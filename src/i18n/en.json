@@ -26,7 +26,7 @@
     "wikipedia": "Open on Wikipedia"
   },
   "style": {
-    "theme": "Theme",
+    "theme": "Map theme",
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "Follow system",
@@ -37,13 +37,13 @@
     "hintMinimal": "Major roads only",
     "hintStandard": "Width by road class",
     "hintBold": "High contrast hierarchy",
-    "lightColors": "Light mode wallpaper colors",
-    "darkColors": "Dark mode wallpaper colors",
+    "lightColors": "Light palette",
+    "darkColors": "Dark palette",
     "active": "Active",
     "background": "Background",
-    "foreground": "Foreground",
+    "foreground": "Lines",
     "reset": "Reset",
-    "rerendering": "Re-rendering wallpaper…"
+    "save": "Save"
   },
   "about": {
     "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day. The city for each day is picked deterministically from a list of the world's 1,000 most populous cities, so everyone running InkCity sees the same city on the same day.",

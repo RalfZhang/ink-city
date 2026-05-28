@@ -62,59 +62,57 @@ pub fn set_hide_tray(app: AppHandle, hide: bool) -> Result<(), String> {
     persist(&app)
 }
 
-#[tauri::command]
-pub fn set_theme(app: AppHandle, mode: ThemeMode) -> Result<(), String> {
-    let before = current_effective_colors(&app);
-    *app.state::<AppState>().theme.lock().unwrap() = mode;
-    crate::apply_window_theme(&app, mode);
-    persist(&app)?;
-    regen_if_visible_change(app, before);
-    Ok(())
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApplyResult {
+    pub regen_started: bool,
 }
 
+#[derive(Serialize)]
+pub struct ColorDefaults {
+    pub light: ColorPair,
+    pub dark: ColorPair,
+}
+
+/// Atomic write of all Style-tab settings. Returns whether a wallpaper
+/// re-render was triggered so the UI can decide whether to wait for
+/// pipeline:end before clearing its Save spinner.
 #[tauri::command]
-pub fn set_colors(app: AppHandle, mode: String, background: String, foreground: String) -> Result<(), String> {
-    let before = current_effective_colors(&app);
-    let state = app.state::<AppState>();
-    let pair = ColorPair { background, foreground };
-    match mode.as_str() {
-        "light" => *state.light.lock().unwrap() = pair,
-        "dark" => *state.dark.lock().unwrap() = pair,
-        other => return Err(format!("unknown mode: {}", other)),
+pub fn apply_style_settings(
+    app: AppHandle,
+    theme: ThemeMode,
+    style: StylePreset,
+    light: ColorPair,
+    dark: ColorPair,
+) -> Result<ApplyResult, String> {
+    let before_colors = current_effective_colors(&app);
+    let before_style = *app.state::<AppState>().style.lock().unwrap();
+
+    {
+        let s = app.state::<AppState>();
+        *s.theme.lock().unwrap() = theme;
+        *s.style.lock().unwrap() = style;
+        *s.light.lock().unwrap() = light;
+        *s.dark.lock().unwrap() = dark;
     }
     persist(&app)?;
-    regen_if_visible_change(app, before);
-    Ok(())
-}
 
-#[tauri::command]
-pub fn set_style(app: AppHandle, preset: StylePreset) -> Result<(), String> {
-    let before = *app.state::<AppState>().style.lock().unwrap();
-    *app.state::<AppState>().style.lock().unwrap() = preset;
-    persist(&app)?;
-    if before != preset {
+    let after_colors = current_effective_colors(&app);
+    let after_style = *app.state::<AppState>().style.lock().unwrap();
+
+    let regen_started = before_colors != after_colors || before_style != after_style;
+    if regen_started {
         pipeline::spawn_force_regen(app);
     }
-    Ok(())
+    Ok(ApplyResult { regen_started })
 }
 
 #[tauri::command]
-pub fn reset_colors(app: AppHandle, mode: String) -> Result<ColorPair, String> {
-    let before = current_effective_colors(&app);
-    let pair = match mode.as_str() {
-        "light" => ColorPair::light_default(),
-        "dark" => ColorPair::dark_default(),
-        other => return Err(format!("unknown mode: {}", other)),
-    };
-    let state = app.state::<AppState>();
-    match mode.as_str() {
-        "light" => *state.light.lock().unwrap() = pair.clone(),
-        "dark" => *state.dark.lock().unwrap() = pair.clone(),
-        _ => unreachable!(),
+pub fn get_color_defaults() -> ColorDefaults {
+    ColorDefaults {
+        light: ColorPair::light_default(),
+        dark: ColorPair::dark_default(),
     }
-    persist(&app)?;
-    regen_if_visible_change(app, before);
-    Ok(pair)
 }
 
 fn current_effective_colors(app: &AppHandle) -> ColorPair {
@@ -122,13 +120,6 @@ fn current_effective_colors(app: &AppHandle) -> ColorPair {
     match pipeline::effective_theme(app) {
         EffectiveTheme::Light => state.light.lock().unwrap().clone(),
         EffectiveTheme::Dark => state.dark.lock().unwrap().clone(),
-    }
-}
-
-fn regen_if_visible_change(app: AppHandle, before: ColorPair) {
-    let after = current_effective_colors(&app);
-    if before != after {
-        pipeline::spawn_force_regen(app);
     }
 }
 

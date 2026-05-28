@@ -12,25 +12,11 @@ mod wallpaper_set;
 
 use std::sync::atomic::Ordering;
 
-use tauri::{AppHandle, Manager, Theme, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_autostart::MacosLauncher;
 
 use crate::config::ThemeMode;
 use crate::state::AppState;
-
-/// Pin the main window's NSAppearance / OS appearance to match the user's chosen
-/// app theme so native chrome (vibrancy material, scrollbars, etc.) stays in
-/// sync. `ThemeMode::System` leaves the window following the OS.
-pub fn apply_window_theme(app: &AppHandle, mode: ThemeMode) {
-    let theme = match mode {
-        ThemeMode::Light => Some(Theme::Light),
-        ThemeMode::Dark => Some(Theme::Dark),
-        ThemeMode::System => None,
-    };
-    if let Some(win) = app.get_webview_window("main") {
-        let _ = win.set_theme(theme);
-    }
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -100,8 +86,6 @@ pub fn run() {
             tray::setup(handle)?;
             tray::apply_hide_tray(handle, hide_tray_initial);
 
-            apply_window_theme(handle, cfg.theme);
-
             scheduler::spawn(handle.clone());
             Ok(())
         })
@@ -109,10 +93,8 @@ pub fn run() {
             commands::get_status,
             commands::set_enabled,
             commands::set_hide_tray,
-            commands::set_theme,
-            commands::set_colors,
-            commands::reset_colors,
-            commands::set_style,
+            commands::apply_style_settings,
+            commands::get_color_defaults,
             commands::regenerate_now,
             commands::renderer_ready,
             commands::submit_render_result,

@@ -62,27 +62,20 @@ function App() {
     return () => i18n.off("languageChanged", sync);
   }, []);
 
-  // Apply the shadcn `.dark` class on <html> based on the chosen theme mode.
-  // In "system" mode, mirror the OS preference and watch for changes.
+  // The settings-page UI always follows the OS theme. The user-visible "Map
+  // Theme" toggle in Style only controls which color pair the wallpaper
+  // renderer uses; it doesn't override the app chrome's appearance.
   useEffect(() => {
-    if (!status) return;
     const root = document.documentElement;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const apply = () => {
-      root.classList.remove("dark");
-      if (status.theme === "dark") root.classList.add("dark");
-      else if (status.theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          root.classList.add("dark");
-        }
-      }
+      if (mq.matches) root.classList.add("dark");
+      else root.classList.remove("dark");
     };
     apply();
-    if (status.theme === "system") {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      mq.addEventListener("change", apply);
-      return () => mq.removeEventListener("change", apply);
-    }
-  }, [status?.theme]);
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   const onError = (e: unknown) => setErr(String(e));
 
@@ -118,7 +111,7 @@ function App() {
           <City status={effectiveStatus} onError={onError} />
         </TabsContent>
         <TabsContent value="style" className="flex-1 overflow-y-auto border-l px-4 py-4">
-          <Style status={effectiveStatus} busy={busy || status.running} refresh={refresh} onError={onError} />
+          <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
         <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
           <About />

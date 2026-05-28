@@ -44,7 +44,7 @@ impl ColorPair {
         Self { background: "#fafafa".into(), foreground: "#1a1a1a".into() }
     }
     pub fn dark_default() -> Self {
-        Self { background: "#0d0d0d".into(), foreground: "#fafafa".into() }
+        Self { background: "#000000".into(), foreground: "#3e2815".into() }
     }
 }
 
