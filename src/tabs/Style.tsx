@@ -1,9 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import type { ColorPair, Status, ThemeMode } from "../types";
+import type { ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
   status: Status;
@@ -12,13 +13,21 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
-const THEMES: { id: ThemeMode; label: string }[] = [
-  { id: "light", label: "Light" },
-  { id: "dark", label: "Dark" },
-  { id: "system", label: "Follow system" },
+const THEMES: { id: ThemeMode; labelKey: string }[] = [
+  { id: "light", labelKey: "style.themeLight" },
+  { id: "dark", labelKey: "style.themeDark" },
+  { id: "system", labelKey: "style.themeSystem" },
+];
+
+const PRESETS: { id: StylePreset; labelKey: string; hintKey: string }[] = [
+  { id: "minimal", labelKey: "style.presetMinimal", hintKey: "style.hintMinimal" },
+  { id: "standard", labelKey: "style.presetStandard", hintKey: "style.hintStandard" },
+  { id: "bold", labelKey: "style.presetBold", hintKey: "style.hintBold" },
 ];
 
 export default function Style({ status, busy, refresh, onError }: Props) {
+  const { t } = useTranslation();
+
   const pickTheme = async (mode: ThemeMode) => {
     try {
       await invoke("set_theme", { mode });
@@ -28,22 +37,33 @@ export default function Style({ status, busy, refresh, onError }: Props) {
     }
   };
 
+  const pickStyle = async (preset: StylePreset) => {
+    try {
+      await invoke("set_style", { preset });
+      await refresh();
+    } catch (e) {
+      onError(e);
+    }
+  };
+
+  const activeHintKey = PRESETS.find((p) => p.id === status.style)?.hintKey;
+
   return (
-    <div className="relative space-y-6 max-w-2xl overflow-hidden">
+    <div className="relative space-y-6 max-w-2xl">
       {busy && (
         <div
-          className="absolute inset-0 z-100 flex items-center justify-center gap-2 m-0 bg-background/65 backdrop-blur-sm rounded-md text-sm"
+          className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-background/65 backdrop-blur-sm text-sm"
           role="status"
           aria-live="polite"
         >
           <span className="inline-block size-3 rounded-full border-2 border-border border-t-foreground animate-spin" />
-          <span>Re-rendering wallpaper…</span>
+          <span>{t("style.rerendering")}</span>
         </div>
       )}
 
       <Card>
         <CardContent>
-          <Label className="text-sm mb-3 block">Theme</Label>
+          <Label className="text-sm mb-3 block">{t("style.theme")}</Label>
           <ToggleGroup
             type="single"
             value={status.theme}
@@ -51,18 +71,40 @@ export default function Style({ status, busy, refresh, onError }: Props) {
             variant="outline"
             size="sm"
           >
-            {THEMES.map((t) => (
-              <ToggleGroupItem key={t.id} value={t.id}>
-                {t.label}
+            {THEMES.map((it) => (
+              <ToggleGroupItem key={it.id} value={it.id}>
+                {t(it.labelKey)}
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
         </CardContent>
       </Card>
 
+      <Card>
+        <CardContent>
+          <Label className="text-sm mb-3 block">{t("style.mapStyle")}</Label>
+          <ToggleGroup
+            type="single"
+            value={status.style}
+            onValueChange={(v) => v && pickStyle(v as StylePreset)}
+            variant="outline"
+            size="sm"
+          >
+            {PRESETS.map((p) => (
+              <ToggleGroupItem key={p.id} value={p.id}>
+                {t(p.labelKey)}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+          {activeHintKey && (
+            <p className="text-xs text-muted-foreground mt-2">{t(activeHintKey)}</p>
+          )}
+        </CardContent>
+      </Card>
+
       <ColorEditor
         mode="light"
-        title="Light mode wallpaper colors"
+        titleKey="style.lightColors"
         colors={status.light}
         active={status.effectiveTheme === "light"}
         refresh={refresh}
@@ -70,7 +112,7 @@ export default function Style({ status, busy, refresh, onError }: Props) {
       />
       <ColorEditor
         mode="dark"
-        title="Dark mode wallpaper colors"
+        titleKey="style.darkColors"
         colors={status.dark}
         active={status.effectiveTheme === "dark"}
         refresh={refresh}
@@ -82,19 +124,21 @@ export default function Style({ status, busy, refresh, onError }: Props) {
 
 function ColorEditor({
   mode,
-  title,
+  titleKey,
   colors,
   active,
   refresh,
   onError,
 }: {
   mode: "light" | "dark";
-  title: string;
+  titleKey: string;
   colors: ColorPair;
   active: boolean;
   refresh: () => Promise<void>;
   onError: (e: unknown) => void;
 }) {
+  const { t } = useTranslation();
+
   const update = async (next: Partial<ColorPair>) => {
     const merged = { ...colors, ...next };
     try {
@@ -119,25 +163,25 @@ function ColorEditor({
       <CardContent>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Label className="text-sm">{title}</Label>
+            <Label className="text-sm">{t(titleKey)}</Label>
             {active && (
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-foreground text-background font-medium">
-                Active
+                {t("style.active")}
               </span>
             )}
           </div>
           <Button variant="ghost" size="sm" onClick={reset}>
-            Reset
+            {t("style.reset")}
           </Button>
         </div>
         <div className="flex gap-6">
           <ColorField
-            label="Background"
+            label={t("style.background")}
             value={colors.background}
             onChange={(v) => update({ background: v })}
           />
           <ColorField
-            label="Foreground"
+            label={t("style.foreground")}
             value={colors.foreground}
             onChange={(v) => update({ foreground: v })}
           />

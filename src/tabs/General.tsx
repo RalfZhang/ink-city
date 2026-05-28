@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getLocaleChoice, setLocaleChoice, type LocaleChoice } from "../i18n";
 import type { Status } from "../types";
 
 type Props = {
@@ -15,19 +24,13 @@ type Props = {
 };
 
 export default function General({ status, refresh, onError }: Props) {
+  const { t } = useTranslation();
   const [autostart, setAutostart] = useState<boolean | null>(null);
+  const [locale, setLocale] = useState<LocaleChoice>(getLocaleChoice());
 
   useEffect(() => {
     isEnabled().then(setAutostart).catch(onError);
   }, []);
-
-  const regenerate = async () => {
-    try {
-      await invoke("regenerate_now");
-    } catch (e) {
-      onError(e);
-    }
-  };
 
   const toggleEnabled = async (on: boolean) => {
     try {
@@ -57,41 +60,24 @@ export default function General({ status, refresh, onError }: Props) {
     }
   };
 
-  const city = status.city;
+  const pickLocale = (v: LocaleChoice) => {
+    setLocaleChoice(v);
+    setLocale(v);
+  };
 
   return (
     <div className="space-y-6 max-w-2xl">
       <Card>
-        <CardContent>
-          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Today · {status.date}</div>
-          <div className="text-xl font-semibold">
-            {city.name}, {city.country}
-          </div>
-          {city.localName !== city.name && (
-            <div className="text-sm text-muted-foreground">{city.localName}</div>
-          )}
-          <div className="text-xs text-muted-foreground mt-1">
-            {city.lat.toFixed(4)}, {city.lon.toFixed(4)} · pop {city.population.toLocaleString()}
-          </div>
-          <Button onClick={regenerate} disabled={status.running} size="sm" className="mt-4">
-            {status.running ? "Generating…" : "Regenerate now"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
         <CardContent className="space-y-4">
           <Row
-            label="Enable daily updates"
-            description="Refresh the wallpaper at midnight with the next city."
-            control={
-              <Switch checked={status.enabled} onCheckedChange={toggleEnabled} />
-            }
+            label={t("general.enabledLabel")}
+            description={t("general.enabledDesc")}
+            control={<Switch checked={status.enabled} onCheckedChange={toggleEnabled} />}
           />
           <Separator />
           <Row
-            label="Launch at login"
-            description="Start InkCity automatically when you log in."
+            label={t("general.autostartLabel")}
+            description={t("general.autostartDesc")}
             control={
               <Switch
                 checked={autostart ?? false}
@@ -102,14 +88,28 @@ export default function General({ status, refresh, onError }: Props) {
           />
           <Separator />
           <Row
-            label="Hide system tray icon"
+            label={t("general.hideTrayLabel")}
             description={
               status.hide_tray
-                ? "With the tray hidden, relaunch the app to reopen this window."
-                : "Keep the menu-bar icon visible."
+                ? t("general.hideTrayDescOn")
+                : t("general.hideTrayDescOff")
             }
+            control={<Switch checked={status.hide_tray} onCheckedChange={toggleHideTray} />}
+          />
+          <Separator />
+          <Row
+            label={t("general.languageLabel")}
             control={
-              <Switch checked={status.hide_tray} onCheckedChange={toggleHideTray} />
+              <Select value={locale} onValueChange={(v) => pickLocale(v as LocaleChoice)}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">{t("general.languageAuto")}</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="zh-Hans">简体中文</SelectItem>
+                </SelectContent>
+              </Select>
             }
           />
         </CardContent>
@@ -117,10 +117,10 @@ export default function General({ status, refresh, onError }: Props) {
 
       <div className="flex gap-2">
         <Button variant="outline" size="sm" onClick={() => invoke("hide_window")}>
-          Hide window
+          {t("general.hideWindow")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
-          Quit InkCity
+          {t("general.quit")}
         </Button>
       </div>
     </div>

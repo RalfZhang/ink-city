@@ -1,4 +1,5 @@
 mod bbox;
+mod cities_update;
 mod city;
 mod commands;
 mod config;
@@ -43,6 +44,10 @@ pub fn run() {
             let cfg = config::load(handle);
             let hide_tray_initial = cfg.hide_tray;
             handle.manage(AppState::from_config(&cfg));
+
+            // Initialize the cities list (cache → bundled fallback) before the
+            // scheduler picks today's city.
+            city::initialize(handle);
 
             // Hidden renderer window — built up front so it's ready for the first run.
             let _ = WebviewWindowBuilder::new(
@@ -107,11 +112,13 @@ pub fn run() {
             commands::set_theme,
             commands::set_colors,
             commands::reset_colors,
+            commands::set_style,
             commands::regenerate_now,
             commands::renderer_ready,
             commands::submit_render_result,
             commands::quit_app,
             commands::hide_window,
+            commands::update_tray_labels,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

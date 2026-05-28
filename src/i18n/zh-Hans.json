@@ -1,0 +1,65 @@
+{
+  "sidebar": {
+    "general": "通用",
+    "city": "城市",
+    "style": "样式",
+    "about": "关于"
+  },
+  "general": {
+    "enabledLabel": "开启每日更新",
+    "enabledDesc": "每天午夜自动切换到下一个城市的壁纸",
+    "autostartLabel": "登录时启动",
+    "autostartDesc": "登录系统时自动启动 InkCity",
+    "hideTrayLabel": "隐藏系统托盘图标",
+    "hideTrayDescOn": "托盘隐藏后，需要重新启动应用才能打开此窗口",
+    "hideTrayDescOff": "在菜单栏保持图标可见",
+    "languageLabel": "语言",
+    "languageAuto": "跟随系统",
+    "hideWindow": "隐藏窗口",
+    "quit": "退出 InkCity"
+  },
+  "city": {
+    "today": "今日",
+    "population": "人口 {{value}}",
+    "regenerate": "立即重新生成",
+    "regenerating": "生成中…",
+    "wikipedia": "在 Wikipedia 上查看"
+  },
+  "style": {
+    "theme": "主题",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "跟随系统",
+    "mapStyle": "地图样式",
+    "presetMinimal": "极简",
+    "presetStandard": "标准",
+    "presetBold": "强烈",
+    "hintMinimal": "仅显示主干道",
+    "hintStandard": "按道路等级分级线宽",
+    "hintBold": "高对比度层级",
+    "lightColors": "浅色模式壁纸颜色",
+    "darkColors": "深色模式壁纸颜色",
+    "active": "当前",
+    "background": "背景",
+    "foreground": "前景",
+    "reset": "重置",
+    "rerendering": "正在重新生成壁纸…"
+  },
+  "about": {
+    "p1": "InkCity 每天把你的桌面壁纸切换成一个不同城市的道路地图。每天的城市从全球人口前 1000 的城市列表中确定性选取，所以所有 InkCity 用户在同一天看到的是同一座城市。",
+    "p2": "道路数据通过 Overpass API 从 OpenStreetMap 拉取并在本地渲染。缓存保留在应用缓存目录下，过期 7 天清理。",
+    "github": "GitHub 仓库",
+    "feedbackTitle": "反馈",
+    "feedbackDesc": "发现 bug 或有建议？欢迎在 GitHub 提 issue。请附上你的操作系统版本，必要时附上触发问题的城市和日期。",
+    "openIssues": "打开 GitHub Issues"
+  },
+  "common": {
+    "loading": "加载中…"
+  },
+  "tray": {
+    "openSettings": "打开设置",
+    "dailyUpdates": "每日更新",
+    "regenerateNow": "立即重新生成",
+    "quit": "退出 InkCity"
+  }
+}

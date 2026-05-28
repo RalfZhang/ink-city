@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex as StdMutex};
 
 use tokio::sync::{oneshot, Mutex, Notify};
 
-use crate::config::{ColorPair, ThemeMode};
+use crate::config::{ColorPair, StylePreset, ThemeMode};
 
 pub struct PendingJob {
     pub date: String,
@@ -19,6 +19,7 @@ pub struct AppState {
     pub theme: StdMutex<ThemeMode>,
     pub light: StdMutex<ColorPair>,
     pub dark: StdMutex<ColorPair>,
+    pub style: StdMutex<StylePreset>,
     pub running: Mutex<bool>,
     pub quitting: AtomicBool,
 }
@@ -34,6 +35,7 @@ impl AppState {
             theme: StdMutex::new(cfg.theme),
             light: StdMutex::new(cfg.light.clone()),
             dark: StdMutex::new(cfg.dark.clone()),
+            style: StdMutex::new(cfg.style),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
         }

@@ -1,7 +1,12 @@
+use std::fs;
+use std::sync::OnceLock;
+
 use chrono::{NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Manager};
 
-const CITIES_JSON: &str = include_str!("../../src/data/cities.json");
+const BUNDLED_CITIES: &str = include_str!("../../src/data/cities.json");
+const CACHE_FILE: &str = "cities.json";
 const EPOCH: (i32, u32, u32) = (2023, 3, 3);
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -16,17 +21,55 @@ pub struct City {
     pub population: u64,
 }
 
-pub fn all_cities() -> Vec<City> {
-    serde_json::from_str(CITIES_JSON).expect("cities.json invalid")
+static CITIES: OnceLock<Vec<City>> = OnceLock::new();
+
+/// Load the cities list once at startup. Prefers the hot-updatable cache file
+/// in `app_data_dir`; falls back to the bundled JSON if missing/corrupt/empty.
+/// Subsequent remote updates land in the cache but only take effect on the
+/// next launch — avoiding mid-session city switches.
+pub fn initialize(app: &AppHandle) {
+    let cities = load_from_cache_or_bundled(app);
+    let _ = CITIES.set(cities);
+}
+
+fn load_from_cache_or_bundled(app: &AppHandle) -> Vec<City> {
+    if let Some(cities) = load_from_cache(app) {
+        eprintln!("[city] loaded {} cities from cache", cities.len());
+        return cities;
+    }
+    eprintln!("[city] using bundled cities list");
+    serde_json::from_str(BUNDLED_CITIES).expect("bundled cities.json invalid")
+}
+
+fn load_from_cache(app: &AppHandle) -> Option<Vec<City>> {
+    let dir = app.path().app_data_dir().ok()?;
+    let path = dir.join(CACHE_FILE);
+    let s = fs::read_to_string(&path).ok()?;
+    let cities: Vec<City> = serde_json::from_str(&s).ok()?;
+    if cities.len() < 100 {
+        return None; // sanity floor: don't trust a tiny list
+    }
+    Some(cities)
+}
+
+fn cities() -> &'static [City] {
+    CITIES.get().expect("city::initialize must run before pick_for_date")
 }
 
 pub fn pick_for_date(date: NaiveDate) -> City {
-    let cities = all_cities();
+    let all = cities();
+
+    // DEBUG override: pin a known city so the renderer can be eyeballed.
+    // Remove this `if` block to restore deterministic daily rotation.
+    if let Some(c) = all.iter().find(|c| c.name == "Xi'an") {
+        return c.clone();
+    }
+
     let epoch = NaiveDate::from_ymd_opt(EPOCH.0, EPOCH.1, EPOCH.2).unwrap();
     let days = (date - epoch).num_days();
-    let n = cities.len() as i64;
+    let n = all.len() as i64;
     let idx = ((days % n) + n) % n;
-    cities.into_iter().nth(idx as usize).unwrap()
+    all[idx as usize].clone()
 }
 
 pub fn today() -> NaiveDate {

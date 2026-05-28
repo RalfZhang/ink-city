@@ -19,6 +19,20 @@ impl Default for ThemeMode {
     }
 }
 
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StylePreset {
+    Minimal,
+    Standard,
+    Bold,
+}
+
+impl Default for StylePreset {
+    fn default() -> Self {
+        StylePreset::Standard
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ColorPair {
     pub background: String,
@@ -46,6 +60,8 @@ pub struct Config {
     pub light: ColorPair,
     #[serde(default = "ColorPair::dark_default")]
     pub dark: ColorPair,
+    #[serde(default)]
+    pub style: StylePreset,
 }
 
 fn default_true() -> bool {
@@ -60,6 +76,7 @@ impl Default for Config {
             theme: ThemeMode::System,
             light: ColorPair::light_default(),
             dark: ColorPair::dark_default(),
+            style: StylePreset::Standard,
         }
     }
 }

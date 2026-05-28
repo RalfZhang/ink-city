@@ -9,6 +9,7 @@ export type City = {
 };
 
 export type ThemeMode = "light" | "dark" | "system";
+export type StylePreset = "minimal" | "standard" | "bold";
 
 export type ColorPair = {
   background: string;
@@ -25,4 +26,5 @@ export type Status = {
   effectiveTheme: "light" | "dark";
   light: ColorPair;
   dark: ColorPair;
+  style: StylePreset;
 };

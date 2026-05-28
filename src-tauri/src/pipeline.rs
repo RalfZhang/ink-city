@@ -11,7 +11,7 @@ use tokio::sync::oneshot;
 
 use crate::bbox::{bbox_for_screen, Bbox};
 use crate::city;
-use crate::config::{ColorPair, ThemeMode};
+use crate::config::{ColorPair, StylePreset, ThemeMode};
 use crate::overpass;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
@@ -28,7 +28,7 @@ pub enum EffectiveTheme {
 struct Style {
     background: String,
     foreground: String,
-    line_width: f32,
+    preset: StylePreset,
 }
 
 #[derive(Serialize, Clone)]
@@ -117,7 +117,8 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     };
 
     let colors = pick_colors(app);
-    let style = Style { background: colors.background, foreground: colors.foreground, line_width: 1.0 };
+    let preset = *app.state::<AppState>().style.lock().unwrap();
+    let style = Style { background: colors.background, foreground: colors.foreground, preset };
 
     let (tx, rx) = oneshot::channel::<Vec<u8>>();
     {

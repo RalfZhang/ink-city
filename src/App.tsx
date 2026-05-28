@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import General from "./tabs/General";
+import City from "./tabs/City";
 import Style from "./tabs/Style";
 import About from "./tabs/About";
-import Feedback from "./tabs/Feedback";
 import type { Status } from "./types";
 
-type TabId = "general" | "style" | "about" | "feedback";
+type TabId = "general" | "city" | "style" | "about";
 
 function App() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<Status | null>(null);
   const [tab, setTab] = useState<TabId>("general");
   const [err, setErr] = useState<string | null>(null);
@@ -42,6 +45,23 @@ function App() {
     };
   }, []);
 
+  // Push the current language's tray-menu translations into Rust so the
+  // OS-rendered tray menu stays in sync with the React UI. Done on mount and
+  // on every language change. Source of truth remains the JSON locale files.
+  useEffect(() => {
+    const sync = () => {
+      invoke("update_tray_labels", {
+        openSettings: i18n.t("tray.openSettings"),
+        dailyUpdates: i18n.t("tray.dailyUpdates"),
+        regenerateNow: i18n.t("tray.regenerateNow"),
+        quit: i18n.t("tray.quit"),
+      }).catch((e) => console.warn("[tray] sync failed", e));
+    };
+    sync();
+    i18n.on("languageChanged", sync);
+    return () => i18n.off("languageChanged", sync);
+  }, []);
+
   // Apply the shadcn `.dark` class on <html> based on the chosen theme mode.
   // In "system" mode, mirror the OS preference and watch for changes.
   useEffect(() => {
@@ -69,7 +89,7 @@ function App() {
   if (!status) {
     return (
       <main className="p-4 text-sm text-muted-foreground">
-        {err ? <pre className="text-destructive">{err}</pre> : "loading…"}
+        {err ? <pre className="text-destructive">{err}</pre> : t("common.loading")}
       </main>
     );
   }
@@ -85,23 +105,23 @@ function App() {
         className="flex-1 min-h-0 gap-0"
       >
         <TabsList className="w-[180px] h-full bg-transparent rounded-none p-4 gap-0.5 items-stretch">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="style">Style</TabsTrigger>
-          <TabsTrigger value="about">About</TabsTrigger>
-          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+          <TabsTrigger value="general">{t("sidebar.general")}</TabsTrigger>
+          <TabsTrigger value="city">{t("sidebar.city")}</TabsTrigger>
+          <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
+          <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="flex-1 overflow-y-auto border-l px-4 py-4">
           <General status={effectiveStatus} refresh={refresh} onError={onError} />
         </TabsContent>
+        <TabsContent value="city" className="flex-1 overflow-y-auto border-l px-4 py-4">
+          <City status={effectiveStatus} onError={onError} />
+        </TabsContent>
         <TabsContent value="style" className="flex-1 overflow-y-auto border-l px-4 py-4">
           <Style status={effectiveStatus} busy={busy || status.running} refresh={refresh} onError={onError} />
         </TabsContent>
         <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
-          <About status={status} />
-        </TabsContent>
-        <TabsContent value="feedback" className="flex-1 overflow-y-auto border-l px-4 py-4">
-          <Feedback />
+          <About />
         </TabsContent>
       </Tabs>
 

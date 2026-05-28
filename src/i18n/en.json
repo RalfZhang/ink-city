@@ -1,0 +1,65 @@
+{
+  "sidebar": {
+    "general": "General",
+    "city": "City",
+    "style": "Style",
+    "about": "About"
+  },
+  "general": {
+    "enabledLabel": "Enable daily updates",
+    "enabledDesc": "Refresh the wallpaper at midnight with the next city.",
+    "autostartLabel": "Launch at login",
+    "autostartDesc": "Start InkCity automatically when you log in.",
+    "hideTrayLabel": "Hide system tray icon",
+    "hideTrayDescOn": "With the tray hidden, relaunch the app to reopen this window.",
+    "hideTrayDescOff": "Keep the menu-bar icon visible.",
+    "languageLabel": "Language",
+    "languageAuto": "Auto",
+    "hideWindow": "Hide window",
+    "quit": "Quit InkCity"
+  },
+  "city": {
+    "today": "Today",
+    "population": "pop {{value}}",
+    "regenerate": "Regenerate now",
+    "regenerating": "Generating…",
+    "wikipedia": "Open on Wikipedia"
+  },
+  "style": {
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "Follow system",
+    "mapStyle": "Map style",
+    "presetMinimal": "Minimal",
+    "presetStandard": "Standard",
+    "presetBold": "Bold",
+    "hintMinimal": "Major roads only",
+    "hintStandard": "Width by road class",
+    "hintBold": "High contrast hierarchy",
+    "lightColors": "Light mode wallpaper colors",
+    "darkColors": "Dark mode wallpaper colors",
+    "active": "Active",
+    "background": "Background",
+    "foreground": "Foreground",
+    "reset": "Reset",
+    "rerendering": "Re-rendering wallpaper…"
+  },
+  "about": {
+    "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day. The city for each day is picked deterministically from a list of the world's 1,000 most populous cities, so everyone running InkCity sees the same city on the same day.",
+    "p2": "Road geometry is fetched from OpenStreetMap via the Overpass API and rendered locally. Cached data is kept for 7 days under your app cache directory.",
+    "github": "GitHub repository",
+    "feedbackTitle": "Feedback",
+    "feedbackDesc": "Found a bug or have an idea? Open an issue on GitHub. Please include your OS version and, if relevant, the city / date that triggered the problem.",
+    "openIssues": "Open GitHub Issues"
+  },
+  "common": {
+    "loading": "loading…"
+  },
+  "tray": {
+    "openSettings": "Open Settings",
+    "dailyUpdates": "Daily Updates",
+    "regenerateNow": "Regenerate Now",
+    "quit": "Quit InkCity"
+  }
+}

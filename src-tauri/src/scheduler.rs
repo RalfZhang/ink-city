@@ -4,6 +4,7 @@ use std::time::Duration;
 use chrono::{Local, NaiveTime};
 use tauri::{AppHandle, Manager};
 
+use crate::cities_update;
 use crate::city;
 use crate::pipeline;
 use crate::state::AppState;
@@ -11,6 +12,11 @@ use crate::state::AppState;
 pub fn spawn(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
         loop {
+            // Refresh the remote cities list (no-op when up to date thanks to
+            // ETag). Runs on every tick regardless of the daily-update toggle —
+            // the toggle gates wallpaper changes, not data freshness.
+            cities_update::spawn_check(app.clone());
+
             run_if_enabled(&app).await;
             let wait = secs_until_next_midnight();
             tokio::time::sleep(Duration::from_secs(wait)).await;

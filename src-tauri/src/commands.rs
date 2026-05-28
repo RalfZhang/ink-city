@@ -4,7 +4,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
 
 use crate::city::{self, City};
-use crate::config::{self, ColorPair, ThemeMode};
+use crate::config::{self, ColorPair, StylePreset, ThemeMode};
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
@@ -21,6 +21,7 @@ pub struct Status {
     pub effective_theme: String,
     pub light: ColorPair,
     pub dark: ColorPair,
+    pub style: StylePreset,
 }
 
 #[tauri::command]
@@ -43,6 +44,7 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<St
         effective_theme: effective.into(),
         light: state.light.lock().unwrap().clone(),
         dark: state.dark.lock().unwrap().clone(),
+        style: *state.style.lock().unwrap(),
     })
 }
 
@@ -82,6 +84,17 @@ pub fn set_colors(app: AppHandle, mode: String, background: String, foreground: 
     }
     persist(&app)?;
     regen_if_visible_change(app, before);
+    Ok(())
+}
+
+#[tauri::command]
+pub fn set_style(app: AppHandle, preset: StylePreset) -> Result<(), String> {
+    let before = *app.state::<AppState>().style.lock().unwrap();
+    *app.state::<AppState>().style.lock().unwrap() = preset;
+    persist(&app)?;
+    if before != preset {
+        pipeline::spawn_force_regen(app);
+    }
     Ok(())
 }
 
@@ -149,6 +162,17 @@ pub async fn submit_render_result(
 }
 
 #[tauri::command]
+pub fn update_tray_labels(
+    open_settings: String,
+    daily_updates: String,
+    regenerate_now: String,
+    quit: String,
+) -> Result<(), String> {
+    tray::update_labels(&open_settings, &daily_updates, &regenerate_now, &quit);
+    Ok(())
+}
+
+#[tauri::command]
 pub fn hide_window(app: AppHandle) -> Result<(), String> {
     if let Some(w) = app.get_webview_window("main") {
         w.hide().map_err(|e| e.to_string())?;
@@ -171,6 +195,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         theme: *s.theme.lock().unwrap(),
         light: s.light.lock().unwrap().clone(),
         dark: s.dark.lock().unwrap().clone(),
+        style: *s.style.lock().unwrap(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

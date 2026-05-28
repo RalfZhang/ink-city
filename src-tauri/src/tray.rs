@@ -1,7 +1,7 @@
 use std::sync::atomic::Ordering;
 use std::sync::OnceLock;
 
-use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, MenuBuilder, MenuItemBuilder, PredefinedMenuItem};
+use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, MenuBuilder, MenuItem, MenuItemBuilder, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry};
 
@@ -11,7 +11,10 @@ use crate::state::AppState;
 
 pub const TRAY_ID: &str = "main";
 
+static OPEN_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
 static TOGGLE_ITEM: OnceLock<CheckMenuItem<Wry>> = OnceLock::new();
+static REGEN_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
+static QUIT_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     let initial_enabled = app.state::<AppState>().enabled.load(Ordering::Acquire);
@@ -34,7 +37,10 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
         .item(&quit_item)
         .build()?;
 
+    let _ = OPEN_ITEM.set(open_item);
     let _ = TOGGLE_ITEM.set(toggle_item);
+    let _ = REGEN_ITEM.set(regen_item);
+    let _ = QUIT_ITEM.set(quit_item);
 
     let icon = app
         .default_window_icon()
@@ -100,5 +106,28 @@ pub fn sync_enabled_to_tray(app: &AppHandle) {
 pub fn apply_hide_tray(app: &AppHandle, hide: bool) {
     if let Some(tray) = app.tray_by_id(TRAY_ID) {
         let _ = tray.set_visible(!hide);
+    }
+}
+
+/// Update the tray menu labels. Called by the frontend after i18n init and on
+/// every language change so translations stay in JSON (single source of truth)
+/// and Rust just renders whatever it's told.
+pub fn update_labels(
+    open_settings: &str,
+    daily_updates: &str,
+    regenerate_now: &str,
+    quit: &str,
+) {
+    if let Some(it) = OPEN_ITEM.get() {
+        let _ = it.set_text(open_settings);
+    }
+    if let Some(it) = TOGGLE_ITEM.get() {
+        let _ = it.set_text(daily_updates);
+    }
+    if let Some(it) = REGEN_ITEM.get() {
+        let _ = it.set_text(regenerate_now);
+    }
+    if let Some(it) = QUIT_ITEM.get() {
+        let _ = it.set_text(quit);
     }
 }
