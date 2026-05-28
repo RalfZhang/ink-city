@@ -1,0 +1,83 @@
+use std::fs;
+use std::path::PathBuf;
+
+use anyhow::Result;
+use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Manager};
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ThemeMode {
+    Light,
+    Dark,
+    System,
+}
+
+impl Default for ThemeMode {
+    fn default() -> Self {
+        ThemeMode::System
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ColorPair {
+    pub background: String,
+    pub foreground: String,
+}
+
+impl ColorPair {
+    pub fn light_default() -> Self {
+        Self { background: "#fafafa".into(), foreground: "#1a1a1a".into() }
+    }
+    pub fn dark_default() -> Self {
+        Self { background: "#0d0d0d".into(), foreground: "#fafafa".into() }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Config {
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+    #[serde(default)]
+    pub hide_tray: bool,
+    #[serde(default)]
+    pub theme: ThemeMode,
+    #[serde(default = "ColorPair::light_default")]
+    pub light: ColorPair,
+    #[serde(default = "ColorPair::dark_default")]
+    pub dark: ColorPair,
+}
+
+fn default_true() -> bool {
+    true
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            hide_tray: false,
+            theme: ThemeMode::System,
+            light: ColorPair::light_default(),
+            dark: ColorPair::dark_default(),
+        }
+    }
+}
+
+fn config_path(app: &AppHandle) -> Result<PathBuf> {
+    let dir = app.path().app_config_dir()?;
+    fs::create_dir_all(&dir)?;
+    Ok(dir.join("config.json"))
+}
+
+pub fn load(app: &AppHandle) -> Config {
+    let Ok(path) = config_path(app) else { return Config::default() };
+    let Ok(raw) = fs::read_to_string(&path) else { return Config::default() };
+    serde_json::from_str(&raw).unwrap_or_default()
+}
+
+pub fn save(app: &AppHandle, cfg: &Config) -> Result<()> {
+    let path = config_path(app)?;
+    fs::write(path, serde_json::to_string_pretty(cfg)?)?;
+    Ok(())
+}
