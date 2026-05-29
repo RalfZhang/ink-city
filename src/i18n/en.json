@@ -46,12 +46,12 @@
     "save": "Save"
   },
   "about": {
-    "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day. The city for each day is picked deterministically from a list of the world's 1,000 most populous cities, so everyone running InkCity sees the same city on the same day.",
-    "p2": "Road geometry is fetched from OpenStreetMap via the Overpass API and rendered locally. Cached data is kept for 7 days under your app cache directory.",
+    "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day.",
+    "p2": "More features coming soon…",
     "github": "GitHub repository",
     "feedbackTitle": "Feedback",
-    "feedbackDesc": "Found a bug or have an idea? Open an issue on GitHub. Please include your OS version and, if relevant, the city / date that triggered the problem.",
-    "openIssues": "Open GitHub Issues"
+    "feedbackDesc": "Found a bug or have an idea? Open an issue on GitHub. For bug reports please include your OS version, and if relevant the city / date that triggered the problem.",
+    "openIssues": "Submit feedback"
   },
   "common": {
     "loading": "loading…"

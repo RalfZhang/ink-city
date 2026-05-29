@@ -6,10 +6,14 @@ use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-/// Remote canonical cities list. ETag-based conditional GETs are used to
-/// avoid re-downloading unchanged content. Update this URL if the repo moves.
+/// Remote canonical cities list. We pull from jsDelivr (a Cloudflare-fronted
+/// CDN of GitHub) rather than raw.githubusercontent.com because the latter is
+/// frequently DNS-poisoned in mainland China and unreliable for users there;
+/// jsDelivr also has 12h edge-cache propagation, fine for our daily-check
+/// cadence. ETag-based conditional GETs avoid re-downloading unchanged
+/// content. Update this URL if the repo / branch moves.
 const REMOTE_URL: &str =
-    "https://raw.githubusercontent.com/RalfZhang/ink-city/main/src/data/cities.json";
+    "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@main/src/data/cities.json";
 
 const CACHE_FILE: &str = "cities.json";
 const META_FILE: &str = "cities.meta.json";

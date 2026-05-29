@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ink-city",
+  "productName": "InkCity",
   "version": "0.1.0",
   "identifier": "com.zhang.inkcity",
   "build": {
@@ -14,8 +14,10 @@
     "windows": [
       {
         "title": "InkCity",
-        "width": 760,
+        "width": 732,
         "height": 600,
+        "minWidth": 732,
+        "maxWidth": 732,
         "transparent": true
       }
     ],

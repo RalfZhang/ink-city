@@ -46,12 +46,12 @@
     "save": "保存"
   },
   "about": {
-    "p1": "InkCity 每天把你的桌面壁纸切换成一个不同城市的道路地图。每天的城市从全球人口前 1000 的城市列表中确定性选取，所以所有 InkCity 用户在同一天看到的是同一座城市。",
-    "p2": "道路数据通过 Overpass API 从 OpenStreetMap 拉取并在本地渲染。缓存保留在应用缓存目录下，过期 7 天清理。",
+    "p1": "InkCity 每天把你的桌面壁纸切换成一个不同城市的道路地图。",
+    "p2": "更多功能正在开发中……",
     "github": "GitHub 仓库",
     "feedbackTitle": "反馈",
-    "feedbackDesc": "发现 bug 或有建议？欢迎在 GitHub 提 issue。请附上你的操作系统版本，必要时附上触发问题的城市和日期。",
-    "openIssues": "打开 GitHub Issues"
+    "feedbackDesc": "发现 bug 或有建议？欢迎在 GitHub 提 issue。如果是 bug，请附上你的操作系统版本，必要时附上触发问题的城市和日期。",
+    "openIssues": "提交反馈"
   },
   "common": {
     "loading": "加载中…"

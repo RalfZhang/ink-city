@@ -50,8 +50,28 @@ pub fn run() {
             if let Some(main) = handle.get_webview_window("main") {
                 #[cfg(target_os = "macos")]
                 {
+                    use objc2::{msg_send, runtime::AnyObject};
                     use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
                     let _ = apply_vibrancy(&main, NSVisualEffectMaterial::Sidebar, None, None);
+
+                    // Stop the green traffic-light button from entering
+                    // Fullscreen Mode. Tauri's default collection behavior is
+                    // 0, which still leaves the window fullscreen-capable
+                    // because the app itself is fullscreen-capable.  Setting
+                    // `NSWindowCollectionBehaviorFullScreenNone` (1<<9)
+                    // explicitly disables fullscreen for this window, which
+                    // switches the green button to its `zoom:` (➕) variant.
+                    // `zoom:` then respects our maxWidth=732 constraint and
+                    // only grows the window vertically; a second click toggles
+                    // back to the previous frame.
+                    if let Ok(ptr) = main.ns_window() {
+                        let ns_window = ptr as *mut AnyObject;
+                        unsafe {
+                            let current: usize = msg_send![ns_window, collectionBehavior];
+                            let new_behavior = (current & !(1usize << 7)) | (1usize << 9);
+                            let _: () = msg_send![ns_window, setCollectionBehavior: new_behavior];
+                        }
+                    }
                 }
                 #[cfg(target_os = "windows")]
                 {
