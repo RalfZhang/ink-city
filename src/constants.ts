@@ -1,9 +1,3 @@
-// Update this once the public repository exists.
-export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
-export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
-
-export const WIKIPEDIA_BASE = "https://en.wikipedia.org/wiki/";
-
-export function wikipediaUrl(cityName: string): string {
-  return WIKIPEDIA_BASE + encodeURIComponent(cityName.replace(/ /g, "_"));
-}
+// Re-export from the portable core so existing `../constants` imports keep
+// working. The canonical definitions live in `@/core/constants`.
+export { GITHUB_REPO, GITHUB_ISSUES, WIKIPEDIA_BASE, wikipediaUrl } from "./core";

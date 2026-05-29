@@ -3,6 +3,8 @@ use std::time::Duration;
 
 use crate::bbox::Bbox;
 
+// Mirror list and query template mirror `src/core/overpass.ts`; keep in sync.
+
 const MIRRORS: &[&str] = &[
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",

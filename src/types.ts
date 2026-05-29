@@ -1,20 +1,9 @@
-export type City = {
-  id: number;
-  name: string;
-  localName: string;
-  country: string;
-  lat: number;
-  lon: number;
-  population: number;
-};
+// Shared primitives live in the portable core; re-export them so existing
+// `../types` imports keep working. `Status` is desktop-specific (it mirrors the
+// Rust `get_status` command output), so it stays here.
+export type { City, ColorPair, StylePreset, ThemeMode } from "./core";
 
-export type ThemeMode = "light" | "dark" | "system";
-export type StylePreset = "minimal" | "standard" | "bold";
-
-export type ColorPair = {
-  background: string;
-  foreground: string;
-};
+import type { City, ColorPair, StylePreset, ThemeMode } from "./core";
 
 export type Status = {
   enabled: boolean;

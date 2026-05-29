@@ -8,6 +8,16 @@ use tauri::{AppHandle, Manager};
 const BUNDLED_CITIES: &str = include_str!("../../src/data/cities.json");
 const CACHE_FILE: &str = "cities.json";
 const EPOCH: (i32, u32, u32) = (2023, 3, 3);
+/// Day-to-city index uses `(days * MULTIPLIER) % N`. A prime coprime to N
+/// makes this a permutation of 0..N-1, so cities.json can stay sorted by
+/// population while the daily sequence still feels random and never repeats
+/// within an N-day cycle. 379 is prime, so it stays coprime to most N as the
+/// list grows.
+///
+/// MUST stay equivalent to the TS port in `src/core/city.ts` (the website / CI
+/// pick the same city there); if they diverge the website shows a different
+/// city than the user's wallpaper.
+const MULTIPLIER: i64 = 379;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct City {
@@ -68,7 +78,8 @@ pub fn pick_for_date(date: NaiveDate) -> City {
     let epoch = NaiveDate::from_ymd_opt(EPOCH.0, EPOCH.1, EPOCH.2).unwrap();
     let days = (date - epoch).num_days();
     let n = all.len() as i64;
-    let idx = ((days % n) + n) % n;
+    let raw = ((days % n) + n) % n;
+    let idx = (raw * MULTIPLIER) % n;
     all[idx as usize].clone()
 }
 

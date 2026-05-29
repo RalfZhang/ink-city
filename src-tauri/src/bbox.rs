@@ -13,6 +13,7 @@ pub struct Bbox {
 /// Build a bbox sized to the screen aspect: the longer side spans `2 * max_half_km`,
 /// the shorter side is scaled down by the aspect ratio.
 /// `aspect` is screen width / screen height.
+/// Mirrors `bboxForScreen` in `src/core/bbox.ts`; keep them in sync.
 pub fn bbox_for_screen(lat: f64, lon: f64, max_half_km: f64, aspect: f64) -> Bbox {
     let (half_w_km, half_h_km) = if aspect >= 1.0 {
         (max_half_km, max_half_km / aspect)
