@@ -84,6 +84,20 @@ npm run build:cities
 npm run precache -- data/osm 7
 ```
 
+## Releasing
+
+Bump the version in `package.json` and `src-tauri/tauri.conf.json`, then push a
+matching tag:
+
+```bash
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+The [release workflow](.github/workflows/release.yml) builds signed bundles for
+macOS (universal) and Windows, publishes a **draft** GitHub Release (review, then
+hit Publish), and generates the signed `latest.json` the in-app updater reads.
+Code signing / notarization setup is documented in [docs/SIGNING.md](docs/SIGNING.md).
+
 ## Data sources & licenses
 
 - Road map data © **OpenStreetMap** contributors, licensed under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
