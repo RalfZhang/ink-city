@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- InkCity app icon: a road-network crop (the app's own output), sepia ink
+       on cream paper. Source of truth; regenerate the PNG/ICNS/ICO set with:
+       npx tauri icon src-tauri/icons/app-icon.svg -o src-tauri/icons -->
+  <defs>
+    <clipPath id="tile">
+      <rect x="96" y="96" width="832" height="832" rx="196" ry="196"/>
+    </clipPath>
+  </defs>
+
+  <rect x="96" y="96" width="832" height="832" rx="196" ry="196" fill="#f4ead6"/>
+
+  <g clip-path="url(#tile)" fill="none" stroke="#3e2815"
+     stroke-linecap="round" stroke-linejoin="round">
+    <!-- thin residential streets (grid) -->
+    <path d="M96 372 H928" stroke-width="26"/>
+    <path d="M96 668 H928" stroke-width="26"/>
+    <path d="M392 96 V928" stroke-width="26"/>
+    <path d="M712 96 V928" stroke-width="26"/>
+    <!-- a curving avenue -->
+    <path d="M96 540 C 340 486, 560 588, 928 470" stroke-width="42"/>
+    <!-- the bold highway cutting diagonally across -->
+    <path d="M150 916 L 916 236" stroke-width="78"/>
+  </g>
+</svg>

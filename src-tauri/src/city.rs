@@ -68,13 +68,6 @@ fn cities() -> &'static [City] {
 
 pub fn pick_for_date(date: NaiveDate) -> City {
     let all = cities();
-
-    // DEBUG override: pin a known city so the renderer can be eyeballed.
-    // Remove this `if` block to restore deterministic daily rotation.
-    if let Some(c) = all.iter().find(|c| c.name == "Xi'an") {
-        return c.clone();
-    }
-
     let epoch = NaiveDate::from_ymd_opt(EPOCH.0, EPOCH.1, EPOCH.2).unwrap();
     let days = (date - epoch).num_days();
     let n = all.len() as i64;

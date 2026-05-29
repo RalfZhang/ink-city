@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- macOS menu-bar template glyph: solid black on transparent, so macOS can
+       tint it for light/dark menu bars. A simplified road junction (no tile).
+       Regenerate src-tauri/icons/tray.png from this; see scripts note in tray.rs. -->
+  <g fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round">
+    <!-- grid streets -->
+    <path d="M72 196 H440" stroke-width="30"/>
+    <path d="M72 340 H440" stroke-width="30"/>
+    <path d="M214 72 V440" stroke-width="30"/>
+    <!-- bold highway -->
+    <path d="M96 440 L440 120" stroke-width="58"/>
+  </g>
+</svg>

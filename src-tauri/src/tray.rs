@@ -42,15 +42,32 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     let _ = REGEN_ITEM.set(regen_item);
     let _ = QUIT_ITEM.set(quit_item);
 
-    let icon = app
-        .default_window_icon()
-        .ok_or_else(|| tauri::Error::AssetNotFound("default icon".into()))?
-        .clone();
-
-    let _tray = TrayIconBuilder::with_id(TRAY_ID)
-        .icon(icon)
+    let mut builder = TrayIconBuilder::with_id(TRAY_ID)
         .tooltip("InkCity")
-        .menu(&menu)
+        .menu(&menu);
+
+    // macOS menu bars want a monochrome template image that auto-tints for
+    // light/dark; other platforms use the full-color app icon. The template is
+    // embedded at compile time (path is relative to src-tauri/). Regenerate
+    // icons/tray.png from icons/tray-icon.svg:
+    //   npx tauri icon src-tauri/icons/tray-icon.svg -o /tmp/tray-out
+    //   sips -z 44 44 /tmp/tray-out/128x128.png --out src-tauri/icons/tray.png
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder
+            .icon(tauri::include_image!("icons/tray.png"))
+            .icon_as_template(true);
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let icon = app
+            .default_window_icon()
+            .ok_or_else(|| tauri::Error::AssetNotFound("default icon".into()))?
+            .clone();
+        builder = builder.icon(icon);
+    }
+
+    let _tray = builder
         .on_menu_event(|app, event| {
             let app = app.clone();
             match event.id().as_ref() {
