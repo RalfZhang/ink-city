@@ -1,7 +1,7 @@
 use std::fs;
 use std::sync::OnceLock;
 
-use chrono::{NaiveDate, Utc};
+use chrono::{Local, NaiveDate};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
@@ -77,5 +77,5 @@ pub fn pick_for_date(date: NaiveDate) -> City {
 }
 
 pub fn today() -> NaiveDate {
-    Utc::now().date_naive()
+    Local::now().date_naive()
 }
