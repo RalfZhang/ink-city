@@ -1,0 +1,71 @@
+name: Release
+
+# Builds signed desktop bundles for macOS (universal) and Windows on a version
+# tag, publishes them to a GitHub Release, and generates the signed updater
+# manifest (latest.json) that the in-app updater reads. See src-tauri's
+# plugins.updater config and src/tabs/About.tsx.
+#
+# To cut a release: bump the version in package.json + src-tauri/tauri.conf.json,
+# commit, then push a matching tag, e.g.:
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   TAURI_SIGNING_PRIVATE_KEY           contents of ~/.tauri/inkcity-updater.key
+#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD  the key's password (empty string if none)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: "--target universal-apple-darwin"
+          - platform: windows-latest
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "InkCity ${{ github.ref_name }}"
+          releaseBody: "See the assets below to download and install."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
