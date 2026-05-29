@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import { getVersion } from "@tauri-apps/api/app";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { Trans, useTranslation } from "react-i18next";
@@ -35,6 +36,11 @@ export default function About() {
   const { t } = useTranslation();
   const [state, setState] = useState<UpdateState>("idle");
   const [pending, setPending] = useState<Update | null>(null);
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    getVersion().then(setVersion).catch(() => {});
+  }, []);
 
   async function checkForUpdate() {
     setState("checking");
@@ -129,6 +135,10 @@ export default function About() {
           </p>
         </CardContent>
       </Card>
+
+      <p className="text-center text-xs text-muted-foreground">
+        {version ? `InkCity v${version}` : "InkCity"} · © 2026 Ralf Zhang
+      </p>
     </div>
   );
 }

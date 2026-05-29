@@ -5,6 +5,7 @@
   "windows": ["main", "renderer"],
   "permissions": [
     "core:default",
+    "core:app:allow-version",
     "opener:default",
     "opener:allow-open-url",
     "autostart:default",

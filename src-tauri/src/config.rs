@@ -41,10 +41,10 @@ pub struct ColorPair {
 
 impl ColorPair {
     pub fn light_default() -> Self {
-        Self { background: "#fafafa".into(), foreground: "#1a1a1a".into() }
+        Self { background: "#eee8d6".into(), foreground: "#2d2d2d".into() }
     }
     pub fn dark_default() -> Self {
-        Self { background: "#000000".into(), foreground: "#3e2815".into() }
+        Self { background: "#000000".into(), foreground: "#5e5d58".into() }
     }
 }
 

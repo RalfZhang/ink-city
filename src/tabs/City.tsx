@@ -37,18 +37,17 @@ export default function City({ status, onError }: Props) {
             <div className="text-sm text-muted-foreground">{city.localName}</div>
           )}
           <div className="text-xs text-muted-foreground mt-1">
-            {city.lat.toFixed(4)}, {city.lon.toFixed(4)} ·{" "}
-            {t("city.population", { value: city.population.toLocaleString() })}
+            {city.lat.toFixed(4)}, {city.lon.toFixed(4)}
           </div>
         </CardContent>
       </Card>
 
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
-          {t("city.wikipedia")}
-        </Button>
         <Button onClick={regenerate} disabled={status.running} size="sm">
           {status.running ? t("city.regenerating") : t("city.regenerate")}
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
+          {t("city.wikipedia")}
         </Button>
       </div>
     </div>
