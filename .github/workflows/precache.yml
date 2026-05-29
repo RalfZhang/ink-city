@@ -35,14 +35,20 @@ jobs:
           node-version: 20
 
       # Pull the current data branch so we only fetch cities that aren't cached
-      # yet. First run (branch absent) is allowed to fail; the script just
-      # creates the output dir from scratch.
+      # yet. If the branch doesn't exist yet (first run, or it was deleted), we
+      # start fresh — handled gracefully so the step never reports a failure.
       - name: Restore existing data branch
-        uses: actions/checkout@v4
-        continue-on-error: true
-        with:
-          ref: data
-          path: data-out
+        run: |
+          if git clone --depth 1 --branch data --single-branch \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data-out 2>/dev/null; then
+            echo "restored existing data branch"
+            rm -rf data-out/.git
+          else
+            echo "no data branch yet — starting fresh"
+            mkdir -p data-out
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-cache upcoming cities
         run: npx -y tsx@4 scripts/precache-osm.ts data-out/osm 7
