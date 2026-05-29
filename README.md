@@ -24,7 +24,6 @@ Open https://github.com/RalfZhang/ink-city/releases/latest/
 
 <div align="center">
   <img src="docs/wallpaper.png" alt="Example wallpaper" />
-  <img src="docs/settings.png" width="420" alt="InkCity settings" />
 </div>
 
 ## Data sources & licenses
