@@ -1,0 +1,64 @@
+name: Precache OSM
+
+# Fetches road data for the next few days' cities and publishes it to the
+# `data` branch, which jsDelivr serves as a CDN (cdn.jsdelivr.net/gh/<repo>@data).
+# The desktop client pulls from there before hitting Overpass directly, so users
+# on slow / Overpass-blocked networks (notably mainland China) get fast,
+# reliable data. See scripts/precache-osm.ts and src-tauri/src/cdn.rs.
+
+on:
+  schedule:
+    - cron: "0 19 * * *" # 19:00 UTC daily (~03:00 Beijing) — ahead of the local midnight tick
+  workflow_dispatch: {} # allow manual runs
+
+# Avoid two runs racing to force-push the data branch.
+concurrency:
+  group: precache
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  precache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Pull the current data branch so we only fetch cities that aren't cached
+      # yet. First run (branch absent) is allowed to fail; the script just
+      # creates the output dir from scratch.
+      - name: Restore existing data branch
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: data
+          path: data-out
+
+      - name: Pre-cache upcoming cities
+        run: npx -y tsx@4 scripts/precache-osm.ts data-out/osm 7
+
+      - name: Publish to data branch
+        run: |
+          cd data-out
+          # Single-commit branch each run: reuse the files restored above, but
+          # drop history so the repo never bloats with old OSM blobs.
+          rm -rf .git
+          if [ -z "$(ls -A osm 2>/dev/null)" ]; then
+            echo "nothing to publish (no cities cached)"
+            exit 0
+          fi
+          git init -q -b data
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "precache: $(date -u +%F)"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

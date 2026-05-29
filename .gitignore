@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 idea.md
+
+# OSM pre-cache output (scripts/precache-osm.ts); published to the `data`
+# branch by CI, never committed to main.
+/data/
+/data-out/

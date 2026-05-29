@@ -1,4 +1,5 @@
 mod bbox;
+mod cdn;
 mod cities_update;
 mod city;
 mod commands;

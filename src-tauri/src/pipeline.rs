@@ -10,6 +10,7 @@ use tauri::{AppHandle, Emitter, Manager, Theme, WebviewUrl, WebviewWindow, Webvi
 use tokio::sync::oneshot;
 
 use crate::bbox::{bbox_for_screen, Bbox};
+use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, StylePreset, ThemeMode};
 use crate::overpass;
@@ -105,13 +106,30 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     let renderer = ensure_renderer(app).await?;
     let (w, h) = primary_size(&renderer)?;
     let aspect = w as f64 / h as f64;
-    let bbox = bbox_for_screen(city.lat, city.lon, 20.0, aspect);
+    // 10km half = 20km long side. MUST match MAX_HALF_KM in
+    // scripts/precache-osm.ts: the precached square (aspect=1) is the superset
+    // every screen-aspect rectangle here must fit inside, so the CDN data
+    // always covers the wallpaper.
+    let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
 
+    // OSM acquisition order: local day cache → jsDelivr CDN (pre-cached 20km
+    // square, China-reachable) → live Overpass (screen rectangle). The CDN
+    // square is a superset of `bbox`, so the renderer projects within `bbox`
+    // and clips the rest; Overpass fetches exactly `bbox` to save bandwidth.
     let osm_path = cache.join(format!("{}.osm.json", date));
     let osm: serde_json::Value = if osm_path.exists() {
         serde_json::from_str(&fs::read_to_string(&osm_path)?)?
     } else {
-        let v = overpass::fetch_roads(bbox).await?;
+        let v = match cdn::fetch_cached_osm(city.id).await {
+            Ok(v) => {
+                eprintln!("[pipeline] osm from CDN ({})", city.id);
+                v
+            }
+            Err(e) => {
+                eprintln!("[pipeline] CDN miss ({}), falling back to Overpass: {}", city.id, e);
+                overpass::fetch_roads(bbox).await?
+            }
+        };
         fs::write(&osm_path, v.to_string())?;
         v
     };
