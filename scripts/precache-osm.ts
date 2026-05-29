@@ -79,11 +79,15 @@ async function main() {
   }
 
   let fetched = 0;
+  let first = true;
   for (const [id, city] of wanted) {
     if (present.has(id)) {
       console.log(`[precache] keep ${id} (${city.name}) — already cached`);
       continue;
     }
+    // Space out requests so we don't hammer Overpass back-to-back.
+    if (!first) await new Promise((r) => setTimeout(r, 3000));
+    first = false;
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
       const osm = await fetchRoads(bbox);

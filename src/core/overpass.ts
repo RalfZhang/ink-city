@@ -38,24 +38,68 @@ export function slimRoads(osm: Osm, coordPrecision?: number): Osm {
   return { elements };
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export type FetchOptions = {
+  /** Extra retry rounds over the whole mirror list after the first. */
+  retries?: number;
+  /** Base backoff between rounds (doubles each round). */
+  backoffMs?: number;
+};
+
 /**
- * Fetch road geometry for `b`, trying each mirror in turn. Throws only if every
- * mirror fails. `mirrors` is overridable for tests / custom deployments.
+ * Fetch road geometry for `b`, trying each mirror in turn. Overpass returns 429
+ * ("rate limited — slow down") and 504 ("no free slot") under load, especially
+ * from shared IPs like CI runners, so when a whole round of mirrors fails on
+ * those we wait and retry rather than giving up. Honors the server's
+ * `Retry-After` header when present, otherwise uses exponential backoff with
+ * jitter. Throws only after all retries are exhausted.
  */
-export async function fetchRoads(b: Bbox, mirrors: readonly string[] = MIRRORS): Promise<Osm> {
+export async function fetchRoads(
+  b: Bbox,
+  mirrors: readonly string[] = MIRRORS,
+  opts: FetchOptions = {},
+): Promise<Osm> {
+  const retries = opts.retries ?? 4;
+  const backoffMs = opts.backoffMs ?? 15_000;
   const query = buildQuery(b);
   let lastErr: unknown;
-  for (const url of mirrors) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data=${encodeURIComponent(query)}`,
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return (await res.json()) as Osm;
-    } catch (e) {
-      lastErr = e;
+
+  for (let round = 0; round <= retries; round++) {
+    let retryAfterMs = 0;
+    for (const url of mirrors) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            // Overpass rejects requests without a User-Agent (HTTP 406). Node's
+            // fetch sends none by default; browsers ignore this header (the
+            // website fetches from the CDN, not Overpass, so it's moot there).
+            "User-Agent": "InkCity/0.1 (https://github.com/RalfZhang/ink-city)",
+          },
+          body: `data=${encodeURIComponent(query)}`,
+        });
+        if (res.status === 429 || res.status === 504) {
+          const ra = Number(res.headers.get("retry-after"));
+          if (Number.isFinite(ra) && ra > 0) retryAfterMs = Math.max(retryAfterMs, ra * 1000);
+          lastErr = new Error(`HTTP ${res.status}`);
+          continue; // overloaded — try the next mirror, then back off
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return (await res.json()) as Osm;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    if (round < retries) {
+      const backoff = backoffMs * 2 ** round;
+      const wait = Math.max(retryAfterMs, backoff) + Math.random() * 1000;
+      console.warn(
+        `[overpass] all mirrors failed (${String(lastErr)}); retrying in ${Math.round(wait / 1000)}s ` +
+          `(round ${round + 1}/${retries})`,
+      );
+      await sleep(wait);
     }
   }
   throw new Error(`all Overpass mirrors failed: ${String(lastErr)}`);

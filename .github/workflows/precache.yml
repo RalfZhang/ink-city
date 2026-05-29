@@ -8,7 +8,10 @@ name: Precache OSM
 
 on:
   schedule:
-    - cron: "0 19 * * *" # 19:00 UTC daily (~03:00 Beijing) — ahead of the local midnight tick
+    # Every 6 hours. Most runs are no-ops (skip-existing), but the extra passes
+    # give transient Overpass 429s several chances to clear before a city's day
+    # arrives, and let a partially-failed window finish filling.
+    - cron: "0 */6 * * *"
   workflow_dispatch: {} # allow manual runs
 
 # Avoid two runs racing to force-push the data branch.
