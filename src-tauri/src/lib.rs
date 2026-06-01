@@ -19,15 +19,41 @@ use tauri_plugin_autostart::MacosLauncher;
 use crate::config::ThemeMode;
 use crate::state::AppState;
 
+/// CLI flag injected into the autostart (login) launch command. Its presence
+/// means "started by the OS at login" → stay silent in the background; its
+/// absence means the user opened the app, so we surface the settings window.
+const AUTOSTART_FLAG: &str = "--autostart";
+
+fn launched_by_autostart() -> bool {
+    std::env::args().any(|a| a == AUTOSTART_FLAG)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        // single-instance must be the first plugin: a second launch (e.g. the
+        // user reopening from Applications while we're already running) is
+        // funneled into this callback instead of starting a new process, and we
+        // surface the existing settings window.
+        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            tray::show_settings(app);
+        }))
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec![AUTOSTART_FLAG]),
+        ))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
             let handle = app.handle();
+
+            // No Dock icon, ever (macOS). Accessory keeps the app alive as a
+            // menu-bar app with no Dock presence; the settings window can still
+            // be shown and focused. Set as early as possible to minimize any
+            // Dock-icon flash on launch.
+            #[cfg(target_os = "macos")]
+            let _ = handle.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
             // Load persisted config and seed AppState from it.
             let cfg = config::load(handle);
@@ -45,6 +71,7 @@ pub fn run() {
                 WebviewUrl::App("render.html".into()),
             )
             .visible(false)
+            .skip_taskbar(true)
             .title("InkCity Renderer")
             .build()?;
 
@@ -104,6 +131,14 @@ pub fn run() {
                     }
                     _ => {}
                 });
+
+                // The window starts hidden (config `visible: false`). Surface it
+                // only when the user launched the app; an autostart (login)
+                // launch stays silent in the background.
+                if !launched_by_autostart() {
+                    let _ = main.show();
+                    let _ = main.set_focus();
+                }
             }
 
             tray::setup(handle)?;
@@ -125,6 +160,15 @@ pub fn run() {
             commands::hide_window,
             commands::update_tray_labels,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app_handle, _event| {
+            // Reopening an already-running app (double-clicking it in Finder, or
+            // any other reopen trigger) surfaces the settings window — the only
+            // way back in when both the Dock icon and the tray icon are hidden.
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { .. } = _event {
+                tray::show_settings(_app_handle);
+            }
+        });
 }

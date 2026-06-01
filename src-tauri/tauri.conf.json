@@ -18,7 +18,9 @@
         "height": 600,
         "minWidth": 732,
         "maxWidth": 732,
-        "transparent": true
+        "transparent": true,
+        "visible": false,
+        "skipTaskbar": true
       }
     ],
     "security": {
