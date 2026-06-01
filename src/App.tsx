@@ -45,16 +45,27 @@ function App() {
     };
   }, []);
 
+  // The tray's "Update available" entry asks us to jump to the About tab,
+  // where the Install & Restart button lives.
+  useEffect(() => {
+    const off = listen<string>("open-tab", (e) => setTab(e.payload as TabId));
+    return () => {
+      off.then((f) => f());
+    };
+  }, []);
+
   // Push the current language's tray-menu translations into Rust so the
   // OS-rendered tray menu stays in sync with the React UI. Done on mount and
   // on every language change. Source of truth remains the JSON locale files.
   useEffect(() => {
     const sync = () => {
+      invoke("set_language", { lang: i18n.language });
       invoke("update_tray_labels", {
         openSettings: i18n.t("tray.openSettings"),
         dailyUpdates: i18n.t("tray.dailyUpdates"),
         regenerateNow: i18n.t("tray.regenerateNow"),
         quit: i18n.t("tray.quit"),
+        updateAvailable: i18n.t("tray.updateAvailable"),
       }).catch((e) => console.warn("[tray] sync failed", e));
     };
     sync();

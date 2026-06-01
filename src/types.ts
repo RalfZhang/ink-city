@@ -5,6 +5,8 @@ export type { City, ColorPair, StylePreset, ThemeMode } from "./core";
 
 import type { City, ColorPair, StylePreset, ThemeMode } from "./core";
 
+export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
+
 export type Status = {
   enabled: boolean;
   hide_tray: boolean;
@@ -16,4 +18,5 @@ export type Status = {
   light: ColorPair;
   dark: ColorPair;
   style: StylePreset;
+  updateCheck: UpdateCheck;
 };

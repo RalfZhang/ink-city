@@ -8,6 +8,7 @@ use crate::cities_update;
 use crate::city;
 use crate::pipeline;
 use crate::state::AppState;
+use crate::updates;
 
 pub fn spawn(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
@@ -16,6 +17,11 @@ pub fn spawn(app: AppHandle) {
             // ETag). Runs on every tick regardless of the daily-update toggle —
             // the toggle gates wallpaper changes, not data freshness.
             cities_update::spawn_check(app.clone());
+
+            // Check GitHub for a new release at the user's chosen cadence
+            // (daily/weekly/monthly/never). The cadence gate lives inside, so
+            // this runs once at startup and re-evaluates on every midnight tick.
+            updates::spawn_check(app.clone());
 
             run_if_enabled(&app).await;
             let wait = secs_until_next_midnight();

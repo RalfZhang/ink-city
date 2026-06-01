@@ -9,6 +9,7 @@ mod pipeline;
 mod scheduler;
 mod state;
 mod tray;
+mod updates;
 mod wallpaper_set;
 
 use std::sync::atomic::Ordering;
@@ -45,6 +46,7 @@ pub fn run() {
         ))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             let handle = app.handle();
 
@@ -151,6 +153,8 @@ pub fn run() {
             commands::get_status,
             commands::set_enabled,
             commands::set_hide_tray,
+            commands::set_update_check,
+            commands::set_language,
             commands::apply_style_settings,
             commands::get_color_defaults,
             commands::regenerate_now,

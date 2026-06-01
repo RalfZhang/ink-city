@@ -4,7 +4,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
 
 use crate::city::{self, City};
-use crate::config::{self, ColorPair, StylePreset, ThemeMode};
+use crate::config::{self, ColorPair, StylePreset, ThemeMode, UpdateCheck};
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
@@ -22,6 +22,8 @@ pub struct Status {
     pub light: ColorPair,
     pub dark: ColorPair,
     pub style: StylePreset,
+    #[serde(rename = "updateCheck")]
+    pub update_check: UpdateCheck,
 }
 
 #[tauri::command]
@@ -45,6 +47,7 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<St
         light: state.light.lock().unwrap().clone(),
         dark: state.dark.lock().unwrap().clone(),
         style: *state.style.lock().unwrap(),
+        update_check: *state.update_check.lock().unwrap(),
     })
 }
 
@@ -60,6 +63,18 @@ pub fn set_hide_tray(app: AppHandle, hide: bool) -> Result<(), String> {
     app.state::<AppState>().hide_tray.store(hide, Ordering::Release);
     tray::apply_hide_tray(&app, hide);
     persist(&app)
+}
+
+#[tauri::command]
+pub fn set_update_check(app: AppHandle, value: UpdateCheck) -> Result<(), String> {
+    *app.state::<AppState>().update_check.lock().unwrap() = value;
+    persist(&app)
+}
+
+#[tauri::command]
+pub fn set_language(app: AppHandle, lang: String) -> Result<(), String> {
+    *app.state::<AppState>().language.lock().unwrap() = lang;
+    Ok(())
 }
 
 #[derive(Serialize)]
@@ -158,8 +173,15 @@ pub fn update_tray_labels(
     daily_updates: String,
     regenerate_now: String,
     quit: String,
+    update_available: String,
 ) -> Result<(), String> {
-    tray::update_labels(&open_settings, &daily_updates, &regenerate_now, &quit);
+    tray::update_labels(
+        &open_settings,
+        &daily_updates,
+        &regenerate_now,
+        &quit,
+        &update_available,
+    );
     Ok(())
 }
 
@@ -187,6 +209,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         light: s.light.lock().unwrap().clone(),
         dark: s.dark.lock().unwrap().clone(),
         style: *s.style.lock().unwrap(),
+        update_check: *s.update_check.lock().unwrap(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

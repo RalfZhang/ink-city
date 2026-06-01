@@ -19,6 +19,36 @@ impl Default for ThemeMode {
     }
 }
 
+/// How often the background scheduler checks GitHub for a new release.
+/// `Never` disables automatic checks entirely (the user can still check
+/// manually from the About tab).
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum UpdateCheck {
+    Daily,
+    Weekly,
+    Monthly,
+    Never,
+}
+
+impl Default for UpdateCheck {
+    fn default() -> Self {
+        UpdateCheck::Weekly
+    }
+}
+
+impl UpdateCheck {
+    /// Minimum days between automatic checks, or `None` when disabled.
+    pub fn interval_days(self) -> Option<i64> {
+        match self {
+            UpdateCheck::Daily => Some(1),
+            UpdateCheck::Weekly => Some(7),
+            UpdateCheck::Monthly => Some(30),
+            UpdateCheck::Never => None,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StylePreset {
@@ -62,6 +92,8 @@ pub struct Config {
     pub dark: ColorPair,
     #[serde(default)]
     pub style: StylePreset,
+    #[serde(default)]
+    pub update_check: UpdateCheck,
 }
 
 fn default_true() -> bool {
@@ -77,6 +109,7 @@ impl Default for Config {
             light: ColorPair::light_default(),
             dark: ColorPair::dark_default(),
             style: StylePreset::Standard,
+            update_check: UpdateCheck::Weekly,
         }
     }
 }

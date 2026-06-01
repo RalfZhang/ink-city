@@ -1,9 +1,9 @@
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
 
-use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, MenuBuilder, MenuItem, MenuItemBuilder, PredefinedMenuItem};
+use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuItem, MenuItemBuilder, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::{AppHandle, Manager, Wry};
+use tauri::{AppHandle, Emitter, Manager, Wry};
 
 use crate::city;
 use crate::pipeline;
@@ -15,6 +15,13 @@ static OPEN_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
 static TOGGLE_ITEM: OnceLock<CheckMenuItem<Wry>> = OnceLock::new();
 static REGEN_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
 static QUIT_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
+
+// "Update available" entry — built up front (so its label can be localized via
+// update_labels) but only prepended to the menu once a new release is detected.
+static MENU: OnceLock<Menu<Wry>> = OnceLock::new();
+static UPDATE_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
+static UPDATE_SEP: OnceLock<PredefinedMenuItem<Wry>> = OnceLock::new();
+static UPDATE_SHOWN: AtomicBool = AtomicBool::new(false);
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     let initial_enabled = app.state::<AppState>().enabled.load(Ordering::Acquire);
@@ -37,10 +44,16 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
         .item(&quit_item)
         .build()?;
 
+    let update_item = MenuItemBuilder::with_id("update", "Update available").build(app)?;
+    let update_sep = PredefinedMenuItem::separator(app)?;
+
     let _ = OPEN_ITEM.set(open_item);
     let _ = TOGGLE_ITEM.set(toggle_item);
     let _ = REGEN_ITEM.set(regen_item);
     let _ = QUIT_ITEM.set(quit_item);
+    let _ = UPDATE_ITEM.set(update_item);
+    let _ = UPDATE_SEP.set(update_sep);
+    let _ = MENU.set(menu.clone());
 
     let mut builder = TrayIconBuilder::with_id(TRAY_ID)
         .tooltip("InkCity")
@@ -72,6 +85,12 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
             let app = app.clone();
             match event.id().as_ref() {
                 "open" => show_settings(&app),
+                "update" => {
+                    show_settings(&app);
+                    // Ask the frontend to switch to the General tab, where the
+                    // Check for updates & Install & Restart controls live.
+                    let _ = app.emit("open-tab", "general");
+                }
                 "toggle_enabled" => {
                     let state = app.state::<AppState>();
                     let new_val = !state.enabled.load(Ordering::Acquire);
@@ -120,6 +139,22 @@ pub fn sync_enabled_to_tray(app: &AppHandle) {
     }
 }
 
+/// Reveal the "Update available" entry at the top of the tray menu. Idempotent:
+/// only inserts on the first call so repeated detections don't stack entries.
+pub fn show_update_available(_app: &AppHandle) {
+    if UPDATE_SHOWN.swap(true, Ordering::AcqRel) {
+        return;
+    }
+    let (Some(menu), Some(item), Some(sep)) =
+        (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
+    else {
+        return;
+    };
+    // Prepend separator first, then the item, leaving [item, sep, ...rest].
+    let _ = menu.prepend(sep);
+    let _ = menu.prepend(item);
+}
+
 pub fn apply_hide_tray(app: &AppHandle, hide: bool) {
     if let Some(tray) = app.tray_by_id(TRAY_ID) {
         let _ = tray.set_visible(!hide);
@@ -134,6 +169,7 @@ pub fn update_labels(
     daily_updates: &str,
     regenerate_now: &str,
     quit: &str,
+    update_available: &str,
 ) {
     if let Some(it) = OPEN_ITEM.get() {
         let _ = it.set_text(open_settings);
@@ -146,5 +182,8 @@ pub fn update_labels(
     }
     if let Some(it) = QUIT_ITEM.get() {
         let _ = it.set_text(quit);
+    }
+    if let Some(it) = UPDATE_ITEM.get() {
+        let _ = it.set_text(update_available);
     }
 }

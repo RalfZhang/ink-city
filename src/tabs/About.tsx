@@ -1,10 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { getVersion } from "@tauri-apps/api/app";
-import { check, type Update } from "@tauri-apps/plugin-updater";
-import { relaunch } from "@tauri-apps/plugin-process";
 import { Trans, useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
@@ -30,48 +27,13 @@ function ExtLink({ href, children }: { href: string; children?: ReactNode }) {
   );
 }
 
-type UpdateState = "idle" | "checking" | "available" | "installing" | "uptodate" | "error";
-
 export default function About() {
   const { t } = useTranslation();
-  const [state, setState] = useState<UpdateState>("idle");
-  const [pending, setPending] = useState<Update | null>(null);
   const [version, setVersion] = useState("");
 
   useEffect(() => {
     getVersion().then(setVersion).catch(() => {});
   }, []);
-
-  async function checkForUpdate() {
-    setState("checking");
-    try {
-      const upd = await check();
-      if (upd) {
-        setPending(upd);
-        setState("available");
-      } else {
-        setState("uptodate");
-      }
-    } catch (e) {
-      console.error("[updater] check failed", e);
-      setState("error");
-    }
-  }
-
-  async function installUpdate() {
-    if (!pending) return;
-    setState("installing");
-    try {
-      // Downloads, installs, then relaunches into the new version.
-      await pending.downloadAndInstall();
-      await relaunch();
-    } catch (e) {
-      console.error("[updater] install failed", e);
-      setState("error");
-    }
-  }
-
-  const busy = state === "checking" || state === "installing";
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -81,25 +43,7 @@ export default function About() {
           <p className="text-sm text-muted-foreground mt-1">{t("about.p1")}</p>
           <p className="text-sm text-muted-foreground mt-2">{t("about.p2")}</p>
         </CardContent>
-        <CardFooter className="justify-between">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {state === "available" || state === "installing" ? (
-              <Button size="sm" onClick={installUpdate} disabled={busy}>
-                {state === "installing" && <Loader2 className="animate-spin" />}
-                {t(state === "installing" ? "about.installing" : "about.installRestart")}
-              </Button>
-            ) : (
-              <Button variant="outline" size="sm" onClick={checkForUpdate} disabled={busy}>
-                {state === "checking" && <Loader2 className="animate-spin" />}
-                {t(state === "checking" ? "about.checking" : "about.checkUpdates")}
-              </Button>
-            )}
-            {state === "available" && (
-              <span>{t("about.updateAvailable", { version: pending?.version })}</span>
-            )}
-            {state === "uptodate" && <span>{t("about.upToDate")}</span>}
-            {state === "error" && <span>{t("about.updateError")}</span>}
-          </div>
+        <CardFooter className="justify-end">
           <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_REPO)}>
             {t("about.github")}
           </Button>
