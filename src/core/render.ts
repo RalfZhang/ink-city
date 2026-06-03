@@ -32,6 +32,8 @@ export function widthFor(highway: string | undefined, preset: StylePreset, scale
       case "footway":
       case "cycleway":
       case "path":         return scale * 0.2;
+      case "proposed":
+      case "construction": return null;
       default:             return scale * 0.25;
     }
   }
@@ -49,6 +51,8 @@ export function widthFor(highway: string | undefined, preset: StylePreset, scale
     case "footway":
     case "cycleway":
     case "path":         return scale * 0.3;
+    case "proposed":
+    case "construction": return null;
     default:             return scale * 0.4;
   }
 }
