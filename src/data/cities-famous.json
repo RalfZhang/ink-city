@@ -1,0 +1,8939 @@
+[
+  {
+    "id": 84,
+    "name": "London",
+    "localName": "London",
+    "country": "GB",
+    "lat": 51.507222222,
+    "lon": -0.1275,
+    "population": 8799728
+  },
+  {
+    "id": 649,
+    "name": "Moscow",
+    "localName": "Москва",
+    "country": "RU",
+    "lat": 55.750555555,
+    "lon": 37.6175,
+    "population": 13274285
+  },
+  {
+    "id": 90,
+    "name": "Paris",
+    "localName": "Paris",
+    "country": "FR",
+    "lat": 48.856666666,
+    "lon": 2.352222222,
+    "population": 2103778
+  },
+  {
+    "id": 60,
+    "name": "New York City",
+    "localName": "New York",
+    "country": "US",
+    "lat": 40.712777777,
+    "lon": -74.006111111,
+    "population": 8804190
+  },
+  {
+    "id": 956,
+    "name": "Beijing",
+    "localName": "北京市",
+    "country": "CN",
+    "lat": 39.90403,
+    "lon": 116.407526,
+    "population": 21893095
+  },
+  {
+    "id": 334,
+    "name": "Singapore",
+    "localName": "Republic of Singapore",
+    "country": "SG",
+    "lat": 1.3,
+    "lon": 103.8,
+    "population": 5866139
+  },
+  {
+    "id": 220,
+    "name": "Rome",
+    "localName": "Roma",
+    "country": "IT",
+    "lat": 41.893055555,
+    "lon": 12.482777777,
+    "population": 2748109
+  },
+  {
+    "id": 64,
+    "name": "Berlin",
+    "localName": "Berlin",
+    "country": "DE",
+    "lat": 52.516666666,
+    "lon": 13.383333333,
+    "population": 3782202
+  },
+  {
+    "id": 1490,
+    "name": "Tokyo",
+    "localName": "東京都",
+    "country": "JP",
+    "lat": 35.689444444,
+    "lon": 139.691666666,
+    "population": 14264798
+  },
+  {
+    "id": 8646,
+    "name": "Hong Kong",
+    "localName": "香港",
+    "country": "CN",
+    "lat": 22.278333333,
+    "lon": 114.158611111,
+    "population": 7413070
+  },
+  {
+    "id": 406,
+    "name": "Istanbul",
+    "localName": "İstanbul",
+    "country": "TR",
+    "lat": 41.01,
+    "lon": 28.960277777,
+    "population": 15655924
+  },
+  {
+    "id": 8678,
+    "name": "Rio de Janeiro",
+    "localName": "Rio de Janeiro",
+    "country": "BR",
+    "lat": -22.911111111,
+    "lon": -43.205555555,
+    "population": 6211223
+  },
+  {
+    "id": 2807,
+    "name": "Madrid",
+    "localName": "Madrid",
+    "country": "ES",
+    "lat": 40.416944444,
+    "lon": -3.703333333,
+    "population": 3506730
+  },
+  {
+    "id": 2841,
+    "name": "Bogotá",
+    "localName": "Bogotá",
+    "country": "CO",
+    "lat": 4.60971,
+    "lon": -74.08175,
+    "population": 8034649
+  },
+  {
+    "id": 2887,
+    "name": "Santiago",
+    "localName": "Santiago de Chile",
+    "country": "CL",
+    "lat": -33.4375,
+    "lon": -70.65,
+    "population": 6257516
+  },
+  {
+    "id": 8686,
+    "name": "Shanghai",
+    "localName": "Shanghai",
+    "country": "CN",
+    "lat": 31.2325,
+    "lon": 121.469166666,
+    "population": 24870895
+  },
+  {
+    "id": 1854,
+    "name": "Ho Chi Minh City",
+    "localName": "ក្រុងព្រៃនគរ",
+    "country": "VN",
+    "lat": 10.775555555,
+    "lon": 106.701944444,
+    "population": 14002598
+  },
+  {
+    "id": 65,
+    "name": "Los Angeles",
+    "localName": "El Pueblo de Nuestra Señora la Reina de los Ángeles del Río de Porciúncula",
+    "country": "US",
+    "lat": 34.05223,
+    "lon": -118.24368,
+    "population": 3898747
+  },
+  {
+    "id": 85,
+    "name": "Cairo",
+    "localName": "القاهرة",
+    "country": "EG",
+    "lat": 30.044444444,
+    "lon": 31.235833333,
+    "population": 9801536
+  },
+  {
+    "id": 1741,
+    "name": "Vienna",
+    "localName": "Wien",
+    "country": "AT",
+    "lat": 48.208333333,
+    "lon": 16.3725,
+    "population": 2028289
+  },
+  {
+    "id": 656,
+    "name": "Saint Petersburg",
+    "localName": "Санкт-Петербург",
+    "country": "RU",
+    "lat": 59.95,
+    "lon": 30.316666666,
+    "population": 5652922
+  },
+  {
+    "id": 270,
+    "name": "Warsaw",
+    "localName": "Warszawa",
+    "country": "PL",
+    "lat": 52.23,
+    "lon": 21.011111111,
+    "population": 1862402
+  },
+  {
+    "id": 174,
+    "name": "São Paulo",
+    "localName": "São Paulo",
+    "country": "BR",
+    "lat": -23.550394444,
+    "lon": -46.633947222,
+    "population": 11451999
+  },
+  {
+    "id": 1297,
+    "name": "Chicago",
+    "localName": "Chicago",
+    "country": "US",
+    "lat": 41.881944444,
+    "lon": -87.627777777,
+    "population": 2746388
+  },
+  {
+    "id": 1486,
+    "name": "Buenos Aires",
+    "localName": "Ciudad Autónoma de Buenos Aires",
+    "country": "AR",
+    "lat": -34.599722222,
+    "lon": -58.381944444,
+    "population": 3121707
+  },
+  {
+    "id": 1489,
+    "name": "Mexico City",
+    "localName": "Ciudad de México",
+    "country": "MX",
+    "lat": 19.353773,
+    "lon": -99.13589,
+    "population": 9209944
+  },
+  {
+    "id": 1218,
+    "name": "Jerusalem",
+    "localName": "ירושלים",
+    "country": "IL",
+    "lat": 31.776679,
+    "lon": 35.234156,
+    "population": 936425
+  },
+  {
+    "id": 8684,
+    "name": "Seoul",
+    "localName": "서울",
+    "country": "KR",
+    "lat": 37.56,
+    "lon": 126.99,
+    "population": 9668465
+  },
+  {
+    "id": 1899,
+    "name": "Kyiv",
+    "localName": "Київ",
+    "country": "UA",
+    "lat": 50.45,
+    "lon": 30.523611111,
+    "population": 2952301
+  },
+  {
+    "id": 3630,
+    "name": "Jakarta",
+    "localName": "Jakarta",
+    "country": "ID",
+    "lat": -6.175277777,
+    "lon": 106.826944444,
+    "population": 11135191
+  },
+  {
+    "id": 3130,
+    "name": "Sydney",
+    "localName": "Sydney",
+    "country": "AU",
+    "lat": -33.867777777,
+    "lon": 151.21,
+    "population": 5450496
+  },
+  {
+    "id": 1861,
+    "name": "Bangkok",
+    "localName": "กรุงเทพมหานคร",
+    "country": "TH",
+    "lat": 13.75,
+    "lon": 100.516666666,
+    "population": 5676648
+  },
+  {
+    "id": 61,
+    "name": "Washington, D.C.",
+    "localName": "Washington",
+    "country": "US",
+    "lat": 38.895,
+    "lon": -77.036666666,
+    "population": 689545
+  },
+  {
+    "id": 1530,
+    "name": "Baghdad",
+    "localName": "بغداد",
+    "country": "IQ",
+    "lat": 33.315277777,
+    "lon": 44.366111111,
+    "population": 8126755
+  },
+  {
+    "id": 1757,
+    "name": "Helsinki",
+    "localName": "Helsingfors",
+    "country": "FI",
+    "lat": 60.170833333,
+    "lon": 24.9375,
+    "population": 694392
+  },
+  {
+    "id": 1524,
+    "name": "Athens",
+    "localName": "Αθήνα",
+    "country": "GR",
+    "lat": 37.984166666,
+    "lon": 23.728055555,
+    "population": 643452
+  },
+  {
+    "id": 1754,
+    "name": "Stockholm",
+    "localName": "Stockholm",
+    "country": "SE",
+    "lat": 59.329444444,
+    "lon": 18.068611111,
+    "population": 984748
+  },
+  {
+    "id": 3616,
+    "name": "Tehran",
+    "localName": "تهران",
+    "country": "IR",
+    "lat": 35.688888888,
+    "lon": 51.389722222,
+    "population": 8693706
+  },
+  {
+    "id": 1085,
+    "name": "Prague",
+    "localName": "Praha",
+    "country": "CZ",
+    "lat": 50.0875,
+    "lon": 14.421388888,
+    "population": 1397880
+  },
+  {
+    "id": 4361,
+    "name": "Curitiba",
+    "localName": "Curitiba",
+    "country": "BR",
+    "lat": -25.429722222,
+    "lon": -49.271944444,
+    "population": 1773718
+  },
+  {
+    "id": 1156,
+    "name": "Mumbai",
+    "localName": "मुंबई",
+    "country": "IN",
+    "lat": 19.075833333,
+    "lon": 72.8775,
+    "population": 15414288
+  },
+  {
+    "id": 3640,
+    "name": "Ankara",
+    "localName": "Ankara",
+    "country": "TR",
+    "lat": 39.93576,
+    "lon": 32.83869,
+    "population": 5803482
+  },
+  {
+    "id": 1781,
+    "name": "Budapest",
+    "localName": "Budapest",
+    "country": "HU",
+    "lat": 47.498333333,
+    "lon": 19.040833333,
+    "population": 1685209
+  },
+  {
+    "id": 34600,
+    "name": "Kyoto",
+    "localName": "京都市",
+    "country": "JP",
+    "lat": 35.011611111,
+    "lon": 135.768111111,
+    "population": 1463723
+  },
+  {
+    "id": 1354,
+    "name": "Dhaka",
+    "localName": "ڈھاکہ",
+    "country": "BD",
+    "lat": 23.728888888,
+    "lon": 90.394444444,
+    "population": 16800000
+  },
+  {
+    "id": 3870,
+    "name": "Nairobi",
+    "localName": "Nairobi",
+    "country": "KE",
+    "lat": -1.286388888,
+    "lon": 36.817222222,
+    "population": 5545000
+  },
+  {
+    "id": 9248,
+    "name": "Baku",
+    "localName": "Bakı",
+    "country": "AZ",
+    "lat": 40.366655555,
+    "lon": 49.835183333,
+    "population": 2300500
+  },
+  {
+    "id": 19689,
+    "name": "Tirana",
+    "localName": "Tirana",
+    "country": "AL",
+    "lat": 41.328333333,
+    "lon": 19.818055555,
+    "population": 389323
+  },
+  {
+    "id": 3766,
+    "name": "Damascus",
+    "localName": "دمشق",
+    "country": "SY",
+    "lat": 33.513055555,
+    "lon": 36.291944444,
+    "population": 2685360
+  },
+  {
+    "id": 1492,
+    "name": "Barcelona",
+    "localName": "Barcelona",
+    "country": "ES",
+    "lat": 41.3825,
+    "lon": 2.176944444,
+    "population": 1731649
+  },
+  {
+    "id": 2868,
+    "name": "Lima",
+    "localName": "Lima",
+    "country": "PE",
+    "lat": -12.06,
+    "lon": -77.0375,
+    "population": 9943800
+  },
+  {
+    "id": 597,
+    "name": "Lisbon",
+    "localName": "Lisboa",
+    "country": "PT",
+    "lat": 38.708042,
+    "lon": -9.139016,
+    "population": 545796
+  },
+  {
+    "id": 43387,
+    "name": "Edirne",
+    "localName": "Edirne",
+    "country": "TR",
+    "lat": 41.67304,
+    "lon": 26.57361,
+    "population": 180327
+  },
+  {
+    "id": 1353,
+    "name": "Delhi",
+    "localName": "दिल्ली",
+    "country": "IN",
+    "lat": 28.666666666,
+    "lon": 77.216666666,
+    "population": 26495000
+  },
+  {
+    "id": 1726,
+    "name": "Munich",
+    "localName": "München",
+    "country": "DE",
+    "lat": 48.1375,
+    "lon": 11.575,
+    "population": 1510378
+  },
+  {
+    "id": 1865,
+    "name": "Kuala Lumpur",
+    "localName": "Kuala Lumpur",
+    "country": "MY",
+    "lat": 3.147777777,
+    "lon": 101.695277777,
+    "population": 9000280
+  },
+  {
+    "id": 5838,
+    "name": "Kabul",
+    "localName": "کابل",
+    "country": "AF",
+    "lat": 34.532777777,
+    "lon": 69.165833333,
+    "population": 5333284
+  },
+  {
+    "id": 235,
+    "name": "Monaco",
+    "localName": "Monaco",
+    "country": "MC",
+    "lat": 43.731111111,
+    "lon": 7.42,
+    "population": 38857
+  },
+  {
+    "id": 3838,
+    "name": "Kinshasa",
+    "localName": "Kinshasa",
+    "country": "CD",
+    "lat": -4.321944444,
+    "lon": 15.311944444,
+    "population": 14565700
+  },
+  {
+    "id": 19660,
+    "name": "Bucharest",
+    "localName": "București",
+    "country": "RO",
+    "lat": 44.413361111,
+    "lon": 26.097777777,
+    "population": 1716961
+  },
+  {
+    "id": 2844,
+    "name": "Brasília",
+    "localName": "Brasília",
+    "country": "BR",
+    "lat": -15.793888888,
+    "lon": -47.882777777,
+    "population": 2996899
+  },
+  {
+    "id": 8660,
+    "name": "Karachi",
+    "localName": "Karachi",
+    "country": "PK",
+    "lat": 24.86,
+    "lon": 67.01,
+    "population": 14910352
+  },
+  {
+    "id": 1055,
+    "name": "Hamburg",
+    "localName": "Freie und Hansestadt Hamburg",
+    "country": "DE",
+    "lat": 53.55,
+    "lon": 10.0,
+    "population": 1910160
+  },
+  {
+    "id": 2280,
+    "name": "Minsk",
+    "localName": "Мінск",
+    "country": "BY",
+    "lat": 53.902246,
+    "lon": 27.561837,
+    "population": 1995091
+  },
+  {
+    "id": 612,
+    "name": "Dubai",
+    "localName": "دبيّ",
+    "country": "AE",
+    "lat": 25.269722222,
+    "lon": 55.309444444,
+    "population": 3944751
+  },
+  {
+    "id": 172,
+    "name": "Toronto",
+    "localName": "Toronto",
+    "country": "CA",
+    "lat": 43.670277777,
+    "lon": -79.386666666,
+    "population": 2794356
+  },
+  {
+    "id": 1748,
+    "name": "Copenhagen",
+    "localName": "København",
+    "country": "DK",
+    "lat": 55.676111111,
+    "lon": 12.568888888,
+    "population": 667099
+  },
+  {
+    "id": 5465,
+    "name": "Cape Town",
+    "localName": "Cape Town",
+    "country": "ZA",
+    "lat": -33.925277777,
+    "lon": 18.423888888,
+    "population": 3776313
+  },
+  {
+    "id": 585,
+    "name": "Oslo",
+    "localName": "Oslo",
+    "country": "NO",
+    "lat": 59.913333333,
+    "lon": 10.738888888,
+    "population": 717710
+  },
+  {
+    "id": 62,
+    "name": "San Francisco",
+    "localName": "San Francisco",
+    "country": "US",
+    "lat": 37.775,
+    "lon": -122.419444444,
+    "population": 873965
+  },
+  {
+    "id": 3711,
+    "name": "Belgrade",
+    "localName": "Београд",
+    "country": "RS",
+    "lat": 44.817777777,
+    "lon": 20.456944444,
+    "population": 1197714
+  },
+  {
+    "id": 1930,
+    "name": "Ottawa",
+    "localName": "Ottawa",
+    "country": "CA",
+    "lat": 45.424722222,
+    "lon": -75.695,
+    "population": 1017449
+  },
+  {
+    "id": 1858,
+    "name": "Hanoi",
+    "localName": "Hà Nội",
+    "country": "VN",
+    "lat": 21.0245,
+    "lon": 105.84117,
+    "population": 8717600
+  },
+  {
+    "id": 3141,
+    "name": "Melbourne",
+    "localName": "Melbourne",
+    "country": "AU",
+    "lat": -37.814166666,
+    "lon": 144.963055555,
+    "population": 5350705
+  },
+  {
+    "id": 490,
+    "name": "Milan",
+    "localName": "Milan",
+    "country": "IT",
+    "lat": 45.466944444,
+    "lon": 9.19,
+    "population": 1354196
+  },
+  {
+    "id": 1533,
+    "name": "Caracas",
+    "localName": "Caracas",
+    "country": "VE",
+    "lat": 10.506111111,
+    "lon": -66.914444444,
+    "population": 2245744
+  },
+  {
+    "id": 3646,
+    "name": "Krasnodar",
+    "localName": "Краснодар",
+    "country": "RU",
+    "lat": 45.033333333,
+    "lon": 38.983333333,
+    "population": 1154885
+  },
+  {
+    "id": 3561,
+    "name": "Algiers",
+    "localName": "Alger",
+    "country": "DZ",
+    "lat": 36.776388888,
+    "lon": 3.058611111,
+    "population": 2364230
+  },
+  {
+    "id": 472,
+    "name": "Sofia",
+    "localName": "Со́фия",
+    "country": "BG",
+    "lat": 42.697886,
+    "lon": 23.321726,
+    "population": 1213134
+  },
+  {
+    "id": 994,
+    "name": "Tbilisi",
+    "localName": "თბილისი",
+    "country": "GE",
+    "lat": 41.7225,
+    "lon": 44.7925,
+    "population": 1118035
+  },
+  {
+    "id": 8673,
+    "name": "Lagos",
+    "localName": "Lagos",
+    "country": "NG",
+    "lat": 6.456111111,
+    "lon": 3.393611111,
+    "population": 15070000
+  },
+  {
+    "id": 1761,
+    "name": "Dublin",
+    "localName": "Dublin",
+    "country": "IE",
+    "lat": 53.349722222,
+    "lon": -6.260277777,
+    "population": 592713
+  },
+  {
+    "id": 3820,
+    "name": "Beirut",
+    "localName": "بيروت",
+    "country": "LB",
+    "lat": 33.886944444,
+    "lon": 35.513055555,
+    "population": 2421354
+  },
+  {
+    "id": 3624,
+    "name": "Addis Ababa",
+    "localName": "አዲስ አበባ",
+    "country": "ET",
+    "lat": 9.035833333,
+    "lon": 38.7525,
+    "population": 5704000
+  },
+  {
+    "id": 1348,
+    "name": "Kolkata",
+    "localName": "কলকাতা",
+    "country": "IN",
+    "lat": 22.5675,
+    "lon": 88.37,
+    "population": 4496694
+  },
+  {
+    "id": 3692,
+    "name": "Riyadh",
+    "localName": "الرياض",
+    "country": "SA",
+    "lat": 24.65,
+    "lon": 46.71,
+    "population": 7009100
+  },
+  {
+    "id": 216,
+    "name": "Vilnius",
+    "localName": "Vilnius",
+    "country": "LT",
+    "lat": 54.687222222,
+    "lon": 25.28,
+    "population": 581475
+  },
+  {
+    "id": 33986,
+    "name": "Valparaíso",
+    "localName": "Valparaíso",
+    "country": "CL",
+    "lat": -33.046111111,
+    "lon": -71.619722222,
+    "population": 296655
+  },
+  {
+    "id": 14773,
+    "name": "Macau",
+    "localName": "澳门",
+    "country": "CN",
+    "lat": 22.19,
+    "lon": 113.538055555,
+    "population": 682100
+  },
+  {
+    "id": 1770,
+    "name": "Tallinn",
+    "localName": "Tallinn",
+    "country": "EE",
+    "lat": 59.437222222,
+    "lon": 24.745,
+    "population": 457572
+  },
+  {
+    "id": 1461,
+    "name": "Manila",
+    "localName": "City of Manila",
+    "country": "PH",
+    "lat": 14.595833333,
+    "lon": 120.977222222,
+    "population": 1902590
+  },
+  {
+    "id": 1773,
+    "name": "Riga",
+    "localName": "Rīga",
+    "country": "LV",
+    "lat": 56.9475,
+    "lon": 24.106944444,
+    "population": 595053
+  },
+  {
+    "id": 1520,
+    "name": "Astana",
+    "localName": "Астана",
+    "country": "KZ",
+    "lat": 51.133333333,
+    "lon": 71.433333333,
+    "population": 1078362
+  },
+  {
+    "id": 11746,
+    "name": "Wuhan",
+    "localName": "武汉",
+    "country": "CN",
+    "lat": 30.595,
+    "lon": 114.2975,
+    "population": 12326518
+  },
+  {
+    "id": 3805,
+    "name": "Amman",
+    "localName": "عَمَّان",
+    "country": "JO",
+    "lat": 31.95,
+    "lon": 35.933333333,
+    "population": 4007526
+  },
+  {
+    "id": 1780,
+    "name": "Bratislava",
+    "localName": "Bratislava",
+    "country": "SK",
+    "lat": 48.144722222,
+    "lon": 17.112777777,
+    "population": 480902
+  },
+  {
+    "id": 18808,
+    "name": "Pyongyang",
+    "localName": "평양직할시",
+    "country": "KP",
+    "lat": 39.016666666,
+    "lon": 125.7475,
+    "population": 2863000
+  },
+  {
+    "id": 1435,
+    "name": "Zagreb",
+    "localName": "Zagreb",
+    "country": "HR",
+    "lat": 45.813055555,
+    "lon": 15.977222222,
+    "population": 767131
+  },
+  {
+    "id": 1953,
+    "name": "Yerevan",
+    "localName": "Երևան",
+    "country": "AM",
+    "lat": 40.181388888,
+    "lon": 44.514444444,
+    "population": 1106300
+  },
+  {
+    "id": 1563,
+    "name": "Havana",
+    "localName": "La Habana",
+    "country": "CU",
+    "lat": 23.136666666,
+    "lon": -82.358888888,
+    "population": 2492618
+  },
+  {
+    "id": 1345,
+    "name": "Philadelphia",
+    "localName": "Philadelphia",
+    "country": "US",
+    "lat": 39.952777777,
+    "lon": -75.163611111,
+    "population": 1603797
+  },
+  {
+    "id": 239,
+    "name": "Brussels",
+    "localName": "Brussel",
+    "country": "BE",
+    "lat": 50.846666666,
+    "lon": 4.351666666,
+    "population": 195546
+  },
+  {
+    "id": 35765,
+    "name": "Osaka",
+    "localName": "大阪市",
+    "country": "JP",
+    "lat": 34.69375,
+    "lon": 135.502111111,
+    "population": 2751862
+  },
+  {
+    "id": 100,
+    "name": "Boston",
+    "localName": "Boston",
+    "country": "US",
+    "lat": 42.360277777,
+    "lon": -71.057777777,
+    "population": 675647
+  },
+  {
+    "id": 34647,
+    "name": "Johannesburg",
+    "localName": "Johannesburg",
+    "country": "ZA",
+    "lat": -26.204361111,
+    "lon": 28.041638888,
+    "population": 4803262
+  },
+  {
+    "id": 1335,
+    "name": "Montevideo",
+    "localName": "San Felipe y Santiago de Montevideo",
+    "country": "UY",
+    "lat": -34.905916666,
+    "lon": -56.191311111,
+    "population": 1302954
+  },
+  {
+    "id": 1867,
+    "name": "Taipei",
+    "localName": "台北市",
+    "country": "TW",
+    "lat": 25.0375,
+    "lon": 121.5625,
+    "population": 2442991
+  },
+  {
+    "id": 1794,
+    "name": "Frankfurt",
+    "localName": "Frankfurt am Main",
+    "country": "DE",
+    "lat": 50.110555555,
+    "lon": 8.682222222,
+    "population": 775790
+  },
+  {
+    "id": 269,
+    "name": "Tashkent",
+    "localName": "Тошкент",
+    "country": "UZ",
+    "lat": 41.311111111,
+    "lon": 69.279722222,
+    "population": 2956384
+  },
+  {
+    "id": 16572,
+    "name": "Guangzhou",
+    "localName": "广州",
+    "country": "CN",
+    "lat": 23.13,
+    "lon": 113.26,
+    "population": 18676605
+  },
+  {
+    "id": 3761,
+    "name": "Accra",
+    "localName": "Nkran",
+    "country": "GH",
+    "lat": 5.55602,
+    "lon": -0.1969,
+    "population": 1782150
+  },
+  {
+    "id": 3787,
+    "name": "Abuja",
+    "localName": "Abuja",
+    "country": "NG",
+    "lat": 9.055555555,
+    "lon": 7.491388888,
+    "population": 1693400
+  },
+  {
+    "id": 641,
+    "name": "Venice",
+    "localName": "Venezia",
+    "country": "IT",
+    "lat": 45.439722222,
+    "lon": 12.331944444,
+    "population": 250369
+  },
+  {
+    "id": 1963,
+    "name": "Khartoum",
+    "localName": "الخرطوم",
+    "country": "SD",
+    "lat": 15.60308,
+    "lon": 32.52654,
+    "population": 5345000
+  },
+  {
+    "id": 2634,
+    "name": "Naples",
+    "localName": "Napoli",
+    "country": "IT",
+    "lat": 40.835833333,
+    "lon": 14.248611111,
+    "population": 913462
+  },
+  {
+    "id": 1880,
+    "name": "Concepción",
+    "localName": "Concepción",
+    "country": "CL",
+    "lat": -36.826944444,
+    "lon": -73.050277777,
+    "population": 217537
+  },
+  {
+    "id": 16555,
+    "name": "Houston",
+    "localName": "Houston",
+    "country": "US",
+    "lat": 29.762777777,
+    "lon": -95.383055555,
+    "population": 2304580
+  },
+  {
+    "id": 340,
+    "name": "Montreal",
+    "localName": "Montréal",
+    "country": "CA",
+    "lat": 45.5033426,
+    "lon": -73.5868411,
+    "population": 1895211
+  },
+  {
+    "id": 1877,
+    "name": "Đồng Hới",
+    "localName": "Đồng Hới",
+    "country": "VN",
+    "lat": 17.483333333,
+    "lon": 106.6,
+    "population": 160325
+  },
+  {
+    "id": 23556,
+    "name": "Atlanta",
+    "localName": "Atlanta",
+    "country": "US",
+    "lat": 33.754444444,
+    "lon": -84.389722222,
+    "population": 498715
+  },
+  {
+    "id": 87,
+    "name": "Alexandria",
+    "localName": "الإسكندرية",
+    "country": "EG",
+    "lat": 31.1975,
+    "lon": 29.8925,
+    "population": 5362517
+  },
+  {
+    "id": 3897,
+    "name": "Luanda",
+    "localName": "Luanda",
+    "country": "AO",
+    "lat": -8.838333333,
+    "lon": 13.234444444,
+    "population": 2487444
+  },
+  {
+    "id": 987,
+    "name": "New Delhi",
+    "localName": "ਨਵੀਂ ਦਿੱਲੀ",
+    "country": "IN",
+    "lat": 28.613888888,
+    "lon": 77.208888888,
+    "population": 249998
+  },
+  {
+    "id": 3114,
+    "name": "Canberra",
+    "localName": "Canberra",
+    "country": "AU",
+    "lat": -35.293055555,
+    "lon": 149.126944444,
+    "population": 381488
+  },
+  {
+    "id": 3703,
+    "name": "Bamako",
+    "localName": "ߓߡߊ߬ߞߐ߬",
+    "country": "ML",
+    "lat": 12.645833333,
+    "lon": -7.992222222,
+    "population": 4227569
+  },
+  {
+    "id": 11194,
+    "name": "Sarajevo",
+    "localName": "Sarajevo",
+    "country": "BA",
+    "lat": 43.856388888,
+    "lon": 18.413055555,
+    "population": 275524
+  },
+  {
+    "id": 2044,
+    "name": "Florence",
+    "localName": "Firenze",
+    "country": "IT",
+    "lat": 43.771388888,
+    "lon": 11.254166666,
+    "population": 360930
+  },
+  {
+    "id": 23430,
+    "name": "Ulaanbaatar",
+    "localName": "Улаанбаатар",
+    "country": "MN",
+    "lat": 47.921357,
+    "lon": 106.905515,
+    "population": 1396288
+  },
+  {
+    "id": 1362,
+    "name": "Islamabad",
+    "localName": "اسلام آباد",
+    "country": "PK",
+    "lat": 33.698888888,
+    "lon": 73.036944444,
+    "population": 1014825
+  },
+  {
+    "id": 3037,
+    "name": "Kathmandu",
+    "localName": "काठमांडौ",
+    "country": "NP",
+    "lat": 27.71,
+    "lon": 85.32,
+    "population": 845767
+  },
+  {
+    "id": 3579,
+    "name": "Tripoli",
+    "localName": "طرابلس",
+    "country": "LY",
+    "lat": 32.8875,
+    "lon": 13.1875,
+    "population": 1293016
+  },
+  {
+    "id": 1355,
+    "name": "Bengaluru",
+    "localName": "ಬೆಂಗಳೂರು",
+    "country": "IN",
+    "lat": 12.9791198,
+    "lon": 77.5912997,
+    "population": 12327000
+  },
+  {
+    "id": 365,
+    "name": "Cologne",
+    "localName": "Köln",
+    "country": "DE",
+    "lat": 50.942222222,
+    "lon": 6.957777777,
+    "population": 1087353
+  },
+  {
+    "id": 1519,
+    "name": "Abu Dhabi",
+    "localName": "ابوظبي",
+    "country": "AE",
+    "lat": 24.451111111,
+    "lon": 54.396944444,
+    "population": 1570000
+  },
+  {
+    "id": 3894,
+    "name": "Kampala",
+    "localName": "Kampala",
+    "country": "UG",
+    "lat": 0.313611111,
+    "lon": 32.581111111,
+    "population": 1680600
+  },
+  {
+    "id": 23482,
+    "name": "Marseille",
+    "localName": "Marseille",
+    "country": "FR",
+    "lat": 43.296666666,
+    "lon": 5.376388888,
+    "population": 886040
+  },
+  {
+    "id": 11725,
+    "name": "Chongqing",
+    "localName": "重庆",
+    "country": "CN",
+    "lat": 29.55,
+    "lon": 106.506944444,
+    "population": 32054159
+  },
+  {
+    "id": 1850,
+    "name": "Phnom Penh",
+    "localName": "ភ្នំពេញ",
+    "country": "KH",
+    "lat": 11.569583333,
+    "lon": 104.921027777,
+    "population": 2129371
+  },
+  {
+    "id": 23768,
+    "name": "Las Vegas",
+    "localName": "Las Vegas",
+    "country": "US",
+    "lat": 36.167222222,
+    "lon": -115.148611111,
+    "population": 641903
+  },
+  {
+    "id": 3861,
+    "name": "Doha",
+    "localName": "الدوحة",
+    "country": "QA",
+    "lat": 25.286111111,
+    "lon": 51.529444444,
+    "population": 1186023
+  },
+  {
+    "id": 8652,
+    "name": "Miami",
+    "localName": "Miami",
+    "country": "US",
+    "lat": 25.783333333,
+    "lon": -80.216666666,
+    "population": 442241
+  },
+  {
+    "id": 2900,
+    "name": "Quito",
+    "localName": "Quito",
+    "country": "EC",
+    "lat": -0.22,
+    "lon": -78.5125,
+    "population": 1763275
+  },
+  {
+    "id": 3926,
+    "name": "Pretoria",
+    "localName": "Pretoria",
+    "country": "ZA",
+    "lat": -25.746388888,
+    "lon": 28.188055555,
+    "population": 741651
+  },
+  {
+    "id": 456,
+    "name": "Lyon",
+    "localName": "Lyon",
+    "country": "FR",
+    "lat": 45.7675,
+    "lon": 4.835,
+    "population": 519127
+  },
+  {
+    "id": 72,
+    "name": "Zurich",
+    "localName": "Zürich",
+    "country": "CH",
+    "lat": 47.374444444,
+    "lon": 8.541111111,
+    "population": 452421
+  },
+  {
+    "id": 9361,
+    "name": "Bishkek",
+    "localName": "Бишкек",
+    "country": "KG",
+    "lat": 42.866666666,
+    "lon": 74.566666666,
+    "population": 1191000
+  },
+  {
+    "id": 9022,
+    "name": "Guadalajara",
+    "localName": "Guadalajara",
+    "country": "MX",
+    "lat": 20.676388888,
+    "lon": -103.342222222,
+    "population": 1385621
+  },
+  {
+    "id": 16556,
+    "name": "Phoenix",
+    "localName": "Phoenix",
+    "country": "US",
+    "lat": 33.448333333,
+    "lon": -112.073888888,
+    "population": 1608139
+  },
+  {
+    "id": 21197,
+    "name": "Chișinău",
+    "localName": "Chișinău",
+    "country": "MD",
+    "lat": 47.022777777,
+    "lon": 28.835277777,
+    "population": 567038
+  },
+  {
+    "id": 437,
+    "name": "Ljubljana",
+    "localName": "Ljubljana",
+    "country": "SI",
+    "lat": 46.051388888,
+    "lon": 14.506111111,
+    "population": 284293
+  },
+  {
+    "id": 11736,
+    "name": "Tianjin",
+    "localName": "天津",
+    "country": "CN",
+    "lat": 39.146666666,
+    "lon": 117.205555555,
+    "population": 13866009
+  },
+  {
+    "id": 2471,
+    "name": "Sanaa",
+    "localName": "صنعاء",
+    "country": "YE",
+    "lat": 15.35,
+    "lon": 44.2,
+    "population": 2957000
+  },
+  {
+    "id": 23438,
+    "name": "Ashgabat",
+    "localName": "Aşgabat",
+    "country": "TM",
+    "lat": 37.95,
+    "lon": 58.383333333,
+    "population": 1030063
+  },
+  {
+    "id": 1764,
+    "name": "Reykjavík",
+    "localName": "Reykjavík",
+    "country": "IS",
+    "lat": 64.1475,
+    "lon": -21.935,
+    "population": 138772
+  },
+  {
+    "id": 3921,
+    "name": "Harare",
+    "localName": "Harare",
+    "country": "ZW",
+    "lat": -17.829166666,
+    "lon": 31.052222222,
+    "population": 2150000
+  },
+  {
+    "id": 38283,
+    "name": "Yokohama",
+    "localName": "横浜市",
+    "country": "JP",
+    "lat": 35.450333333,
+    "lon": 139.634222222,
+    "population": 3757630
+  },
+  {
+    "id": 35997,
+    "name": "İzmir",
+    "localName": "İzmir",
+    "country": "TR",
+    "lat": 38.41273,
+    "lon": 27.13838,
+    "population": 4493242
+  },
+  {
+    "id": 3844,
+    "name": "Brazzaville",
+    "localName": "Brazzaville",
+    "country": "CG",
+    "lat": -4.269444444,
+    "lon": 15.271111111,
+    "population": 2145783
+  },
+  {
+    "id": 23436,
+    "name": "Edinburgh",
+    "localName": "Edinburgh",
+    "country": "GB",
+    "lat": 55.953333333,
+    "lon": -3.189166666,
+    "population": 488050
+  },
+  {
+    "id": 5083,
+    "name": "Seattle",
+    "localName": "Seattle",
+    "country": "US",
+    "lat": 47.605,
+    "lon": -122.33,
+    "population": 737015
+  },
+  {
+    "id": 35178,
+    "name": "Kuwait City",
+    "localName": "الكويت",
+    "country": "KW",
+    "lat": 29.375,
+    "lon": 47.98,
+    "population": 2989000
+  },
+  {
+    "id": 31487,
+    "name": "Kraków",
+    "localName": "Kraków",
+    "country": "PL",
+    "lat": 50.061388888,
+    "lon": 19.937222222,
+    "population": 804237
+  },
+  {
+    "id": 3718,
+    "name": "Dakar",
+    "localName": "Ville de Dakar",
+    "country": "SN",
+    "lat": 14.672555555,
+    "lon": -17.432,
+    "population": 1438725
+  },
+  {
+    "id": 16554,
+    "name": "Denver",
+    "localName": "Denver",
+    "country": "US",
+    "lat": 39.739166666,
+    "lon": -104.984722222,
+    "population": 715522
+  },
+  {
+    "id": 33935,
+    "name": "Tel Aviv",
+    "localName": "תֵּל אָבִיב-יָפוֹ",
+    "country": "IL",
+    "lat": 32.08,
+    "lon": 34.78,
+    "population": 467875
+  },
+  {
+    "id": 374365,
+    "name": "Jeddah",
+    "localName": "جدة",
+    "country": "SA",
+    "lat": 21.542777777,
+    "lon": 39.172777777,
+    "population": 4697000
+  },
+  {
+    "id": 3551,
+    "name": "Rabat",
+    "localName": "Rabat",
+    "country": "MA",
+    "lat": 34.021111111,
+    "lon": -6.841388888,
+    "population": 572717
+  },
+  {
+    "id": 3183,
+    "name": "Perth",
+    "localName": "Perth",
+    "country": "AU",
+    "lat": -31.955833333,
+    "lon": 115.859722222,
+    "population": 2141834
+  },
+  {
+    "id": 2449,
+    "name": "Mogadishu",
+    "localName": "مقديشو",
+    "country": "SO",
+    "lat": 2.039166666,
+    "lon": 45.341944444,
+    "population": 2120000
+  },
+  {
+    "id": 384,
+    "name": "Skopje",
+    "localName": "Скопје",
+    "country": "MK",
+    "lat": 41.996111111,
+    "lon": 21.431666666,
+    "population": 422540
+  },
+  {
+    "id": 3777,
+    "name": "Ouagadougou",
+    "localName": "Ouagadougou",
+    "country": "BF",
+    "lat": 12.368611111,
+    "lon": -1.5275,
+    "population": 2453496
+  },
+  {
+    "id": 1352,
+    "name": "Chennai",
+    "localName": "சென்னை",
+    "country": "IN",
+    "lat": 13.0825,
+    "lon": 80.275,
+    "population": 6599000
+  },
+  {
+    "id": 16557,
+    "name": "Dallas",
+    "localName": "Dallas",
+    "country": "US",
+    "lat": 32.779166666,
+    "lon": -96.808888888,
+    "population": 1304379
+  },
+  {
+    "id": 18125,
+    "name": "Manchester",
+    "localName": "Manchester",
+    "country": "GB",
+    "lat": 53.466666666,
+    "lon": -2.233333333,
+    "population": 547627
+  },
+  {
+    "id": 495,
+    "name": "Turin",
+    "localName": "Torino",
+    "country": "IT",
+    "lat": 45.079166666,
+    "lon": 7.676111111,
+    "population": 841600
+  },
+  {
+    "id": 70,
+    "name": "Bern",
+    "localName": "Berna",
+    "country": "CH",
+    "lat": 46.94798,
+    "lon": 7.44743,
+    "population": 136988
+  },
+  {
+    "id": 1022,
+    "name": "Stuttgart",
+    "localName": "Stuttgart",
+    "country": "DE",
+    "lat": 48.7775,
+    "lon": 9.18,
+    "population": 633484
+  },
+  {
+    "id": 34932,
+    "name": "Brisbane",
+    "localName": "Brisbane",
+    "country": "AU",
+    "lat": -27.467777777,
+    "lon": 153.027777777,
+    "population": 2706966
+  },
+  {
+    "id": 18094,
+    "name": "Honolulu",
+    "localName": "Honolulu",
+    "country": "US",
+    "lat": 21.304722222,
+    "lon": -157.857222222,
+    "population": 350964
+  },
+  {
+    "id": 71,
+    "name": "Geneva",
+    "localName": "Genève",
+    "country": "CH",
+    "lat": 46.2,
+    "lon": 6.15,
+    "population": 209061
+  },
+  {
+    "id": 3572,
+    "name": "Tunis",
+    "localName": "تونس",
+    "country": "TN",
+    "lat": 36.800833333,
+    "lon": 10.18,
+    "population": 602560
+  },
+  {
+    "id": 9365,
+    "name": "Dushanbe",
+    "localName": "دوشنبه",
+    "country": "TJ",
+    "lat": 38.573055555,
+    "lon": 68.786388888,
+    "population": 948251
+  },
+  {
+    "id": 1874,
+    "name": "Odesa",
+    "localName": "Одеса",
+    "country": "UA",
+    "lat": 46.47747,
+    "lon": 30.73262,
+    "population": 1010537
+  },
+  {
+    "id": 3881,
+    "name": "Lusaka",
+    "localName": "Lusaka",
+    "country": "ZM",
+    "lat": -15.416666666,
+    "lon": 28.283333333,
+    "population": 2467563
+  },
+  {
+    "id": 24639,
+    "name": "Vancouver",
+    "localName": "Vancouver",
+    "country": "CA",
+    "lat": 49.260833333,
+    "lon": -123.113888888,
+    "population": 662248
+  },
+  {
+    "id": 3808,
+    "name": "Yaoundé",
+    "localName": "Yaoundé",
+    "country": "CM",
+    "lat": 3.857777777,
+    "lon": 11.518055555,
+    "population": 2440462
+  },
+  {
+    "id": 1731,
+    "name": "Dresden",
+    "localName": "Dresden",
+    "country": "DE",
+    "lat": 51.0493286,
+    "lon": 13.7381437,
+    "population": 566222
+  },
+  {
+    "id": 1515,
+    "name": "Abidjan",
+    "localName": "Abidjan",
+    "country": "CI",
+    "lat": 5.336388888,
+    "lon": -4.026666666,
+    "population": 5616633
+  },
+  {
+    "id": 42308,
+    "name": "Kharkiv",
+    "localName": "Харків",
+    "country": "UA",
+    "lat": 49.9925,
+    "lon": 36.231111111,
+    "population": 1421125
+  },
+  {
+    "id": 6602,
+    "name": "Strasbourg",
+    "localName": "Strasbourg",
+    "country": "FR",
+    "lat": 48.573333333,
+    "lon": 7.752222222,
+    "population": 293771
+  },
+  {
+    "id": 24826,
+    "name": "Liverpool",
+    "localName": "Liverpool",
+    "country": "GB",
+    "lat": 53.407222222,
+    "lon": -2.991666666,
+    "population": 513441
+  },
+  {
+    "id": 3792,
+    "name": "Lomé",
+    "localName": "Lomé",
+    "country": "TG",
+    "lat": 6.13,
+    "lon": 1.215833333,
+    "population": 2188376
+  },
+  {
+    "id": 37995,
+    "name": "Yangon",
+    "localName": "ရန်ကုန်",
+    "country": "MM",
+    "lat": 16.80528,
+    "lon": 96.15611,
+    "population": 6874000
+  },
+  {
+    "id": 1449,
+    "name": "Genoa",
+    "localName": "Zena",
+    "country": "IT",
+    "lat": 44.407186111,
+    "lon": 8.933983333,
+    "population": 558745
+  },
+  {
+    "id": 36036,
+    "name": "Lviv",
+    "localName": "Львів",
+    "country": "UA",
+    "lat": 49.8425,
+    "lon": 24.032222222,
+    "population": 717273
+  },
+  {
+    "id": 3859,
+    "name": "Kigali",
+    "localName": "Kigali",
+    "country": "RW",
+    "lat": -1.9525,
+    "lon": 30.115,
+    "population": 1745555
+  },
+  {
+    "id": 12439,
+    "name": "Detroit",
+    "localName": "Detroit",
+    "country": "US",
+    "lat": 42.331666666,
+    "lon": -83.0475,
+    "population": 639111
+  },
+  {
+    "id": 1718,
+    "name": "Düsseldorf",
+    "localName": "Düsseldorf",
+    "country": "DE",
+    "lat": 51.225555555,
+    "lon": 6.776666666,
+    "population": 631217
+  },
+  {
+    "id": 2656,
+    "name": "Palermo",
+    "localName": "Palermo",
+    "country": "IT",
+    "lat": 38.115658055,
+    "lon": 13.361261944,
+    "population": 630167
+  },
+  {
+    "id": 4093,
+    "name": "Glasgow",
+    "localName": "Glasgow",
+    "country": "GB",
+    "lat": 55.861111111,
+    "lon": -4.25,
+    "population": 626410
+  },
+  {
+    "id": 3733,
+    "name": "Conakry",
+    "localName": "𞤑𞤮𞤲𞤢𞥄𞤳𞤭𞤪𞤭",
+    "country": "GN",
+    "lat": 9.509166666,
+    "lon": -13.712222222,
+    "population": 1667864
+  },
+  {
+    "id": 16552,
+    "name": "San Diego",
+    "localName": "San Diego",
+    "country": "US",
+    "lat": 32.715,
+    "lon": -117.1625,
+    "population": 1386932
+  },
+  {
+    "id": 1410,
+    "name": "Gibraltar",
+    "localName": "Gibraltar",
+    "country": "GB",
+    "lat": 36.14,
+    "lon": -5.35,
+    "population": 34003
+  },
+  {
+    "id": 16559,
+    "name": "Austin",
+    "localName": "Austin",
+    "country": "US",
+    "lat": 30.3,
+    "lon": -97.733333333,
+    "population": 961855
+  },
+  {
+    "id": 2933,
+    "name": "Asunción",
+    "localName": "Nuestra Señora Santa María de la Asunción",
+    "country": "PY",
+    "lat": -25.28,
+    "lon": -57.634444444,
+    "population": 462241
+  },
+  {
+    "id": 35484,
+    "name": "Medina",
+    "localName": "المدينة المنورة",
+    "country": "SA",
+    "lat": 24.47,
+    "lon": 39.61,
+    "population": 1411599
+  },
+  {
+    "id": 3674,
+    "name": "Niamey",
+    "localName": "Yamai",
+    "country": "NE",
+    "lat": 13.515,
+    "lon": 2.1175,
+    "population": 1496260
+  },
+  {
+    "id": 11751,
+    "name": "Nagoya",
+    "localName": "名古屋市",
+    "country": "JP",
+    "lat": 35.18147,
+    "lon": 136.90641,
+    "population": 2326844
+  },
+  {
+    "id": 900,
+    "name": "Kazan",
+    "localName": "Казань",
+    "country": "RU",
+    "lat": 55.790833333,
+    "lon": 49.114444444,
+    "population": 1329825
+  },
+  {
+    "id": 1361,
+    "name": "Hyderabad",
+    "localName": "హైదరాబాదు",
+    "country": "IN",
+    "lat": 17.361666666,
+    "lon": 78.474722222,
+    "population": 9191000
+  },
+  {
+    "id": 5826,
+    "name": "Xi'an",
+    "localName": "西安",
+    "country": "CN",
+    "lat": 34.261111111,
+    "lon": 108.942222222,
+    "population": 12952907
+  },
+  {
+    "id": 7903,
+    "name": "Casablanca",
+    "localName": "Casablanca",
+    "country": "MA",
+    "lat": 33.599166666,
+    "lon": -7.62,
+    "population": 3215935
+  },
+  {
+    "id": 18013,
+    "name": "Sacramento",
+    "localName": "Sacramento",
+    "country": "US",
+    "lat": 38.575277777,
+    "lon": -121.486111111,
+    "population": 524943
+  },
+  {
+    "id": 3915,
+    "name": "Antananarivo",
+    "localName": "Tananarive",
+    "country": "MG",
+    "lat": -18.91,
+    "lon": 47.525,
+    "population": 1275207
+  },
+  {
+    "id": 11739,
+    "name": "Lahore",
+    "localName": "لہور",
+    "country": "PK",
+    "lat": 31.549722222,
+    "lon": 74.343611111,
+    "population": 11126285
+  },
+  {
+    "id": 3889,
+    "name": "Maputo",
+    "localName": "Maputo",
+    "country": "MZ",
+    "lat": -25.968888888,
+    "lon": 32.573333333,
+    "population": 1133200
+  },
+  {
+    "id": 237,
+    "name": "Vatican City",
+    "localName": "Civitas Vaticana",
+    "country": "VA",
+    "lat": 41.904,
+    "lon": 12.453,
+    "population": 882
+  },
+  {
+    "id": 3935,
+    "name": "Windhoek",
+    "localName": "Windhoek",
+    "country": "NA",
+    "lat": -22.57,
+    "lon": 17.083611111,
+    "population": 486169
+  },
+  {
+    "id": 1479,
+    "name": "Bordeaux",
+    "localName": "Bordeaux",
+    "country": "FR",
+    "lat": 44.837777777,
+    "lon": -0.579444444,
+    "population": 267991
+  },
+  {
+    "id": 1715,
+    "name": "Hanover",
+    "localName": "Hannover",
+    "country": "DE",
+    "lat": 52.374444444,
+    "lon": 9.738611111,
+    "population": 548186
+  },
+  {
+    "id": 2256,
+    "name": "Birmingham",
+    "localName": "Birmingham",
+    "country": "GB",
+    "lat": 52.48,
+    "lon": -1.9025,
+    "population": 1137100
+  },
+  {
+    "id": 30340,
+    "name": "Zhengzhou",
+    "localName": "Zhengzhou",
+    "country": "CN",
+    "lat": 34.74919,
+    "lon": 113.66051,
+    "population": 12600574
+  },
+  {
+    "id": 23661,
+    "name": "Wellington",
+    "localName": "Wellington",
+    "country": "NZ",
+    "lat": -41.288888888,
+    "lon": 174.777222222,
+    "population": 216200
+  },
+  {
+    "id": 37100,
+    "name": "Auckland",
+    "localName": "Auckland",
+    "country": "NZ",
+    "lat": -36.849166666,
+    "lon": 174.765277777,
+    "population": 1470100
+  },
+  {
+    "id": 2079,
+    "name": "Leipzig",
+    "localName": "Leipzig",
+    "country": "DE",
+    "lat": 51.3406321,
+    "lon": 12.3747329,
+    "population": 619879
+  },
+  {
+    "id": 1070,
+    "name": "Ahmedabad",
+    "localName": "Ahmedabad",
+    "country": "IN",
+    "lat": 23.021944444,
+    "lon": 72.579722222,
+    "population": 7645000
+  },
+  {
+    "id": 3306,
+    "name": "Panama City",
+    "localName": "Panamá",
+    "country": "PA",
+    "lat": 8.971111111,
+    "lon": -79.534722222,
+    "population": 1540000
+  },
+  {
+    "id": 16666,
+    "name": "Nanjing",
+    "localName": "南京",
+    "country": "CN",
+    "lat": 32.060833333,
+    "lon": 118.778888888,
+    "population": 9314685
+  },
+  {
+    "id": 3642,
+    "name": "Asmara",
+    "localName": "ኣስመራ",
+    "country": "ER",
+    "lat": 15.333333333,
+    "lon": 38.916666666,
+    "population": 963000
+  },
+  {
+    "id": 23564,
+    "name": "Podgorica",
+    "localName": "Podgorica",
+    "country": "ME",
+    "lat": 42.441388888,
+    "lon": 19.262777777,
+    "population": 150977
+  },
+  {
+    "id": 3659,
+    "name": "N'Djamena",
+    "localName": "N’Djaména",
+    "country": "TD",
+    "lat": 12.11,
+    "lon": 15.05,
+    "population": 1092066
+  },
+  {
+    "id": 15174,
+    "name": "Shenzhen",
+    "localName": "深圳",
+    "country": "CN",
+    "lat": 22.546666666,
+    "lon": 114.054444444,
+    "population": 17494398
+  },
+  {
+    "id": 34404,
+    "name": "New Orleans",
+    "localName": "New Orleans",
+    "country": "US",
+    "lat": 29.976111111,
+    "lon": -90.078333333,
+    "population": 383997
+  },
+  {
+    "id": 7880,
+    "name": "Toulouse",
+    "localName": "Tolosa",
+    "country": "FR",
+    "lat": 43.604444444,
+    "lon": 1.443333333,
+    "population": 514819
+  },
+  {
+    "id": 883,
+    "name": "Novosibirsk",
+    "localName": "Новосибирск",
+    "country": "RU",
+    "lat": 55.033333333,
+    "lon": 82.916666666,
+    "population": 1637266
+  },
+  {
+    "id": 37951,
+    "name": "Sapporo",
+    "localName": "札幌市",
+    "country": "JP",
+    "lat": 43.061944444,
+    "lon": 141.354444444,
+    "population": 1959313
+  },
+  {
+    "id": 1792,
+    "name": "Gdańsk",
+    "localName": "Gdańsk",
+    "country": "PL",
+    "lat": 54.3482907,
+    "lon": 18.6540233,
+    "population": 487834
+  },
+  {
+    "id": 3826,
+    "name": "Muscat",
+    "localName": "مسقط",
+    "country": "OM",
+    "lat": 23.613888888,
+    "lon": 58.592222222,
+    "population": 1421409
+  },
+  {
+    "id": 35493,
+    "name": "Almaty",
+    "localName": "Алматы",
+    "country": "KZ",
+    "lat": 43.24,
+    "lon": 76.915,
+    "population": 2228675
+  },
+  {
+    "id": 5112,
+    "name": "Adelaide",
+    "localName": "Adelaide",
+    "country": "AU",
+    "lat": -34.9275,
+    "lon": 138.6,
+    "population": 1387290
+  },
+  {
+    "id": 34820,
+    "name": "Santo Domingo",
+    "localName": "Santo Domingo de Guzmán",
+    "country": "DO",
+    "lat": 18.4625,
+    "lon": -69.936111111,
+    "population": 2201941
+  },
+  {
+    "id": 3748,
+    "name": "Monrovia",
+    "localName": "Monrovia",
+    "country": "LR",
+    "lat": 6.310555555,
+    "lon": -10.804722222,
+    "population": 1021762
+  },
+  {
+    "id": 33959,
+    "name": "Nice",
+    "localName": "Nice",
+    "country": "FR",
+    "lat": 43.701944444,
+    "lon": 7.268333333,
+    "population": 357737
+  },
+  {
+    "id": 6346,
+    "name": "Indianapolis",
+    "localName": "Indianapolis",
+    "country": "US",
+    "lat": 39.768611111,
+    "lon": -86.158055555,
+    "population": 887642
+  },
+  {
+    "id": 1404,
+    "name": "Uetersen",
+    "localName": "Uetersen",
+    "country": "DE",
+    "lat": 53.687222222,
+    "lon": 9.669166666,
+    "population": 18776
+  },
+  {
+    "id": 48278,
+    "name": "Medellín",
+    "localName": "Medellín",
+    "country": "CO",
+    "lat": 6.250200154,
+    "lon": -75.5675845,
+    "population": 2529403
+  },
+  {
+    "id": 3856,
+    "name": "Nicosia",
+    "localName": "Lefkoşa",
+    "country": "CY",
+    "lat": 35.1725,
+    "lon": 33.365,
+    "population": 56848
+  },
+  {
+    "id": 30002,
+    "name": "Chengdu",
+    "localName": "Chengdu",
+    "country": "CN",
+    "lat": 30.66,
+    "lon": 104.063333333,
+    "population": 20937757
+  },
+  {
+    "id": 34664,
+    "name": "Hiroshima",
+    "localName": "広島市",
+    "country": "JP",
+    "lat": 34.38525,
+    "lon": 132.455305555,
+    "population": 1198021
+  },
+  {
+    "id": 3825,
+    "name": "Libreville",
+    "localName": "Libreville",
+    "country": "GA",
+    "lat": 0.407777777,
+    "lon": 9.440277777,
+    "population": 899000
+  },
+  {
+    "id": 3739,
+    "name": "Bissau",
+    "localName": "Bissau",
+    "country": "GW",
+    "lat": 11.86,
+    "lon": -15.583333333,
+    "population": 492004
+  },
+  {
+    "id": 34692,
+    "name": "Kingston",
+    "localName": "Kingston",
+    "country": "JM",
+    "lat": 17.971388888,
+    "lon": -76.793055555,
+    "population": 937700
+  },
+  {
+    "id": 3688,
+    "name": "Nouakchott",
+    "localName": "Nuwaasoot",
+    "country": "MR",
+    "lat": 18.08581,
+    "lon": -15.9785,
+    "population": 1446761
+  },
+  {
+    "id": 3238,
+    "name": "Tegucigalpa",
+    "localName": "Tegucigalpa",
+    "country": "HN",
+    "lat": 14.105783333,
+    "lon": -87.204705555,
+    "population": 1055729
+  },
+  {
+    "id": 24879,
+    "name": "Bremen",
+    "localName": "Bremen",
+    "country": "DE",
+    "lat": 53.075833333,
+    "lon": 8.807222222,
+    "population": 577026
+  },
+  {
+    "id": 914,
+    "name": "Volgograd",
+    "localName": "Волгоград",
+    "country": "RU",
+    "lat": 48.708611111,
+    "lon": 44.514722222,
+    "population": 1012219
+  },
+  {
+    "id": 16520,
+    "name": "Busan",
+    "localName": "부산",
+    "country": "KR",
+    "lat": 35.18,
+    "lon": 129.075,
+    "population": 3453198
+  },
+  {
+    "id": 1960,
+    "name": "Dar es Salaam",
+    "localName": "دَار السَّلَام",
+    "country": "TZ",
+    "lat": -6.816111111,
+    "lon": 39.280277777,
+    "population": 4715000
+  },
+  {
+    "id": 3832,
+    "name": "Bangui",
+    "localName": "Bangui",
+    "country": "CF",
+    "lat": 4.37325,
+    "lon": 18.562833333,
+    "population": 889231
+  },
+  {
+    "id": 16567,
+    "name": "Columbus",
+    "localName": "Columbus",
+    "country": "US",
+    "lat": 39.962222222,
+    "lon": -83.000555555,
+    "population": 905748
+  },
+  {
+    "id": 34261,
+    "name": "Port-au-Prince",
+    "localName": "Pòtoprens",
+    "country": "HT",
+    "lat": 18.546944444,
+    "lon": -72.340277777,
+    "population": 987310
+  },
+  {
+    "id": 959,
+    "name": "Vladivostok",
+    "localName": "Владивосток",
+    "country": "RU",
+    "lat": 43.115,
+    "lon": 131.885277777,
+    "population": 591628
+  },
+  {
+    "id": 3274,
+    "name": "Managua",
+    "localName": "Managua",
+    "country": "NI",
+    "lat": 12.154680555,
+    "lon": -86.273725,
+    "population": 937489
+  },
+  {
+    "id": 975,
+    "name": "San Antonio",
+    "localName": "San Antonio",
+    "country": "US",
+    "lat": 29.425,
+    "lon": -98.493888888,
+    "population": 1434625
+  },
+  {
+    "id": 3876,
+    "name": "Lilongwe",
+    "localName": "Lilongwe",
+    "country": "MW",
+    "lat": -13.986388888,
+    "lon": 33.768055555,
+    "population": 989318
+  },
+  {
+    "id": 37400,
+    "name": "Naypyidaw",
+    "localName": "နေပြည်တော်",
+    "country": "MM",
+    "lat": 19.7475,
+    "lon": 96.115,
+    "population": 1160242
+  },
+  {
+    "id": 3780,
+    "name": "Freetown",
+    "localName": "Freetown",
+    "country": "SL",
+    "lat": 8.487222222,
+    "lon": -13.235555555,
+    "population": 951000
+  },
+  {
+    "id": 41183,
+    "name": "Aleppo",
+    "localName": "ܚܠܒ",
+    "country": "SY",
+    "lat": 36.2,
+    "lon": 37.16,
+    "population": 2003671
+  },
+  {
+    "id": 42956,
+    "name": "Harbin",
+    "localName": "哈尔滨",
+    "country": "CN",
+    "lat": 45.75,
+    "lon": 126.633333333,
+    "population": 10009854
+  },
+  {
+    "id": 1555,
+    "name": "Guatemala City",
+    "localName": "Ciudad de Guatemala",
+    "country": "GT",
+    "lat": 14.641666666,
+    "lon": -90.513333333,
+    "population": 994938
+  },
+  {
+    "id": 1491,
+    "name": "La Paz",
+    "localName": "La Paz",
+    "country": "BO",
+    "lat": -16.495833333,
+    "lon": -68.133333333,
+    "population": 755732
+  },
+  {
+    "id": 25287,
+    "name": "Gothenburg",
+    "localName": "Göteborg",
+    "country": "SE",
+    "lat": 57.7075,
+    "lon": 11.9675,
+    "population": 674529
+  },
+  {
+    "id": 1799,
+    "name": "Wrocław",
+    "localName": "Wrocław",
+    "country": "PL",
+    "lat": 51.11,
+    "lon": 17.0325,
+    "population": 673531
+  },
+  {
+    "id": 34001,
+    "name": "Roubaix",
+    "localName": "Roubaix",
+    "country": "FR",
+    "lat": 50.69,
+    "lon": 3.181666666,
+    "population": 98286
+  },
+  {
+    "id": 12892,
+    "name": "Antwerp",
+    "localName": "Antwerpen",
+    "country": "BE",
+    "lat": 51.221111111,
+    "lon": 4.399722222,
+    "population": 529247
+  },
+  {
+    "id": 66485,
+    "name": "Jaipur",
+    "localName": "जयपुर",
+    "country": "IN",
+    "lat": 26.915,
+    "lon": 75.82,
+    "population": 3073350
+  },
+  {
+    "id": 3882,
+    "name": "Manama",
+    "localName": "Manama",
+    "country": "BH",
+    "lat": 26.216666666,
+    "lon": 50.583333333,
+    "population": 297502
+  },
+  {
+    "id": 4970,
+    "name": "Hangzhou",
+    "localName": "Hangzhou",
+    "country": "CN",
+    "lat": 30.25,
+    "lon": 120.1675,
+    "population": 11936010
+  },
+  {
+    "id": 887,
+    "name": "Yekaterinburg",
+    "localName": "Екатеринбург",
+    "country": "RU",
+    "lat": 56.835555555,
+    "lon": 60.612777777,
+    "population": 1468833
+  },
+  {
+    "id": 16553,
+    "name": "San Jose",
+    "localName": "San José",
+    "country": "US",
+    "lat": 37.304166666,
+    "lon": -121.872777777,
+    "population": 1013240
+  },
+  {
+    "id": 5092,
+    "name": "Baltimore",
+    "localName": "Baltimore",
+    "country": "US",
+    "lat": 39.286388888,
+    "lon": -76.615,
+    "population": 585708
+  },
+  {
+    "id": 376749,
+    "name": "Chittagong",
+    "localName": "চট্টগ্রাম",
+    "country": "BD",
+    "lat": 22.335,
+    "lon": 91.8325,
+    "population": 3230507
+  },
+  {
+    "id": 40840,
+    "name": "Tampere",
+    "localName": "Tammerfors",
+    "country": "FI",
+    "lat": 61.498055555,
+    "lon": 23.76,
+    "population": 255333
+  },
+  {
+    "id": 3854,
+    "name": "Bujumbura",
+    "localName": "Bujumbura",
+    "country": "BI",
+    "lat": -3.3825,
+    "lon": 29.361111111,
+    "population": 658859
+  },
+  {
+    "id": 586,
+    "name": "Bonn",
+    "localName": "Bonn",
+    "country": "DE",
+    "lat": 50.735277777,
+    "lon": 7.102222222,
+    "population": 335789
+  },
+  {
+    "id": 19491,
+    "name": "Nha Trang",
+    "localName": "Nha Trang",
+    "country": "VN",
+    "lat": 12.245,
+    "lon": 109.191666666,
+    "population": 392279
+  },
+  {
+    "id": 23197,
+    "name": "Nashville",
+    "localName": "City of Nashville",
+    "country": "US",
+    "lat": 36.162222222,
+    "lon": -86.774444444,
+    "population": 689447
+  },
+  {
+    "id": 10690,
+    "name": "Cardiff",
+    "localName": "Cardiff",
+    "country": "GB",
+    "lat": 51.481666666,
+    "lon": -3.179166666,
+    "population": 383536
+  },
+  {
+    "id": 34863,
+    "name": "Oklahoma City",
+    "localName": "Oklahoma City",
+    "country": "US",
+    "lat": 35.482222222,
+    "lon": -97.535277777,
+    "population": 681054
+  },
+  {
+    "id": 1891,
+    "name": "Bologna",
+    "localName": "Bologna",
+    "country": "IT",
+    "lat": 44.493888888,
+    "lon": 11.342777777,
+    "population": 387971
+  },
+  {
+    "id": 1842,
+    "name": "Luxembourg",
+    "localName": "Luxembourg",
+    "country": "LU",
+    "lat": 49.610555555,
+    "lon": 6.132777777,
+    "population": 137696
+  },
+  {
+    "id": 10686,
+    "name": "Belfast",
+    "localName": "Belfast",
+    "country": "GB",
+    "lat": 54.596666666,
+    "lon": -5.93,
+    "population": 345006
+  },
+  {
+    "id": 25282,
+    "name": "Da Nang",
+    "localName": "Đà Nẵng",
+    "country": "VN",
+    "lat": 16.069444444,
+    "lon": 108.209722222,
+    "population": 2819900
+  },
+  {
+    "id": 1829,
+    "name": "Kaliningrad",
+    "localName": "Калининград",
+    "country": "RU",
+    "lat": 54.716666666,
+    "lon": 20.5,
+    "population": 488690
+  },
+  {
+    "id": 36312,
+    "name": "Calgary",
+    "localName": "Calgary",
+    "country": "CA",
+    "lat": 51.05,
+    "lon": -114.066666666,
+    "population": 1306784
+  },
+  {
+    "id": 2090,
+    "name": "Nuremberg",
+    "localName": "Nürnberg",
+    "country": "DE",
+    "lat": 49.453888888,
+    "lon": 11.0775,
+    "population": 526091
+  },
+  {
+    "id": 1295,
+    "name": "Dortmund",
+    "localName": "Dortmund",
+    "country": "DE",
+    "lat": 51.513888888,
+    "lon": 7.465277777,
+    "population": 595471
+  },
+  {
+    "id": 588,
+    "name": "Katowice",
+    "localName": "Katowice",
+    "country": "PL",
+    "lat": 50.25,
+    "lon": 19.0,
+    "population": 278090
+  },
+  {
+    "id": 891,
+    "name": "Nizhny Novgorod",
+    "localName": "Нижний Новгород",
+    "country": "RU",
+    "lat": 56.326944444,
+    "lon": 44.0075,
+    "population": 1198245
+  },
+  {
+    "id": 83285,
+    "name": "Durrës",
+    "localName": "Durrës",
+    "country": "AL",
+    "lat": 41.313333333,
+    "lon": 19.445833333,
+    "population": 101728
+  },
+  {
+    "id": 1721,
+    "name": "Wiesbaden",
+    "localName": "Wiesbaden",
+    "country": "DE",
+    "lat": 50.0825,
+    "lon": 8.24,
+    "population": 285522
+  },
+  {
+    "id": 35381,
+    "name": "Colombo",
+    "localName": "කොළඹ",
+    "country": "LK",
+    "lat": 6.926666666,
+    "lon": 79.860555555,
+    "population": 647557
+  },
+  {
+    "id": 3919,
+    "name": "Gaborone",
+    "localName": "Gaborone",
+    "country": "BW",
+    "lat": -24.656944444,
+    "lon": 25.908611111,
+    "population": 235884
+  },
+  {
+    "id": 43070,
+    "name": "Donetsk",
+    "localName": "Донецьк",
+    "country": "UA",
+    "lat": 48.015833333,
+    "lon": 37.802777777,
+    "population": 901645
+  },
+  {
+    "id": 42053,
+    "name": "Isfahan",
+    "localName": "اصفهان",
+    "country": "IR",
+    "lat": 32.6525,
+    "lon": 51.675,
+    "population": 1961260
+  },
+  {
+    "id": 36947,
+    "name": "Salvador",
+    "localName": "Salvador",
+    "country": "BR",
+    "lat": -12.983055555,
+    "lon": -38.492777777,
+    "population": 2417678
+  },
+  {
+    "id": 40738,
+    "name": "Bursa",
+    "localName": "Bursa",
+    "country": "TR",
+    "lat": 40.191330555,
+    "lon": 29.080538888,
+    "population": 2901396
+  },
+  {
+    "id": 5332,
+    "name": "Saratov",
+    "localName": "Саратов",
+    "country": "RU",
+    "lat": 51.53,
+    "lon": 46.035,
+    "population": 838042
+  },
+  {
+    "id": 42800,
+    "name": "Belo Horizonte",
+    "localName": "Belo Horizonte",
+    "country": "BR",
+    "lat": -19.928055555,
+    "lon": -43.941944444,
+    "population": 2315560
+  },
+  {
+    "id": 5831,
+    "name": "Melilla",
+    "localName": "Melilla",
+    "country": "ES",
+    "lat": 35.2825,
+    "lon": -2.9475,
+    "population": 86780
+  },
+  {
+    "id": 1538,
+    "name": "Pune",
+    "localName": "पुणे",
+    "country": "IN",
+    "lat": 18.521111111,
+    "lon": 73.855277777,
+    "population": 6200000
+  },
+  {
+    "id": 17151,
+    "name": "Thessaloniki",
+    "localName": "Θεσσαλονίκη",
+    "country": "GR",
+    "lat": 40.640277777,
+    "lon": 22.935555555,
+    "population": 309617
+  },
+  {
+    "id": 6487,
+    "name": "Antalya",
+    "localName": "Antalya",
+    "country": "TR",
+    "lat": 36.90812,
+    "lon": 30.69556,
+    "population": 2426356
+  },
+  {
+    "id": 3768,
+    "name": "Yamoussoukro",
+    "localName": "Yamoussoukro",
+    "country": "CI",
+    "lat": 6.816111111,
+    "lon": -5.274166666,
+    "population": 340234
+  },
+  {
+    "id": 3001,
+    "name": "Paramaribo",
+    "localName": "Paramaribo",
+    "country": "SR",
+    "lat": 5.866666666,
+    "lon": -55.166666666,
+    "population": 223757
+  },
+  {
+    "id": 3604,
+    "name": "Djibouti",
+    "localName": "جيبوتي",
+    "country": "DJ",
+    "lat": 11.595,
+    "lon": 43.148055555,
+    "population": 603900
+  },
+  {
+    "id": 648,
+    "name": "Lille",
+    "localName": "Lille",
+    "country": "FR",
+    "lat": 50.631944444,
+    "lon": 3.0575,
+    "population": 238246
+  },
+  {
+    "id": 908,
+    "name": "Rostov-on-Don",
+    "localName": "Ростов-на-Дону",
+    "country": "RU",
+    "lat": 47.2225,
+    "lon": 39.71,
+    "population": 1143123
+  },
+  {
+    "id": 3799,
+    "name": "Porto-Novo",
+    "localName": "Porto-Novo",
+    "country": "BJ",
+    "lat": 6.483333333,
+    "lon": 2.616666666,
+    "population": 234168
+  },
+  {
+    "id": 3818,
+    "name": "Malabo",
+    "localName": "Malabo",
+    "country": "GQ",
+    "lat": 3.752063888,
+    "lon": 8.7737,
+    "population": 297000
+  },
+  {
+    "id": 2145,
+    "name": "Quebec City",
+    "localName": "Québec",
+    "country": "CA",
+    "lat": 46.816111,
+    "lon": -71.224167,
+    "population": 574482
+  },
+  {
+    "id": 48256,
+    "name": "Dnipro",
+    "localName": "Дніпро",
+    "country": "UA",
+    "lat": 48.4675,
+    "lon": 35.04,
+    "population": 968502
+  },
+  {
+    "id": 9270,
+    "name": "Thimphu",
+    "localName": "ཐིམ་ཕུ",
+    "country": "BT",
+    "lat": 27.47135,
+    "lon": 89.63367,
+    "population": 114551
+  },
+  {
+    "id": 42941,
+    "name": "Agra",
+    "localName": "आगरा",
+    "country": "IN",
+    "lat": 27.18,
+    "lon": 78.02,
+    "population": 1585705
+  },
+  {
+    "id": 5753,
+    "name": "Samarkand",
+    "localName": "Самарканд",
+    "country": "UZ",
+    "lat": 39.654722222,
+    "lon": 66.975833333,
+    "population": 546303
+  },
+  {
+    "id": 23337,
+    "name": "Salt Lake City",
+    "localName": "Salt Lake City",
+    "country": "US",
+    "lat": 40.75,
+    "lon": -111.883333333,
+    "population": 199723
+  },
+  {
+    "id": 3866,
+    "name": "Dodoma",
+    "localName": "Dodoma",
+    "country": "TZ",
+    "lat": -6.1835,
+    "lon": 35.746,
+    "population": 213636
+  },
+  {
+    "id": 1947,
+    "name": "Juba",
+    "localName": "Juba",
+    "country": "SS",
+    "lat": 4.853888888,
+    "lon": 31.5825,
+    "population": 500088
+  },
+  {
+    "id": 36526,
+    "name": "Port Moresby",
+    "localName": "Pot Mosbi",
+    "country": "PG",
+    "lat": -9.478888888,
+    "lon": 147.149444444,
+    "population": 317374
+  },
+  {
+    "id": 9310,
+    "name": "Dili",
+    "localName": "Dili",
+    "country": "TL",
+    "lat": -8.553611111,
+    "lon": 125.578333333,
+    "population": 222323
+  },
+  {
+    "id": 2907,
+    "name": "Sucre",
+    "localName": "Sucre",
+    "country": "BO",
+    "lat": -19.0475,
+    "lon": -65.26,
+    "population": 360544
+  },
+  {
+    "id": 12191,
+    "name": "Nantes",
+    "localName": "Nantes",
+    "country": "FR",
+    "lat": 47.217222222,
+    "lon": -1.553888888,
+    "population": 327734
+  },
+  {
+    "id": 1863,
+    "name": "Andorra la Vella",
+    "localName": "Andorra la Vella",
+    "country": "AD",
+    "lat": 42.507222222,
+    "lon": 1.522222222,
+    "population": 24042
+  },
+  {
+    "id": 3909,
+    "name": "Maseru",
+    "localName": "Maseru",
+    "country": "LS",
+    "lat": -29.31,
+    "lon": 27.48,
+    "population": 343541
+  },
+  {
+    "id": 25270,
+    "name": "Pristina",
+    "localName": "Приштина",
+    "country": "RS",
+    "lat": 42.666666666,
+    "lon": 21.166666666,
+    "population": 227466
+  },
+  {
+    "id": 13298,
+    "name": "Graz",
+    "localName": "Graz",
+    "country": "AT",
+    "lat": 47.070833333,
+    "lon": 15.438611111,
+    "population": 292630
+  },
+  {
+    "id": 7525,
+    "name": "Sevastopol",
+    "localName": "Севастополь",
+    "country": "RU",
+    "lat": 44.605,
+    "lon": 33.5225,
+    "population": 485386
+  },
+  {
+    "id": 34713,
+    "name": "Salzburg",
+    "localName": "Salzburg",
+    "country": "AT",
+    "lat": 47.8,
+    "lon": 13.045,
+    "population": 155021
+  },
+  {
+    "id": 894,
+    "name": "Samara",
+    "localName": "Самара",
+    "country": "RU",
+    "lat": 53.183333333,
+    "lon": 50.116666666,
+    "population": 1154223
+  },
+  {
+    "id": 3070,
+    "name": "San José",
+    "localName": "San José",
+    "country": "CR",
+    "lat": 9.932738888,
+    "lon": -84.079613888,
+    "population": 335007
+  },
+  {
+    "id": 2096,
+    "name": "Edmonton",
+    "localName": "Edmonton",
+    "country": "CA",
+    "lat": 53.533333333,
+    "lon": -113.5,
+    "population": 1010899
+  },
+  {
+    "id": 101625,
+    "name": "Marrakech",
+    "localName": "Mrrakc",
+    "country": "MA",
+    "lat": 31.62947,
+    "lon": -7.98108,
+    "population": 1002697
+  },
+  {
+    "id": 898,
+    "name": "Omsk",
+    "localName": "Омск",
+    "country": "RU",
+    "lat": 54.966666666,
+    "lon": 73.383333333,
+    "population": 1101367
+  },
+  {
+    "id": 11720,
+    "name": "Shenyang",
+    "localName": "沈阳",
+    "country": "CN",
+    "lat": 41.8025,
+    "lon": 123.428055555,
+    "population": 9070093
+  },
+  {
+    "id": 40236,
+    "name": "Manaus",
+    "localName": "Manaus",
+    "country": "BR",
+    "lat": -3.118888888,
+    "lon": -60.021666666,
+    "population": 2303732
+  },
+  {
+    "id": 6106,
+    "name": "Portland",
+    "localName": "Portland",
+    "country": "US",
+    "lat": 45.515,
+    "lon": -122.679166666,
+    "population": 652503
+  },
+  {
+    "id": 16568,
+    "name": "Jacksonville",
+    "localName": "Jacksonville",
+    "country": "US",
+    "lat": 30.316666666,
+    "lon": -81.65,
+    "population": 949611
+  },
+  {
+    "id": 2211,
+    "name": "Malmö",
+    "localName": "Malmö",
+    "country": "SE",
+    "lat": 55.583333333,
+    "lon": 13.0,
+    "population": 339316
+  },
+  {
+    "id": 14960,
+    "name": "Brno",
+    "localName": "Brno",
+    "country": "CZ",
+    "lat": 49.195277777,
+    "lon": 16.608333333,
+    "population": 402739
+  },
+  {
+    "id": 3110,
+    "name": "San Salvador",
+    "localName": "San Salvador",
+    "country": "SV",
+    "lat": 13.697597222,
+    "lon": -89.191155555,
+    "population": 330543
+  },
+  {
+    "id": 1342,
+    "name": "Pittsburgh",
+    "localName": "Pittsburgh",
+    "country": "US",
+    "lat": 40.441666666,
+    "lon": -80.0,
+    "population": 302971
+  },
+  {
+    "id": 3751,
+    "name": "Praia",
+    "localName": "Praia",
+    "country": "CV",
+    "lat": 14.917719444,
+    "lon": -23.509155555,
+    "population": 159050
+  },
+  {
+    "id": 48320,
+    "name": "Kobe",
+    "localName": "神戸市",
+    "country": "JP",
+    "lat": 34.690166666,
+    "lon": 135.195444444,
+    "population": 1521707
+  },
+  {
+    "id": 37836,
+    "name": "Milwaukee",
+    "localName": "Milwaukee",
+    "country": "US",
+    "lat": 43.05,
+    "lon": -87.95,
+    "population": 577222
+  },
+  {
+    "id": 23154,
+    "name": "Bristol",
+    "localName": "Bristle",
+    "country": "GB",
+    "lat": 51.453611111,
+    "lon": -2.5975,
+    "population": 472465
+  },
+  {
+    "id": 36091,
+    "name": "Minneapolis",
+    "localName": "Minneapolis",
+    "country": "US",
+    "lat": 44.981944444,
+    "lon": -93.269166666,
+    "population": 429954
+  },
+  {
+    "id": 393,
+    "name": "Szczecin",
+    "localName": "Szczecin",
+    "country": "PL",
+    "lat": 53.424722222,
+    "lon": 14.555277777,
+    "population": 387700
+  },
+  {
+    "id": 79980,
+    "name": "Varanasi",
+    "localName": "Varanasi",
+    "country": "IN",
+    "lat": 25.318888888,
+    "lon": 83.012777777,
+    "population": 1198491
+  },
+  {
+    "id": 21194,
+    "name": "Vũng Tàu",
+    "localName": "Vũng Tàu",
+    "country": "VN",
+    "lat": 10.404166666,
+    "lon": 107.141666666,
+    "population": 357124
+  },
+  {
+    "id": 268,
+    "name": "Poznań",
+    "localName": "Poznań",
+    "country": "PL",
+    "lat": 52.408333333,
+    "lon": 16.933611111,
+    "population": 546859
+  },
+  {
+    "id": 3519,
+    "name": "Bari",
+    "localName": "Bari",
+    "country": "IT",
+    "lat": 41.125277777,
+    "lon": 16.866666666,
+    "population": 315473
+  },
+  {
+    "id": 5869,
+    "name": "Lhasa",
+    "localName": "拉萨",
+    "country": "CN",
+    "lat": 29.6457567,
+    "lon": 91.1408186,
+    "population": 867891
+  },
+  {
+    "id": 43463,
+    "name": "Fortaleza",
+    "localName": "Fortaleza",
+    "country": "BR",
+    "lat": -3.7275,
+    "lon": -38.5275,
+    "population": 2578483
+  },
+  {
+    "id": 16563,
+    "name": "Memphis",
+    "localName": "Memphis",
+    "country": "US",
+    "lat": 35.146111111,
+    "lon": -90.051944444,
+    "population": 633104
+  },
+  {
+    "id": 915,
+    "name": "Perm",
+    "localName": "Пермь",
+    "country": "RU",
+    "lat": 58.013888888,
+    "lon": 56.248888888,
+    "population": 1027518
+  },
+  {
+    "id": 16959,
+    "name": "Ürümqi",
+    "localName": "Үрүмчи",
+    "country": "CN",
+    "lat": 43.8225,
+    "lon": 87.6125,
+    "population": 4054369
+  },
+  {
+    "id": 1720,
+    "name": "Mainz",
+    "localName": "Mainz",
+    "country": "DE",
+    "lat": 49.999444444,
+    "lon": 8.273611111,
+    "population": 222889
+  },
+  {
+    "id": 47916,
+    "name": "Lucknow",
+    "localName": "लखनऊ",
+    "country": "IN",
+    "lat": 26.847,
+    "lon": 80.947,
+    "population": 3382000
+  },
+  {
+    "id": 6441,
+    "name": "Montpellier",
+    "localName": "Montpelhièr",
+    "country": "FR",
+    "lat": 43.610919444,
+    "lon": 3.877230555,
+    "population": 310240
+  },
+  {
+    "id": 1711,
+    "name": "Potsdam",
+    "localName": "Potsdam",
+    "country": "DE",
+    "lat": 52.4,
+    "lon": 13.066666666,
+    "population": 187119
+  },
+  {
+    "id": 9347,
+    "name": "Malé",
+    "localName": "މާލެ",
+    "country": "MV",
+    "lat": 4.175,
+    "lon": 73.508333333,
+    "population": 133019
+  },
+  {
+    "id": 38545,
+    "name": "Adana",
+    "localName": "Adana",
+    "country": "TR",
+    "lat": 36.9863599,
+    "lon": 35.3252861,
+    "population": 1765981
+  },
+  {
+    "id": 26793,
+    "name": "Bergen",
+    "localName": "Bergen",
+    "country": "NO",
+    "lat": 60.3925,
+    "lon": 5.323333333,
+    "population": 291189
+  },
+  {
+    "id": 3929,
+    "name": "Port Louis",
+    "localName": "Port Louis",
+    "country": "MU",
+    "lat": -20.161944444,
+    "lon": 57.498888888,
+    "population": 149194
+  },
+  {
+    "id": 580,
+    "name": "Łódź",
+    "localName": "Łódź",
+    "country": "PL",
+    "lat": 51.75,
+    "lon": 19.466666666,
+    "population": 648711
+  },
+  {
+    "id": 48344,
+    "name": "Recife",
+    "localName": "Recife",
+    "country": "BR",
+    "lat": -8.053888888,
+    "lon": -34.880833333,
+    "population": 1488920
+  },
+  {
+    "id": 34804,
+    "name": "Albuquerque",
+    "localName": "La Villa de Alburquerque",
+    "country": "US",
+    "lat": 35.084444444,
+    "lon": -106.650277777,
+    "population": 564559
+  },
+  {
+    "id": 11462,
+    "name": "Surabaya",
+    "localName": "Surabaya",
+    "country": "ID",
+    "lat": -7.246283611,
+    "lon": 112.737767222,
+    "population": 3009286
+  },
+  {
+    "id": 1296,
+    "name": "Ghent",
+    "localName": "Gent",
+    "country": "BE",
+    "lat": 51.053611111,
+    "lon": 3.725277777,
+    "population": 272657
+  },
+  {
+    "id": 6022566,
+    "name": "Monte Águila",
+    "localName": "Monte Águila",
+    "country": "CL",
+    "lat": -37.0879,
+    "lon": -72.4385,
+    "population": 6574
+  },
+  {
+    "id": 38511,
+    "name": "Turku",
+    "localName": "Åbo",
+    "country": "FI",
+    "lat": 60.451666666,
+    "lon": 22.266944444,
+    "population": 209633
+  },
+  {
+    "id": 26600,
+    "name": "Fukuoka",
+    "localName": "福岡市",
+    "country": "JP",
+    "lat": 33.590138888,
+    "lon": 130.401722222,
+    "population": 1603043
+  },
+  {
+    "id": 78,
+    "name": "Basel",
+    "localName": "Basel",
+    "country": "CH",
+    "lat": 47.560555555,
+    "lon": 7.590555555,
+    "population": 176329
+  },
+  {
+    "id": 30974,
+    "name": "Rouen",
+    "localName": "Rouen",
+    "country": "FR",
+    "lat": 49.443055555,
+    "lon": 1.1025,
+    "population": 117662
+  },
+  {
+    "id": 39121,
+    "name": "Leeds",
+    "localName": "Leeds",
+    "country": "GB",
+    "lat": 53.7975,
+    "lon": -1.543611111,
+    "population": 536280
+  },
+  {
+    "id": 4115712,
+    "name": "Kaunas",
+    "localName": "Kaunas",
+    "country": "LT",
+    "lat": 54.9,
+    "lon": 23.933333333,
+    "population": 305120
+  },
+  {
+    "id": 20934,
+    "name": "Incheon",
+    "localName": "Incheon",
+    "country": "KR",
+    "lat": 37.463888888,
+    "lon": 126.648611111,
+    "population": 3049315
+  },
+  {
+    "id": 906,
+    "name": "Chelyabinsk",
+    "localName": "Челябинск",
+    "country": "RU",
+    "lat": 55.15,
+    "lon": 61.4,
+    "population": 1176770
+  },
+  {
+    "id": 40269,
+    "name": "Porto Alegre",
+    "localName": "Porto Alegre",
+    "country": "BR",
+    "lat": -30.032777777,
+    "lon": -51.23,
+    "population": 1388794
+  },
+  {
+    "id": 5468,
+    "name": "Durban",
+    "localName": "Durban",
+    "country": "ZA",
+    "lat": -29.858333333,
+    "lon": 31.025,
+    "population": 595061
+  },
+  {
+    "id": 10717,
+    "name": "Georgetown",
+    "localName": "Georgetown",
+    "country": "GY",
+    "lat": 6.805833333,
+    "lon": -58.150833333,
+    "population": 235017
+  },
+  {
+    "id": 2066,
+    "name": "Essen",
+    "localName": "Essen",
+    "country": "DE",
+    "lat": 51.450833333,
+    "lon": 7.013055555,
+    "population": 586608
+  },
+  {
+    "id": 5823,
+    "name": "Ceuta",
+    "localName": "Ceuta",
+    "country": "ES",
+    "lat": 35.886667,
+    "lon": -5.3,
+    "population": 83595
+  },
+  {
+    "id": 1017,
+    "name": "Aachen",
+    "localName": "Aachen",
+    "country": "DE",
+    "lat": 50.776207,
+    "lon": 6.083788,
+    "population": 252769
+  },
+  {
+    "id": 34217,
+    "name": "Oxford",
+    "localName": "Oxford",
+    "country": "GB",
+    "lat": 51.751944444,
+    "lon": -1.257777777,
+    "population": 147500
+  },
+  {
+    "id": 33405,
+    "name": "Little Rock",
+    "localName": "Little Rock, Arkansas",
+    "country": "US",
+    "lat": 34.744444444,
+    "lon": -92.288055555,
+    "population": 202591
+  },
+  {
+    "id": 16558,
+    "name": "Fort Worth",
+    "localName": "Fort Worth",
+    "country": "US",
+    "lat": 32.756388888,
+    "lon": -97.3325,
+    "population": 918915
+  },
+  {
+    "id": 29364,
+    "name": "Montgomery",
+    "localName": "Montgomery",
+    "country": "US",
+    "lat": 32.3675,
+    "lon": -86.3,
+    "population": 200603
+  },
+  {
+    "id": 37320,
+    "name": "Cleveland",
+    "localName": "Cleveland",
+    "country": "US",
+    "lat": 41.499166666,
+    "lon": -81.694722222,
+    "population": 372624
+  },
+  {
+    "id": 1729,
+    "name": "Erfurt",
+    "localName": "Erfurt",
+    "country": "DE",
+    "lat": 50.978055555,
+    "lon": 11.028888888,
+    "population": 215199
+  },
+  {
+    "id": 1707,
+    "name": "Kiel",
+    "localName": "Kiel",
+    "country": "DE",
+    "lat": 54.323333333,
+    "lon": 10.139444444,
+    "population": 248873
+  },
+  {
+    "id": 1209,
+    "name": "Bremen",
+    "localName": "Freie Hansestadt Bremen",
+    "country": "DE",
+    "lat": 53.133333333,
+    "lon": 8.733333333,
+    "population": 693204
+  },
+  {
+    "id": 37701,
+    "name": "Bloemfontein",
+    "localName": "Bloemfontein",
+    "country": "ZA",
+    "lat": -29.1,
+    "lon": 26.216666666,
+    "population": 256185
+  },
+  {
+    "id": 182852,
+    "name": "Kunming",
+    "localName": "昆明",
+    "country": "CN",
+    "lat": 25.043333333,
+    "lon": 102.706111111,
+    "population": 8460088
+  },
+  {
+    "id": 13375,
+    "name": "Pisa",
+    "localName": "Pisa",
+    "country": "IT",
+    "lat": 43.716666666,
+    "lon": 10.4,
+    "population": 88737
+  },
+  {
+    "id": 41087,
+    "name": "Raleigh",
+    "localName": "Raleigh",
+    "country": "US",
+    "lat": 35.78,
+    "lon": -78.64,
+    "population": 467665
+  },
+  {
+    "id": 1733,
+    "name": "Magdeburg",
+    "localName": "Magdeburg",
+    "country": "DE",
+    "lat": 52.1315889,
+    "lon": 11.6399609,
+    "population": 240114
+  },
+  {
+    "id": 196163,
+    "name": "Łobez",
+    "localName": "Łobez",
+    "country": "PL",
+    "lat": 53.639166666,
+    "lon": 15.621388888,
+    "population": 9792
+  },
+  {
+    "id": 81788,
+    "name": "Giza",
+    "localName": "مدينة الجيزة",
+    "country": "EG",
+    "lat": 29.987,
+    "lon": 31.2118,
+    "population": 4458135
+  },
+  {
+    "id": 126148,
+    "name": "Tangier",
+    "localName": "طنجة",
+    "country": "MA",
+    "lat": 35.776666666,
+    "lon": -5.803888888,
+    "population": 1275428
+  },
+  {
+    "id": 2028,
+    "name": "Verona",
+    "localName": "Verona",
+    "country": "IT",
+    "lat": 45.438611111,
+    "lon": 10.992777777,
+    "population": 255588
+  },
+  {
+    "id": 39709,
+    "name": "Des Moines",
+    "localName": "Des Moines",
+    "country": "US",
+    "lat": 41.590833333,
+    "lon": -93.620833333,
+    "population": 214133
+  },
+  {
+    "id": 9279,
+    "name": "Bandar Seri Begawan",
+    "localName": "Bandar Seri Begawan",
+    "country": "BN",
+    "lat": 4.916666666,
+    "lon": 114.916666666,
+    "population": 50000
+  },
+  {
+    "id": 170322,
+    "name": "Qingdao",
+    "localName": "青岛",
+    "country": "CN",
+    "lat": 36.116666666,
+    "lon": 120.4,
+    "population": 10071722
+  },
+  {
+    "id": 41329,
+    "name": "Linz",
+    "localName": "Linz",
+    "country": "AT",
+    "lat": 48.305833333,
+    "lon": 14.286388888,
+    "population": 211944
+  },
+  {
+    "id": 2467,
+    "name": "Nassau",
+    "localName": "Nassau",
+    "country": "BS",
+    "lat": 25.078055555,
+    "lon": -77.338611111,
+    "population": 227940
+  },
+  {
+    "id": 16565,
+    "name": "Charlotte",
+    "localName": "Charlotte",
+    "country": "US",
+    "lat": 35.226944444,
+    "lon": -80.843333333,
+    "population": 874579
+  },
+  {
+    "id": 39450,
+    "name": "Anchorage",
+    "localName": "Dgheyay Kaq'",
+    "country": "US",
+    "lat": 61.216666666,
+    "lon": -149.893611111,
+    "population": 291247
+  },
+  {
+    "id": 1735,
+    "name": "Innsbruck",
+    "localName": "Innsbruck",
+    "country": "AT",
+    "lat": 47.268333333,
+    "lon": 11.393333333,
+    "population": 132499
+  },
+  {
+    "id": 1903,
+    "name": "Catania",
+    "localName": "Catania",
+    "country": "IT",
+    "lat": 37.502669444,
+    "lon": 15.087269444,
+    "population": 311584
+  },
+  {
+    "id": 35775,
+    "name": "Boise",
+    "localName": "Boise",
+    "country": "US",
+    "lat": 43.613611111,
+    "lon": -116.237777777,
+    "population": 235684
+  },
+  {
+    "id": 162442,
+    "name": "Prayagraj",
+    "localName": "प्रयागराज",
+    "country": "IN",
+    "lat": 25.45,
+    "lon": 81.85,
+    "population": 5954391
+  },
+  {
+    "id": 2135,
+    "name": "Winnipeg",
+    "localName": "Winnipeg",
+    "country": "CA",
+    "lat": 49.895555555,
+    "lon": -97.138611111,
+    "population": 749607
+  },
+  {
+    "id": 5776,
+    "name": "Bethlehem",
+    "localName": "بيت لحم",
+    "country": "PS",
+    "lat": 31.704444444,
+    "lon": 35.206111111,
+    "population": 36000
+  },
+  {
+    "id": 38022,
+    "name": "St. Louis",
+    "localName": "St. Louis",
+    "country": "US",
+    "lat": 38.626388888,
+    "lon": -90.199444444,
+    "population": 301578
+  },
+  {
+    "id": 2966,
+    "name": "Heidelberg",
+    "localName": "Heidelberg",
+    "country": "DE",
+    "lat": 49.412222222,
+    "lon": 8.71,
+    "population": 162960
+  },
+  {
+    "id": 80985,
+    "name": "Fez",
+    "localName": "فاس",
+    "country": "MA",
+    "lat": 34.043333333,
+    "lon": -5.003333333,
+    "population": 1167842
+  },
+  {
+    "id": 37043,
+    "name": "Tallahassee",
+    "localName": "Tallahassee",
+    "country": "US",
+    "lat": 30.438333333,
+    "lon": -84.280555555,
+    "population": 196169
+  },
+  {
+    "id": 6576,
+    "name": "Irkutsk",
+    "localName": "Иркутск",
+    "country": "RU",
+    "lat": 52.289166666,
+    "lon": 104.28,
+    "population": 605708
+  },
+  {
+    "id": 350,
+    "name": "Cambridge",
+    "localName": "Cambridge",
+    "country": "GB",
+    "lat": 52.208055555,
+    "lon": 0.1225,
+    "population": 123867
+  },
+  {
+    "id": 13666,
+    "name": "Messina",
+    "localName": "Messina",
+    "country": "IT",
+    "lat": 38.193611111,
+    "lon": 15.554166666,
+    "population": 218786
+  },
+  {
+    "id": 28848,
+    "name": "Saint Paul",
+    "localName": "Saint Paul",
+    "country": "US",
+    "lat": 44.944166666,
+    "lon": -93.093611111,
+    "population": 311527
+  },
+  {
+    "id": 43196,
+    "name": "Cincinnati",
+    "localName": "Cincinnati",
+    "country": "US",
+    "lat": 39.1,
+    "lon": -84.5125,
+    "population": 309317
+  },
+  {
+    "id": 93338,
+    "name": "Gaziantep",
+    "localName": "Gaziantep",
+    "country": "TR",
+    "lat": 37.062777777,
+    "lon": 37.379166666,
+    "population": 1680723
+  },
+  {
+    "id": 647,
+    "name": "Rennes",
+    "localName": "Rennes",
+    "country": "FR",
+    "lat": 48.114166666,
+    "lon": -1.680833333,
+    "population": 230890
+  },
+  {
+    "id": 80989,
+    "name": "Bhopal",
+    "localName": "Bhopal",
+    "country": "IN",
+    "lat": 23.25,
+    "lon": 77.416666666,
+    "population": 1798218
+  },
+  {
+    "id": 83317,
+    "name": "Mosul",
+    "localName": "الموصل",
+    "country": "IQ",
+    "lat": 36.366666666,
+    "lon": 43.116666666,
+    "population": 1792000
+  },
+  {
+    "id": 92161,
+    "name": "Changchun",
+    "localName": "长春市",
+    "country": "CN",
+    "lat": 43.88,
+    "lon": 125.322777777,
+    "population": 9066906
+  },
+  {
+    "id": 36433,
+    "name": "Porto",
+    "localName": "Porto",
+    "country": "PT",
+    "lat": 41.15,
+    "lon": -8.610833333,
+    "population": 231800
+  },
+  {
+    "id": 17042,
+    "name": "Oakland",
+    "localName": "Oakland",
+    "country": "US",
+    "lat": 37.8,
+    "lon": -122.25,
+    "population": 440646
+  },
+  {
+    "id": 1289,
+    "name": "Grenoble",
+    "localName": "Grenoble",
+    "country": "FR",
+    "lat": 45.186944444,
+    "lon": 5.726388888,
+    "population": 156140
+  },
+  {
+    "id": 43509,
+    "name": "Guayaquil",
+    "localName": "Santiago de Guayaquil",
+    "country": "EC",
+    "lat": -2.19,
+    "lon": -79.8875,
+    "population": 2650288
+  },
+  {
+    "id": 4629,
+    "name": "Surat",
+    "localName": "Surat",
+    "country": "IN",
+    "lat": 21.205,
+    "lon": 72.84,
+    "population": 5935000
+  },
+  {
+    "id": 157835,
+    "name": "Zaporizhzhia",
+    "localName": "Запоріжжя",
+    "country": "UA",
+    "lat": 47.85,
+    "lon": 35.1175,
+    "population": 710052
+  },
+  {
+    "id": 3927,
+    "name": "Astrakhan",
+    "localName": "Астрахань",
+    "country": "RU",
+    "lat": 46.35,
+    "lon": 48.035,
+    "population": 465990
+  },
+  {
+    "id": 919,
+    "name": "Krasnoyarsk",
+    "localName": "Красноярск",
+    "country": "RU",
+    "lat": 56.008888888,
+    "lon": 92.871944444,
+    "population": 1092851
+  },
+  {
+    "id": 79857,
+    "name": "Konya",
+    "localName": "Konya",
+    "country": "TR",
+    "lat": 37.872769444,
+    "lon": 32.492138888,
+    "population": 2232374
+  },
+  {
+    "id": 51103,
+    "name": "Cali",
+    "localName": "Cali",
+    "country": "CO",
+    "lat": 3.44,
+    "lon": -76.519722222,
+    "population": 2471474
+  },
+  {
+    "id": 37133,
+    "name": "Mariupol",
+    "localName": "Маріуполь",
+    "country": "UA",
+    "lat": 47.130555555,
+    "lon": 37.563888888,
+    "population": 250000
+  },
+  {
+    "id": 3726,
+    "name": "Banjul",
+    "localName": "Banjul",
+    "country": "GM",
+    "lat": 13.453055555,
+    "lon": -16.5775,
+    "population": 31356
+  },
+  {
+    "id": 174091,
+    "name": "Changsha",
+    "localName": "Changsha",
+    "country": "CN",
+    "lat": 28.19874,
+    "lon": 112.97087,
+    "population": 10047914
+  },
+  {
+    "id": 41621,
+    "name": "Haifa",
+    "localName": "חֵיפָה",
+    "country": "IL",
+    "lat": 32.819166666,
+    "lon": 34.999166666,
+    "population": 282831
+  },
+  {
+    "id": 49233,
+    "name": "Orlando",
+    "localName": "Orlando",
+    "country": "US",
+    "lat": 28.533611111,
+    "lon": -81.386666666,
+    "population": 334854
+  },
+  {
+    "id": 124739,
+    "name": "Tijuana",
+    "localName": "Tijuana",
+    "country": "MX",
+    "lat": 32.536447,
+    "lon": -117.037155,
+    "population": 1964788
+  },
+  {
+    "id": 10389,
+    "name": "Bandung",
+    "localName": "Bandung",
+    "country": "ID",
+    "lat": -6.921845833,
+    "lon": 107.607083055,
+    "population": 2875673
+  },
+  {
+    "id": 807,
+    "name": "Lausanne",
+    "localName": "Lausanne",
+    "country": "CH",
+    "lat": 46.533333333,
+    "lon": 6.633333333,
+    "population": 144873
+  },
+  {
+    "id": 47492,
+    "name": "Gaza City",
+    "localName": "غزة",
+    "country": "PS",
+    "lat": 31.5075,
+    "lon": 34.459722222,
+    "population": 590481
+  },
+  {
+    "id": 81033,
+    "name": "Monterrey",
+    "localName": "Monterrey",
+    "country": "MX",
+    "lat": 25.684444444,
+    "lon": -100.318055555,
+    "population": 1142952
+  },
+  {
+    "id": 1040,
+    "name": "Karlsruhe",
+    "localName": "Karlsruhe",
+    "country": "DE",
+    "lat": 49.016666666,
+    "lon": 8.4,
+    "population": 309964
+  },
+  {
+    "id": 36168,
+    "name": "Bridgetown",
+    "localName": "Bridgetown",
+    "country": "BB",
+    "lat": 13.0975,
+    "lon": -59.616666666,
+    "population": 98511
+  },
+  {
+    "id": 2100,
+    "name": "Duisburg",
+    "localName": "Duisburg",
+    "country": "DE",
+    "lat": 51.432222222,
+    "lon": 6.761111111,
+    "population": 503707
+  },
+  {
+    "id": 25286,
+    "name": "Uppsala",
+    "localName": "Uppsala",
+    "country": "SE",
+    "lat": 59.849760548,
+    "lon": 17.638946597,
+    "population": 174982
+  },
+  {
+    "id": 28218,
+    "name": "Baton Rouge",
+    "localName": "Bâton-Rouge",
+    "country": "US",
+    "lat": 30.4475,
+    "lon": -91.178611111,
+    "population": 227470
+  },
+  {
+    "id": 170247,
+    "name": "Jinan",
+    "localName": "Jinan",
+    "country": "CN",
+    "lat": 36.666666666,
+    "lon": 116.983333333,
+    "population": 9202432
+  },
+  {
+    "id": 46747,
+    "name": "Sendai",
+    "localName": "仙台市",
+    "country": "JP",
+    "lat": 38.268222222,
+    "lon": 140.869416666,
+    "population": 1061177
+  },
+  {
+    "id": 43199,
+    "name": "Omaha",
+    "localName": "Omaha",
+    "country": "US",
+    "lat": 41.258611111,
+    "lon": -95.9375,
+    "population": 486051
+  },
+  {
+    "id": 45301,
+    "name": "Trabzon",
+    "localName": "Trabzon",
+    "country": "TR",
+    "lat": 41.005,
+    "lon": 39.7225,
+    "population": 824352
+  },
+  {
+    "id": 2843,
+    "name": "Lübeck",
+    "localName": "Lübeck",
+    "country": "DE",
+    "lat": 53.869722222,
+    "lon": 10.686388888,
+    "population": 219044
+  },
+  {
+    "id": 66568,
+    "name": "Kanpur",
+    "localName": "कानपुर",
+    "country": "IN",
+    "lat": 26.4725,
+    "lon": 80.331111111,
+    "population": 4581268
+  },
+  {
+    "id": 68481,
+    "name": "Fuzhou",
+    "localName": "Fuzhou",
+    "country": "CN",
+    "lat": 26.076944444,
+    "lon": 119.291666666,
+    "population": 8291268
+  },
+  {
+    "id": 48338,
+    "name": "Kayseri",
+    "localName": "Kayseri",
+    "country": "TR",
+    "lat": 38.7225,
+    "lon": 35.4875,
+    "population": 1389680
+  },
+  {
+    "id": 33486,
+    "name": "Hartford",
+    "localName": "Hartford",
+    "country": "US",
+    "lat": 41.763333333,
+    "lon": -72.685,
+    "population": 121054
+  },
+  {
+    "id": 225641,
+    "name": "Mombasa",
+    "localName": "Mombasa",
+    "country": "KE",
+    "lat": -4.05,
+    "lon": 39.666666666,
+    "population": 1208333
+  },
+  {
+    "id": 16562,
+    "name": "El Paso",
+    "localName": "El Paso",
+    "country": "US",
+    "lat": 31.759166666,
+    "lon": -106.488611111,
+    "population": 678815
+  },
+  {
+    "id": 43433,
+    "name": "Chandigarh",
+    "localName": "ਚੰਡੀਗੜ",
+    "country": "IN",
+    "lat": 30.736388888,
+    "lon": 76.788333333,
+    "population": 1055450
+  },
+  {
+    "id": 42622,
+    "name": "Suzhou",
+    "localName": "Suzhou",
+    "country": "CN",
+    "lat": 31.3,
+    "lon": 120.619444444,
+    "population": 12748262
+  },
+  {
+    "id": 3426,
+    "name": "Voronezh",
+    "localName": "Воронеж",
+    "country": "RU",
+    "lat": 51.671666666,
+    "lon": 39.210555555,
+    "population": 1041722
+  },
+  {
+    "id": 546,
+    "name": "Trieste",
+    "localName": "Trieste",
+    "country": "IT",
+    "lat": 45.650277777,
+    "lon": 13.770277777,
+    "population": 198417
+  },
+  {
+    "id": 80484,
+    "name": "Patna",
+    "localName": "Pataliputra",
+    "country": "IN",
+    "lat": 25.61,
+    "lon": 85.141388888,
+    "population": 1684222
+  },
+  {
+    "id": 79990,
+    "name": "Christchurch",
+    "localName": "Christchurch",
+    "country": "NZ",
+    "lat": -43.531111111,
+    "lon": 172.636111111,
+    "population": 383200
+  },
+  {
+    "id": 134279,
+    "name": "Luhansk",
+    "localName": "Луганськ",
+    "country": "UA",
+    "lat": 48.5717084,
+    "lon": 39.2973153,
+    "population": 417990
+  },
+  {
+    "id": 74881,
+    "name": "Dalian",
+    "localName": "大连",
+    "country": "CN",
+    "lat": 38.9,
+    "lon": 121.6,
+    "population": 7450785
+  },
+  {
+    "id": 43421,
+    "name": "Richmond",
+    "localName": "Richmond",
+    "country": "US",
+    "lat": 37.540833333,
+    "lon": -77.436666666,
+    "population": 226610
+  },
+  {
+    "id": 617,
+    "name": "Padua",
+    "localName": "Padua",
+    "country": "IT",
+    "lat": 45.407777777,
+    "lon": 11.873333333,
+    "population": 206496
+  },
+  {
+    "id": 18575,
+    "name": "Tucson",
+    "localName": "Tucson",
+    "country": "US",
+    "lat": 32.221666666,
+    "lon": -110.926388888,
+    "population": 542629
+  },
+  {
+    "id": 2119,
+    "name": "Mannheim",
+    "localName": "Mannheim",
+    "country": "DE",
+    "lat": 49.487777777,
+    "lon": 8.466111111,
+    "population": 316877
+  },
+  {
+    "id": 49255,
+    "name": "Tampa",
+    "localName": "Tampa",
+    "country": "US",
+    "lat": 27.9475,
+    "lon": -82.458611111,
+    "population": 384959
+  },
+  {
+    "id": 18383,
+    "name": "Providence",
+    "localName": "Providence",
+    "country": "US",
+    "lat": 41.82399,
+    "lon": -71.41283,
+    "population": 190934
+  },
+  {
+    "id": 4454,
+    "name": "Khabarovsk",
+    "localName": "Хабаровск",
+    "country": "RU",
+    "lat": 48.483333333,
+    "lon": 135.066666666,
+    "population": 615600
+  },
+  {
+    "id": 3901,
+    "name": "Moroni",
+    "localName": "Moroni",
+    "country": "KM",
+    "lat": -11.703611111,
+    "lon": 43.253611111,
+    "population": 85400
+  },
+  {
+    "id": 1724,
+    "name": "Saarbrücken",
+    "localName": "Saarbrücken",
+    "country": "DE",
+    "lat": 49.233333333,
+    "lon": 7.0,
+    "population": 183509
+  },
+  {
+    "id": 28260,
+    "name": "Lincoln",
+    "localName": "Lincoln",
+    "country": "US",
+    "lat": 40.809166666,
+    "lon": -96.678055555,
+    "population": 291082
+  },
+  {
+    "id": 1844,
+    "name": "Vaduz",
+    "localName": "Vaduz",
+    "country": "LI",
+    "lat": 47.140555555,
+    "lon": 9.522222222,
+    "population": 5668
+  },
+  {
+    "id": 42448,
+    "name": "Sheffield",
+    "localName": "Sheffield",
+    "country": "GB",
+    "lat": 53.380833333,
+    "lon": -1.470277777,
+    "population": 518090
+  },
+  {
+    "id": 43788,
+    "name": "Madison",
+    "localName": "Madison",
+    "country": "US",
+    "lat": 43.074722222,
+    "lon": -89.384166666,
+    "population": 269840
+  },
+  {
+    "id": 5196,
+    "name": "Grozny",
+    "localName": "Грозный",
+    "country": "RU",
+    "lat": 43.3125,
+    "lon": 45.698611111,
+    "population": 291687
+  },
+  {
+    "id": 40191,
+    "name": "Hobart",
+    "localName": "Hobart",
+    "country": "AU",
+    "lat": -42.883333333,
+    "lon": 147.316666666,
+    "population": 197451
+  },
+  {
+    "id": 3904,
+    "name": "Mbabane",
+    "localName": "Mbabane",
+    "country": "SZ",
+    "lat": -26.316666666,
+    "lon": 31.133333333,
+    "population": 76218
+  },
+  {
+    "id": 2337,
+    "name": "Smolensk",
+    "localName": "Смоленск",
+    "country": "RU",
+    "lat": 54.782777777,
+    "lon": 32.045277777,
+    "population": 310460
+  },
+  {
+    "id": 5764,
+    "name": "Bukhara",
+    "localName": "Buxoro",
+    "country": "UZ",
+    "lat": 39.774722222,
+    "lon": 64.428611111,
+    "population": 280187
+  },
+  {
+    "id": 41819,
+    "name": "Kansas City",
+    "localName": "Kansas City",
+    "country": "US",
+    "lat": 39.05,
+    "lon": -94.583333333,
+    "population": 508090
+  },
+  {
+    "id": 2423,
+    "name": "Yaroslavl",
+    "localName": "Ярославль",
+    "country": "RU",
+    "lat": 57.626388888,
+    "lon": 39.893333333,
+    "population": 563717
+  },
+  {
+    "id": 28198,
+    "name": "Jackson",
+    "localName": "Jackson",
+    "country": "US",
+    "lat": 32.298888888,
+    "lon": -90.184722222,
+    "population": 153701
+  },
+  {
+    "id": 2742,
+    "name": "Münster",
+    "localName": "Münster",
+    "country": "DE",
+    "lat": 51.9625,
+    "lon": 7.625555555,
+    "population": 322904
+  },
+  {
+    "id": 25319,
+    "name": "Aarhus",
+    "localName": "Aarhus",
+    "country": "DK",
+    "lat": 56.156388888,
+    "lon": 10.209722222,
+    "population": 290598
+  },
+  {
+    "id": 43301,
+    "name": "Fresno",
+    "localName": "Fresno",
+    "country": "US",
+    "lat": 36.781666666,
+    "lon": -119.792222222,
+    "population": 542107
+  },
+  {
+    "id": 28515,
+    "name": "Springfield",
+    "localName": "Springfield",
+    "country": "US",
+    "lat": 39.7975,
+    "lon": -89.645,
+    "population": 114394
+  },
+  {
+    "id": 7003,
+    "name": "Dijon",
+    "localName": "Dijon",
+    "country": "FR",
+    "lat": 47.323055555,
+    "lon": 5.041944444,
+    "population": 161830
+  },
+  {
+    "id": 5168,
+    "name": "Makhachkala",
+    "localName": "Махачкала",
+    "country": "RU",
+    "lat": 42.9825,
+    "lon": 47.505,
+    "population": 662660
+  },
+  {
+    "id": 52535,
+    "name": "Rosario",
+    "localName": "Rosario",
+    "country": "AR",
+    "lat": -32.9575,
+    "lon": -60.639444444,
+    "population": 1193605
+  },
+  {
+    "id": 657461,
+    "name": "Cartagena",
+    "localName": "Cartagena de Indias",
+    "country": "CO",
+    "lat": 10.423611111,
+    "lon": -75.525277777,
+    "population": 914552
+  },
+  {
+    "id": 48403,
+    "name": "Amritsar",
+    "localName": "अमृतसर",
+    "country": "IN",
+    "lat": 31.626917,
+    "lon": 74.87704,
+    "population": 1159227
+  },
+  {
+    "id": 19566,
+    "name": "Simferopol",
+    "localName": "Сімферополь",
+    "country": "RU",
+    "lat": 44.948376,
+    "lon": 34.100039,
+    "population": 335009
+  },
+  {
+    "id": 20927,
+    "name": "Daegu",
+    "localName": "대구광역시",
+    "country": "KR",
+    "lat": 35.871666666,
+    "lon": 128.601666666,
+    "population": 2444412
+  },
+  {
+    "id": 38807,
+    "name": "Suva",
+    "localName": "Suva",
+    "country": "FJ",
+    "lat": -18.133333333,
+    "lon": 178.433333333,
+    "population": 88271
+  },
+  {
+    "id": 23800,
+    "name": "Valletta",
+    "localName": "Belt Valletta",
+    "country": "MT",
+    "lat": 35.897777777,
+    "lon": 14.5125,
+    "population": 6444
+  },
+  {
+    "id": 6610,
+    "name": "Yakutsk",
+    "localName": "Якутск",
+    "country": "RU",
+    "lat": 62.027222222,
+    "lon": 129.731944444,
+    "population": 311760
+  },
+  {
+    "id": 37333,
+    "name": "Lublin",
+    "localName": "Lublin",
+    "country": "PL",
+    "lat": 51.25,
+    "lon": 22.566666666,
+    "population": 334681
+  },
+  {
+    "id": 41057,
+    "name": "Topeka",
+    "localName": "Topeka",
+    "country": "US",
+    "lat": 39.04833,
+    "lon": -95.67804,
+    "population": 126587
+  },
+  {
+    "id": 2833,
+    "name": "Freiburg im Breisgau",
+    "localName": "Freiburg im Breisgau",
+    "country": "DE",
+    "lat": 47.995,
+    "lon": 7.85,
+    "population": 237244
+  },
+  {
+    "id": 38555,
+    "name": "Santa Fe",
+    "localName": "Santa Fe",
+    "country": "US",
+    "lat": 35.666666666,
+    "lon": -105.966666666,
+    "population": 87505
+  },
+  {
+    "id": 5972,
+    "name": "Medan",
+    "localName": "Medan",
+    "country": "ID",
+    "lat": 3.589444444,
+    "lon": 98.673888888,
+    "population": 2109330
+  },
+  {
+    "id": 29445,
+    "name": "Juneau",
+    "localName": "Dzánti K'ihéeni",
+    "country": "US",
+    "lat": 58.30194,
+    "lon": -134.41972,
+    "population": 32255
+  },
+  {
+    "id": 42462,
+    "name": "York",
+    "localName": "Jórvek",
+    "country": "GB",
+    "lat": 53.95,
+    "lon": -1.083333333,
+    "population": 208400
+  },
+  {
+    "id": 3932,
+    "name": "São Tomé",
+    "localName": "São Tomé",
+    "country": "ST",
+    "lat": 0.3375,
+    "lon": 6.728333333,
+    "population": 65468
+  },
+  {
+    "id": 36405,
+    "name": "Aberdeen",
+    "localName": "Aberdeen",
+    "country": "GB",
+    "lat": 57.15,
+    "lon": -2.1,
+    "population": 200680
+  },
+  {
+    "id": 12829733,
+    "name": "Belém",
+    "localName": "Mairi",
+    "country": "BR",
+    "lat": -1.455833333,
+    "lon": -48.503888888,
+    "population": 1303403
+  },
+  {
+    "id": 3992,
+    "name": "Liège",
+    "localName": "Liège",
+    "country": "BE",
+    "lat": 50.639722222,
+    "lon": 5.570555555,
+    "population": 195278
+  },
+  {
+    "id": 100188,
+    "name": "Cluj-Napoca",
+    "localName": "Kolozsvár",
+    "country": "RO",
+    "lat": 46.76891,
+    "lon": 23.59066,
+    "population": 286598
+  },
+  {
+    "id": 8826,
+    "name": "Palma",
+    "localName": "Palma",
+    "country": "ES",
+    "lat": 39.566666666,
+    "lon": 2.649722222,
+    "population": 434786
+  },
+  {
+    "id": 3612,
+    "name": "Antofagasta",
+    "localName": "Antofagasta",
+    "country": "CL",
+    "lat": -23.646388888,
+    "lon": -70.398055555,
+    "population": 348517
+  },
+  {
+    "id": 185684,
+    "name": "Hefei",
+    "localName": "合肥",
+    "country": "CN",
+    "lat": 31.86389,
+    "lon": 117.28083,
+    "population": 9369881
+  },
+  {
+    "id": 11568,
+    "name": "Darwin",
+    "localName": "Darwin",
+    "country": "AU",
+    "lat": -12.438055555,
+    "lon": 130.841111111,
+    "population": 139902
+  },
+  {
+    "id": 2749,
+    "name": "Augsburg",
+    "localName": "Augsburg",
+    "country": "DE",
+    "lat": 48.368888888,
+    "lon": 10.897777777,
+    "population": 303150
+  },
+  {
+    "id": 2235,
+    "name": "Veliky Novgorod",
+    "localName": "Великий Новгород",
+    "country": "RU",
+    "lat": 58.52099,
+    "lon": 31.27579,
+    "population": 222669
+  },
+  {
+    "id": 131818,
+    "name": "Oran",
+    "localName": "وهران",
+    "country": "DZ",
+    "lat": 35.696944444,
+    "lon": -0.633055555,
+    "population": 803329
+  },
+  {
+    "id": 1113311,
+    "name": "Peshawar",
+    "localName": "پشور",
+    "country": "PK",
+    "lat": 34.014444444,
+    "lon": 71.5675,
+    "population": 1970042
+  },
+  {
+    "id": 24861,
+    "name": "Albany",
+    "localName": "Albany",
+    "country": "US",
+    "lat": 42.65,
+    "lon": -73.766666666,
+    "population": 99224
+  },
+  {
+    "id": 181557,
+    "name": "Kaohsiung",
+    "localName": "高雄市",
+    "country": "TW",
+    "lat": 22.615,
+    "lon": 120.2975,
+    "population": 2733964
+  },
+  {
+    "id": 25804,
+    "name": "Trondheim",
+    "localName": "Trondheim",
+    "country": "NO",
+    "lat": 63.44,
+    "lon": 10.4,
+    "population": 198777
+  },
+  {
+    "id": 164234,
+    "name": "Kawasaki",
+    "localName": "川崎市",
+    "country": "JP",
+    "lat": 35.530888888,
+    "lon": 139.703,
+    "population": 1539522
+  },
+  {
+    "id": 6506,
+    "name": "Varna",
+    "localName": "Варна",
+    "country": "BG",
+    "lat": 43.211375,
+    "lon": 27.91108,
+    "population": 322683
+  },
+  {
+    "id": 41262,
+    "name": "Nottingham",
+    "localName": "Nottingham",
+    "country": "GB",
+    "lat": 52.955,
+    "lon": -1.149166666,
+    "population": 289301
+  },
+  {
+    "id": 131694,
+    "name": "Aden",
+    "localName": "عَدَن",
+    "country": "YE",
+    "lat": 12.8,
+    "lon": 45.033333333,
+    "population": 1154410
+  },
+  {
+    "id": 776965,
+    "name": "Klaipėda",
+    "localName": "Klaipėda",
+    "country": "LT",
+    "lat": 55.7125,
+    "lon": 21.135,
+    "population": 158420
+  },
+  {
+    "id": 628,
+    "name": "Bergamo",
+    "localName": "Bergamo",
+    "country": "IT",
+    "lat": 45.695,
+    "lon": 9.67,
+    "population": 119534
+  },
+  {
+    "id": 43595,
+    "name": "Cotonou",
+    "localName": "Kútɔ̀nú",
+    "country": "BJ",
+    "lat": 6.366666666,
+    "lon": 2.416666666,
+    "population": 780000
+  },
+  {
+    "id": 37776,
+    "name": "Besançon",
+    "localName": "Besançon",
+    "country": "FR",
+    "lat": 47.242222222,
+    "lon": 6.021388888,
+    "population": 118489
+  },
+  {
+    "id": 49258,
+    "name": "Colorado Springs",
+    "localName": "Colorado Springs",
+    "country": "US",
+    "lat": 38.863333333,
+    "lon": -104.791944444,
+    "population": 478961
+  },
+  {
+    "id": 40435,
+    "name": "Buffalo",
+    "localName": "Buffalo",
+    "country": "US",
+    "lat": 42.886388888,
+    "lon": -78.878055555,
+    "population": 278349
+  },
+  {
+    "id": 5684,
+    "name": "Babylon",
+    "localName": "Babili(m)",
+    "country": "IQ",
+    "lat": 32.5425,
+    "lon": 44.421111111,
+    "population": 150000
+  },
+  {
+    "id": 38453,
+    "name": "Columbia",
+    "localName": "Columbia",
+    "country": "US",
+    "lat": 34.000555555,
+    "lon": -81.044166666,
+    "population": 136632
+  },
+  {
+    "id": 459,
+    "name": "Plovdiv",
+    "localName": "Пловдив",
+    "country": "BG",
+    "lat": 42.142086,
+    "lon": 24.741454,
+    "population": 333994
+  },
+  {
+    "id": 132830,
+    "name": "Douala",
+    "localName": "Douala",
+    "country": "CM",
+    "lat": 4.05,
+    "lon": 9.7,
+    "population": 2768436
+  },
+  {
+    "id": 2814,
+    "name": "Halle (Saale)",
+    "localName": "Halle (Saale)",
+    "country": "DE",
+    "lat": 51.482777777,
+    "lon": 11.969722222,
+    "population": 242172
+  },
+  {
+    "id": 3437,
+    "name": "Perugia",
+    "localName": "Perugia",
+    "country": "IT",
+    "lat": 43.11191816,
+    "lon": 12.38854847,
+    "population": 161748
+  },
+  {
+    "id": 159610,
+    "name": "Vlorë",
+    "localName": "Vlorë",
+    "country": "AL",
+    "lat": 40.45,
+    "lon": 19.483333333,
+    "population": 66320
+  },
+  {
+    "id": 44210,
+    "name": "Córdoba",
+    "localName": "Córdoba",
+    "country": "AR",
+    "lat": -31.416666666,
+    "lon": -64.183333333,
+    "population": 1505250
+  },
+  {
+    "id": 13364,
+    "name": "Ravenna",
+    "localName": "Ravenna",
+    "country": "IT",
+    "lat": 44.416111111,
+    "lon": 12.201666666,
+    "population": 155751
+  },
+  {
+    "id": 13498,
+    "name": "Taranto",
+    "localName": "Taranto",
+    "country": "IT",
+    "lat": 40.471111111,
+    "lon": 17.243055555,
+    "population": 188098
+  },
+  {
+    "id": 976,
+    "name": "Tomsk",
+    "localName": "Томск",
+    "country": "RU",
+    "lat": 56.488611111,
+    "lon": 84.952222222,
+    "population": 544566
+  },
+  {
+    "id": 13972,
+    "name": "Tartu",
+    "localName": "Tartu",
+    "country": "EE",
+    "lat": 58.38,
+    "lon": 26.7225,
+    "population": 97759
+  },
+  {
+    "id": 58401,
+    "name": "Shijiazhuang",
+    "localName": "Shijiazhuang",
+    "country": "CN",
+    "lat": 38.0425,
+    "lon": 114.51,
+    "population": 10640458
+  },
+  {
+    "id": 2795,
+    "name": "Chemnitz",
+    "localName": "Chemnitz",
+    "country": "DE",
+    "lat": 50.833333333,
+    "lon": 12.916666666,
+    "population": 250681
+  },
+  {
+    "id": 2112,
+    "name": "Bielefeld",
+    "localName": "Bielefeld",
+    "country": "DE",
+    "lat": 52.016666666,
+    "lon": 8.533333333,
+    "population": 338410
+  },
+  {
+    "id": 171943,
+    "name": "Nanchang",
+    "localName": "Nanchang",
+    "country": "CN",
+    "lat": 28.684167,
+    "lon": 115.887222,
+    "population": 6255007
+  },
+  {
+    "id": 39178,
+    "name": "Port of Spain",
+    "localName": "Port of Spain",
+    "country": "TT",
+    "lat": 10.666666666,
+    "lon": -61.516666666,
+    "population": 49031
+  },
+  {
+    "id": 2683,
+    "name": "Parma",
+    "localName": "Parma",
+    "country": "IT",
+    "lat": 44.801472222,
+    "lon": 10.328,
+    "population": 196764
+  },
+  {
+    "id": 183584,
+    "name": "Lanzhou",
+    "localName": "Lanzhou",
+    "country": "CN",
+    "lat": 36.06171,
+    "lon": 103.83177,
+    "population": 4359446
+  },
+  {
+    "id": 430776,
+    "name": "Nazareth",
+    "localName": "נצרת",
+    "country": "IL",
+    "lat": 32.702102777,
+    "lon": 35.29785,
+    "population": 83400
+  },
+  {
+    "id": 156732,
+    "name": "Kherson",
+    "localName": "Херсон",
+    "country": "UA",
+    "lat": 46.6425,
+    "lon": 32.625,
+    "population": 279131
+  },
+  {
+    "id": 131301,
+    "name": "Homs",
+    "localName": "حمص",
+    "country": "SY",
+    "lat": 34.733333333,
+    "lon": 36.716666666,
+    "population": 775404
+  },
+  {
+    "id": 79880,
+    "name": "Debrecen",
+    "localName": "Debrecen",
+    "country": "HU",
+    "lat": 47.53,
+    "lon": 21.639166666,
+    "population": 202130
+  },
+  {
+    "id": 3138,
+    "name": "Trier",
+    "localName": "Trier",
+    "country": "DE",
+    "lat": 49.75565,
+    "lon": 6.63935,
+    "population": 112737
+  },
+  {
+    "id": 1425428,
+    "name": "Newcastle upon Tyne",
+    "localName": "Newcastle upon Tyne",
+    "country": "GB",
+    "lat": 54.977777777,
+    "lon": -1.613333333,
+    "population": 300196
+  },
+  {
+    "id": 41876,
+    "name": "Reims",
+    "localName": "Reims",
+    "country": "FR",
+    "lat": 49.265277777,
+    "lon": 4.028611111,
+    "population": 177674
+  },
+  {
+    "id": 40811,
+    "name": "Sokhumi",
+    "localName": "სოხუმი",
+    "country": "GE",
+    "lat": 43.003611111,
+    "lon": 41.019166666,
+    "population": 64441
+  },
+  {
+    "id": 3012,
+    "name": "Ulm",
+    "localName": "Ulm",
+    "country": "DE",
+    "lat": 48.398611111,
+    "lon": 9.991111111,
+    "population": 129942
+  },
+  {
+    "id": 45604,
+    "name": "Kandahar",
+    "localName": "کندهار",
+    "country": "AF",
+    "lat": 31.62068,
+    "lon": 65.71588,
+    "population": 614254
+  },
+  {
+    "id": 5627,
+    "name": "Ulyanovsk",
+    "localName": "Ульяновск",
+    "country": "RU",
+    "lat": 54.316666666,
+    "lon": 48.366666666,
+    "population": 612516
+  },
+  {
+    "id": 5582862,
+    "name": "Cusco",
+    "localName": "Qusqu",
+    "country": "PE",
+    "lat": -13.516944444,
+    "lon": -71.978611111,
+    "population": 428450
+  },
+  {
+    "id": 41211,
+    "name": "San Juan",
+    "localName": "San Juan",
+    "country": "US",
+    "lat": 18.465277777,
+    "lon": -66.116666666,
+    "population": 342259
+  },
+  {
+    "id": 3940,
+    "name": "Victoria",
+    "localName": "Victoria",
+    "country": "SC",
+    "lat": -4.623611111,
+    "lon": 55.454444444,
+    "population": 24701
+  },
+  {
+    "id": 81398,
+    "name": "Acapulco de Juárez",
+    "localName": "Acapulco de Juárez",
+    "country": "MX",
+    "lat": 16.8628695,
+    "lon": -99.8870087,
+    "population": 673478
+  },
+  {
+    "id": 36260,
+    "name": "Apia",
+    "localName": "Apia",
+    "country": "WS",
+    "lat": -13.833333333,
+    "lon": -171.833333333,
+    "population": 37708
+  },
+  {
+    "id": 16739,
+    "name": "Long Beach",
+    "localName": "Long Beach",
+    "country": "US",
+    "lat": 33.768055555,
+    "lon": -118.195555555,
+    "population": 466742
+  },
+  {
+    "id": 6221,
+    "name": "Brescia",
+    "localName": "Brescia",
+    "country": "IT",
+    "lat": 45.538888888,
+    "lon": 10.220280555,
+    "population": 196446
+  },
+  {
+    "id": 2861,
+    "name": "Rostock",
+    "localName": "Rostock",
+    "country": "DE",
+    "lat": 54.083333333,
+    "lon": 12.133333333,
+    "population": 210795
+  },
+  {
+    "id": 2107,
+    "name": "Wuppertal",
+    "localName": "Wuppertal",
+    "country": "DE",
+    "lat": 51.266666666,
+    "lon": 7.183333333,
+    "population": 358938
+  },
+  {
+    "id": 39984,
+    "name": "Cannes",
+    "localName": "Cannes",
+    "country": "FR",
+    "lat": 43.5525,
+    "lon": 7.021388888,
+    "population": 74350
+  },
+  {
+    "id": 1513,
+    "name": "Nagpur",
+    "localName": "नागपूर",
+    "country": "IN",
+    "lat": 21.149722222,
+    "lon": 79.080555555,
+    "population": 2405665
+  },
+  {
+    "id": 162279,
+    "name": "Kuopio",
+    "localName": "Kuopio",
+    "country": "FI",
+    "lat": 62.8925,
+    "lon": 27.678333333,
+    "population": 126572
+  },
+  {
+    "id": 25395,
+    "name": "Newark",
+    "localName": "Newark",
+    "country": "US",
+    "lat": 40.735555555,
+    "lon": -74.172222222,
+    "population": 311549
+  },
+  {
+    "id": 42810,
+    "name": "Le Havre",
+    "localName": "Le Havre",
+    "country": "FR",
+    "lat": 49.494166666,
+    "lon": 0.108055555,
+    "population": 166687
+  },
+  {
+    "id": 48195,
+    "name": "Basra",
+    "localName": "البصرة",
+    "country": "IQ",
+    "lat": 30.515,
+    "lon": 47.81,
+    "population": 1326564
+  },
+  {
+    "id": 23551,
+    "name": "Mérida",
+    "localName": "Mérida",
+    "country": "VE",
+    "lat": 8.57018,
+    "lon": -71.180189,
+    "population": 248192
+  },
+  {
+    "id": 80561,
+    "name": "Antakya",
+    "localName": "Antakya",
+    "country": "TR",
+    "lat": 36.2025,
+    "lon": 36.160555555,
+    "population": 377793
+  },
+  {
+    "id": 79848,
+    "name": "Southampton",
+    "localName": "Southampton",
+    "country": "GB",
+    "lat": 50.906666666,
+    "lon": -1.404444444,
+    "population": 271173
+  },
+  {
+    "id": 5815,
+    "name": "Tyumen",
+    "localName": "Тюмень",
+    "country": "RU",
+    "lat": 57.15,
+    "lon": 65.533333333,
+    "population": 872077
+  },
+  {
+    "id": 83065,
+    "name": "Leicester",
+    "localName": "Leicester",
+    "country": "GB",
+    "lat": 52.636111111,
+    "lon": -1.133055555,
+    "population": 368600
+  },
+  {
+    "id": 38380,
+    "name": "Angers",
+    "localName": "Angers",
+    "country": "FR",
+    "lat": 47.472777777,
+    "lon": -0.555555555,
+    "population": 159022
+  },
+  {
+    "id": 2865,
+    "name": "Kassel",
+    "localName": "Kassel",
+    "country": "DE",
+    "lat": 51.315777777,
+    "lon": 9.497916666,
+    "population": 204687
+  },
+  {
+    "id": 2773,
+    "name": "Brunswick",
+    "localName": "Braunschweig",
+    "country": "DE",
+    "lat": 52.269166666,
+    "lon": 10.521111111,
+    "population": 252066
+  },
+  {
+    "id": 179608,
+    "name": "Nanning",
+    "localName": "Namzningz",
+    "country": "CN",
+    "lat": 22.81918,
+    "lon": 108.31501,
+    "population": 8741584
+  },
+  {
+    "id": 28237,
+    "name": "Lansing",
+    "localName": "Lansing",
+    "country": "US",
+    "lat": 42.7335,
+    "lon": -84.5467,
+    "population": 112644
+  },
+  {
+    "id": 2973,
+    "name": "Darmstadt",
+    "localName": "Darmstadt",
+    "country": "DE",
+    "lat": 49.866666666,
+    "lon": 8.65,
+    "population": 164792
+  },
+  {
+    "id": 173985,
+    "name": "Faisalabad",
+    "localName": "ਫ਼ੈਸਲਾਬਾਦ",
+    "country": "PK",
+    "lat": 31.418,
+    "lon": 73.079,
+    "population": 3203846
+  },
+  {
+    "id": 226,
+    "name": "Nuuk",
+    "localName": "Godthåb",
+    "country": "GL",
+    "lat": 64.175,
+    "lon": -51.733333333,
+    "population": 18326
+  },
+  {
+    "id": 43668,
+    "name": "Louisville",
+    "localName": "Louisville",
+    "country": "US",
+    "lat": 38.256111111,
+    "lon": -85.751388888,
+    "population": 246161
+  },
+  {
+    "id": 134635,
+    "name": "Saitama",
+    "localName": "さいたま市",
+    "country": "JP",
+    "lat": 35.861388888,
+    "lon": 139.645555555,
+    "population": 1325843
+  },
+  {
+    "id": 3043,
+    "name": "Belmopan",
+    "localName": "Belmopan",
+    "country": "BZ",
+    "lat": 17.25,
+    "lon": -88.7675,
+    "population": 20754
+  },
+  {
+    "id": 42168,
+    "name": "Clermont-Ferrand",
+    "localName": "Clermont-Ferrand",
+    "country": "FR",
+    "lat": 45.779722222,
+    "lon": 3.086944444,
+    "population": 146351
+  },
+  {
+    "id": 3033,
+    "name": "Göttingen",
+    "localName": "Göttingen",
+    "country": "DE",
+    "lat": 51.533888888,
+    "lon": 9.935555555,
+    "population": 120261
+  },
+  {
+    "id": 1800,
+    "name": "Kochi",
+    "localName": "കൊച്ചി",
+    "country": "IN",
+    "lat": 9.966666666,
+    "lon": 76.283333333,
+    "population": 677381
+  },
+  {
+    "id": 1475,
+    "name": "Quezon City",
+    "localName": "Quezon City",
+    "country": "PH",
+    "lat": 14.65,
+    "lon": 121.0475,
+    "population": 3084270
+  },
+  {
+    "id": 42716,
+    "name": "Saint-Étienne",
+    "localName": "Saint-Étienne",
+    "country": "FR",
+    "lat": 45.433888888,
+    "lon": 4.389722222,
+    "population": 173136
+  },
+  {
+    "id": 37066,
+    "name": "Bismarck",
+    "localName": "Bismarck",
+    "country": "US",
+    "lat": 46.808333333,
+    "lon": -100.78375,
+    "population": 73622
+  },
+  {
+    "id": 43453,
+    "name": "Plzeň",
+    "localName": "Plzeň",
+    "country": "CZ",
+    "lat": 49.741388888,
+    "lon": 13.3825,
+    "population": 187928
+  },
+  {
+    "id": 25475,
+    "name": "Batumi",
+    "localName": "ბათუმი",
+    "country": "GE",
+    "lat": 41.645833333,
+    "lon": 41.641666666,
+    "population": 169095
+  },
+  {
+    "id": 49266,
+    "name": "Wichita",
+    "localName": "Wichita",
+    "country": "US",
+    "lat": 37.688888888,
+    "lon": -97.336111111,
+    "population": 397532
+  },
+  {
+    "id": 93230,
+    "name": "Rawalpindi",
+    "localName": "راولپنڈی",
+    "country": "PK",
+    "lat": 33.6007,
+    "lon": 73.0679,
+    "population": 2098231
+  },
+  {
+    "id": 40921,
+    "name": "Honiara",
+    "localName": "Honiara",
+    "country": "SB",
+    "lat": -9.433333,
+    "lon": 159.95,
+    "population": 84520
+  },
+  {
+    "id": 72778,
+    "name": "Taiyuan",
+    "localName": "Taiyuan",
+    "country": "CN",
+    "lat": 37.87326,
+    "lon": 112.54245,
+    "population": 5304061
+  },
+  {
+    "id": 47048,
+    "name": "Oulu",
+    "localName": "Oulu",
+    "country": "FI",
+    "lat": 65.014166666,
+    "lon": 25.471944444,
+    "population": 217469
+  },
+  {
+    "id": 43919,
+    "name": "Salem",
+    "localName": "Salem",
+    "country": "US",
+    "lat": 44.94,
+    "lon": -123.038888888,
+    "population": 175535
+  },
+  {
+    "id": 83387,
+    "name": "Diyarbakır",
+    "localName": "Amed",
+    "country": "TR",
+    "lat": 37.910833333,
+    "lon": 40.236666666,
+    "population": 1732396
+  },
+  {
+    "id": 37806,
+    "name": "Port Vila",
+    "localName": "Port Vila",
+    "country": "VU",
+    "lat": -17.73333,
+    "lon": 168.316667,
+    "population": 49034
+  },
+  {
+    "id": 66616,
+    "name": "Indore",
+    "localName": "Indore",
+    "country": "IN",
+    "lat": 22.718611111,
+    "lon": 75.855,
+    "population": 1994397
+  },
+  {
+    "id": 133118,
+    "name": "Şanlıurfa",
+    "localName": "Şanlıurfa",
+    "country": "TR",
+    "lat": 37.158333333,
+    "lon": 38.791666666,
+    "population": 1985753
+  },
+  {
+    "id": 6761,
+    "name": "Livorno",
+    "localName": "Livorno",
+    "country": "IT",
+    "lat": 43.55,
+    "lon": 10.316666666,
+    "population": 152914
+  },
+  {
+    "id": 8385,
+    "name": "Ostrava",
+    "localName": "Ostrava",
+    "country": "CZ",
+    "lat": 49.835555555,
+    "lon": 18.2925,
+    "population": 283187
+  },
+  {
+    "id": 22690,
+    "name": "Metz",
+    "localName": "Metz",
+    "country": "FR",
+    "lat": 49.119722222,
+    "lon": 6.176944444,
+    "population": 122572
+  },
+  {
+    "id": 49247,
+    "name": "Anaheim",
+    "localName": "Anaheim",
+    "country": "US",
+    "lat": 33.836111111,
+    "lon": -117.889722222,
+    "population": 346824
+  },
+  {
+    "id": 79867,
+    "name": "Birmingham",
+    "localName": "Birmingham",
+    "country": "US",
+    "lat": 33.5175,
+    "lon": -86.809444444,
+    "population": 200733
+  },
+  {
+    "id": 44160,
+    "name": "Toulon",
+    "localName": "Toulon",
+    "country": "FR",
+    "lat": 43.125,
+    "lon": 5.930555555,
+    "population": 179116
+  },
+  {
+    "id": 25330,
+    "name": "Trenton",
+    "localName": "Trenton",
+    "country": "US",
+    "lat": 40.220277777,
+    "lon": -74.765833333,
+    "population": 90871
+  },
+  {
+    "id": 62823,
+    "name": "Barranquilla",
+    "localName": "Barranquilla",
+    "country": "CO",
+    "lat": 10.983333333,
+    "lon": -74.801944444,
+    "population": 1326588
+  },
+  {
+    "id": 41963,
+    "name": "Sri Jayawardenepura Kotte",
+    "localName": "ශ්රී ජයවර්ධනපුර කෝට්ටේ",
+    "country": "LK",
+    "lat": 6.9,
+    "lon": 79.916388888,
+    "population": 115826
+  },
+  {
+    "id": 44989,
+    "name": "Tulsa",
+    "localName": "Tulsa",
+    "country": "US",
+    "lat": 36.131388888,
+    "lon": -95.937222222,
+    "population": 413066
+  },
+  {
+    "id": 192271,
+    "name": "Guiyang",
+    "localName": "贵阳",
+    "country": "CN",
+    "lat": 26.579444444,
+    "lon": 106.707777777,
+    "population": 5987018
+  },
+  {
+    "id": 157053,
+    "name": "Chernihiv",
+    "localName": "Чернігів",
+    "country": "UA",
+    "lat": 51.493888888,
+    "lon": 31.294722222,
+    "population": 286899
+  },
+  {
+    "id": 167715,
+    "name": "Thiruvananthapuram",
+    "localName": "തിരുവനന്തപുരം",
+    "country": "IN",
+    "lat": 8.4875,
+    "lon": 76.9525,
+    "population": 743691
+  },
+  {
+    "id": 39042,
+    "name": "Cheyenne",
+    "localName": "Cheyenne",
+    "country": "US",
+    "lat": 41.145555555,
+    "lon": -104.801944444,
+    "population": 65132
+  },
+  {
+    "id": 279,
+    "name": "Modena",
+    "localName": "Modena",
+    "country": "IT",
+    "lat": 44.64582,
+    "lon": 10.92572,
+    "population": 184153
+  },
+  {
+    "id": 25280,
+    "name": "Harrisburg",
+    "localName": "Harrisburg",
+    "country": "US",
+    "lat": 40.264554871,
+    "lon": -76.883381676,
+    "population": 50099
+  },
+  {
+    "id": 83404,
+    "name": "Timișoara",
+    "localName": "Temesvár",
+    "country": "RO",
+    "lat": 45.759722222,
+    "lon": 21.23,
+    "population": 250849
+  },
+  {
+    "id": 2978,
+    "name": "Regensburg",
+    "localName": "Regensburg",
+    "country": "DE",
+    "lat": 49.016666666,
+    "lon": 12.083333333,
+    "population": 159465
+  },
+  {
+    "id": 182059,
+    "name": "Kumasi",
+    "localName": "Kumasi",
+    "country": "GH",
+    "lat": 6.7,
+    "lon": -1.625,
+    "population": 3903480
+  },
+  {
+    "id": 8969,
+    "name": "Cancun",
+    "localName": "Cancún",
+    "country": "MX",
+    "lat": 21.161416111,
+    "lon": -86.824811111,
+    "population": 888797
+  },
+  {
+    "id": 2103,
+    "name": "Bochum",
+    "localName": "Bochum",
+    "country": "DE",
+    "lat": 51.483333333,
+    "lon": 7.216666666,
+    "population": 366385
+  },
+  {
+    "id": 11959,
+    "name": "Alicante",
+    "localName": "Alacant",
+    "country": "ES",
+    "lat": 38.345277777,
+    "lon": -0.483055555,
+    "population": 366221
+  },
+  {
+    "id": 42807,
+    "name": "Nîmes",
+    "localName": "Nîmes",
+    "country": "FR",
+    "lat": 43.838333333,
+    "lon": 4.359722222,
+    "population": 151839
+  },
+  {
+    "id": 132754,
+    "name": "Erbil",
+    "localName": "Hewlêr",
+    "country": "IQ",
+    "lat": 36.191111111,
+    "lon": 44.009444444,
+    "population": 846000
+  },
+  {
+    "id": 2999,
+    "name": "Würzburg",
+    "localName": "Würzburg",
+    "country": "DE",
+    "lat": 49.794444444,
+    "lon": 9.929444444,
+    "population": 132215
+  },
+  {
+    "id": 1709,
+    "name": "Schwerin",
+    "localName": "Schwerin",
+    "country": "DE",
+    "lat": 53.628888888,
+    "lon": 11.415,
+    "population": 98733
+  },
+  {
+    "id": 45313,
+    "name": "Herat",
+    "localName": "Herat",
+    "country": "AF",
+    "lat": 34.341944,
+    "lon": 62.203056,
+    "population": 556205
+  },
+  {
+    "id": 3159,
+    "name": "Kursk",
+    "localName": "Курск",
+    "country": "RU",
+    "lat": 51.737222222,
+    "lon": 36.187222222,
+    "population": 434696
+  },
+  {
+    "id": 6014,
+    "name": "Barnaul",
+    "localName": "Барнаул",
+    "country": "RU",
+    "lat": 53.356666666,
+    "lon": 83.787222222,
+    "population": 621598
+  },
+  {
+    "id": 12193,
+    "name": "Brest",
+    "localName": "Brest",
+    "country": "FR",
+    "lat": 48.39,
+    "lon": -4.486944444,
+    "population": 142346
+  },
+  {
+    "id": 5426,
+    "name": "Izhevsk",
+    "localName": "Иж",
+    "country": "RU",
+    "lat": 56.85,
+    "lon": 53.216666666,
+    "population": 616297
+  },
+  {
+    "id": 8471,
+    "name": "Reggio Calabria",
+    "localName": "Reggio di Calabria",
+    "country": "IT",
+    "lat": 38.114438888,
+    "lon": 15.65,
+    "population": 170951
+  },
+  {
+    "id": 40898,
+    "name": "Nancy",
+    "localName": "Nancy",
+    "country": "FR",
+    "lat": 48.692777777,
+    "lon": 6.183611111,
+    "population": 103671
+  },
+  {
+    "id": 159273,
+    "name": "Arequipa",
+    "localName": "Ariqipa",
+    "country": "PE",
+    "lat": -16.398888888,
+    "lon": -71.536944444,
+    "population": 1008290
+  },
+  {
+    "id": 41252,
+    "name": "Bydgoszcz",
+    "localName": "Bydgoszcz",
+    "country": "PL",
+    "lat": 53.116666666,
+    "lon": 18.0,
+    "population": 324984
+  },
+  {
+    "id": 40881,
+    "name": "Carson City",
+    "localName": "Carson City",
+    "country": "US",
+    "lat": 39.160833333,
+    "lon": -119.753888888,
+    "population": 58639
+  },
+  {
+    "id": 41283,
+    "name": "Gwangju",
+    "localName": "Gwangju",
+    "country": "KR",
+    "lat": 35.166666666,
+    "lon": 126.916666666,
+    "population": 1490092
+  },
+  {
+    "id": 2751,
+    "name": "Siena",
+    "localName": "Siena",
+    "country": "IT",
+    "lat": 43.318333333,
+    "lon": 11.331388888,
+    "population": 52812
+  },
+  {
+    "id": 12994,
+    "name": "Bruges",
+    "localName": "Brugge",
+    "country": "BE",
+    "lat": 51.208888888,
+    "lon": 3.224166666,
+    "population": 118509
+  },
+  {
+    "id": 40816,
+    "name": "Benghazi",
+    "localName": "بنغازي",
+    "country": "LY",
+    "lat": 32.116666666,
+    "lon": 20.066666666,
+    "population": 631555
+  },
+  {
+    "id": 2684,
+    "name": "Vladimir",
+    "localName": "Владимир",
+    "country": "RU",
+    "lat": 56.128611111,
+    "lon": 40.405833333,
+    "population": 341579
+  },
+  {
+    "id": 6526,
+    "name": "Bolzano",
+    "localName": "Bolzano",
+    "country": "IT",
+    "lat": 46.498113,
+    "lon": 11.35478,
+    "population": 106107
+  },
+  {
+    "id": 6548,
+    "name": "Orléans",
+    "localName": "Orléans",
+    "country": "FR",
+    "lat": 47.902222222,
+    "lon": 1.904166666,
+    "population": 116357
+  },
+  {
+    "id": 13670,
+    "name": "Syracuse",
+    "localName": "Siracusa",
+    "country": "IT",
+    "lat": 37.069166666,
+    "lon": 15.2875,
+    "population": 115515
+  },
+  {
+    "id": 3955,
+    "name": "Weimar",
+    "localName": "Weimar",
+    "country": "DE",
+    "lat": 50.981111111,
+    "lon": 11.329444444,
+    "population": 65611
+  },
+  {
+    "id": 170525,
+    "name": "Agadir",
+    "localName": "أڭادير",
+    "country": "MA",
+    "lat": 30.421388888,
+    "lon": -9.583055555,
+    "population": 538000
+  },
+  {
+    "id": 5337,
+    "name": "Orenburg",
+    "localName": "Оренбург",
+    "country": "RU",
+    "lat": 51.766666666,
+    "lon": 55.1,
+    "population": 536515
+  },
+  {
+    "id": 2288,
+    "name": "Tver",
+    "localName": "Тверь",
+    "country": "RU",
+    "lat": 56.857827777,
+    "lon": 35.921927777,
+    "population": 412806
+  },
+  {
+    "id": 25331,
+    "name": "Odense",
+    "localName": "Odense",
+    "country": "DK",
+    "lat": 55.4,
+    "lon": 10.383333333,
+    "population": 185480
+  },
+  {
+    "id": 13369,
+    "name": "Rimini",
+    "localName": "Rimini",
+    "country": "IT",
+    "lat": 44.059444444,
+    "lon": 12.568333333,
+    "population": 149211
+  },
+  {
+    "id": 2746,
+    "name": "Ryazan",
+    "localName": "Рязань",
+    "country": "RU",
+    "lat": 54.63,
+    "lon": 39.7425,
+    "population": 519315
+  },
+  {
+    "id": 8131,
+    "name": "Palembang",
+    "localName": "Palembang",
+    "country": "ID",
+    "lat": -2.983333333,
+    "lon": 104.764444444,
+    "population": 1535952
+  },
+  {
+    "id": 3415,
+    "name": "Ancona",
+    "localName": "Ancona",
+    "country": "IT",
+    "lat": 43.616666666,
+    "lon": 13.516666666,
+    "population": 98356
+  },
+  {
+    "id": 36647,
+    "name": "Cork",
+    "localName": "Cork",
+    "country": "IE",
+    "lat": 51.9,
+    "lon": -8.473055555,
+    "population": 222333
+  },
+  {
+    "id": 1663,
+    "name": "Split",
+    "localName": "Split",
+    "country": "HR",
+    "lat": 43.51,
+    "lon": 16.44,
+    "population": 160577
+  },
+  {
+    "id": 171771,
+    "name": "Bhubaneswar",
+    "localName": "Bhubaneswar",
+    "country": "IN",
+    "lat": 20.295,
+    "lon": 85.825,
+    "population": 837737
+  },
+  {
+    "id": 5470,
+    "name": "Cheboksary",
+    "localName": "Чебоксары",
+    "country": "RU",
+    "lat": 56.133333333,
+    "lon": 47.25,
+    "population": 497061
+  },
+  {
+    "id": 4191,
+    "name": "Lucerne",
+    "localName": "Luzern",
+    "country": "CH",
+    "lat": 47.0523,
+    "lon": 8.3059,
+    "population": 86234
+  },
+  {
+    "id": 36399,
+    "name": "Huế",
+    "localName": "Huế",
+    "country": "VN",
+    "lat": 16.463888888,
+    "lon": 107.586666666,
+    "population": 1236393
+  },
+  {
+    "id": 2765,
+    "name": "Gelsenkirchen",
+    "localName": "Gelsenkirchen",
+    "country": "DE",
+    "lat": 51.510277777,
+    "lon": 7.094166666,
+    "population": 265885
+  },
+  {
+    "id": 59218,
+    "name": "Dongguan",
+    "localName": "Dongguan",
+    "country": "CN",
+    "lat": 23.04749,
+    "lon": 113.74928,
+    "population": 10466625
+  },
+  {
+    "id": 288,
+    "name": "Tours",
+    "localName": "Tours",
+    "country": "FR",
+    "lat": 47.392777777,
+    "lon": 0.688333333,
+    "population": 139259
+  },
+  {
+    "id": 7568,
+    "name": "Yogyakarta",
+    "localName": "Yogyakarta",
+    "country": "ID",
+    "lat": -7.800456766,
+    "lon": 110.391280229,
+    "population": 422732
+  },
+  {
+    "id": 47837,
+    "name": "Laayoune",
+    "localName": "El Aaiún",
+    "country": "MA",
+    "lat": 27.15,
+    "lon": -13.2,
+    "population": 262791
+  },
+  {
+    "id": 55630,
+    "name": "Novi Sad",
+    "localName": "Нови Сад",
+    "country": "RS",
+    "lat": 45.264444444,
+    "lon": 19.831666666,
+    "population": 260438
+  },
+  {
+    "id": 40104,
+    "name": "Ajaccio",
+    "localName": "Ajaccio",
+    "country": "FR",
+    "lat": 41.925555555,
+    "lon": 8.736388888,
+    "population": 76320
+  },
+  {
+    "id": 761,
+    "name": "Białystok",
+    "localName": "Białystok",
+    "country": "PL",
+    "lat": 53.132355821,
+    "lon": 23.168672448,
+    "population": 290386
+  },
+  {
+    "id": 49259,
+    "name": "Virginia Beach",
+    "localName": "Virginia Beach",
+    "country": "US",
+    "lat": 36.8506,
+    "lon": -75.9779,
+    "population": 459470
+  },
+  {
+    "id": 28249,
+    "name": "Concord",
+    "localName": "Concord",
+    "country": "US",
+    "lat": 43.206666666,
+    "lon": -71.538055555,
+    "population": 43976
+  },
+  {
+    "id": 102217,
+    "name": "Vitebsk",
+    "localName": "Віцебск",
+    "country": "BY",
+    "lat": 55.183333333,
+    "lon": 30.166666666,
+    "population": 357899
+  },
+  {
+    "id": 158119,
+    "name": "Ramallah",
+    "localName": "רמאללה",
+    "country": "PS",
+    "lat": 31.896944444,
+    "lon": 35.201666666,
+    "population": 43880
+  },
+  {
+    "id": 33518,
+    "name": "Dover",
+    "localName": "Dover",
+    "country": "US",
+    "lat": 39.161662,
+    "lon": -75.525709,
+    "population": 39403
+  },
+  {
+    "id": 43048,
+    "name": "Rhodes",
+    "localName": "Ρόδος",
+    "country": "GR",
+    "lat": 36.17,
+    "lon": 27.92,
+    "population": 127613
+  },
+  {
+    "id": 147402,
+    "name": "Zapopan",
+    "localName": "Zapopan",
+    "country": "MX",
+    "lat": 20.720833333,
+    "lon": -103.391111111,
+    "population": 1257547
+  },
+  {
+    "id": 43382,
+    "name": "Plymouth",
+    "localName": "Plymouth",
+    "country": "GB",
+    "lat": 50.371388888,
+    "lon": -4.142222222,
+    "population": 267918
+  },
+  {
+    "id": 83189,
+    "name": "Goiânia",
+    "localName": "Goiânia",
+    "country": "BR",
+    "lat": -16.680555555,
+    "lon": -49.256388888,
+    "population": 1437366
+  },
+  {
+    "id": 79808,
+    "name": "Constanța",
+    "localName": "Constanța",
+    "country": "RO",
+    "lat": 44.1767161,
+    "lon": 28.6507598,
+    "population": 263707
+  },
+  {
+    "id": 6397,
+    "name": "Avignon",
+    "localName": "Avignon",
+    "country": "FR",
+    "lat": 43.948611111,
+    "lon": 4.808333333,
+    "population": 92188
+  },
+  {
+    "id": 185518,
+    "name": "Mandalay",
+    "localName": "မန္တလေး",
+    "country": "MM",
+    "lat": 21.983055555,
+    "lon": 96.084444444,
+    "population": 1225546
+  },
+  {
+    "id": 41185,
+    "name": "Caen",
+    "localName": "Caen",
+    "country": "FR",
+    "lat": 49.181388888,
+    "lon": -0.363611111,
+    "population": 109400
+  },
+  {
+    "id": 187136,
+    "name": "Luoyang",
+    "localName": "Luoyang",
+    "country": "CN",
+    "lat": 34.65867,
+    "lon": 112.42447,
+    "population": 7056699
+  },
+  {
+    "id": 114257,
+    "name": "Elbasan",
+    "localName": "Elbasan",
+    "country": "AL",
+    "lat": 41.113059,
+    "lon": 20.08178,
+    "population": 66834
+  },
+  {
+    "id": 41547,
+    "name": "St. George's",
+    "localName": "St. George's",
+    "country": "GD",
+    "lat": 12.0525,
+    "lon": -61.753055555,
+    "population": 33734
+  },
+  {
+    "id": 484706,
+    "name": "Karaganda",
+    "localName": "Қарағанды",
+    "country": "KZ",
+    "lat": 49.8,
+    "lon": 73.116666666,
+    "population": 515632
+  },
+  {
+    "id": 25262,
+    "name": "Cà Mau",
+    "localName": "Cà Mau",
+    "country": "VN",
+    "lat": 9.183333333,
+    "lon": 105.15,
+    "population": 315270
+  },
+  {
+    "id": 72259,
+    "name": "Portsmouth",
+    "localName": "Portsmouth",
+    "country": "GB",
+    "lat": 50.805833333,
+    "lon": -1.087222222,
+    "population": 248440
+  },
+  {
+    "id": 81581,
+    "name": "Szeged",
+    "localName": "Szeged",
+    "country": "HU",
+    "lat": 46.25,
+    "lon": 20.166666666,
+    "population": 157282
+  },
+  {
+    "id": 46852,
+    "name": "Iași",
+    "localName": "Iași",
+    "country": "RO",
+    "lat": 47.162222222,
+    "lon": 27.588888888,
+    "population": 271692
+  },
+  {
+    "id": 200016,
+    "name": "Visakhapatnam",
+    "localName": "Visakhapatnam",
+    "country": "IN",
+    "lat": 17.693888888,
+    "lon": 83.292222222,
+    "population": 2035922
+  },
+  {
+    "id": 20921,
+    "name": "Daejeon",
+    "localName": "Daejeon",
+    "country": "KR",
+    "lat": 36.35,
+    "lon": 127.385,
+    "population": 1475221
+  },
+  {
+    "id": 38733,
+    "name": "Helena",
+    "localName": "Helena",
+    "country": "US",
+    "lat": 46.592777777,
+    "lon": -112.035,
+    "population": 32091
+  },
+  {
+    "id": 28271,
+    "name": "Annapolis",
+    "localName": "Annapolis",
+    "country": "US",
+    "lat": 38.978611111,
+    "lon": -76.491944444,
+    "population": 40812
+  },
+  {
+    "id": 41604,
+    "name": "Amiens",
+    "localName": "Amiens",
+    "country": "FR",
+    "lat": 49.891944444,
+    "lon": 2.297777777,
+    "population": 136449
+  },
+  {
+    "id": 2214,
+    "name": "Pskov",
+    "localName": "Псков",
+    "country": "RU",
+    "lat": 57.816666666,
+    "lon": 28.333333333,
+    "population": 185486
+  },
+  {
+    "id": 36262,
+    "name": "St. John's",
+    "localName": "St. John's",
+    "country": "AG",
+    "lat": 17.121111111,
+    "lon": -61.844722222,
+    "population": 21394
+  },
+  {
+    "id": 47034,
+    "name": "Espoo",
+    "localName": "Esbo",
+    "country": "FI",
+    "lat": 60.205555555,
+    "lon": 24.655555555,
+    "population": 325716
+  },
+  {
+    "id": 11909,
+    "name": "Vadodara",
+    "localName": "Vadodara",
+    "country": "IN",
+    "lat": 22.3,
+    "lon": 73.2,
+    "population": 3100260
+  },
+  {
+    "id": 3323,
+    "name": "Belgorod",
+    "localName": "Белгород",
+    "country": "RU",
+    "lat": 50.6,
+    "lon": 36.6,
+    "population": 321761
+  },
+  {
+    "id": 6225,
+    "name": "Coventry",
+    "localName": "Coventry",
+    "country": "GB",
+    "lat": 52.416666666,
+    "lon": -1.516666666,
+    "population": 362690
+  },
+  {
+    "id": 228405,
+    "name": "Madurai",
+    "localName": "Madurai",
+    "country": "IN",
+    "lat": 9.919661111,
+    "lon": 78.119394444,
+    "population": 1561129
+  },
+  {
+    "id": 9427,
+    "name": "Timbuktu",
+    "localName": "تمبكتو",
+    "country": "ML",
+    "lat": 16.77348,
+    "lon": -3.00742,
+    "population": 35330
+  },
+  {
+    "id": 14634,
+    "name": "Makassar",
+    "localName": "Makassar",
+    "country": "ID",
+    "lat": -5.133055555,
+    "lon": 119.413611111,
+    "population": 1338663
+  },
+  {
+    "id": 189823,
+    "name": "Haikou",
+    "localName": "Haikou",
+    "country": "CN",
+    "lat": 20.02,
+    "lon": 110.32,
+    "population": 2873358
+  },
+  {
+    "id": 41753,
+    "name": "Klagenfurt am Wörthersee",
+    "localName": "Klagenfurt am Wörthersee",
+    "country": "AT",
+    "lat": 46.616666666,
+    "lon": 14.3,
+    "population": 101403
+  },
+  {
+    "id": 1308,
+    "name": "Como",
+    "localName": "Como",
+    "country": "IT",
+    "lat": 45.81025,
+    "lon": 9.086138888,
+    "population": 83184
+  },
+  {
+    "id": 44401,
+    "name": "Cayenne",
+    "localName": "Cayenne",
+    "country": "FR",
+    "lat": 4.938611111,
+    "lon": -52.335,
+    "population": 62675
+  },
+  {
+    "id": 6252,
+    "name": "Monza",
+    "localName": "Monscia",
+    "country": "IT",
+    "lat": 45.583611111,
+    "lon": 9.273611111,
+    "population": 121799
+  },
+  {
+    "id": 42735,
+    "name": "Olympia",
+    "localName": "Olympia",
+    "country": "US",
+    "lat": 47.0425,
+    "lon": -122.893055555,
+    "population": 55605
+  },
+  {
+    "id": 170688,
+    "name": "Santa Cruz de la Sierra",
+    "localName": "Santa Cruz de la Sierra",
+    "country": "BO",
+    "lat": -17.789166666,
+    "lon": -63.1975,
+    "population": 3122605
+  },
+  {
+    "id": 13362,
+    "name": "Ferrara",
+    "localName": "Ferrara",
+    "country": "IT",
+    "lat": 44.839166666,
+    "lon": 11.6175,
+    "population": 129340
+  },
+  {
+    "id": 25409,
+    "name": "Košice",
+    "localName": "Košice",
+    "country": "SK",
+    "lat": 48.716666666,
+    "lon": 21.25,
+    "population": 222286
+  },
+  {
+    "id": 2770,
+    "name": "Tula",
+    "localName": "Тула",
+    "country": "RU",
+    "lat": 54.2,
+    "lon": 37.616666666,
+    "population": 456813
+  },
+  {
+    "id": 3104,
+    "name": "Koblenz",
+    "localName": "Koblenz",
+    "country": "DE",
+    "lat": 50.359722222,
+    "lon": 7.597777777,
+    "population": 115298
+  },
+  {
+    "id": 170115,
+    "name": "Srinagar",
+    "localName": "श्रीनगर",
+    "country": "IN",
+    "lat": 34.091111111,
+    "lon": 74.806111111,
+    "population": 1180570
+  },
+  {
+    "id": 11506,
+    "name": "Denpasar",
+    "localName": "Denpasar",
+    "country": "ID",
+    "lat": -8.671666666,
+    "lon": 115.233888888,
+    "population": 670210
+  },
+  {
+    "id": 131620,
+    "name": "Natal",
+    "localName": "Natal",
+    "country": "BR",
+    "lat": -5.795,
+    "lon": -35.208888888,
+    "population": 751300
+  },
+  {
+    "id": 171632,
+    "name": "Maracaibo",
+    "localName": "Maracaibo",
+    "country": "VE",
+    "lat": 10.633333333,
+    "lon": -71.633333333,
+    "population": 1551539
+  },
+  {
+    "id": 2132,
+    "name": "Victoria",
+    "localName": "Victoria",
+    "country": "CA",
+    "lat": 48.422151,
+    "lon": -123.3657,
+    "population": 91867
+  },
+  {
+    "id": 28603,
+    "name": "Frankfort",
+    "localName": "Frankfort",
+    "country": "US",
+    "lat": 38.197,
+    "lon": -84.863,
+    "population": 28602
+  },
+  {
+    "id": 5540,
+    "name": "Penza",
+    "localName": "Пенза",
+    "country": "RU",
+    "lat": 53.2,
+    "lon": 45.0,
+    "population": 487978
+  },
+  {
+    "id": 157144,
+    "name": "Vinnytsia",
+    "localName": "Вінниця",
+    "country": "UA",
+    "lat": 49.237222222,
+    "lon": 28.467222222,
+    "population": 369739
+  },
+  {
+    "id": 173270,
+    "name": "Veracruz",
+    "localName": "Veracruz",
+    "country": "MX",
+    "lat": 19.190277777,
+    "lon": -96.153333333,
+    "population": 8062579
+  },
+  {
+    "id": 13378,
+    "name": "Arezzo",
+    "localName": "Arezzo",
+    "country": "IT",
+    "lat": 43.463055555,
+    "lon": 11.878055555,
+    "population": 96260
+  },
+  {
+    "id": 41572,
+    "name": "Mykolaiv",
+    "localName": "Миколаїв",
+    "country": "UA",
+    "lat": 46.975,
+    "lon": 31.995,
+    "population": 470011
+  },
+  {
+    "id": 156747,
+    "name": "Poltava",
+    "localName": "Полтава",
+    "country": "UA",
+    "lat": 49.589444444,
+    "lon": 34.551388888,
+    "population": 283402
+  },
+  {
+    "id": 49256,
+    "name": "Bakersfield",
+    "localName": "Bakersfield",
+    "country": "US",
+    "lat": 35.373333333,
+    "lon": -119.018888888,
+    "population": 403455
+  },
+  {
+    "id": 134291,
+    "name": "Mersin",
+    "localName": "Mersin",
+    "country": "TR",
+    "lat": 36.8,
+    "lon": 34.616666666,
+    "population": 1040507
+  },
+  {
+    "id": 385,
+    "name": "Gdynia",
+    "localName": "Gdynia",
+    "country": "PL",
+    "lat": 54.5175,
+    "lon": 18.54,
+    "population": 245222
+  },
+  {
+    "id": 5343,
+    "name": "Saransk",
+    "localName": "Саранск",
+    "country": "RU",
+    "lat": 54.183333333,
+    "lon": 45.183333333,
+    "population": 309349
+  },
+  {
+    "id": 182984,
+    "name": "Kano",
+    "localName": "Kano",
+    "country": "NG",
+    "lat": 12.0022,
+    "lon": 8.592,
+    "population": 4348000
+  },
+  {
+    "id": 28180,
+    "name": "Jefferson City",
+    "localName": "Jefferson City",
+    "country": "US",
+    "lat": 38.576666666,
+    "lon": -92.173611111,
+    "population": 43228
+  },
+  {
+    "id": 6816,
+    "name": "Ulan-Ude",
+    "localName": "Улаан Үдэ",
+    "country": "RU",
+    "lat": 51.827222222,
+    "lon": 107.606388888,
+    "population": 435067
+  },
+  {
+    "id": 72818,
+    "name": "Haiphong",
+    "localName": "Hải Phòng",
+    "country": "VN",
+    "lat": 20.8,
+    "lon": 106.666666666,
+    "population": 2124500
+  },
+  {
+    "id": 156713,
+    "name": "Zhytomyr",
+    "localName": "Житомир",
+    "country": "UA",
+    "lat": 50.254444444,
+    "lon": 28.657777777,
+    "population": 261624
+  },
+  {
+    "id": 199605,
+    "name": "Guwahati",
+    "localName": "গুৱাহাটী",
+    "country": "IN",
+    "lat": 26.1805876,
+    "lon": 91.750238,
+    "population": 1116267
+  },
+  {
+    "id": 1722,
+    "name": "Dubrovnik",
+    "localName": "Dubrovnik",
+    "country": "HR",
+    "lat": 42.640277777,
+    "lon": 18.108333333,
+    "population": 41562
+  },
+  {
+    "id": 79815,
+    "name": "Mulhouse",
+    "localName": "Mulhouse",
+    "country": "FR",
+    "lat": 47.748611111,
+    "lon": 7.339166666,
+    "population": 104978
+  },
+  {
+    "id": 157137,
+    "name": "Kryvyi Rih",
+    "localName": "Кривий Ріг",
+    "country": "UA",
+    "lat": 47.91,
+    "lon": 33.39,
+    "population": 603904
+  },
+  {
+    "id": 13377,
+    "name": "Prato",
+    "localName": "Prato",
+    "country": "IT",
+    "lat": 43.880813888,
+    "lon": 11.096561111,
+    "population": 195736
+  },
+  {
+    "id": 29888,
+    "name": "Aswan",
+    "localName": "Aswan",
+    "country": "EG",
+    "lat": 24.088919444,
+    "lon": 32.899730555,
+    "population": 401890
+  },
+  {
+    "id": 45779,
+    "name": "Pécs",
+    "localName": "Pécs",
+    "country": "HU",
+    "lat": 46.070833333,
+    "lon": 18.233055555,
+    "population": 139412
+  },
+  {
+    "id": 34412,
+    "name": "Foshan",
+    "localName": "Foshan",
+    "country": "CN",
+    "lat": 23.029167,
+    "lon": 113.105556,
+    "population": 9498863
+  },
+  {
+    "id": 6454,
+    "name": "Calais",
+    "localName": "Calais",
+    "country": "FR",
+    "lat": 50.9475,
+    "lon": 1.855555555,
+    "population": 67571
+  },
+  {
+    "id": 3150,
+    "name": "Jena",
+    "localName": "Jena",
+    "country": "DE",
+    "lat": 50.927222222,
+    "lon": 11.586388888,
+    "population": 110791
+  },
+  {
+    "id": 170366,
+    "name": "Ahvaz",
+    "localName": "الاهواز",
+    "country": "IR",
+    "lat": 31.318888888,
+    "lon": 48.684166666,
+    "population": 1184788
+  },
+  {
+    "id": 6616,
+    "name": "Poitiers",
+    "localName": "Poitiers",
+    "country": "FR",
+    "lat": 46.581111111,
+    "lon": 0.335277777,
+    "population": 89916
+  },
+  {
+    "id": 1341,
+    "name": "Tolyatti",
+    "localName": "Тольятти",
+    "country": "RU",
+    "lat": 53.516666666,
+    "lon": 49.416666666,
+    "population": 662683
+  },
+  {
+    "id": 6537,
+    "name": "Vicenza",
+    "localName": "Vicenza",
+    "country": "IT",
+    "lat": 45.55,
+    "lon": 11.55,
+    "population": 109823
+  },
+  {
+    "id": 160450,
+    "name": "Samsun",
+    "localName": "Samsun",
+    "country": "TR",
+    "lat": 41.286666666,
+    "lon": 36.33,
+    "population": 1368488
+  },
+  {
+    "id": 6730,
+    "name": "Perpignan",
+    "localName": "Perpinyà",
+    "country": "FR",
+    "lat": 42.6975,
+    "lon": 2.894722222,
+    "population": 121616
+  },
+  {
+    "id": 168866,
+    "name": "Eskişehir",
+    "localName": "Eskişehir",
+    "country": "TR",
+    "lat": 39.776666666,
+    "lon": 30.520555555,
+    "population": 871187
+  },
+  {
+    "id": 157725,
+    "name": "Chernivtsi",
+    "localName": "Чернівці",
+    "country": "UA",
+    "lat": 48.290833333,
+    "lon": 25.934444444,
+    "population": 265471
+  },
+  {
+    "id": 132572,
+    "name": "Tiraspol",
+    "localName": "Тирасполь",
+    "country": "MD",
+    "lat": 46.85,
+    "lon": 29.63333333,
+    "population": 133807
+  },
+  {
+    "id": 1895,
+    "name": "Petrozavodsk",
+    "localName": "Петрозаводск",
+    "country": "RU",
+    "lat": 61.783333333,
+    "lon": 34.35,
+    "population": 234577
+  },
+  {
+    "id": 47282,
+    "name": "Osh",
+    "localName": "Ош",
+    "country": "KG",
+    "lat": 40.533333333,
+    "lon": 72.783333333,
+    "population": 375400
+  },
+  {
+    "id": 170616,
+    "name": "Chiba",
+    "localName": "千葉市",
+    "country": "JP",
+    "lat": 35.607277777,
+    "lon": 140.106361111,
+    "population": 975014
+  },
+  {
+    "id": 83061,
+    "name": "Van",
+    "localName": "Wan",
+    "country": "TR",
+    "lat": 38.501944444,
+    "lon": 43.416666666,
+    "population": 1127612
+  },
+  {
+    "id": 69060,
+    "name": "Xining",
+    "localName": "Xining",
+    "country": "CN",
+    "lat": 36.62386,
+    "lon": 101.77866,
+    "population": 2467965
+  },
+  {
+    "id": 7024,
+    "name": "Lugano",
+    "localName": "Lugano",
+    "country": "CH",
+    "lat": 46.010277777,
+    "lon": 8.9625,
+    "population": 63495
+  },
+  {
+    "id": 181376,
+    "name": "Horadnia",
+    "localName": "Гродна",
+    "country": "BY",
+    "lat": 53.666666666,
+    "lon": 23.816666666,
+    "population": 364902
+  },
+  {
+    "id": 3806,
+    "name": "Tübingen",
+    "localName": "Tübingen",
+    "country": "DE",
+    "lat": 48.52,
+    "lon": 9.055555555,
+    "population": 93615
+  },
+  {
+    "id": 3004,
+    "name": "Ingolstadt",
+    "localName": "Ingolstadt",
+    "country": "DE",
+    "lat": 48.763055555,
+    "lon": 11.425,
+    "population": 142308
+  },
+  {
+    "id": 3014,
+    "name": "Wolfsburg",
+    "localName": "Wolfsburg",
+    "country": "DE",
+    "lat": 52.423055555,
+    "lon": 10.787222222,
+    "population": 127256
+  },
+  {
+    "id": 13329,
+    "name": "Piacenza",
+    "localName": "Piacenza",
+    "country": "IT",
+    "lat": 45.05,
+    "lon": 9.7,
+    "population": 102465
+  },
+  {
+    "id": 10086,
+    "name": "Mysore",
+    "localName": "ಮೈಸೂರು",
+    "country": "IN",
+    "lat": 12.308611111,
+    "lon": 76.653055555,
+    "population": 920550
+  },
+  {
+    "id": 140147,
+    "name": "Byerastsye",
+    "localName": "Брэст",
+    "country": "BY",
+    "lat": 52.084722222,
+    "lon": 23.656944444,
+    "population": 347138
+  },
+  {
+    "id": 2758,
+    "name": "Mönchengladbach",
+    "localName": "Mönchengladbach",
+    "country": "DE",
+    "lat": 51.2,
+    "lon": 6.433333333,
+    "population": 268943
+  },
+  {
+    "id": 41699,
+    "name": "Castries",
+    "localName": "Castries",
+    "country": "LC",
+    "lat": 14.010833333,
+    "lon": -60.989444444,
+    "population": 20000
+  },
+  {
+    "id": 2790,
+    "name": "Udine",
+    "localName": "Udine",
+    "country": "IT",
+    "lat": 46.066666666,
+    "lon": 13.233333333,
+    "population": 97808
+  },
+  {
+    "id": 2678,
+    "name": "Gomel",
+    "localName": "Гомель",
+    "country": "BY",
+    "lat": 52.441666666,
+    "lon": 30.983333333,
+    "population": 499853
+  },
+  {
+    "id": 372773,
+    "name": "Raipur",
+    "localName": "Raipur",
+    "country": "IN",
+    "lat": 21.2379468,
+    "lon": 81.6336833,
+    "population": 1010087
+  },
+  {
+    "id": 165972,
+    "name": "Fort Lauderdale",
+    "localName": "Fort Lauderdale",
+    "country": "US",
+    "lat": 26.135833333,
+    "lon": -80.141944444,
+    "population": 182760
+  },
+  {
+    "id": 68744,
+    "name": "Xiamen",
+    "localName": "Ē-mn̂g-chhī",
+    "country": "CN",
+    "lat": 24.479722222,
+    "lon": 118.081944444,
+    "population": 5163970
+  },
+  {
+    "id": 41278,
+    "name": "Ulsan",
+    "localName": "울산 광역시",
+    "country": "KR",
+    "lat": 35.55,
+    "lon": 129.316666666,
+    "population": 1127553
+  },
+  {
+    "id": 2837,
+    "name": "Kaluga",
+    "localName": "Калуга",
+    "country": "RU",
+    "lat": 54.533333333,
+    "lon": 36.266666666,
+    "population": 324989
+  },
+  {
+    "id": 1083,
+    "name": "Salerno",
+    "localName": "Salerno",
+    "country": "IT",
+    "lat": 40.680555555,
+    "lon": 14.759444444,
+    "population": 127186
+  },
+  {
+    "id": 49241,
+    "name": "Lexington",
+    "localName": "Lexington",
+    "country": "US",
+    "lat": 38.049722222,
+    "lon": -84.458611111,
+    "population": 322570
+  },
+  {
+    "id": 6066,
+    "name": "Kemerovo",
+    "localName": "Кемерово",
+    "country": "RU",
+    "lat": 55.333333333,
+    "lon": 86.066666666,
+    "population": 542928
+  },
+  {
+    "id": 102397,
+    "name": "Miskolc",
+    "localName": "Miskolc",
+    "country": "HU",
+    "lat": 48.1,
+    "lon": 20.783333333,
+    "population": 141440
+  },
+  {
+    "id": 170454,
+    "name": "Agartala",
+    "localName": "আগরতলা",
+    "country": "IN",
+    "lat": 23.833333333,
+    "lon": 91.266666666,
+    "population": 522613
+  },
+  {
+    "id": 25410,
+    "name": "Aalborg",
+    "localName": "Aalborg",
+    "country": "DK",
+    "lat": 57.05,
+    "lon": 9.916666666,
+    "population": 121878
+  },
+  {
+    "id": 3042,
+    "name": "Offenbach am Main",
+    "localName": "Offenbach am Main",
+    "country": "DE",
+    "lat": 50.1,
+    "lon": 8.766666666,
+    "population": 135490
+  },
+  {
+    "id": 13373,
+    "name": "Lucca",
+    "localName": "Lucca",
+    "country": "IT",
+    "lat": 43.85,
+    "lon": 10.516666666,
+    "population": 88798
+  },
+  {
+    "id": 5206,
+    "name": "Stavropol",
+    "localName": "Ставрополь",
+    "country": "RU",
+    "lat": 45.05,
+    "lon": 41.983333333,
+    "population": 450680
+  },
+  {
+    "id": 6509,
+    "name": "Burgas",
+    "localName": "Бургас",
+    "country": "BG",
+    "lat": 42.502965,
+    "lon": 27.470179,
+    "population": 189086
+  },
+  {
+    "id": 49145,
+    "name": "New Haven",
+    "localName": "New Haven",
+    "country": "US",
+    "lat": 41.308333333,
+    "lon": -72.925,
+    "population": 134023
+  },
+  {
+    "id": 122803,
+    "name": "Erzurum",
+    "localName": "Erzurum",
+    "country": "TR",
+    "lat": 39.909722222,
+    "lon": 41.275555555,
+    "population": 767848
+  },
+  {
+    "id": 172415,
+    "name": "Kutaisi",
+    "localName": "ქუთაისი",
+    "country": "GE",
+    "lat": 42.271666666,
+    "lon": 42.705555555,
+    "population": 147900
+  },
+  {
+    "id": 49261,
+    "name": "Mesa",
+    "localName": "Mesa",
+    "country": "US",
+    "lat": 33.415,
+    "lon": -111.831388888,
+    "population": 504258
+  },
+  {
+    "id": 52028,
+    "name": "Chiang Mai",
+    "localName": "เทศบาลนครเชียงใหม่",
+    "country": "TH",
+    "lat": 18.788888888,
+    "lon": 98.983333333,
+    "population": 1198000
+  },
+  {
+    "id": 170967,
+    "name": "Denizli",
+    "localName": "Denizli",
+    "country": "TR",
+    "lat": 37.783333333,
+    "lon": 29.096388888,
+    "population": 1027782
+  },
+  {
+    "id": 13464,
+    "name": "Foggia",
+    "localName": "Foggia",
+    "country": "IT",
+    "lat": 41.45845,
+    "lon": 15.55188,
+    "population": 145348
+  },
+  {
+    "id": 45656,
+    "name": "Limoges",
+    "localName": "Limoges",
+    "country": "FR",
+    "lat": 45.834444444,
+    "lon": 1.261666666,
+    "population": 129937
+  },
+  {
+    "id": 131290,
+    "name": "Ganja",
+    "localName": "Gəncə",
+    "country": "AZ",
+    "lat": 40.682777777,
+    "lon": 46.360555555,
+    "population": 331400
+  },
+  {
+    "id": 130514,
+    "name": "Luxor",
+    "localName": "الأقصر",
+    "country": "EG",
+    "lat": 25.696666666,
+    "lon": 32.644444444,
+    "population": 202232
+  },
+  {
+    "id": 12919,
+    "name": "Majuro",
+    "localName": "Majuro",
+    "country": "MH",
+    "lat": 7.0918,
+    "lon": 171.3802,
+    "population": 30000
+  },
+  {
+    "id": 82128,
+    "name": "Temuco",
+    "localName": "Temuco",
+    "country": "CL",
+    "lat": -38.7399,
+    "lon": -72.5901,
+    "population": 282415
+  },
+  {
+    "id": 14467,
+    "name": "La Serena",
+    "localName": "La Serena",
+    "country": "CL",
+    "lat": -29.9027,
+    "lon": -71.252,
+    "population": 195382
+  },
+  {
+    "id": 188806,
+    "name": "Kitakyūshū",
+    "localName": "北九州市",
+    "country": "JP",
+    "lat": 33.883416666,
+    "lon": 130.875194444,
+    "population": 935084
+  },
+  {
+    "id": 13360,
+    "name": "Reggio Emilia",
+    "localName": "Reggio Emilia",
+    "country": "IT",
+    "lat": 44.7,
+    "lon": 10.633333333,
+    "population": 169545
+  },
+  {
+    "id": 174461,
+    "name": "Ranchi",
+    "localName": "রাঁচি",
+    "country": "IN",
+    "lat": 23.355555555,
+    "lon": 85.334722222,
+    "population": 1073440
+  },
+  {
+    "id": 44564,
+    "name": "Charleston",
+    "localName": "Charleston",
+    "country": "US",
+    "lat": 38.347222222,
+    "lon": -81.633333333,
+    "population": 48864
+  },
+  {
+    "id": 17943,
+    "name": "Arlington",
+    "localName": "Arlington",
+    "country": "US",
+    "lat": 32.705033,
+    "lon": -97.122839,
+    "population": 394266
+  },
+  {
+    "id": 2916,
+    "name": "Osnabrück",
+    "localName": "Osnabrück",
+    "country": "DE",
+    "lat": 52.278888888,
+    "lon": 8.043055555,
+    "population": 166960
+  },
+  {
+    "id": 82174,
+    "name": "Brașov",
+    "localName": "Brașov",
+    "country": "RO",
+    "lat": 45.652222222,
+    "lon": 25.610555555,
+    "population": 237589
+  },
+  {
+    "id": 170521,
+    "name": "Kashgar",
+    "localName": "قەشقەر / Қәшқәр",
+    "country": "CN",
+    "lat": 39.45,
+    "lon": 75.983333,
+    "population": 782662
+  },
+  {
+    "id": 200019,
+    "name": "Jodhpur",
+    "localName": "जोधपुर",
+    "country": "IN",
+    "lat": 26.294444444,
+    "lon": 73.027777777,
+    "population": 1033918
+  },
+  {
+    "id": 3476,
+    "name": "L'Aquila",
+    "localName": "L'Aquila",
+    "country": "IT",
+    "lat": 42.354008333,
+    "lon": 13.391991666,
+    "population": 69558
+  },
+  {
+    "id": 22889,
+    "name": "Bath",
+    "localName": "Bath",
+    "country": "GB",
+    "lat": 51.381388888,
+    "lon": -2.359722222,
+    "population": 94092
+  },
+  {
+    "id": 2203,
+    "name": "Arica",
+    "localName": "Arica",
+    "country": "CL",
+    "lat": -18.478388888,
+    "lon": -70.321222222,
+    "population": 202131
+  },
+  {
+    "id": 128849,
+    "name": "Nagano",
+    "localName": "長野市",
+    "country": "JP",
+    "lat": 36.648666666,
+    "lon": 138.194694444,
+    "population": 367184
+  },
+  {
+    "id": 5384,
+    "name": "Kirov",
+    "localName": "Киров",
+    "country": "RU",
+    "lat": 58.6,
+    "lon": 49.65,
+    "population": 475871
+  },
+  {
+    "id": 26590,
+    "name": "Ciudad Juárez",
+    "localName": "Ciudad Juárez",
+    "country": "MX",
+    "lat": 31.6685,
+    "lon": -106.42,
+    "population": 1321004
+  },
+  {
+    "id": 23051,
+    "name": "Swansea",
+    "localName": "Swansea",
+    "country": "GB",
+    "lat": 51.616666666,
+    "lon": -3.95,
+    "population": 246700
+  },
+  {
+    "id": 125434,
+    "name": "Gqeberha",
+    "localName": "Port Elizabeth",
+    "country": "ZA",
+    "lat": -33.958055555,
+    "lon": 25.6,
+    "population": 312392
+  },
+  {
+    "id": 13629,
+    "name": "Sassari",
+    "localName": "Sassari",
+    "country": "IT",
+    "lat": 40.726666666,
+    "lon": 8.559166666,
+    "population": 121021
+  },
+  {
+    "id": 154835,
+    "name": "Mahilyow",
+    "localName": "Магілёў",
+    "country": "BY",
+    "lat": 53.90894,
+    "lon": 30.34296,
+    "population": 352891
+  },
+  {
+    "id": 83324,
+    "name": "Sibiu",
+    "localName": "Hermannstadt",
+    "country": "RO",
+    "lat": 45.8,
+    "lon": 24.15,
+    "population": 134308
+  },
+  {
+    "id": 47465,
+    "name": "Aix-en-Provence",
+    "localName": "Aix-en-Provence",
+    "country": "FR",
+    "lat": 43.527777777,
+    "lon": 5.445555555,
+    "population": 149695
+  },
+  {
+    "id": 178663,
+    "name": "Meknes",
+    "localName": "مكناس",
+    "country": "MA",
+    "lat": 33.883333333,
+    "lon": -5.55,
+    "population": 601000
+  },
+  {
+    "id": 214173,
+    "name": "Trujillo",
+    "localName": "Trujillo",
+    "country": "PE",
+    "lat": -8.111944444,
+    "lon": -79.028888888,
+    "population": 919899
+  },
+  {
+    "id": 158467,
+    "name": "Gwalior",
+    "localName": "Gwalior",
+    "country": "IN",
+    "lat": 26.2125,
+    "lon": 78.1775,
+    "population": 1069276
+  },
+  {
+    "id": 535534,
+    "name": "Hohhot",
+    "localName": "Hohhot",
+    "country": "CN",
+    "lat": 40.81507,
+    "lon": 111.66293,
+    "population": 3446100
+  },
+  {
+    "id": 2805,
+    "name": "Krefeld",
+    "localName": "Krefeld",
+    "country": "DE",
+    "lat": 51.333333333,
+    "lon": 6.566666666,
+    "population": 228550
+  },
+  {
+    "id": 133116,
+    "name": "Hamilton",
+    "localName": "Hamilton",
+    "country": "CA",
+    "lat": 43.256666666,
+    "lon": -79.869166666,
+    "population": 569353
+  },
+  {
+    "id": 485496,
+    "name": "Shymkent",
+    "localName": "Шымкент",
+    "country": "KZ",
+    "lat": 42.3,
+    "lon": 69.6,
+    "population": 1191877
+  },
+  {
+    "id": 11025,
+    "name": "Semarang",
+    "localName": "Semarang",
+    "country": "ID",
+    "lat": -6.99,
+    "lon": 110.4225,
+    "population": 1621384
+  },
+  {
+    "id": 1647,
+    "name": "Rijeka",
+    "localName": "Fiume",
+    "country": "HR",
+    "lat": 45.333333333,
+    "lon": 14.433333333,
+    "population": 107964
+  },
+  {
+    "id": 169134,
+    "name": "Nara",
+    "localName": "奈良市",
+    "country": "JP",
+    "lat": 34.685,
+    "lon": 135.804777777,
+    "population": 352377
+  },
+  {
+    "id": 2704,
+    "name": "Pescara",
+    "localName": "Pescara",
+    "country": "IT",
+    "lat": 42.464277777,
+    "lon": 14.214188888,
+    "population": 118657
+  },
+  {
+    "id": 49218,
+    "name": "Rochester",
+    "localName": "Rochester",
+    "country": "US",
+    "lat": 43.165555555,
+    "lon": -77.611388888,
+    "population": 211328
+  },
+  {
+    "id": 2838,
+    "name": "Oberhausen",
+    "localName": "Oberhausen",
+    "country": "DE",
+    "lat": 51.4699,
+    "lon": 6.8514,
+    "population": 211099
+  },
+  {
+    "id": 157055,
+    "name": "Cherkasy",
+    "localName": "Черкаси",
+    "country": "UA",
+    "lat": 49.444444444,
+    "lon": 32.059722222,
+    "population": 269836
+  },
+  {
+    "id": 875,
+    "name": "Abakan",
+    "localName": "Ағбан",
+    "country": "RU",
+    "lat": 53.716666666,
+    "lon": 91.416666666,
+    "population": 184284
+  },
+  {
+    "id": 38834,
+    "name": "Nukuʻalofa",
+    "localName": "Nukuʻalofa",
+    "country": "TO",
+    "lat": -21.1343401,
+    "lon": -175.201808,
+    "population": 23221
+  },
+  {
+    "id": 200235,
+    "name": "Nashik",
+    "localName": "नाशिक",
+    "country": "IN",
+    "lat": 20.0,
+    "lon": 73.783333333,
+    "population": 1486053
+  },
+  {
+    "id": 42780,
+    "name": "Ningbo",
+    "localName": "宁波",
+    "country": "CN",
+    "lat": 29.875,
+    "lon": 121.549166666,
+    "population": 9404283
+  },
+  {
+    "id": 134509,
+    "name": "Port Said",
+    "localName": "بورسعيد",
+    "country": "EG",
+    "lat": 31.2625,
+    "lon": 32.306111111,
+    "population": 791749
+  },
+  {
+    "id": 179691,
+    "name": "Niigata",
+    "localName": "新潟市",
+    "country": "JP",
+    "lat": 37.916194444,
+    "lon": 139.036388888,
+    "population": 790646
+  },
+  {
+    "id": 132997,
+    "name": "Florianópolis",
+    "localName": "Florianópolis",
+    "country": "BR",
+    "lat": -27.593280555,
+    "lon": -48.553047222,
+    "population": 587486
+  },
+  {
+    "id": 13678,
+    "name": "Agrigento",
+    "localName": "Girgenti",
+    "country": "IT",
+    "lat": 37.3125,
+    "lon": 13.575,
+    "population": 55512
+  },
+  {
+    "id": 82070,
+    "name": "Tyre",
+    "localName": "صور",
+    "country": "LB",
+    "lat": 33.266666666,
+    "lon": 35.2,
+    "population": 160000
+  },
+  {
+    "id": 26339,
+    "name": "Jersey City",
+    "localName": "Jersey City",
+    "country": "US",
+    "lat": 40.71,
+    "lon": -74.06,
+    "population": 292449
+  },
+  {
+    "id": 43475,
+    "name": "Derby",
+    "localName": "Derby",
+    "country": "GB",
+    "lat": 52.921666666,
+    "lon": -1.476666666,
+    "population": 255394
+  },
+  {
+    "id": 156743,
+    "name": "Ternopil",
+    "localName": "Тернопіль",
+    "country": "UA",
+    "lat": 49.566666666,
+    "lon": 25.6,
+    "population": 225238
+  },
+  {
+    "id": 47554,
+    "name": "Toruń",
+    "localName": "Toruń",
+    "country": "PL",
+    "lat": 53.016666666,
+    "lon": 18.616666666,
+    "population": 198273
+  },
+  {
+    "id": 47045,
+    "name": "Saint-Denis",
+    "localName": "Saint-Denis",
+    "country": "FR",
+    "lat": -20.878888888,
+    "lon": 55.448055555,
+    "population": 155634
+  },
+  {
+    "id": 2801,
+    "name": "Bryansk",
+    "localName": "Брянск",
+    "country": "RU",
+    "lat": 53.2425,
+    "lon": 34.366666666,
+    "population": 372123
+  },
+  {
+    "id": 130191,
+    "name": "Norwich",
+    "localName": "Norwich",
+    "country": "GB",
+    "lat": 52.628611111,
+    "lon": 1.292777777,
+    "population": 195971
+  },
+  {
+    "id": 190897,
+    "name": "Fier",
+    "localName": "Fier",
+    "country": "AL",
+    "lat": 40.716666666,
+    "lon": 19.55,
+    "population": 52926
+  },
+  {
+    "id": 6231,
+    "name": "Cremona",
+    "localName": "Cremona",
+    "country": "IT",
+    "lat": 45.133333333,
+    "lon": 10.024722222,
+    "population": 70637
+  },
+  {
+    "id": 168225,
+    "name": "Hebron",
+    "localName": "الخليل",
+    "country": "PS",
+    "lat": 31.535,
+    "lon": 35.098611111,
+    "population": 215452
+  },
+  {
+    "id": 49244,
+    "name": "Santa Ana",
+    "localName": "Santa Ana",
+    "country": "US",
+    "lat": 33.740833333,
+    "lon": -117.881388888,
+    "population": 310227
+  },
+  {
+    "id": 140075,
+    "name": "Gold Coast",
+    "localName": "Gold Coast",
+    "country": "AU",
+    "lat": -28.016666666,
+    "lon": 153.4,
+    "population": 607665
+  },
+  {
+    "id": 134494,
+    "name": "Győr",
+    "localName": "Győr",
+    "country": "HU",
+    "lat": 47.684166666,
+    "lon": 17.634444444,
+    "population": 129373
+  },
+  {
+    "id": 134121,
+    "name": "Namur",
+    "localName": "Namur",
+    "country": "BE",
+    "lat": 50.466666666,
+    "lon": 4.866666666,
+    "population": 115330
+  },
+  {
+    "id": 199909,
+    "name": "Karbala",
+    "localName": "كربلاء",
+    "country": "IQ",
+    "lat": 32.616666666,
+    "lon": 44.033333333,
+    "population": 690100
+  },
+  {
+    "id": 40747,
+    "name": "Pierre",
+    "localName": "Pierre",
+    "country": "US",
+    "lat": 44.368361111,
+    "lon": -100.351138888,
+    "population": 14091
+  },
+  {
+    "id": 170244,
+    "name": "Berat",
+    "localName": "Berati",
+    "country": "AL",
+    "lat": 40.704939,
+    "lon": 19.949673,
+    "population": 40665
+  },
+  {
+    "id": 103717,
+    "name": "Rovaniemi",
+    "localName": "Roavvenjárga",
+    "country": "FI",
+    "lat": 66.5027903,
+    "lon": 25.7284789,
+    "population": 65329
+  },
+  {
+    "id": 3752,
+    "name": "Maykop",
+    "localName": "Майкоп",
+    "country": "RU",
+    "lat": 44.6,
+    "lon": 40.083333333,
+    "population": 137899
+  },
+  {
+    "id": 598,
+    "name": "Rzeszów",
+    "localName": "Rzeszów",
+    "country": "PL",
+    "lat": 50.041111111,
+    "lon": 21.998888888,
+    "population": 195871
+  },
+  {
+    "id": 81882,
+    "name": "Santos",
+    "localName": "Santos",
+    "country": "BR",
+    "lat": -23.9335988,
+    "lon": -46.3286399,
+    "population": 418608
+  },
+  {
+    "id": 36214,
+    "name": "Puerto Montt",
+    "localName": "Puerto Montt",
+    "country": "CL",
+    "lat": -41.4718,
+    "lon": -72.9396,
+    "population": 169736
+  },
+  {
+    "id": 199889,
+    "name": "Kumamoto",
+    "localName": "熊本市",
+    "country": "JP",
+    "lat": 32.803,
+    "lon": 130.707861111,
+    "population": 738385
+  },
+  {
+    "id": 8621,
+    "name": "Terni",
+    "localName": "Terni",
+    "country": "IT",
+    "lat": 42.56077083,
+    "lon": 12.6467816,
+    "population": 106370
+  },
+  {
+    "id": 200123,
+    "name": "Ludhiana",
+    "localName": "ਲੁਧਿਆਣਾ",
+    "country": "IN",
+    "lat": 30.908333333,
+    "lon": 75.848611111,
+    "population": 1618879
+  },
+  {
+    "id": 36281,
+    "name": "Roseau",
+    "localName": "Roseau",
+    "country": "DM",
+    "lat": 15.3,
+    "lon": -61.383333333,
+    "population": 16571
+  },
+  {
+    "id": 3883,
+    "name": "Catanzaro",
+    "localName": "Catanzaro",
+    "country": "IT",
+    "lat": 38.91,
+    "lon": 16.5875,
+    "population": 84670
+  },
+  {
+    "id": 173310,
+    "name": "Kirkuk",
+    "localName": "كركوك",
+    "country": "IQ",
+    "lat": 35.466666666,
+    "lon": 44.4,
+    "population": 975000
+  },
+  {
+    "id": 216075,
+    "name": "Cần Thơ",
+    "localName": "Cần Thơ",
+    "country": "VN",
+    "lat": 10.1547298,
+    "lon": 105.5005357,
+    "population": 3207000
+  },
+  {
+    "id": 134514,
+    "name": "Suez",
+    "localName": "Suez",
+    "country": "EG",
+    "lat": 29.966666666,
+    "lon": 32.533333333,
+    "population": 716458
+  },
+  {
+    "id": 715,
+    "name": "Heilbronn",
+    "localName": "Heilbronn",
+    "country": "DE",
+    "lat": 49.140428,
+    "lon": 9.217953,
+    "population": 130093
+  },
+  {
+    "id": 9885,
+    "name": "Coimbatore",
+    "localName": "Coimbatore",
+    "country": "IN",
+    "lat": 11.000833333,
+    "lon": 76.963333333,
+    "population": 959823
+  },
+  {
+    "id": 1473,
+    "name": "Davao City",
+    "localName": "Davao City",
+    "country": "PH",
+    "lat": 7.066233333,
+    "lon": 125.609441666,
+    "population": 1848947
+  },
+  {
+    "id": 25732,
+    "name": "Örebro",
+    "localName": "Örebro",
+    "country": "SE",
+    "lat": 59.266926001,
+    "lon": 15.196522467,
+    "population": 128658
+  },
+  {
+    "id": 93358,
+    "name": "Oradea",
+    "localName": "Nagyvárad",
+    "country": "RO",
+    "lat": 47.072222222,
+    "lon": 21.921111111,
+    "population": 183105
+  },
+  {
+    "id": 1010,
+    "name": "Maribor",
+    "localName": "Maribor",
+    "country": "SI",
+    "lat": 46.55,
+    "lon": 15.633333333,
+    "population": 114301
+  },
+  {
+    "id": 49225,
+    "name": "Reno",
+    "localName": "Reno",
+    "country": "US",
+    "lat": 39.526111111,
+    "lon": -119.812666666,
+    "population": 264165
+  },
+  {
+    "id": 6046,
+    "name": "Novara",
+    "localName": "Novara",
+    "country": "IT",
+    "lat": 45.45,
+    "lon": 8.62,
+    "population": 101257
+  },
+  {
+    "id": 231318,
+    "name": "Johor Bahru",
+    "localName": "Johor Bahru",
+    "country": "MY",
+    "lat": 1.455555555,
+    "lon": 103.761111111,
+    "population": 797882
+  },
+  {
+    "id": 2971,
+    "name": "Paderborn",
+    "localName": "Paderborn",
+    "country": "DE",
+    "lat": 51.716666666,
+    "lon": 8.766666666,
+    "population": 155749
+  },
+  {
+    "id": 51599,
+    "name": "Punta Arenas",
+    "localName": "Punta Arenas",
+    "country": "CL",
+    "lat": -53.1625,
+    "lon": -70.908055555,
+    "population": 123403
+  },
+  {
+    "id": 2938,
+    "name": "Leverkusen",
+    "localName": "Leverkusen",
+    "country": "DE",
+    "lat": 51.033333333,
+    "lon": 6.983333333,
+    "population": 175300
+  },
+  {
+    "id": 199528,
+    "name": "Dehradun",
+    "localName": "Dehradun",
+    "country": "IN",
+    "lat": 30.318,
+    "lon": 78.029,
+    "population": 578420
+  },
+  {
+    "id": 171639,
+    "name": "Ashdod",
+    "localName": "אַשְׁדּוֹד",
+    "country": "IL",
+    "lat": 31.797777777,
+    "lon": 34.650277777,
+    "population": 220174
+  },
+  {
+    "id": 199797,
+    "name": "Tacoma",
+    "localName": "Tacoma",
+    "country": "US",
+    "lat": 47.2525,
+    "lon": -122.4475,
+    "population": 219346
+  },
+  {
+    "id": 28441,
+    "name": "São Luís",
+    "localName": "São Luís",
+    "country": "BR",
+    "lat": -2.53,
+    "lon": -44.302777777,
+    "population": 1037775
+  },
+  {
+    "id": 127623,
+    "name": "Vantaa",
+    "localName": "Vantaa",
+    "country": "FI",
+    "lat": 60.294444444,
+    "lon": 25.040277777,
+    "population": 248199
+  },
+  {
+    "id": 189633,
+    "name": "Guilin",
+    "localName": "桂林市",
+    "country": "CN",
+    "lat": 25.281944444,
+    "lon": 110.286388888,
+    "population": 5085500
+  },
+  {
+    "id": 13386,
+    "name": "Lecce",
+    "localName": "Lecce",
+    "country": "IT",
+    "lat": 40.352011111,
+    "lon": 18.169138888,
+    "population": 94783
+  },
+  {
+    "id": 49111,
+    "name": "Cambridge",
+    "localName": "Cambridge",
+    "country": "US",
+    "lat": 42.375,
+    "lon": -71.106111111,
+    "population": 118403
+  },
+  {
+    "id": 49174,
+    "name": "Bridgeport",
+    "localName": "Bridgeport",
+    "country": "US",
+    "lat": 41.183333333,
+    "lon": -73.2,
+    "population": 148654
+  },
+  {
+    "id": 170513,
+    "name": "Taganrog",
+    "localName": "Таганрог",
+    "country": "RU",
+    "lat": 47.233333333,
+    "lon": 38.9,
+    "population": 240055
+  },
+  {
+    "id": 130469,
+    "name": "Mazar-i-Sharif",
+    "localName": "Mazar-i-Sharif",
+    "country": "AF",
+    "lat": 36.7,
+    "lon": 67.116666666,
+    "population": 469247
+  },
+  {
+    "id": 156726,
+    "name": "Ivano-Frankivsk",
+    "localName": "Івано-Франківськ",
+    "country": "UA",
+    "lat": 48.922777777,
+    "lon": 24.710555555,
+    "population": 238196
+  },
+  {
+    "id": 129352,
+    "name": "Khankendi",
+    "localName": "Stepanakert",
+    "country": "AZ",
+    "lat": 39.815277777,
+    "lon": 46.751944444,
+    "population": 49848
+  },
+  {
+    "id": 182394,
+    "name": "Yazd",
+    "localName": "یزد",
+    "country": "IR",
+    "lat": 31.897222222,
+    "lon": 54.3675,
+    "population": 529673
+  },
+  {
+    "id": 13410,
+    "name": "Latina",
+    "localName": "Latina",
+    "country": "IT",
+    "lat": 41.467222222,
+    "lon": 12.903611111,
+    "population": 127564
+  },
+  {
+    "id": 15674,
+    "name": "Kagoshima",
+    "localName": "鹿児島市",
+    "country": "JP",
+    "lat": 31.596805555,
+    "lon": 130.557138888,
+    "population": 593754
+  },
+  {
+    "id": 49236,
+    "name": "St. Petersburg",
+    "localName": "St. Petersburg",
+    "country": "US",
+    "lat": 27.773055555,
+    "lon": -82.64,
+    "population": 258308
+  },
+  {
+    "id": 174691,
+    "name": "Shizuoka",
+    "localName": "静岡市",
+    "country": "JP",
+    "lat": 34.975555555,
+    "lon": 138.3825,
+    "population": 685589
+  },
+  {
+    "id": 485176,
+    "name": "Pasadena",
+    "localName": "Pasadena",
+    "country": "US",
+    "lat": 34.1475,
+    "lon": -118.143888888,
+    "population": 138699
+  },
+  {
+    "id": 2910,
+    "name": "Ludwigshafen",
+    "localName": "Ludwigshafen am Rhein",
+    "country": "DE",
+    "lat": 49.481111111,
+    "lon": 8.435277777,
+    "population": 176110
+  },
+  {
+    "id": 2167,
+    "name": "Lund",
+    "localName": "Lund",
+    "country": "SE",
+    "lat": 55.708313018,
+    "lon": 13.199164196,
+    "population": 98308
+  },
+  {
+    "id": 173121,
+    "name": "Santiago de Querétaro",
+    "localName": "Santiago de Querétaro",
+    "country": "MX",
+    "lat": 20.588055555,
+    "lon": -100.388055555,
+    "population": 794789
+  },
+  {
+    "id": 59100,
+    "name": "Shantou",
+    "localName": "汕头",
+    "country": "CN",
+    "lat": 23.353888888,
+    "lon": 116.682222222,
+    "population": 5502031
+  },
+  {
+    "id": 133123,
+    "name": "Patras",
+    "localName": "Πάτρα",
+    "country": "GR",
+    "lat": 38.25,
+    "lon": 21.733333333,
+    "population": 173600
+  },
+  {
+    "id": 289693,
+    "name": "Sharjah",
+    "localName": "الشارقة",
+    "country": "AE",
+    "lat": 25.3375,
+    "lon": 55.411944444,
+    "population": 1247749
+  },
+  {
+    "id": 158292,
+    "name": "Kropyvnytskyi",
+    "localName": "Кропивницький",
+    "country": "UA",
+    "lat": 48.510277777,
+    "lon": 32.266666666,
+    "population": 219676
+  },
+  {
+    "id": 41474,
+    "name": "Kingstown",
+    "localName": "Kingstown",
+    "country": "VC",
+    "lat": 13.15527,
+    "lon": -61.22742,
+    "population": 24518
+  },
+  {
+    "id": 156739,
+    "name": "Rivne",
+    "localName": "Рівне",
+    "country": "UA",
+    "lat": 50.619722222,
+    "lon": 26.251388888,
+    "population": 245289
+  },
+  {
+    "id": 3126,
+    "name": "Erlangen",
+    "localName": "Erlangen",
+    "country": "DE",
+    "lat": 49.5925,
+    "lon": 11.005,
+    "population": 117806
+  },
+  {
+    "id": 49242,
+    "name": "Corpus Christi",
+    "localName": "Corpus Christi",
+    "country": "US",
+    "lat": 27.742777777,
+    "lon": -97.401944444,
+    "population": 317863
+  },
+  {
+    "id": 47164,
+    "name": "Santa Monica",
+    "localName": "Santa Monica",
+    "country": "US",
+    "lat": 34.021944444,
+    "lon": -118.481388888,
+    "population": 93076
+  },
+  {
+    "id": 1476,
+    "name": "Le Mans",
+    "localName": "Le Mans",
+    "country": "FR",
+    "lat": 48.004166666,
+    "lon": 0.196944444,
+    "population": 146249
+  },
+  {
+    "id": 211243,
+    "name": "Yinchuan",
+    "localName": "Yinchuan",
+    "country": "CN",
+    "lat": 38.485,
+    "lon": 106.225,
+    "population": 2859074
+  },
+  {
+    "id": 156711,
+    "name": "Uzhhorod",
+    "localName": "Ужгород",
+    "country": "UA",
+    "lat": 48.623888888,
+    "lon": 22.295,
+    "population": 115449
+  },
+  {
+    "id": 160544,
+    "name": "Heraklion",
+    "localName": "Ηράκλειο",
+    "country": "GR",
+    "lat": 35.340277777,
+    "lon": 25.134444444,
+    "population": 145440
+  },
+  {
+    "id": 41843,
+    "name": "Beersheba",
+    "localName": "באר שבע",
+    "country": "IL",
+    "lat": 31.252222222,
+    "lon": 34.786666666,
+    "population": 209000
+  },
+  {
+    "id": 199440,
+    "name": "Mexicali",
+    "localName": "Mexicali",
+    "country": "MX",
+    "lat": 32.636,
+    "lon": -115.4759,
+    "population": 854186
+  },
+  {
+    "id": 129259,
+    "name": "Niš",
+    "localName": "Niš",
+    "country": "RS",
+    "lat": 43.319166666,
+    "lon": 21.896111111,
+    "population": 183164
+  },
+  {
+    "id": 187346,
+    "name": "Constantine",
+    "localName": "قسنطينة",
+    "country": "DZ",
+    "lat": 36.365,
+    "lon": 6.614722222,
+    "population": 465138
+  },
+  {
+    "id": 168193,
+    "name": "Najaf",
+    "localName": "النجف",
+    "country": "IQ",
+    "lat": 32.028951,
+    "lon": 44.339621,
+    "population": 724700
+  },
+  {
+    "id": 42651,
+    "name": "Wuxi",
+    "localName": "Wuxi",
+    "country": "CN",
+    "lat": 31.566667,
+    "lon": 120.283333,
+    "population": 7462135
+  },
+  {
+    "id": 156752,
+    "name": "Sumy",
+    "localName": "Суми",
+    "country": "UA",
+    "lat": 50.906666666,
+    "lon": 34.799166666,
+    "population": 265758
+  },
+  {
+    "id": 25315,
+    "name": "Phan Thiết",
+    "localName": "Phan Thiết",
+    "country": "VN",
+    "lat": 10.9375,
+    "lon": 108.158333333,
+    "population": 205333
+  },
+  {
+    "id": 102158,
+    "name": "Narva",
+    "localName": "Narva",
+    "country": "EE",
+    "lat": 59.379166666,
+    "lon": 28.200555555,
+    "population": 53360
+  },
+  {
+    "id": 49268,
+    "name": "Fort Wayne",
+    "localName": "Fort Wayne",
+    "country": "US",
+    "lat": 41.08045,
+    "lon": -85.13915,
+    "population": 263886
+  },
+  {
+    "id": 33962,
+    "name": "Sanremo",
+    "localName": "Sanremo",
+    "country": "IT",
+    "lat": 43.8175,
+    "lon": 7.775,
+    "population": 52787
+  },
+  {
+    "id": 82185,
+    "name": "La Rochelle",
+    "localName": "La Rochelle",
+    "country": "FR",
+    "lat": 46.159444444,
+    "lon": -1.151388888,
+    "population": 79851
+  },
+  {
+    "id": 116341,
+    "name": "Korçë",
+    "localName": "Korça",
+    "country": "AL",
+    "lat": 40.616666666,
+    "lon": 20.766666666,
+    "population": 43254
+  },
+  {
+    "id": 3543,
+    "name": "Potenza",
+    "localName": "Potenza",
+    "country": "IT",
+    "lat": 40.633333333,
+    "lon": 15.8,
+    "population": 64406
+  },
+  {
+    "id": 200237,
+    "name": "Meerut",
+    "localName": "Meerut",
+    "country": "IN",
+    "lat": 28.98,
+    "lon": 77.706388888,
+    "population": 1571434
+  },
+  {
+    "id": 173545,
+    "name": "Hama",
+    "localName": "Hama",
+    "country": "SY",
+    "lat": 35.163546,
+    "lon": 36.757062,
+    "population": 696863
+  },
+  {
+    "id": 53139,
+    "name": "Chita",
+    "localName": "Чита",
+    "country": "RU",
+    "lat": 52.033409,
+    "lon": 113.500893,
+    "population": 337063
+  },
+  {
+    "id": 170762,
+    "name": "Cuiabá",
+    "localName": "Cuiabá",
+    "country": "BR",
+    "lat": -15.595833333,
+    "lon": -56.096944444,
+    "population": 691875
+  },
+  {
+    "id": 6285,
+    "name": "Varese",
+    "localName": "Varese",
+    "country": "IT",
+    "lat": 45.816666666,
+    "lon": 8.833333333,
+    "population": 78409
+  },
+  {
+    "id": 3544,
+    "name": "Tambov",
+    "localName": "Тамбов",
+    "country": "RU",
+    "lat": 52.723055555,
+    "lon": 41.453888888,
+    "population": 254940
+  },
+  {
+    "id": 9125,
+    "name": "Winterthur",
+    "localName": "Winterthur",
+    "country": "CH",
+    "lat": 47.4992,
+    "lon": 8.72671,
+    "population": 120376
+  },
+  {
+    "id": 131491,
+    "name": "Brighton",
+    "localName": "Brighton",
+    "country": "GB",
+    "lat": 50.820833333,
+    "lon": -0.1375,
+    "population": 134293
+  },
+  {
+    "id": 5475,
+    "name": "Treviso",
+    "localName": "Treviso",
+    "country": "IT",
+    "lat": 45.665833333,
+    "lon": 12.245555555,
+    "population": 84607
+  },
+  {
+    "id": 81621,
+    "name": "Fort-de-France",
+    "localName": "Fort-de-France",
+    "country": "FR",
+    "lat": 14.6,
+    "lon": -61.066666666,
+    "population": 75506
+  },
+  {
+    "id": 7550,
+    "name": "Lutsk",
+    "localName": "Луцьк",
+    "country": "UA",
+    "lat": 50.747777777,
+    "lon": 25.324444444,
+    "population": 215986
+  },
+  {
+    "id": 245023,
+    "name": "Taichung",
+    "localName": "Taichung",
+    "country": "TW",
+    "lat": 24.143888888,
+    "lon": 120.679444444,
+    "population": 3033885
+  },
+  {
+    "id": 25413,
+    "name": "Linköping",
+    "localName": "Linköping",
+    "country": "SE",
+    "lat": 58.409418037,
+    "lon": 15.625656134,
+    "population": 116851
+  },
+  {
+    "id": 3977,
+    "name": "Elista",
+    "localName": "Элиста",
+    "country": "RU",
+    "lat": 46.316666666,
+    "lon": 44.266666666,
+    "population": 104082
+  },
+  {
+    "id": 20714,
+    "name": "Suwon",
+    "localName": "수원",
+    "country": "KR",
+    "lat": 37.285833333,
+    "lon": 127.01,
+    "population": 1234300
+  },
+  {
+    "id": 79875,
+    "name": "Mobile",
+    "localName": "Mobile",
+    "country": "US",
+    "lat": 30.727669444,
+    "lon": -88.052672222,
+    "population": 187041
+  },
+  {
+    "id": 156717,
+    "name": "Khmelnytskyi",
+    "localName": "Хмельницький",
+    "country": "UA",
+    "lat": 49.42,
+    "lon": 27.0,
+    "population": 274452
+  },
+  {
+    "id": 3046,
+    "name": "Pforzheim",
+    "localName": "Pforzheim",
+    "country": "DE",
+    "lat": 48.8908846,
+    "lon": 8.7029532,
+    "population": 128992
+  },
+  {
+    "id": 131416,
+    "name": "Derbent",
+    "localName": "Дербент",
+    "country": "RU",
+    "lat": 42.057777777,
+    "lon": 48.288888888,
+    "population": 127084
+  },
+  {
+    "id": 168057,
+    "name": "Craiova",
+    "localName": "Craiova",
+    "country": "RO",
+    "lat": 44.333333333,
+    "lon": 23.816666666,
+    "population": 234140
+  },
+  {
+    "id": 3214,
+    "name": "Cottbus",
+    "localName": "Cottbus",
+    "country": "DE",
+    "lat": 51.760805555,
+    "lon": 14.331861111,
+    "population": 100010
+  },
+  {
+    "id": 200713,
+    "name": "Aurangabad",
+    "localName": "औरंगाबाद शहर, महाराष्ट्र",
+    "country": "IN",
+    "lat": 19.88,
+    "lon": 75.32,
+    "population": 1175116
+  },
+  {
+    "id": 191130,
+    "name": "Kanazawa",
+    "localName": "金沢市",
+    "country": "JP",
+    "lat": 36.561055555,
+    "lon": 136.6565,
+    "population": 462479
+  },
+  {
+    "id": 159288,
+    "name": "Santa Barbara",
+    "localName": "Santa Barbara",
+    "country": "US",
+    "lat": 34.425833333,
+    "lon": -119.714166666,
+    "population": 88665
+  },
+  {
+    "id": 484678,
+    "name": "Berkeley",
+    "localName": "Berkeley",
+    "country": "US",
+    "lat": 37.870277777,
+    "lon": -122.268055555,
+    "population": 124321
+  },
+  {
+    "id": 15760,
+    "name": "Novorossiysk",
+    "localName": "Новороссийск",
+    "country": "RU",
+    "lat": 44.716666666,
+    "lon": 37.766666666,
+    "population": 261973
+  },
+  {
+    "id": 4100,
+    "name": "Baden-Baden",
+    "localName": "Baden-Baden",
+    "country": "DE",
+    "lat": 48.761944444,
+    "lon": 8.240833333,
+    "population": 57420
+  },
+  {
+    "id": 200030,
+    "name": "Latakia",
+    "localName": "اللاذقية",
+    "country": "SY",
+    "lat": 35.52,
+    "lon": 35.778055555,
+    "population": 709000
+  },
+  {
+    "id": 1467,
+    "name": "Cebu City",
+    "localName": "Cebu City",
+    "country": "PH",
+    "lat": 10.293,
+    "lon": 123.902,
+    "population": 965332
+  },
+  {
+    "id": 168929,
+    "name": "Campo Grande",
+    "localName": "Campo Grande",
+    "country": "BR",
+    "lat": -20.468611111,
+    "lon": -54.622222222,
+    "population": 962883
+  },
+  {
+    "id": 126898,
+    "name": "Antibes",
+    "localName": "Antibes",
+    "country": "FR",
+    "lat": 43.58,
+    "lon": 7.123055555,
+    "population": 77637
+  }
+]
