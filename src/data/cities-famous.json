@@ -38,7 +38,7 @@
   {
     "id": 956,
     "name": "Beijing",
-    "localName": "北京市",
+    "localName": "北京",
     "country": "CN",
     "lat": 39.90403,
     "lon": 116.407526,
@@ -74,7 +74,7 @@
   {
     "id": 1490,
     "name": "Tokyo",
-    "localName": "東京都",
+    "localName": "東京",
     "country": "JP",
     "lat": 35.689444444,
     "lon": 139.691666666,
@@ -137,7 +137,7 @@
   {
     "id": 8686,
     "name": "Shanghai",
-    "localName": "Shanghai",
+    "localName": "上海",
     "country": "CN",
     "lat": 31.2325,
     "lon": 121.469166666,
@@ -146,7 +146,7 @@
   {
     "id": 1854,
     "name": "Ho Chi Minh City",
-    "localName": "ក្រុងព្រៃនគរ",
+    "localName": "Thành phố Hồ Chí Minh",
     "country": "VN",
     "lat": 10.775555555,
     "lon": 106.701944444,
@@ -155,7 +155,7 @@
   {
     "id": 65,
     "name": "Los Angeles",
-    "localName": "El Pueblo de Nuestra Señora la Reina de los Ángeles del Río de Porciúncula",
+    "localName": "Los Angeles",
     "country": "US",
     "lat": 34.05223,
     "lon": -118.24368,
@@ -218,7 +218,7 @@
   {
     "id": 1486,
     "name": "Buenos Aires",
-    "localName": "Ciudad Autónoma de Buenos Aires",
+    "localName": "Buenos Aires",
     "country": "AR",
     "lat": -34.599722222,
     "lon": -58.381944444,
@@ -281,7 +281,7 @@
   {
     "id": 1861,
     "name": "Bangkok",
-    "localName": "กรุงเทพมหานคร",
+    "localName": "กรุงเทพฯ",
     "country": "TH",
     "lat": 13.75,
     "lon": 100.516666666,
@@ -308,7 +308,7 @@
   {
     "id": 1757,
     "name": "Helsinki",
-    "localName": "Helsingfors",
+    "localName": "Helsinki",
     "country": "FI",
     "lat": 60.170833333,
     "lon": 24.9375,
@@ -398,7 +398,7 @@
   {
     "id": 1354,
     "name": "Dhaka",
-    "localName": "ڈھاکہ",
+    "localName": "ঢাকা",
     "country": "BD",
     "lat": 23.728888888,
     "lon": 90.394444444,
@@ -551,7 +551,7 @@
   {
     "id": 8660,
     "name": "Karachi",
-    "localName": "Karachi",
+    "localName": "کراچی",
     "country": "PK",
     "lat": 24.86,
     "lon": 67.01,
@@ -560,7 +560,7 @@
   {
     "id": 1055,
     "name": "Hamburg",
-    "localName": "Freie und Hansestadt Hamburg",
+    "localName": "Hamburg",
     "country": "DE",
     "lat": 53.55,
     "lon": 10.0,
@@ -578,7 +578,7 @@
   {
     "id": 612,
     "name": "Dubai",
-    "localName": "دبيّ",
+    "localName": "دبي",
     "country": "AE",
     "lat": 25.269722222,
     "lon": 55.309444444,
@@ -605,7 +605,7 @@
   {
     "id": 5465,
     "name": "Cape Town",
-    "localName": "Cape Town",
+    "localName": "iKapa",
     "country": "ZA",
     "lat": -33.925277777,
     "lon": 18.423888888,
@@ -668,7 +668,7 @@
   {
     "id": 490,
     "name": "Milan",
-    "localName": "Milan",
+    "localName": "Milano",
     "country": "IT",
     "lat": 45.466944444,
     "lon": 9.19,
@@ -695,7 +695,7 @@
   {
     "id": 3561,
     "name": "Algiers",
-    "localName": "Alger",
+    "localName": "الجزائر",
     "country": "DZ",
     "lat": 36.776388888,
     "lon": 3.058611111,
@@ -704,7 +704,7 @@
   {
     "id": 472,
     "name": "Sofia",
-    "localName": "Со́фия",
+    "localName": "София",
     "country": "BG",
     "lat": 42.697886,
     "lon": 23.321726,
@@ -794,7 +794,7 @@
   {
     "id": 14773,
     "name": "Macau",
-    "localName": "澳门",
+    "localName": "澳門",
     "country": "CN",
     "lat": 22.19,
     "lon": 113.538055555,
@@ -812,7 +812,7 @@
   {
     "id": 1461,
     "name": "Manila",
-    "localName": "City of Manila",
+    "localName": "Maynila",
     "country": "PH",
     "lat": 14.595833333,
     "lon": 120.977222222,
@@ -848,7 +848,7 @@
   {
     "id": 3805,
     "name": "Amman",
-    "localName": "عَمَّان",
+    "localName": "عمّان",
     "country": "JO",
     "lat": 31.95,
     "lon": 35.933333333,
@@ -866,7 +866,7 @@
   {
     "id": 18808,
     "name": "Pyongyang",
-    "localName": "평양직할시",
+    "localName": "평양직할",
     "country": "KP",
     "lat": 39.016666666,
     "lon": 125.7475,
@@ -911,7 +911,7 @@
   {
     "id": 239,
     "name": "Brussels",
-    "localName": "Brussel",
+    "localName": "Bruxelles",
     "country": "BE",
     "lat": 50.846666666,
     "lon": 4.351666666,
@@ -938,7 +938,7 @@
   {
     "id": 34647,
     "name": "Johannesburg",
-    "localName": "Johannesburg",
+    "localName": "EGoli",
     "country": "ZA",
     "lat": -26.204361111,
     "lon": 28.041638888,
@@ -947,7 +947,7 @@
   {
     "id": 1335,
     "name": "Montevideo",
-    "localName": "San Felipe y Santiago de Montevideo",
+    "localName": "Montevideo",
     "country": "UY",
     "lat": -34.905916666,
     "lon": -56.191311111,
@@ -956,7 +956,7 @@
   {
     "id": 1867,
     "name": "Taipei",
-    "localName": "台北市",
+    "localName": "台北",
     "country": "TW",
     "lat": 25.0375,
     "lon": 121.5625,
@@ -974,7 +974,7 @@
   {
     "id": 269,
     "name": "Tashkent",
-    "localName": "Тошкент",
+    "localName": "Toshkent",
     "country": "UZ",
     "lat": 41.311111111,
     "lon": 69.279722222,
@@ -992,7 +992,7 @@
   {
     "id": 3761,
     "name": "Accra",
-    "localName": "Nkran",
+    "localName": "Accra",
     "country": "GH",
     "lat": 5.55602,
     "lon": -0.1969,
@@ -1019,7 +1019,7 @@
   {
     "id": 1963,
     "name": "Khartoum",
-    "localName": "الخرطوم",
+    "localName": "خرطوم",
     "country": "SD",
     "lat": 15.60308,
     "lon": 32.52654,
@@ -1100,7 +1100,7 @@
   {
     "id": 987,
     "name": "New Delhi",
-    "localName": "ਨਵੀਂ ਦਿੱਲੀ",
+    "localName": "नई दिल्ली",
     "country": "IN",
     "lat": 28.613888888,
     "lon": 77.208888888,
@@ -1118,7 +1118,7 @@
   {
     "id": 3703,
     "name": "Bamako",
-    "localName": "ߓߡߊ߬ߞߐ߬",
+    "localName": "Bamako",
     "country": "ML",
     "lat": 12.645833333,
     "lon": -7.992222222,
@@ -1163,7 +1163,7 @@
   {
     "id": 3037,
     "name": "Kathmandu",
-    "localName": "काठमांडौ",
+    "localName": "काठमाडौं",
     "country": "NP",
     "lat": 27.71,
     "lon": 85.32,
@@ -1199,7 +1199,7 @@
   {
     "id": 1519,
     "name": "Abu Dhabi",
-    "localName": "ابوظبي",
+    "localName": "أبوظبي",
     "country": "AE",
     "lat": 24.451111111,
     "lon": 54.396944444,
@@ -1280,7 +1280,7 @@
   {
     "id": 3926,
     "name": "Pretoria",
-    "localName": "Pretoria",
+    "localName": "IPitoli",
     "country": "ZA",
     "lat": -25.746388888,
     "lon": 28.188055555,
@@ -1397,7 +1397,7 @@
   {
     "id": 38283,
     "name": "Yokohama",
-    "localName": "横浜市",
+    "localName": "横浜",
     "country": "JP",
     "lat": 35.450333333,
     "lon": 139.634222222,
@@ -1442,7 +1442,7 @@
   {
     "id": 35178,
     "name": "Kuwait City",
-    "localName": "الكويت",
+    "localName": "اَلْكُوَيْت",
     "country": "KW",
     "lat": 29.375,
     "lon": 47.98,
@@ -1460,7 +1460,7 @@
   {
     "id": 3718,
     "name": "Dakar",
-    "localName": "Ville de Dakar",
+    "localName": "Dakar",
     "country": "SN",
     "lat": 14.672555555,
     "lon": -17.432,
@@ -1478,7 +1478,7 @@
   {
     "id": 33935,
     "name": "Tel Aviv",
-    "localName": "תֵּל אָבִיב-יָפוֹ",
+    "localName": "תל אביב-יפו",
     "country": "IL",
     "lat": 32.08,
     "lon": 34.78,
@@ -1496,7 +1496,7 @@
   {
     "id": 3551,
     "name": "Rabat",
-    "localName": "Rabat",
+    "localName": "رباط",
     "country": "MA",
     "lat": 34.021111111,
     "lon": -6.841388888,
@@ -1514,7 +1514,7 @@
   {
     "id": 2449,
     "name": "Mogadishu",
-    "localName": "مقديشو",
+    "localName": "Muqdisho",
     "country": "SO",
     "lat": 2.039166666,
     "lon": 45.341944444,
@@ -1577,7 +1577,7 @@
   {
     "id": 70,
     "name": "Bern",
-    "localName": "Berna",
+    "localName": "Bern",
     "country": "CH",
     "lat": 46.94798,
     "lon": 7.44743,
@@ -1631,7 +1631,7 @@
   {
     "id": 9365,
     "name": "Dushanbe",
-    "localName": "دوشنبه",
+    "localName": "Душанбе",
     "country": "TJ",
     "lat": 38.573055555,
     "lon": 68.786388888,
@@ -1739,7 +1739,7 @@
   {
     "id": 1449,
     "name": "Genoa",
-    "localName": "Zena",
+    "localName": "Genova",
     "country": "IT",
     "lat": 44.407186111,
     "lon": 8.933983333,
@@ -1802,7 +1802,7 @@
   {
     "id": 3733,
     "name": "Conakry",
-    "localName": "𞤑𞤮𞤲𞤢𞥄𞤳𞤭𞤪𞤭",
+    "localName": "Conakry",
     "country": "GN",
     "lat": 9.509166666,
     "lon": -13.712222222,
@@ -1838,7 +1838,7 @@
   {
     "id": 2933,
     "name": "Asunción",
-    "localName": "Nuestra Señora Santa María de la Asunción",
+    "localName": "Asunción",
     "country": "PY",
     "lat": -25.28,
     "lon": -57.634444444,
@@ -1847,7 +1847,7 @@
   {
     "id": 35484,
     "name": "Medina",
-    "localName": "المدينة المنورة",
+    "localName": "المدينة",
     "country": "SA",
     "lat": 24.47,
     "lon": 39.61,
@@ -1856,7 +1856,7 @@
   {
     "id": 3674,
     "name": "Niamey",
-    "localName": "Yamai",
+    "localName": "Niamey",
     "country": "NE",
     "lat": 13.515,
     "lon": 2.1175,
@@ -1865,7 +1865,7 @@
   {
     "id": 11751,
     "name": "Nagoya",
-    "localName": "名古屋市",
+    "localName": "名古屋",
     "country": "JP",
     "lat": 35.18147,
     "lon": 136.90641,
@@ -1901,7 +1901,7 @@
   {
     "id": 7903,
     "name": "Casablanca",
-    "localName": "Casablanca",
+    "localName": "الدار البيضاء",
     "country": "MA",
     "lat": 33.599166666,
     "lon": -7.62,
@@ -1928,7 +1928,7 @@
   {
     "id": 11739,
     "name": "Lahore",
-    "localName": "لہور",
+    "localName": "لاھور",
     "country": "PK",
     "lat": 31.549722222,
     "lon": 74.343611111,
@@ -1991,7 +1991,7 @@
   {
     "id": 30340,
     "name": "Zhengzhou",
-    "localName": "Zhengzhou",
+    "localName": "郑州",
     "country": "CN",
     "lat": 34.74919,
     "lon": 113.66051,
@@ -2027,7 +2027,7 @@
   {
     "id": 1070,
     "name": "Ahmedabad",
-    "localName": "Ahmedabad",
+    "localName": "અમદાવાદ",
     "country": "IN",
     "lat": 23.021944444,
     "lon": 72.579722222,
@@ -2063,7 +2063,7 @@
   {
     "id": 23564,
     "name": "Podgorica",
-    "localName": "Podgorica",
+    "localName": "Подгорица",
     "country": "ME",
     "lat": 42.441388888,
     "lon": 19.262777777,
@@ -2072,7 +2072,7 @@
   {
     "id": 3659,
     "name": "N'Djamena",
-    "localName": "N’Djaména",
+    "localName": "نجامينا",
     "country": "TD",
     "lat": 12.11,
     "lon": 15.05,
@@ -2099,7 +2099,7 @@
   {
     "id": 7880,
     "name": "Toulouse",
-    "localName": "Tolosa",
+    "localName": "Toulouse",
     "country": "FR",
     "lat": 43.604444444,
     "lon": 1.443333333,
@@ -2144,7 +2144,7 @@
   {
     "id": 35493,
     "name": "Almaty",
-    "localName": "Алматы",
+    "localName": "Almaty",
     "country": "KZ",
     "lat": 43.24,
     "lon": 76.915,
@@ -2162,7 +2162,7 @@
   {
     "id": 34820,
     "name": "Santo Domingo",
-    "localName": "Santo Domingo de Guzmán",
+    "localName": "Santo Domingo",
     "country": "DO",
     "lat": 18.4625,
     "lon": -69.936111111,
@@ -2189,7 +2189,7 @@
   {
     "id": 6346,
     "name": "Indianapolis",
-    "localName": "Indianapolis",
+    "localName": "Indpls",
     "country": "US",
     "lat": 39.768611111,
     "lon": -86.158055555,
@@ -2216,7 +2216,7 @@
   {
     "id": 3856,
     "name": "Nicosia",
-    "localName": "Lefkoşa",
+    "localName": "Λευκωσία",
     "country": "CY",
     "lat": 35.1725,
     "lon": 33.365,
@@ -2225,7 +2225,7 @@
   {
     "id": 30002,
     "name": "Chengdu",
-    "localName": "Chengdu",
+    "localName": "成都",
     "country": "CN",
     "lat": 30.66,
     "lon": 104.063333333,
@@ -2234,7 +2234,7 @@
   {
     "id": 34664,
     "name": "Hiroshima",
-    "localName": "広島市",
+    "localName": "広島",
     "country": "JP",
     "lat": 34.38525,
     "lon": 132.455305555,
@@ -2270,7 +2270,7 @@
   {
     "id": 3688,
     "name": "Nouakchott",
-    "localName": "Nuwaasoot",
+    "localName": "نواكشوط",
     "country": "MR",
     "lat": 18.08581,
     "lon": -15.9785,
@@ -2315,7 +2315,7 @@
   {
     "id": 1960,
     "name": "Dar es Salaam",
-    "localName": "دَار السَّلَام",
+    "localName": "Dar es Salaam",
     "country": "TZ",
     "lat": -6.816111111,
     "lon": 39.280277777,
@@ -2405,7 +2405,7 @@
   {
     "id": 41183,
     "name": "Aleppo",
-    "localName": "ܚܠܒ",
+    "localName": "حلب",
     "country": "SY",
     "lat": 36.2,
     "lon": 37.16,
@@ -2423,7 +2423,7 @@
   {
     "id": 1555,
     "name": "Guatemala City",
-    "localName": "Ciudad de Guatemala",
+    "localName": "Guate",
     "country": "GT",
     "lat": 14.641666666,
     "lon": -90.513333333,
@@ -2486,7 +2486,7 @@
   {
     "id": 3882,
     "name": "Manama",
-    "localName": "Manama",
+    "localName": "المنامة",
     "country": "BH",
     "lat": 26.216666666,
     "lon": 50.583333333,
@@ -2495,7 +2495,7 @@
   {
     "id": 4970,
     "name": "Hangzhou",
-    "localName": "Hangzhou",
+    "localName": "杭州",
     "country": "CN",
     "lat": 30.25,
     "lon": 120.1675,
@@ -2513,7 +2513,7 @@
   {
     "id": 16553,
     "name": "San Jose",
-    "localName": "San José",
+    "localName": "San Jose",
     "country": "US",
     "lat": 37.304166666,
     "lon": -121.872777777,
@@ -2540,7 +2540,7 @@
   {
     "id": 40840,
     "name": "Tampere",
-    "localName": "Tammerfors",
+    "localName": "Tampere",
     "country": "FI",
     "lat": 61.498055555,
     "lon": 23.76,
@@ -2576,7 +2576,7 @@
   {
     "id": 23197,
     "name": "Nashville",
-    "localName": "City of Nashville",
+    "localName": "Nashville",
     "country": "US",
     "lat": 36.162222222,
     "lon": -86.774444444,
@@ -2612,7 +2612,7 @@
   {
     "id": 1842,
     "name": "Luxembourg",
-    "localName": "Luxembourg",
+    "localName": "Lëtzebuerg",
     "country": "LU",
     "lat": 49.610555555,
     "lon": 6.132777777,
@@ -2693,7 +2693,7 @@
   {
     "id": 83285,
     "name": "Durrës",
-    "localName": "Durrës",
+    "localName": "Durrësi",
     "country": "AL",
     "lat": 41.313333333,
     "lon": 19.445833333,
@@ -2855,7 +2855,7 @@
   {
     "id": 908,
     "name": "Rostov-on-Don",
-    "localName": "Ростов-на-Дону",
+    "localName": "Ростов",
     "country": "RU",
     "lat": 47.2225,
     "lon": 39.71,
@@ -2864,7 +2864,7 @@
   {
     "id": 3799,
     "name": "Porto-Novo",
-    "localName": "Porto-Novo",
+    "localName": "Porto Novo",
     "country": "BJ",
     "lat": 6.483333333,
     "lon": 2.616666666,
@@ -2918,7 +2918,7 @@
   {
     "id": 5753,
     "name": "Samarkand",
-    "localName": "Самарканд",
+    "localName": "Samarqand",
     "country": "UZ",
     "lat": 39.654722222,
     "lon": 66.975833333,
@@ -2954,7 +2954,7 @@
   {
     "id": 36526,
     "name": "Port Moresby",
-    "localName": "Pot Mosbi",
+    "localName": "Port Moresby",
     "country": "PG",
     "lat": -9.478888888,
     "lon": 147.149444444,
@@ -3071,7 +3071,7 @@
   {
     "id": 101625,
     "name": "Marrakech",
-    "localName": "Mrrakc",
+    "localName": "مراكش",
     "country": "MA",
     "lat": 31.62947,
     "lon": -7.98108,
@@ -3161,7 +3161,7 @@
   {
     "id": 3751,
     "name": "Praia",
-    "localName": "Praia",
+    "localName": "Cidade da Praia",
     "country": "CV",
     "lat": 14.917719444,
     "lon": -23.509155555,
@@ -3188,7 +3188,7 @@
   {
     "id": 23154,
     "name": "Bristol",
-    "localName": "Bristle",
+    "localName": "Bristol",
     "country": "GB",
     "lat": 51.453611111,
     "lon": -2.5975,
@@ -3215,7 +3215,7 @@
   {
     "id": 79980,
     "name": "Varanasi",
-    "localName": "Varanasi",
+    "localName": "वाराणसी",
     "country": "IN",
     "lat": 25.318888888,
     "lon": 83.012777777,
@@ -3251,7 +3251,7 @@
   {
     "id": 5869,
     "name": "Lhasa",
-    "localName": "拉萨",
+    "localName": "ལྷ་ས་",
     "country": "CN",
     "lat": 29.6457567,
     "lon": 91.1408186,
@@ -3287,7 +3287,7 @@
   {
     "id": 16959,
     "name": "Ürümqi",
-    "localName": "Үрүмчи",
+    "localName": "ئۈرۈمچى",
     "country": "CN",
     "lat": 43.8225,
     "lon": 87.6125,
@@ -3314,7 +3314,7 @@
   {
     "id": 6441,
     "name": "Montpellier",
-    "localName": "Montpelhièr",
+    "localName": "Montpellier",
     "country": "FR",
     "lat": 43.610919444,
     "lon": 3.877230555,
@@ -3386,7 +3386,7 @@
   {
     "id": 34804,
     "name": "Albuquerque",
-    "localName": "La Villa de Alburquerque",
+    "localName": "Albuquerque",
     "country": "US",
     "lat": 35.084444444,
     "lon": -106.650277777,
@@ -3395,7 +3395,7 @@
   {
     "id": 11462,
     "name": "Surabaya",
-    "localName": "Surabaya",
+    "localName": "Kota Surabaya",
     "country": "ID",
     "lat": -7.246283611,
     "lon": 112.737767222,
@@ -3422,7 +3422,7 @@
   {
     "id": 38511,
     "name": "Turku",
-    "localName": "Åbo",
+    "localName": "Turku",
     "country": "FI",
     "lat": 60.451666666,
     "lon": 22.266944444,
@@ -3476,7 +3476,7 @@
   {
     "id": 20934,
     "name": "Incheon",
-    "localName": "Incheon",
+    "localName": "인천",
     "country": "KR",
     "lat": 37.463888888,
     "lon": 126.648611111,
@@ -3503,7 +3503,7 @@
   {
     "id": 5468,
     "name": "Durban",
-    "localName": "Durban",
+    "localName": "ITheku",
     "country": "ZA",
     "lat": -29.858333333,
     "lon": 31.025,
@@ -3557,7 +3557,7 @@
   {
     "id": 33405,
     "name": "Little Rock",
-    "localName": "Little Rock, Arkansas",
+    "localName": "Little Rock",
     "country": "US",
     "lat": 34.744444444,
     "lon": -92.288055555,
@@ -3611,7 +3611,7 @@
   {
     "id": 1209,
     "name": "Bremen",
-    "localName": "Freie Hansestadt Bremen",
+    "localName": "Bremen",
     "country": "DE",
     "lat": 53.133333333,
     "lon": 8.733333333,
@@ -3620,7 +3620,7 @@
   {
     "id": 37701,
     "name": "Bloemfontein",
-    "localName": "Bloemfontein",
+    "localName": "IBloemfontein",
     "country": "ZA",
     "lat": -29.1,
     "lon": 26.216666666,
@@ -3674,7 +3674,7 @@
   {
     "id": 81788,
     "name": "Giza",
-    "localName": "مدينة الجيزة",
+    "localName": "الجيزة",
     "country": "EG",
     "lat": 29.987,
     "lon": 31.2118,
@@ -3755,7 +3755,7 @@
   {
     "id": 39450,
     "name": "Anchorage",
-    "localName": "Dgheyay Kaq'",
+    "localName": "Anchorage",
     "country": "US",
     "lat": 61.216666666,
     "lon": -149.893611111,
@@ -3818,7 +3818,7 @@
   {
     "id": 38022,
     "name": "St. Louis",
-    "localName": "St. Louis",
+    "localName": "St Louis",
     "country": "US",
     "lat": 38.626388888,
     "lon": -90.199444444,
@@ -3917,7 +3917,7 @@
   {
     "id": 80989,
     "name": "Bhopal",
-    "localName": "Bhopal",
+    "localName": "भोपाल",
     "country": "IN",
     "lat": 23.25,
     "lon": 77.416666666,
@@ -3935,7 +3935,7 @@
   {
     "id": 92161,
     "name": "Changchun",
-    "localName": "长春市",
+    "localName": "长春",
     "country": "CN",
     "lat": 43.88,
     "lon": 125.322777777,
@@ -3971,7 +3971,7 @@
   {
     "id": 43509,
     "name": "Guayaquil",
-    "localName": "Santiago de Guayaquil",
+    "localName": "Guayaquil",
     "country": "EC",
     "lat": -2.19,
     "lon": -79.8875,
@@ -3980,7 +3980,7 @@
   {
     "id": 4629,
     "name": "Surat",
-    "localName": "Surat",
+    "localName": "સુરત",
     "country": "IN",
     "lat": 21.205,
     "lon": 72.84,
@@ -4025,7 +4025,7 @@
   {
     "id": 51103,
     "name": "Cali",
-    "localName": "Cali",
+    "localName": "Santiago de Cali",
     "country": "CO",
     "lat": 3.44,
     "lon": -76.519722222,
@@ -4052,7 +4052,7 @@
   {
     "id": 174091,
     "name": "Changsha",
-    "localName": "Changsha",
+    "localName": "长沙",
     "country": "CN",
     "lat": 28.19874,
     "lon": 112.97087,
@@ -4061,7 +4061,7 @@
   {
     "id": 41621,
     "name": "Haifa",
-    "localName": "חֵיפָה",
+    "localName": "חיפה",
     "country": "IL",
     "lat": 32.819166666,
     "lon": 34.999166666,
@@ -4160,7 +4160,7 @@
   {
     "id": 28218,
     "name": "Baton Rouge",
-    "localName": "Bâton-Rouge",
+    "localName": "Baton Rouge",
     "country": "US",
     "lat": 30.4475,
     "lon": -91.178611111,
@@ -4169,7 +4169,7 @@
   {
     "id": 170247,
     "name": "Jinan",
-    "localName": "Jinan",
+    "localName": "济南",
     "country": "CN",
     "lat": 36.666666666,
     "lon": 116.983333333,
@@ -4178,7 +4178,7 @@
   {
     "id": 46747,
     "name": "Sendai",
-    "localName": "仙台市",
+    "localName": "仙台",
     "country": "JP",
     "lat": 38.268222222,
     "lon": 140.869416666,
@@ -4223,7 +4223,7 @@
   {
     "id": 68481,
     "name": "Fuzhou",
-    "localName": "Fuzhou",
+    "localName": "福州",
     "country": "CN",
     "lat": 26.076944444,
     "lon": 119.291666666,
@@ -4268,7 +4268,7 @@
   {
     "id": 43433,
     "name": "Chandigarh",
-    "localName": "ਚੰਡੀਗੜ",
+    "localName": "ਚੰਡੀਗੜ੍ਹ",
     "country": "IN",
     "lat": 30.736388888,
     "lon": 76.788333333,
@@ -4277,7 +4277,7 @@
   {
     "id": 42622,
     "name": "Suzhou",
-    "localName": "Suzhou",
+    "localName": "苏州",
     "country": "CN",
     "lat": 31.3,
     "lon": 120.619444444,
@@ -4304,7 +4304,7 @@
   {
     "id": 80484,
     "name": "Patna",
-    "localName": "Pataliputra",
+    "localName": "पटना",
     "country": "IN",
     "lat": 25.61,
     "lon": 85.141388888,
@@ -4349,7 +4349,7 @@
   {
     "id": 617,
     "name": "Padua",
-    "localName": "Padua",
+    "localName": "Padova",
     "country": "IT",
     "lat": 45.407777777,
     "lon": 11.873333333,
@@ -4403,7 +4403,7 @@
   {
     "id": 3901,
     "name": "Moroni",
-    "localName": "Moroni",
+    "localName": "موروني",
     "country": "KM",
     "lat": -11.703611111,
     "lon": 43.253611111,
@@ -4601,7 +4601,7 @@
   {
     "id": 48403,
     "name": "Amritsar",
-    "localName": "अमृतसर",
+    "localName": "ਅੰਮ੍ਰਿਤਸਰ",
     "country": "IN",
     "lat": 31.626917,
     "lon": 74.87704,
@@ -4619,7 +4619,7 @@
   {
     "id": 20927,
     "name": "Daegu",
-    "localName": "대구광역시",
+    "localName": "대구",
     "country": "KR",
     "lat": 35.871666666,
     "lon": 128.601666666,
@@ -4637,7 +4637,7 @@
   {
     "id": 23800,
     "name": "Valletta",
-    "localName": "Belt Valletta",
+    "localName": "Valletta",
     "country": "MT",
     "lat": 35.897777777,
     "lon": 14.5125,
@@ -4673,7 +4673,7 @@
   {
     "id": 2833,
     "name": "Freiburg im Breisgau",
-    "localName": "Freiburg im Breisgau",
+    "localName": "Freiburg",
     "country": "DE",
     "lat": 47.995,
     "lon": 7.85,
@@ -4691,7 +4691,7 @@
   {
     "id": 5972,
     "name": "Medan",
-    "localName": "Medan",
+    "localName": "Kota Medan",
     "country": "ID",
     "lat": 3.589444444,
     "lon": 98.673888888,
@@ -4700,7 +4700,7 @@
   {
     "id": 29445,
     "name": "Juneau",
-    "localName": "Dzánti K'ihéeni",
+    "localName": "Juneau",
     "country": "US",
     "lat": 58.30194,
     "lon": -134.41972,
@@ -4709,7 +4709,7 @@
   {
     "id": 42462,
     "name": "York",
-    "localName": "Jórvek",
+    "localName": "York",
     "country": "GB",
     "lat": 53.95,
     "lon": -1.083333333,
@@ -4736,7 +4736,7 @@
   {
     "id": 12829733,
     "name": "Belém",
-    "localName": "Mairi",
+    "localName": "Belém",
     "country": "BR",
     "lat": -1.455833333,
     "lon": -48.503888888,
@@ -4754,7 +4754,7 @@
   {
     "id": 100188,
     "name": "Cluj-Napoca",
-    "localName": "Kolozsvár",
+    "localName": "Cluj-Napoca",
     "country": "RO",
     "lat": 46.76891,
     "lon": 23.59066,
@@ -4826,7 +4826,7 @@
   {
     "id": 1113311,
     "name": "Peshawar",
-    "localName": "پشور",
+    "localName": "پشاور",
     "country": "PK",
     "lat": 34.014444444,
     "lon": 71.5675,
@@ -4844,7 +4844,7 @@
   {
     "id": 181557,
     "name": "Kaohsiung",
-    "localName": "高雄市",
+    "localName": "高雄",
     "country": "TW",
     "lat": 22.615,
     "lon": 120.2975,
@@ -4862,7 +4862,7 @@
   {
     "id": 164234,
     "name": "Kawasaki",
-    "localName": "川崎市",
+    "localName": "川崎",
     "country": "JP",
     "lat": 35.530888888,
     "lon": 139.703,
@@ -4889,7 +4889,7 @@
   {
     "id": 131694,
     "name": "Aden",
-    "localName": "عَدَن",
+    "localName": "عدن",
     "country": "YE",
     "lat": 12.8,
     "lon": 45.033333333,
@@ -4916,7 +4916,7 @@
   {
     "id": 43595,
     "name": "Cotonou",
-    "localName": "Kútɔ̀nú",
+    "localName": "Cotonou",
     "country": "BJ",
     "lat": 6.366666666,
     "lon": 2.416666666,
@@ -4952,7 +4952,7 @@
   {
     "id": 5684,
     "name": "Babylon",
-    "localName": "Babili(m)",
+    "localName": "الحلة",
     "country": "IQ",
     "lat": 32.5425,
     "lon": 44.421111111,
@@ -4988,7 +4988,7 @@
   {
     "id": 2814,
     "name": "Halle (Saale)",
-    "localName": "Halle (Saale)",
+    "localName": "Halle",
     "country": "DE",
     "lat": 51.482777777,
     "lon": 11.969722222,
@@ -5060,7 +5060,7 @@
   {
     "id": 58401,
     "name": "Shijiazhuang",
-    "localName": "Shijiazhuang",
+    "localName": "石家庄",
     "country": "CN",
     "lat": 38.0425,
     "lon": 114.51,
@@ -5087,7 +5087,7 @@
   {
     "id": 171943,
     "name": "Nanchang",
-    "localName": "Nanchang",
+    "localName": "南昌",
     "country": "CN",
     "lat": 28.684167,
     "lon": 115.887222,
@@ -5114,7 +5114,7 @@
   {
     "id": 183584,
     "name": "Lanzhou",
-    "localName": "Lanzhou",
+    "localName": "兰州",
     "country": "CN",
     "lat": 36.06171,
     "lon": 103.83177,
@@ -5204,7 +5204,7 @@
   {
     "id": 45604,
     "name": "Kandahar",
-    "localName": "کندهار",
+    "localName": "قندهار",
     "country": "AF",
     "lat": 31.62068,
     "lon": 65.71588,
@@ -5222,7 +5222,7 @@
   {
     "id": 5582862,
     "name": "Cusco",
-    "localName": "Qusqu",
+    "localName": "Cuzco",
     "country": "PE",
     "lat": -13.516944444,
     "lon": -71.978611111,
@@ -5249,7 +5249,7 @@
   {
     "id": 81398,
     "name": "Acapulco de Juárez",
-    "localName": "Acapulco de Juárez",
+    "localName": "Acapulco",
     "country": "MX",
     "lat": 16.8628695,
     "lon": -99.8870087,
@@ -5429,7 +5429,7 @@
   {
     "id": 179608,
     "name": "Nanning",
-    "localName": "Namzningz",
+    "localName": "南宁",
     "country": "CN",
     "lat": 22.81918,
     "lon": 108.31501,
@@ -5456,7 +5456,7 @@
   {
     "id": 173985,
     "name": "Faisalabad",
-    "localName": "ਫ਼ੈਸਲਾਬਾਦ",
+    "localName": "فیصل آباد",
     "country": "PK",
     "lat": 31.418,
     "lon": 73.079,
@@ -5465,7 +5465,7 @@
   {
     "id": 226,
     "name": "Nuuk",
-    "localName": "Godthåb",
+    "localName": "Nuuk",
     "country": "GL",
     "lat": 64.175,
     "lon": -51.733333333,
@@ -5483,7 +5483,7 @@
   {
     "id": 134635,
     "name": "Saitama",
-    "localName": "さいたま市",
+    "localName": "さいたま",
     "country": "JP",
     "lat": 35.861388888,
     "lon": 139.645555555,
@@ -5537,7 +5537,7 @@
   {
     "id": 42716,
     "name": "Saint-Étienne",
-    "localName": "Saint-Étienne",
+    "localName": "St Étienne",
     "country": "FR",
     "lat": 45.433888888,
     "lon": 4.389722222,
@@ -5600,7 +5600,7 @@
   {
     "id": 72778,
     "name": "Taiyuan",
-    "localName": "Taiyuan",
+    "localName": "太原",
     "country": "CN",
     "lat": 37.87326,
     "lon": 112.54245,
@@ -5627,7 +5627,7 @@
   {
     "id": 83387,
     "name": "Diyarbakır",
-    "localName": "Amed",
+    "localName": "Diyarbakır",
     "country": "TR",
     "lat": 37.910833333,
     "lon": 40.236666666,
@@ -5645,7 +5645,7 @@
   {
     "id": 66616,
     "name": "Indore",
-    "localName": "Indore",
+    "localName": "इन्दौर",
     "country": "IN",
     "lat": 22.718611111,
     "lon": 75.855,
@@ -5735,7 +5735,7 @@
   {
     "id": 41963,
     "name": "Sri Jayawardenepura Kotte",
-    "localName": "ශ්රී ජයවර්ධනපුර කෝට්ටේ",
+    "localName": "කොළඹ",
     "country": "LK",
     "lat": 6.9,
     "lon": 79.916388888,
@@ -5807,7 +5807,7 @@
   {
     "id": 83404,
     "name": "Timișoara",
-    "localName": "Temesvár",
+    "localName": "Timișoara",
     "country": "RO",
     "lat": 45.759722222,
     "lon": 21.23,
@@ -5870,7 +5870,7 @@
   {
     "id": 132754,
     "name": "Erbil",
-    "localName": "Hewlêr",
+    "localName": "أربيل",
     "country": "IQ",
     "lat": 36.191111111,
     "lon": 44.009444444,
@@ -5897,7 +5897,7 @@
   {
     "id": 45313,
     "name": "Herat",
-    "localName": "Herat",
+    "localName": "هرات",
     "country": "AF",
     "lat": 34.341944,
     "lon": 62.203056,
@@ -5933,7 +5933,7 @@
   {
     "id": 5426,
     "name": "Izhevsk",
-    "localName": "Иж",
+    "localName": "Ижевск",
     "country": "RU",
     "lat": 56.85,
     "lon": 53.216666666,
@@ -5942,7 +5942,7 @@
   {
     "id": 8471,
     "name": "Reggio Calabria",
-    "localName": "Reggio di Calabria",
+    "localName": "Reggio Calabria",
     "country": "IT",
     "lat": 38.114438888,
     "lon": 15.65,
@@ -5960,7 +5960,7 @@
   {
     "id": 159273,
     "name": "Arequipa",
-    "localName": "Ariqipa",
+    "localName": "Arequipa",
     "country": "PE",
     "lat": -16.398888888,
     "lon": -71.536944444,
@@ -5987,7 +5987,7 @@
   {
     "id": 41283,
     "name": "Gwangju",
-    "localName": "Gwangju",
+    "localName": "광주",
     "country": "KR",
     "lat": 35.166666666,
     "lon": 126.916666666,
@@ -6068,7 +6068,7 @@
   {
     "id": 170525,
     "name": "Agadir",
-    "localName": "أڭادير",
+    "localName": "أكادير",
     "country": "MA",
     "lat": 30.421388888,
     "lon": -9.583055555,
@@ -6122,7 +6122,7 @@
   {
     "id": 8131,
     "name": "Palembang",
-    "localName": "Palembang",
+    "localName": "Kota Palembang",
     "country": "ID",
     "lat": -2.983333333,
     "lon": 104.764444444,
@@ -6158,7 +6158,7 @@
   {
     "id": 171771,
     "name": "Bhubaneswar",
-    "localName": "Bhubaneswar",
+    "localName": "ଭୁବନେଶ୍ୱର",
     "country": "IN",
     "lat": 20.295,
     "lon": 85.825,
@@ -6203,7 +6203,7 @@
   {
     "id": 59218,
     "name": "Dongguan",
-    "localName": "Dongguan",
+    "localName": "东莞",
     "country": "CN",
     "lat": 23.04749,
     "lon": 113.74928,
@@ -6221,7 +6221,7 @@
   {
     "id": 7568,
     "name": "Yogyakarta",
-    "localName": "Yogyakarta",
+    "localName": "DI Yogyakarta",
     "country": "ID",
     "lat": -7.800456766,
     "lon": 110.391280229,
@@ -6293,7 +6293,7 @@
   {
     "id": 158119,
     "name": "Ramallah",
-    "localName": "רמאללה",
+    "localName": "رام الله",
     "country": "PS",
     "lat": 31.896944444,
     "lon": 35.201666666,
@@ -6383,7 +6383,7 @@
   {
     "id": 187136,
     "name": "Luoyang",
-    "localName": "Luoyang",
+    "localName": "洛阳",
     "country": "CN",
     "lat": 34.65867,
     "lon": 112.42447,
@@ -6392,7 +6392,7 @@
   {
     "id": 114257,
     "name": "Elbasan",
-    "localName": "Elbasan",
+    "localName": "Elbasani",
     "country": "AL",
     "lat": 41.113059,
     "lon": 20.08178,
@@ -6455,7 +6455,7 @@
   {
     "id": 200016,
     "name": "Visakhapatnam",
-    "localName": "Visakhapatnam",
+    "localName": "విశాఖపట్నం",
     "country": "IN",
     "lat": 17.693888888,
     "lon": 83.292222222,
@@ -6464,7 +6464,7 @@
   {
     "id": 20921,
     "name": "Daejeon",
-    "localName": "Daejeon",
+    "localName": "대전",
     "country": "KR",
     "lat": 36.35,
     "lon": 127.385,
@@ -6509,7 +6509,7 @@
   {
     "id": 36262,
     "name": "St. John's",
-    "localName": "St. John's",
+    "localName": "St John's",
     "country": "AG",
     "lat": 17.121111111,
     "lon": -61.844722222,
@@ -6518,7 +6518,7 @@
   {
     "id": 47034,
     "name": "Espoo",
-    "localName": "Esbo",
+    "localName": "Espoo",
     "country": "FI",
     "lat": 60.205555555,
     "lon": 24.655555555,
@@ -6527,7 +6527,7 @@
   {
     "id": 11909,
     "name": "Vadodara",
-    "localName": "Vadodara",
+    "localName": "વડોદરા",
     "country": "IN",
     "lat": 22.3,
     "lon": 73.2,
@@ -6554,7 +6554,7 @@
   {
     "id": 228405,
     "name": "Madurai",
-    "localName": "Madurai",
+    "localName": "மதுரை",
     "country": "IN",
     "lat": 9.919661111,
     "lon": 78.119394444,
@@ -6563,7 +6563,7 @@
   {
     "id": 9427,
     "name": "Timbuktu",
-    "localName": "تمبكتو",
+    "localName": "Tombouctou",
     "country": "ML",
     "lat": 16.77348,
     "lon": -3.00742,
@@ -6581,7 +6581,7 @@
   {
     "id": 189823,
     "name": "Haikou",
-    "localName": "Haikou",
+    "localName": "海口",
     "country": "CN",
     "lat": 20.02,
     "lon": 110.32,
@@ -6590,7 +6590,7 @@
   {
     "id": 41753,
     "name": "Klagenfurt am Wörthersee",
-    "localName": "Klagenfurt am Wörthersee",
+    "localName": "Klagenfurt",
     "country": "AT",
     "lat": 46.616666666,
     "lon": 14.3,
@@ -6617,7 +6617,7 @@
   {
     "id": 6252,
     "name": "Monza",
-    "localName": "Monscia",
+    "localName": "Monza",
     "country": "IT",
     "lat": 45.583611111,
     "lon": 9.273611111,
@@ -6635,7 +6635,7 @@
   {
     "id": 170688,
     "name": "Santa Cruz de la Sierra",
-    "localName": "Santa Cruz de la Sierra",
+    "localName": "Santa Cruz",
     "country": "BO",
     "lat": -17.789166666,
     "lon": -63.1975,
@@ -6680,7 +6680,7 @@
   {
     "id": 170115,
     "name": "Srinagar",
-    "localName": "श्रीनगर",
+    "localName": "سِری نَگَر",
     "country": "IN",
     "lat": 34.091111111,
     "lon": 74.806111111,
@@ -6797,7 +6797,7 @@
   {
     "id": 134291,
     "name": "Mersin",
-    "localName": "Mersin",
+    "localName": "İçel",
     "country": "TR",
     "lat": 36.8,
     "lon": 34.616666666,
@@ -6842,7 +6842,7 @@
   {
     "id": 6816,
     "name": "Ulan-Ude",
-    "localName": "Улаан Үдэ",
+    "localName": "Улан-Удэ",
     "country": "RU",
     "lat": 51.827222222,
     "lon": 107.606388888,
@@ -6914,7 +6914,7 @@
   {
     "id": 29888,
     "name": "Aswan",
-    "localName": "Aswan",
+    "localName": "أسوان",
     "country": "EG",
     "lat": 24.088919444,
     "lon": 32.899730555,
@@ -6932,7 +6932,7 @@
   {
     "id": 34412,
     "name": "Foshan",
-    "localName": "Foshan",
+    "localName": "佛山",
     "country": "CN",
     "lat": 23.029167,
     "lon": 113.105556,
@@ -6959,7 +6959,7 @@
   {
     "id": 170366,
     "name": "Ahvaz",
-    "localName": "الاهواز",
+    "localName": "اهواز",
     "country": "IR",
     "lat": 31.318888888,
     "lon": 48.684166666,
@@ -7004,7 +7004,7 @@
   {
     "id": 6730,
     "name": "Perpignan",
-    "localName": "Perpinyà",
+    "localName": "Perpignan",
     "country": "FR",
     "lat": 42.6975,
     "lon": 2.894722222,
@@ -7031,7 +7031,7 @@
   {
     "id": 132572,
     "name": "Tiraspol",
-    "localName": "Тирасполь",
+    "localName": "Tiraspol",
     "country": "MD",
     "lat": 46.85,
     "lon": 29.63333333,
@@ -7067,7 +7067,7 @@
   {
     "id": 83061,
     "name": "Van",
-    "localName": "Wan",
+    "localName": "Van",
     "country": "TR",
     "lat": 38.501944444,
     "lon": 43.416666666,
@@ -7076,7 +7076,7 @@
   {
     "id": 69060,
     "name": "Xining",
-    "localName": "Xining",
+    "localName": "西宁",
     "country": "CN",
     "lat": 36.62386,
     "lon": 101.77866,
@@ -7193,7 +7193,7 @@
   {
     "id": 372773,
     "name": "Raipur",
-    "localName": "Raipur",
+    "localName": "रायपुर",
     "country": "IN",
     "lat": 21.2379468,
     "lon": 81.6336833,
@@ -7211,7 +7211,7 @@
   {
     "id": 68744,
     "name": "Xiamen",
-    "localName": "Ē-mn̂g-chhī",
+    "localName": "厦门",
     "country": "CN",
     "lat": 24.479722222,
     "lon": 118.081944444,
@@ -7220,7 +7220,7 @@
   {
     "id": 41278,
     "name": "Ulsan",
-    "localName": "울산 광역시",
+    "localName": "울산",
     "country": "KR",
     "lat": 35.55,
     "lon": 129.316666666,
@@ -7292,7 +7292,7 @@
   {
     "id": 3042,
     "name": "Offenbach am Main",
-    "localName": "Offenbach am Main",
+    "localName": "Frankfurt am Main",
     "country": "DE",
     "lat": 50.1,
     "lon": 8.766666666,
@@ -7364,7 +7364,7 @@
   {
     "id": 52028,
     "name": "Chiang Mai",
-    "localName": "เทศบาลนครเชียงใหม่",
+    "localName": "เชียงใหม่",
     "country": "TH",
     "lat": 18.788888888,
     "lon": 98.983333333,
@@ -7445,7 +7445,7 @@
   {
     "id": 188806,
     "name": "Kitakyūshū",
-    "localName": "北九州市",
+    "localName": "北九州",
     "country": "JP",
     "lat": 33.883416666,
     "lon": 130.875194444,
@@ -7463,7 +7463,7 @@
   {
     "id": 174461,
     "name": "Ranchi",
-    "localName": "রাঁচি",
+    "localName": "राँची",
     "country": "IN",
     "lat": 23.355555555,
     "lon": 85.334722222,
@@ -7508,7 +7508,7 @@
   {
     "id": 170521,
     "name": "Kashgar",
-    "localName": "قەشقەر / Қәшқәр",
+    "localName": "قەشقەر",
     "country": "CN",
     "lat": 39.45,
     "lon": 75.983333,
@@ -7553,7 +7553,7 @@
   {
     "id": 128849,
     "name": "Nagano",
-    "localName": "長野市",
+    "localName": "長野",
     "country": "JP",
     "lat": 36.648666666,
     "lon": 138.194694444,
@@ -7571,7 +7571,7 @@
   {
     "id": 26590,
     "name": "Ciudad Juárez",
-    "localName": "Ciudad Juárez",
+    "localName": "Juárez",
     "country": "MX",
     "lat": 31.6685,
     "lon": -106.42,
@@ -7589,7 +7589,7 @@
   {
     "id": 125434,
     "name": "Gqeberha",
-    "localName": "Port Elizabeth",
+    "localName": "Ibhayi",
     "country": "ZA",
     "lat": -33.958055555,
     "lon": 25.6,
@@ -7616,7 +7616,7 @@
   {
     "id": 83324,
     "name": "Sibiu",
-    "localName": "Hermannstadt",
+    "localName": "Sibiu",
     "country": "RO",
     "lat": 45.8,
     "lon": 24.15,
@@ -7652,7 +7652,7 @@
   {
     "id": 158467,
     "name": "Gwalior",
-    "localName": "Gwalior",
+    "localName": "ग्वालियर",
     "country": "IN",
     "lat": 26.2125,
     "lon": 78.1775,
@@ -7661,7 +7661,7 @@
   {
     "id": 535534,
     "name": "Hohhot",
-    "localName": "Hohhot",
+    "localName": "ᠬᠥᠬᠡᠬᠣᠲᠠ",
     "country": "CN",
     "lat": 40.81507,
     "lon": 111.66293,
@@ -7697,7 +7697,7 @@
   {
     "id": 11025,
     "name": "Semarang",
-    "localName": "Semarang",
+    "localName": "Kota Semarang",
     "country": "ID",
     "lat": -6.99,
     "lon": 110.4225,
@@ -7706,7 +7706,7 @@
   {
     "id": 1647,
     "name": "Rijeka",
-    "localName": "Fiume",
+    "localName": "Rijeka",
     "country": "HR",
     "lat": 45.333333333,
     "lon": 14.433333333,
@@ -7715,7 +7715,7 @@
   {
     "id": 169134,
     "name": "Nara",
-    "localName": "奈良市",
+    "localName": "奈良",
     "country": "JP",
     "lat": 34.685,
     "lon": 135.804777777,
@@ -7760,7 +7760,7 @@
   {
     "id": 875,
     "name": "Abakan",
-    "localName": "Ағбан",
+    "localName": "Абакан",
     "country": "RU",
     "lat": 53.716666666,
     "lon": 91.416666666,
@@ -7805,7 +7805,7 @@
   {
     "id": 179691,
     "name": "Niigata",
-    "localName": "新潟市",
+    "localName": "新潟",
     "country": "JP",
     "lat": 37.916194444,
     "lon": 139.036388888,
@@ -7823,7 +7823,7 @@
   {
     "id": 13678,
     "name": "Agrigento",
-    "localName": "Girgenti",
+    "localName": "Agrigento",
     "country": "IT",
     "lat": 37.3125,
     "lon": 13.575,
@@ -7994,7 +7994,7 @@
   {
     "id": 103717,
     "name": "Rovaniemi",
-    "localName": "Roavvenjárga",
+    "localName": "Rovaniemi",
     "country": "FI",
     "lat": 66.5027903,
     "lon": 25.7284789,
@@ -8039,7 +8039,7 @@
   {
     "id": 199889,
     "name": "Kumamoto",
-    "localName": "熊本市",
+    "localName": "熊本",
     "country": "JP",
     "lat": 32.803,
     "lon": 130.707861111,
@@ -8102,7 +8102,7 @@
   {
     "id": 134514,
     "name": "Suez",
-    "localName": "Suez",
+    "localName": "سويس",
     "country": "EG",
     "lat": 29.966666666,
     "lon": 32.533333333,
@@ -8120,7 +8120,7 @@
   {
     "id": 9885,
     "name": "Coimbatore",
-    "localName": "Coimbatore",
+    "localName": "கோயம்புத்தூர்",
     "country": "IN",
     "lat": 11.000833333,
     "lon": 76.963333333,
@@ -8129,7 +8129,7 @@
   {
     "id": 1473,
     "name": "Davao City",
-    "localName": "Davao City",
+    "localName": "Lungsod ng Dabaw",
     "country": "PH",
     "lat": 7.066233333,
     "lon": 125.609441666,
@@ -8147,7 +8147,7 @@
   {
     "id": 93358,
     "name": "Oradea",
-    "localName": "Nagyvárad",
+    "localName": "Oradea",
     "country": "RO",
     "lat": 47.072222222,
     "lon": 21.921111111,
@@ -8219,7 +8219,7 @@
   {
     "id": 199528,
     "name": "Dehradun",
-    "localName": "Dehradun",
+    "localName": "देहरादून",
     "country": "IN",
     "lat": 30.318,
     "lon": 78.029,
@@ -8228,7 +8228,7 @@
   {
     "id": 171639,
     "name": "Ashdod",
-    "localName": "אַשְׁדּוֹד",
+    "localName": "אשדוד",
     "country": "IL",
     "lat": 31.797777777,
     "lon": 34.650277777,
@@ -8264,7 +8264,7 @@
   {
     "id": 189633,
     "name": "Guilin",
-    "localName": "桂林市",
+    "localName": "桂林",
     "country": "CN",
     "lat": 25.281944444,
     "lon": 110.286388888,
@@ -8309,7 +8309,7 @@
   {
     "id": 130469,
     "name": "Mazar-i-Sharif",
-    "localName": "Mazar-i-Sharif",
+    "localName": "مزار شریف",
     "country": "AF",
     "lat": 36.7,
     "lon": 67.116666666,
@@ -8327,7 +8327,7 @@
   {
     "id": 129352,
     "name": "Khankendi",
-    "localName": "Stepanakert",
+    "localName": "Xankəndi",
     "country": "AZ",
     "lat": 39.815277777,
     "lon": 46.751944444,
@@ -8354,7 +8354,7 @@
   {
     "id": 15674,
     "name": "Kagoshima",
-    "localName": "鹿児島市",
+    "localName": "鹿児島",
     "country": "JP",
     "lat": 31.596805555,
     "lon": 130.557138888,
@@ -8390,7 +8390,7 @@
   {
     "id": 2910,
     "name": "Ludwigshafen",
-    "localName": "Ludwigshafen am Rhein",
+    "localName": "Mannheim",
     "country": "DE",
     "lat": 49.481111111,
     "lon": 8.435277777,
@@ -8507,7 +8507,7 @@
   {
     "id": 211243,
     "name": "Yinchuan",
-    "localName": "Yinchuan",
+    "localName": "银川",
     "country": "CN",
     "lat": 38.485,
     "lon": 106.225,
@@ -8552,7 +8552,7 @@
   {
     "id": 129259,
     "name": "Niš",
-    "localName": "Niš",
+    "localName": "Ниш",
     "country": "RS",
     "lat": 43.319166666,
     "lon": 21.896111111,
@@ -8579,7 +8579,7 @@
   {
     "id": 42651,
     "name": "Wuxi",
-    "localName": "Wuxi",
+    "localName": "无锡",
     "country": "CN",
     "lat": 31.566667,
     "lon": 120.283333,
@@ -8642,7 +8642,7 @@
   {
     "id": 116341,
     "name": "Korçë",
-    "localName": "Korça",
+    "localName": "Korçë",
     "country": "AL",
     "lat": 40.616666666,
     "lon": 20.766666666,
@@ -8660,7 +8660,7 @@
   {
     "id": 200237,
     "name": "Meerut",
-    "localName": "Meerut",
+    "localName": "मेरठ",
     "country": "IN",
     "lat": 28.98,
     "lon": 77.706388888,
@@ -8669,7 +8669,7 @@
   {
     "id": 173545,
     "name": "Hama",
-    "localName": "Hama",
+    "localName": "حماة",
     "country": "SY",
     "lat": 35.163546,
     "lon": 36.757062,
@@ -8759,7 +8759,7 @@
   {
     "id": 245023,
     "name": "Taichung",
-    "localName": "Taichung",
+    "localName": "臺中",
     "country": "TW",
     "lat": 24.143888888,
     "lon": 120.679444444,
@@ -8849,7 +8849,7 @@
   {
     "id": 200713,
     "name": "Aurangabad",
-    "localName": "औरंगाबाद शहर, महाराष्ट्र",
+    "localName": "औरंगाबाद",
     "country": "IN",
     "lat": 19.88,
     "lon": 75.32,
@@ -8858,7 +8858,7 @@
   {
     "id": 191130,
     "name": "Kanazawa",
-    "localName": "金沢市",
+    "localName": "金沢",
     "country": "JP",
     "lat": 36.561055555,
     "lon": 136.6565,
@@ -8903,7 +8903,7 @@
   {
     "id": 200030,
     "name": "Latakia",
-    "localName": "اللاذقية",
+    "localName": "لاذقية",
     "country": "SY",
     "lat": 35.52,
     "lon": 35.778055555,
