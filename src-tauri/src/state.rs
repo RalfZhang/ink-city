@@ -24,6 +24,10 @@ pub struct AppState {
     pub language: StdMutex<String>,
     pub running: Mutex<bool>,
     pub quitting: AtomicBool,
+    /// The (date, effective theme) the wallpaper was last successfully applied
+    /// for. In-memory only (None on launch → forces a reconcile at startup).
+    /// The scheduler's poll uses it to skip work when nothing has changed.
+    pub last_applied: StdMutex<Option<(chrono::NaiveDate, crate::pipeline::EffectiveTheme)>>,
 }
 
 impl AppState {
@@ -42,6 +46,7 @@ impl AppState {
             language: StdMutex::new("en".into()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
+            last_applied: StdMutex::new(None),
         }
     }
 }

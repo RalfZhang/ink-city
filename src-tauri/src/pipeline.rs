@@ -65,12 +65,31 @@ fn system_theme(app: &AppHandle) -> EffectiveTheme {
     }
 }
 
-fn pick_colors(app: &AppHandle) -> ColorPair {
+fn colors_for(app: &AppHandle, theme: EffectiveTheme) -> ColorPair {
     let state = app.state::<AppState>();
-    match effective_theme(app) {
+    match theme {
         EffectiveTheme::Light => state.light.lock().unwrap().clone(),
         EffectiveTheme::Dark => state.dark.lock().unwrap().clone(),
     }
+}
+
+fn theme_suffix(theme: EffectiveTheme) -> &'static str {
+    match theme {
+        EffectiveTheme::Light => "light",
+        EffectiveTheme::Dark => "dark",
+    }
+}
+
+/// Cached wallpaper path for a given day + theme. The theme is part of the
+/// filename so a dark/light switch (including one missed while the machine
+/// slept) renders/loads its own variant instead of reusing the other theme's
+/// stale PNG. OSM data (`{date}.osm.json`) stays theme-independent.
+fn png_path(cache: &Path, date: NaiveDate, theme: EffectiveTheme) -> PathBuf {
+    cache.join(format!("{}-{}.png", date, theme_suffix(theme)))
+}
+
+fn mark_applied(app: &AppHandle, date: NaiveDate, theme: EffectiveTheme) {
+    *app.state::<AppState>().last_applied.lock().unwrap() = Some((date, theme));
 }
 
 pub async fn run_for_date(app: AppHandle, date: NaiveDate) -> Result<()> {
@@ -95,11 +114,13 @@ pub async fn run_for_date(app: AppHandle, date: NaiveDate) -> Result<()> {
 
 async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     let city = city::pick_for_date(date);
+    let theme = effective_theme(app);
     let cache = cache_dir(app)?;
-    let png_path = cache.join(format!("{}.png", date));
+    let png_path = png_path(&cache, date, theme);
 
     if png_path.exists() {
         wallpaper_set::set(&png_path)?;
+        mark_applied(app, date, theme);
         return Ok(());
     }
 
@@ -134,7 +155,7 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
         v
     };
 
-    let colors = pick_colors(app);
+    let colors = colors_for(app, theme);
     let preset = *app.state::<AppState>().style.lock().unwrap();
     let style = Style { background: colors.background, foreground: colors.foreground, preset };
 
@@ -155,6 +176,7 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
 
     fs::write(&png_path, &bytes)?;
     wallpaper_set::set(&png_path)?;
+    mark_applied(app, date, theme);
     let _ = cleanup_cache(&cache, KEEP_DAYS);
     eprintln!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
     Ok(())
@@ -196,7 +218,9 @@ fn cleanup_cache(dir: &Path, keep_days: i64) -> Result<()> {
         let entry = entry?;
         let name = entry.file_name();
         let name = name.to_string_lossy();
-        let date_part = name.split('.').next().unwrap_or("");
+        // Both `YYYY-MM-DD-<theme>.png` and `YYYY-MM-DD.osm.json` start with the
+        // 10-char ISO date, so slice the prefix rather than splitting on '.'.
+        let date_part = name.get(..10).unwrap_or("");
         if let Ok(d) = NaiveDate::parse_from_str(date_part, "%Y-%m-%d") {
             if (today - d).num_days() > keep_days {
                 let _ = fs::remove_file(entry.path());
@@ -206,11 +230,15 @@ fn cleanup_cache(dir: &Path, keep_days: i64) -> Result<()> {
     Ok(())
 }
 
-/// Delete today's PNG and re-run the pipeline (OSM data is reused if cached).
-/// Fire-and-forget: errors are logged to stderr.
+/// Delete the current (date, theme) PNG and re-run the pipeline (OSM data is
+/// reused if cached). Used for theme switches and style/color edits, where the
+/// rendered output must change even though the filename may not. Clearing
+/// `last_applied` ensures the poll re-applies rather than treating the stale
+/// state as up to date. Fire-and-forget: errors are logged to stderr.
 pub fn spawn_force_regen(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
         let date = city::today();
+        let theme = effective_theme(&app);
         let cache = match cache_dir(&app) {
             Ok(c) => c,
             Err(e) => {
@@ -218,8 +246,8 @@ pub fn spawn_force_regen(app: AppHandle) {
                 return;
             }
         };
-        let png = cache.join(format!("{}.png", date));
-        let _ = fs::remove_file(&png);
+        let _ = fs::remove_file(png_path(&cache, date, theme));
+        *app.state::<AppState>().last_applied.lock().unwrap() = None;
         if let Err(e) = run_for_date(app, date).await {
             eprintln!("[pipeline] force regen failed: {}", e);
         }
