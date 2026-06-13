@@ -113,7 +113,7 @@ export default function General({ status, refresh, onError }: Props) {
   const updateBusy = updateState === "checking" || updateState === "installing";
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="min-h-full space-y-6 max-w-2xl flex flex-col justify-between">
       <Card>
         <CardContent className="space-y-4">
           <Row
@@ -213,11 +213,11 @@ export default function General({ status, refresh, onError }: Props) {
       </Card>
 
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => invoke("hide_window")}>
-          {t("general.hideWindow")}
-        </Button>
         <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
           {t("general.quit")}
+        </Button>
+        <Button size="sm" onClick={() => invoke("hide_window")}>
+          {t("general.hideWindow")}
         </Button>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Status } from "../types";
 import { wikipediaUrl } from "../constants";
 
@@ -40,16 +40,18 @@ export default function City({ status, onError }: Props) {
             {city.lat.toFixed(4)}, {city.lon.toFixed(4)}
           </div>
         </CardContent>
+        <CardFooter className="justify-end gap-2">
+          <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
+            {t("city.wikipedia")}
+          </Button>
+          <Button onClick={regenerate} disabled={status.running} size="sm">
+            {status.running ? t("city.regenerating") : t("city.regenerate")}
+          </Button>
+        </CardFooter>
       </Card>
 
-      <div className="flex justify-end gap-2">
-        <Button onClick={regenerate} disabled={status.running} size="sm">
-          {status.running ? t("city.regenerating") : t("city.regenerate")}
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
-          {t("city.wikipedia")}
-        </Button>
-      </div>
+      {/* <div className="flex justify-end gap-2">
+      </div> */}
     </div>
   );
 }

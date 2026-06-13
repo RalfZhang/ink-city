@@ -36,51 +36,53 @@ export default function About() {
   }, []);
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <Card>
-        <CardContent>
-          <h2 className="text-base font-semibold">InkCity</h2>
-          <p className="text-sm text-muted-foreground mt-1">{t("about.p1")}</p>
-          <p className="text-sm text-muted-foreground mt-2">{t("about.p2")}</p>
-        </CardContent>
-        <CardFooter className="justify-end">
-          <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_REPO)}>
-            {t("about.github")}
-          </Button>
-        </CardFooter>
-      </Card>
+    <div className="min-h-full space-y-6 max-w-2xl flex flex-col justify-between">
+      <div>
+        <Card className='mb-4'>
+          <CardContent>
+            <h2 className="text-base font-semibold">InkCity</h2>
+            <p className="text-sm text-muted-foreground mt-1">{t("about.p1")}</p>
+            <p className="text-sm text-muted-foreground mt-2">{t("about.p2")}</p>
+          </CardContent>
+          <CardFooter className="justify-end">
+            <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_REPO)}>
+              {t("about.github")}
+            </Button>
+          </CardFooter>
+        </Card>
 
-      <Card>
-        <CardContent>
-          <h2 className="text-base font-semibold">{t("about.feedbackTitle")}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{t("about.feedbackDesc")}</p>
-        </CardContent>
-        <CardFooter className="justify-end">
-          <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_ISSUES)}>
-            {t("about.openIssues")}
-          </Button>
-        </CardFooter>
-      </Card>
+        <Card className='mb-4'>
+          <CardContent>
+            <h2 className="text-base font-semibold">{t("about.feedbackTitle")}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{t("about.feedbackDesc")}</p>
+          </CardContent>
+          <CardFooter className="justify-end">
+            <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_ISSUES)}>
+              {t("about.openIssues")}
+            </Button>
+          </CardFooter>
+        </Card>
 
-      <Card>
-        <CardContent>
-          <h2 className="text-base font-semibold">{t("about.dataTitle")}</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            <Trans
-              i18nKey="about.osmAttribution"
-              components={[<ExtLink href={OSM_COPYRIGHT_URL} />, <ExtLink href={ODBL_URL} />]}
-            />
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            <Trans
-              i18nKey="about.geonamesAttribution"
-              components={[<ExtLink href={GEONAMES_URL} />, <ExtLink href={CC_BY_URL} />]}
-            />
-          </p>
-        </CardContent>
-      </Card>
+        <Card className='mb-4'>
+          <CardContent>
+            <h2 className="text-base font-semibold">{t("about.dataTitle")}</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              <Trans
+                i18nKey="about.osmAttribution"
+                components={[<ExtLink href={OSM_COPYRIGHT_URL} />, <ExtLink href={ODBL_URL} />]}
+              />
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              <Trans
+                i18nKey="about.geonamesAttribution"
+                components={[<ExtLink href={GEONAMES_URL} />, <ExtLink href={CC_BY_URL} />]}
+              />
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-center text-xs text-muted-foreground mb-2">
         {version ? `InkCity v${version}` : "InkCity"} · © 2026 Ralf Zhang
       </p>
     </div>
