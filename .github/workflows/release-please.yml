@@ -1,0 +1,33 @@
+# Automated release management via Conventional Commits.
+#
+# On every push to main, release-please scans the commits since the last
+# release (v0.2.6) and maintains a "release PR" that bumps the version in
+# package.json + src-tauri/tauri.conf.json (see release-please-config.json) and
+# updates CHANGELOG.md. `feat:` -> minor, `fix:` -> patch, `feat!:`/`BREAKING
+# CHANGE` -> major. Merging that PR creates the `vX.Y.Z` tag, which triggers
+# release.yml to build + sign the macOS/Windows bundles and the updater manifest.
+#
+# IMPORTANT — the token: a tag pushed with the default GITHUB_TOKEN does NOT
+# trigger other workflows (GitHub blocks recursive workflow runs), so release.yml
+# would never fire. To chain into it, create a fine-grained PAT (or GitHub App
+# token) with `contents: write` + `pull-requests: write`, store it as the repo
+# secret RELEASE_PLEASE_TOKEN, and it's used below. Until that secret exists this
+# still works — it opens/merges release PRs and tags — but you must then push the
+# tag manually (or re-run release.yml via workflow_dispatch) to build.
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
