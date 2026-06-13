@@ -19,4 +19,7 @@ export type Status = {
   dark: ColorPair;
   style: StylePreset;
   updateCheck: UpdateCheck;
+  showWater: boolean;
+  /** Whether the current city's data has a water layer (gates the water toggle). */
+  hasWater: boolean;
 };

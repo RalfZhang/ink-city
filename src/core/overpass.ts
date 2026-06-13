@@ -60,9 +60,21 @@ export async function fetchRoads(
   mirrors: readonly string[] = MIRRORS,
   opts: FetchOptions = {},
 ): Promise<Osm> {
+  return (await fetchOverpass(buildQuery(b), mirrors, opts)) as Osm;
+}
+
+/**
+ * POST an arbitrary Overpass QL `query` to the mirrors with the same rate-limit
+ * handling as {@link fetchRoads}. Returns the parsed JSON untyped — callers
+ * shape it (roads, water, …). Shared by `fetchRoads` and the water fetch.
+ */
+export async function fetchOverpass(
+  query: string,
+  mirrors: readonly string[] = MIRRORS,
+  opts: FetchOptions = {},
+): Promise<unknown> {
   const retries = opts.retries ?? 4;
   const backoffMs = opts.backoffMs ?? 15_000;
-  const query = buildQuery(b);
   let lastErr: unknown;
 
   for (let round = 0; round <= retries; round++) {
@@ -87,7 +99,7 @@ export async function fetchRoads(
           continue; // overloaded — try the next mirror, then back off
         }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return (await res.json()) as Osm;
+        return await res.json();
       } catch (e) {
         lastErr = e;
       }

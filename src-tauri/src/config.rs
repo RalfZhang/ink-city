@@ -94,6 +94,10 @@ pub struct Config {
     pub style: StylePreset,
     #[serde(default)]
     pub update_check: UpdateCheck,
+    /// Draw the water layer on the wallpaper. Off by default; only surfaced in
+    /// the UI when the current city's data actually has water.
+    #[serde(default)]
+    pub show_water: bool,
 }
 
 fn default_true() -> bool {
@@ -110,6 +114,7 @@ impl Default for Config {
             dark: ColorPair::dark_default(),
             style: StylePreset::Standard,
             update_check: UpdateCheck::Weekly,
+            show_water: false,
         }
     }
 }

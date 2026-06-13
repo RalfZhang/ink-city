@@ -50,6 +50,8 @@
     "hintMinimal": "Major roads only",
     "hintStandard": "Width by road class",
     "hintBold": "High contrast hierarchy",
+    "showWater": "Show water bodies",
+    "waterHint": "Rivers, lakes and sea are tinted with the line color",
     "lightColors": "Light palette",
     "darkColors": "Dark palette",
     "active": "Active",

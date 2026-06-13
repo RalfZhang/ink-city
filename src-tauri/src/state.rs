@@ -21,6 +21,12 @@ pub struct AppState {
     pub dark: StdMutex<ColorPair>,
     pub style: StdMutex<StylePreset>,
     pub update_check: StdMutex<UpdateCheck>,
+    pub show_water: AtomicBool,
+    /// Cache of "does the cached OSM data for this date have a water layer".
+    /// Keyed by date so it's computed at most once per day per session (checking
+    /// it means scanning the cached OSM file). Updated when the pipeline fetches
+    /// data; read by `get_status` to decide whether to surface the water toggle.
+    pub has_water: StdMutex<Option<(chrono::NaiveDate, bool)>>,
     pub language: StdMutex<String>,
     pub running: Mutex<bool>,
     pub quitting: AtomicBool,
@@ -43,6 +49,8 @@ impl AppState {
             dark: StdMutex::new(cfg.dark.clone()),
             style: StdMutex::new(cfg.style),
             update_check: StdMutex::new(cfg.update_check),
+            show_water: AtomicBool::new(cfg.show_water),
+            has_water: StdMutex::new(None),
             language: StdMutex::new("en".into()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),

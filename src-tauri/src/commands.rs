@@ -24,6 +24,11 @@ pub struct Status {
     pub style: StylePreset,
     #[serde(rename = "updateCheck")]
     pub update_check: UpdateCheck,
+    #[serde(rename = "showWater")]
+    pub show_water: bool,
+    /// Whether the current city's data has a water layer (gates the UI toggle).
+    #[serde(rename = "hasWater")]
+    pub has_water: bool,
 }
 
 #[tauri::command]
@@ -48,6 +53,8 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<St
         dark: state.dark.lock().unwrap().clone(),
         style: *state.style.lock().unwrap(),
         update_check: *state.update_check.lock().unwrap(),
+        show_water: state.show_water.load(Ordering::Acquire),
+        has_water: pipeline::has_water_for(&app, date),
     })
 }
 
@@ -99,9 +106,11 @@ pub fn apply_style_settings(
     style: StylePreset,
     light: ColorPair,
     dark: ColorPair,
+    show_water: bool,
 ) -> Result<ApplyResult, String> {
     let before_colors = current_effective_colors(&app);
     let before_style = *app.state::<AppState>().style.lock().unwrap();
+    let before_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
 
     {
         let s = app.state::<AppState>();
@@ -109,13 +118,15 @@ pub fn apply_style_settings(
         *s.style.lock().unwrap() = style;
         *s.light.lock().unwrap() = light;
         *s.dark.lock().unwrap() = dark;
+        s.show_water.store(show_water, Ordering::Release);
     }
     persist(&app)?;
 
     let after_colors = current_effective_colors(&app);
     let after_style = *app.state::<AppState>().style.lock().unwrap();
 
-    let regen_started = before_colors != after_colors || before_style != after_style;
+    let regen_started =
+        before_colors != after_colors || before_style != after_style || before_water != show_water;
     if regen_started {
         pipeline::spawn_force_regen(app);
     }
@@ -210,6 +221,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         dark: s.dark.lock().unwrap().clone(),
         style: *s.style.lock().unwrap(),
         update_check: *s.update_check.lock().unwrap(),
+        show_water: s.show_water.load(Ordering::Acquire),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

@@ -4,5 +4,8 @@ export * from "./types";
 export * from "./city";
 export * from "./bbox";
 export * from "./overpass";
+// NOTE: ./water is intentionally NOT re-exported here. It is precache-only
+// (Node/CI) and pulls in `polygon-clipping`; the desktop/website client must
+// not bundle it. Precache imports it directly from "./water".
 export * from "./render";
 export * from "./constants";

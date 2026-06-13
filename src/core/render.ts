@@ -1,5 +1,6 @@
-import type { Bbox, Osm, Style, StylePreset, Way } from "./types";
+import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
 import { project } from "./bbox";
+import { WATER_ALPHA } from "./constants";
 
 // Pure canvas-drawing logic, decoupled from any IO. Takes a 2D context so it
 // works with a DOM canvas (desktop renderer + website) and with a headless
@@ -65,12 +66,126 @@ export type DrawReq = {
   osm: Osm;
 };
 
+/**
+ * Parse a `#rgb` / `#rrggbb` hex string into [r,g,b] (0-255). Returns null for
+ * anything we don't recognize (e.g. named colors) so callers can skip blending.
+ */
+function parseHex(c: string): [number, number, number] | null {
+  const m = c.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!m) return null;
+  const h = m[1];
+  const full = h.length === 3 ? h.replace(/(.)/g, "$1$1") : h;
+  return [
+    parseInt(full.slice(0, 2), 16),
+    parseInt(full.slice(2, 4), 16),
+    parseInt(full.slice(4, 6), 16),
+  ];
+}
+
+const hex2 = (n: number) => Math.round(n).toString(16).padStart(2, "0");
+
+/**
+ * Water color: foreground composited over background at {@link WATER_ALPHA},
+ * baked into a single opaque color. Drawing water as this solid color (rather
+ * than using `globalAlpha`) is mathematically identical here — water always
+ * sits directly on the painted background — but it won't darken where two water
+ * polygons overlap, and needs no offscreen canvas. Falls back to the raw
+ * foreground if either color isn't a hex we can parse.
+ */
+export function mixColor(foreground: string, background: string, alpha = WATER_ALPHA): string {
+  const fg = parseHex(foreground);
+  const bg = parseHex(background);
+  if (!fg || !bg) return foreground;
+  const mix = (i: number) => hex2(fg[i] * alpha + bg[i] * (1 - alpha));
+  return `#${mix(0)}${mix(1)}${mix(2)}`;
+}
+
+/** Trace one closed ring onto the current path, projecting each lat/lon. */
+function addRing(ctx: CanvasRenderingContext2D, ring: Geom[], bbox: Bbox, width: number, height: number): void {
+  if (ring.length < 2) return;
+  const [x0, y0] = project(ring[0].lat, ring[0].lon, bbox, width, height);
+  ctx.moveTo(x0, y0);
+  for (let i = 1; i < ring.length; i++) {
+    const [x, y] = project(ring[i].lat, ring[i].lon, bbox, width, height);
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+}
+
+/** Stroke width (px) for a linear waterway, scaled like roads (see drawRoads). */
+function waterLineWidth(cls: string, scale: number): number {
+  switch (cls) {
+    case "river": return scale * 1.6;
+    case "canal": return scale * 1.3;
+    default:      return scale * 0.7; // stream
+  }
+}
+
+/**
+ * Draw the water layer under the roads: filled bodies (lakes, sea) plus thin
+ * linear waterways (creeks/canals). No-op when the OSM data has no `water` key
+ * (old cached data or the roads-only live fallback), so older payloads degrade
+ * gracefully. Polygon holes (islands) are punched out with the even-odd rule,
+ * which is winding-direction agnostic — water.ts only guarantees rings are
+ * closed, not their orientation.
+ */
+export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+  const water = req.osm.water;
+  // Gated by the user's "show water" setting (default off, see Style tab) and a
+  // no-op when the data has no water layer (old cached data / live fallback).
+  if (!req.style.showWater || !water || water.length === 0) return;
+  const { bbox, width, height, style } = req;
+  const color = mixColor(style.foreground, style.background);
+
+  // Filled bodies.
+  ctx.fillStyle = color;
+  for (const f of water) {
+    if (f.kind === "line" || !f.polygon?.outer || f.polygon.outer.length < 3) continue;
+    ctx.beginPath();
+    addRing(ctx, f.polygon.outer, bbox, width, height);
+    for (const hole of f.polygon.holes ?? []) addRing(ctx, hole, bbox, width, height);
+    ctx.fill("evenodd");
+  }
+
+  // Linear waterways, grouped by width so we set lineWidth once per bucket.
+  const scale = Math.max(1, height / 1000);
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  const buckets = new Map<number, Geom[][]>();
+  for (const f of water) {
+    if (f.kind !== "line" || f.line.length < 2) continue;
+    const w = waterLineWidth(f.cls, scale);
+    const list = buckets.get(w) ?? [];
+    list.push(f.line);
+    buckets.set(w, list);
+  }
+  for (const [lw, lines] of Array.from(buckets.entries()).sort((a, b) => a[0] - b[0])) {
+    ctx.lineWidth = lw;
+    ctx.beginPath();
+    for (const line of lines) {
+      const [x0, y0] = project(line[0].lat, line[0].lon, bbox, width, height);
+      ctx.moveTo(x0, y0);
+      for (let i = 1; i < line.length; i++) {
+        const [x, y] = project(line[i].lat, line[i].lon, bbox, width, height);
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.stroke();
+  }
+}
+
 /** Draw the road network onto `ctx`. Returns the number of ways drawn. */
 export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
 
   ctx.fillStyle = style.background;
   ctx.fillRect(0, 0, width, height);
+
+  // Water sits on the background, under the roads. drawWater leaves fillStyle
+  // changed, so set stroke state for roads afterwards.
+  drawWater(ctx, req);
+
   ctx.strokeStyle = style.foreground;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";

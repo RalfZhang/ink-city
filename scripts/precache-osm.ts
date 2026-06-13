@@ -18,8 +18,12 @@ import {
   bboxForScreen,
   fetchRoads,
   slimRoads,
+  OSM_SCHEMA_VERSION,
   type City,
 } from "../src/core/index.ts";
+// water.ts is precache-only (pulls in polygon-clipping); import it directly,
+// not via the client barrel.
+import { fetchWater, slimWater } from "../src/core/water.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -92,9 +96,17 @@ async function main() {
     try {
       const osm = await fetchRoads(bbox);
       const slim = slimRoads(osm, COORD_PRECISION);
-      writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify(slim));
+      // Water is a separate fetch; space it out so we don't hammer Overpass.
+      await new Promise((r) => setTimeout(r, 1500));
+      const rawWater = await fetchWater(bbox);
+      const water = slimWater(rawWater, bbox, slim.elements?.length ?? 0, COORD_PRECISION);
+      // Additive, backward-compatible: old clients read only `elements`.
+      const out = { v: OSM_SCHEMA_VERSION, elements: slim.elements ?? [], water };
+      writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify(out));
       fetched++;
-      console.log(`[precache] cached ${id} (${city.name}) — ${slim.elements?.length ?? 0} ways`);
+      console.log(
+        `[precache] cached ${id} (${city.name}) — ${out.elements.length} ways, ${water.length} water`,
+      );
     } catch (e) {
       // Don't fail the whole run for one city; the client falls back to
       // Overpass for any city missing from the CDN.
