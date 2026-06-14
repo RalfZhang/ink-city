@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/RalfZhang/ink-city/compare/v0.3.0...v0.3.1) (2026-06-14)
+
+
+### Bug Fixes
+
+* error on checking update ([9248155](https://github.com/RalfZhang/ink-city/commit/9248155faf4ec6949a6449353cf053b9b55ab82b))
+
 ## [0.3.0](https://github.com/RalfZhang/ink-city/compare/v0.2.6...v0.3.0) (2026-06-13)
 
 
