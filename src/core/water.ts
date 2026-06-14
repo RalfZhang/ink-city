@@ -1,4 +1,8 @@
-import { difference, union, type MultiPolygon, type Ring } from "polygon-clipping";
+// polygon-clipping's ESM build only has a default export (its .d.ts wrongly
+// declares named ones), so destructure union/difference off the default —
+// named value imports throw at runtime under Node/tsx ESM. Types are erased.
+import polygonClipping, { type MultiPolygon, type Ring } from "polygon-clipping";
+const { difference, union } = polygonClipping;
 
 import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "./types";
 import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
