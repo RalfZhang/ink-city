@@ -26,6 +26,7 @@
     "installRestart": "安装并重启",
     "installing": "下载中…",
     "updateError": "检查更新失败",
+    "updateUnavailable": "暂时无法连接更新服务器，请稍后再试",
     "languageLabel": "语言",
     "languageAuto": "跟随系统",
     "hideWindow": "隐藏窗口",

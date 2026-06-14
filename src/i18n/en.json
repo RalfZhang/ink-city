@@ -26,6 +26,7 @@
     "installRestart": "Install & restart",
     "installing": "Downloading…",
     "updateError": "Update check failed",
+    "updateUnavailable": "Update server unavailable, try again later",
     "languageLabel": "Language",
     "languageAuto": "Auto",
     "hideWindow": "Hide window",

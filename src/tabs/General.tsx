@@ -26,7 +26,39 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
-type UpdateState = "idle" | "checking" | "available" | "installing" | "uptodate" | "error";
+type UpdateState =
+  | "idle"
+  | "checking"
+  | "available"
+  | "installing"
+  | "uptodate"
+  | "unavailable"
+  | "error";
+
+// A failed update check isn't always a fault. During the brief release window a
+// freshly-tagged release can be "latest" before its latest.json asset finishes
+// uploading (the endpoint 404s), and users are frequently just offline. Treat
+// those transport-/availability-level failures as a calm "unavailable" state
+// rather than an alarming "check failed"; reserve the error state for genuinely
+// unexpected failures such as a malformed manifest.
+function isBenignUpdateError(e: unknown): boolean {
+  const msg = (
+    e instanceof Error ? e.message : typeof e === "string" ? e : JSON.stringify(e ?? "")
+  ).toLowerCase();
+  return [
+    "404",
+    "not found",
+    "releasenotfound",
+    "network",
+    "timed out",
+    "timeout",
+    "dns",
+    "connect",
+    "offline",
+    "sending request",
+    "failed to fetch",
+  ].some((s) => msg.includes(s));
+}
 
 export default function General({ status, refresh, onError }: Props) {
   const { t } = useTranslation();
@@ -93,7 +125,7 @@ export default function General({ status, refresh, onError }: Props) {
       }
     } catch (e) {
       console.error("[updater] check failed", e);
-      setUpdateState("error");
+      setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
     }
   };
 
@@ -187,9 +219,11 @@ export default function General({ status, refresh, onError }: Props) {
                   ? t("general.updateAvailable", { version: pending?.version })
                   : updateState === "uptodate"
                     ? t("general.upToDate")
-                    : updateState === "error"
-                      ? t("general.updateError")
-                      : null}
+                    : updateState === "unavailable"
+                      ? t("general.updateUnavailable")
+                      : updateState === "error"
+                        ? t("general.updateError")
+                        : null}
               </span>
             </div>
           </div>
