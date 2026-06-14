@@ -10,7 +10,8 @@
     "tauri": "tauri",
     "build:cities": "node scripts/build-cities.mjs",
     "precache": "tsx scripts/precache-osm.ts",
-    "render-test": "tsx scripts/render-test.ts"
+    "render-test": "tsx scripts/render-test.ts",
+    "render-map": "tsx scripts/render-map.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

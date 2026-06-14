@@ -29,3 +29,6 @@ idea.md
 # branch by CI, never committed to main.
 /data/
 /data-out/
+
+# render-map.ts output (local map previews)
+/test-out/
