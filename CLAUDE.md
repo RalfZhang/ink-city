@@ -2,6 +2,10 @@
 
 A Tauri (Rust + React/TS) desktop app shipping signed bundles for macOS (universal) and Windows.
 
+## Data
+
+City pins live in `src/data/` (three schema-identical pools; only `cities.json` is wired into the app). For the pools' relationship, the `localName` language/script rules, and how to regenerate them, see [src/data/README.md](src/data/README.md).
+
 ## Contribution flow
 
 Never commit directly to `main`. For any change:
