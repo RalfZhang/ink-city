@@ -1,0 +1,20 @@
+name: 🤔 Questions
+description: TBD...
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Let me think...
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Explain the context
+    validations:
+      required: false

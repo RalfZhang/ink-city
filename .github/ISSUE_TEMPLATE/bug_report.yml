@@ -1,0 +1,71 @@
+name: 🐞 Bug
+description: Unexpected thing to be fixed
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Problem
+      description: What happened?
+      placeholder: App crashed / Shown error info / ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps
+      description: How to reproduce it.
+      placeholder: |
+        1. Open the App
+        2. Click...
+        3. Show...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What should it be?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      description: Choose the Operation System.
+      multiple: true
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Windows
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      placeholder: macOS 15.5 / Windows 11 23H2 / ....
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: Check it on the About tab.
+      placeholder: 0.3.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: more-info
+    attributes:
+      label: More Info
+      description: Anything else? Logs? Screenshots?
+    validations:
+      required: false

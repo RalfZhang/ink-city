@@ -1,0 +1,29 @@
+name: ✨ Feature
+description: Something new
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Explain the context
+      placeholder: What's the current situation?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Goal
+      description: How to implement it
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: More info
+      description: Screenshots / Links / Sketch
+    validations:
+      required: false
