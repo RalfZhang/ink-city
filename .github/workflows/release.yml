@@ -5,6 +5,14 @@ name: Release
 # manifest (latest.json) that the in-app updater reads. See src-tauri's
 # plugins.updater config and src/tabs/About.tsx.
 #
+# Draft-then-publish: release-please creates the GitHub Release as a *draft*
+# (see release-please-config.json `draft: true`). A draft is excluded from
+# `releases/latest`, so the updater endpoint keeps resolving to the previous
+# fully-built release while these matrix builds run — no window where `latest`
+# points at a release that has no latest.json yet. The `publish` job below
+# flips the release to public+latest only after BOTH platforms finish uploading,
+# so assets and "latest" status switch over atomically.
+#
 # To cut a release: bump the version in package.json + src-tauri/tauri.conf.json,
 # commit, then push a matching tag, e.g.:
 #   git tag v0.2.0 && git push origin v0.2.0
@@ -69,3 +77,18 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+  # Flip the draft release to public + latest, but only after every matrix build
+  # has succeeded and uploaded its assets. With fail-fast: false, a single
+  # platform failure leaves the release as a draft (invisible to the updater),
+  # so users never see a half-built release.
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish release (draft -> public + latest)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "${{ github.ref_name }}" --repo "${{ github.repository }}" --draft=false --latest
