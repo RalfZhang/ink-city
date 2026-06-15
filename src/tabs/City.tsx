@@ -40,11 +40,11 @@ export default function City({ status, onError }: Props) {
             {city.lat.toFixed(4)}, {city.lon.toFixed(4)}
           </div>
         </CardContent>
-        <CardFooter className="justify-end gap-2">
+        <CardFooter className="min-w-32 justify-end gap-2">
           <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
             {t("city.wikipedia")}
           </Button>
-          <Button onClick={regenerate} disabled={status.running} size="sm">
+          <Button className="min-w-32" onClick={regenerate} disabled={status.running} size="sm">
             {status.running ? t("city.regenerating") : t("city.regenerate")}
           </Button>
         </CardFooter>

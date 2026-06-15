@@ -35,7 +35,7 @@
   "city": {
     "today": "Today",
     "population": "pop {{value}}",
-    "regenerate": "Regenerate now",
+    "regenerate": "Regenerate",
     "regenerating": "Generating…",
     "wikipedia": "Open on Wikipedia"
   },
@@ -78,7 +78,7 @@
   "tray": {
     "openSettings": "Open Settings",
     "dailyUpdates": "Daily Updates",
-    "regenerateNow": "Regenerate Now",
+    "regenerateNow": "Regenerate",
     "quit": "Quit InkCity",
     "updateAvailable": "Update available…"
   }
