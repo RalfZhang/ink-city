@@ -23,7 +23,7 @@ The push to `main` triggers the release pipeline below.
 Driven by [release-please](.github/workflows/release-please.yml) + [release.yml](.github/workflows/release.yml):
 
 1. Push to `main` → `release-please` scans Conventional Commits and creates/updates a **"release PR"** that bumps the version in `package.json` + `src-tauri/tauri.conf.json` and updates `CHANGELOG.md`. **No release is created yet.**
-2. Merge the release PR → the next `release-please` run tags `vX.Y.Z` and creates the GitHub Release as a **draft** (`draft: true` in [release-please-config.json](release-please-config.json)). The tag is pushed with `RELEASE_PLEASE_TOKEN` (a PAT) so it can trigger downstream workflows.
+2. Merge the release PR → the next `release-please` run creates the GitHub Release as a **draft** (`draft: true` in [release-please-config.json](release-please-config.json)). A draft release has **no git tag** (GitHub only creates the ref on publish), so the workflow's `Create tag` step then pushes `vX.Y.Z` with `RELEASE_PLEASE_TOKEN` (a PAT) so it can trigger downstream workflows. That tag also anchors the *next* run's changelog — skip it and release-please loses its anchor and re-collects the whole history into a bogus release PR.
 3. The `vX.Y.Z` tag triggers `release.yml` → builds + signs the macOS/Windows bundles, uploads them plus the signed updater manifest `latest.json` to the draft release.
 4. After **both** platform builds succeed, the `publish` job flips the release to public + `latest`.
 
