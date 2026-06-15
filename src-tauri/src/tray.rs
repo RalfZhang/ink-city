@@ -3,7 +3,7 @@ use std::sync::OnceLock;
 
 use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuItem, MenuItemBuilder, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::{AppHandle, Emitter, Manager, Wry};
+use tauri::{AppHandle, Manager, Wry};
 
 use crate::city;
 use crate::pipeline;
@@ -86,10 +86,9 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
             match event.id().as_ref() {
                 "open" => show_settings(&app),
                 "update" => {
-                    show_settings(&app);
-                    // Ask the frontend to switch to the General tab, where the
-                    // Check for updates & Install & Restart controls live.
-                    let _ = app.emit("open-tab", "general");
+                    // Short path: confirm and install in place via a native
+                    // dialog — no need to open the settings window at all.
+                    crate::updates::prompt_and_install(&app);
                 }
                 "toggle_enabled" => {
                     let state = app.state::<AppState>();
@@ -153,6 +152,22 @@ pub fn show_update_available(_app: &AppHandle) {
     // Prepend separator first, then the item, leaving [item, sep, ...rest].
     let _ = menu.prepend(sep);
     let _ = menu.prepend(item);
+}
+
+/// Remove the "Update available" entry. Idempotent: only acts if it was shown.
+/// Called when a check finds we're already up to date, so the tray never offers
+/// to install a version that no longer applies.
+pub fn hide_update_available(_app: &AppHandle) {
+    if !UPDATE_SHOWN.swap(false, Ordering::AcqRel) {
+        return;
+    }
+    let (Some(menu), Some(item), Some(sep)) =
+        (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
+    else {
+        return;
+    };
+    let _ = menu.remove(item);
+    let _ = menu.remove(sep);
 }
 
 pub fn apply_hide_tray(app: &AppHandle, hide: bool) {

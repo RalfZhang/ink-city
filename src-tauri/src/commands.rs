@@ -24,6 +24,10 @@ pub struct Status {
     pub style: StylePreset,
     #[serde(rename = "updateCheck")]
     pub update_check: UpdateCheck,
+    /// The version we can update to, or `None`. Single source of truth for the
+    /// "update available" affordance — see `AppState::available_update`.
+    #[serde(rename = "updateAvailable")]
+    pub update_available: Option<String>,
     #[serde(rename = "showWater")]
     pub show_water: bool,
     /// Whether the current city's data has a water layer (gates the UI toggle).
@@ -53,6 +57,7 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<St
         dark: state.dark.lock().unwrap().clone(),
         style: *state.style.lock().unwrap(),
         update_check: *state.update_check.lock().unwrap(),
+        update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
         has_water: pipeline::has_water_for(&app, date),
     })
@@ -78,9 +83,34 @@ pub fn set_update_check(app: AppHandle, value: UpdateCheck) -> Result<(), String
     persist(&app)
 }
 
+/// Manual "Check now" — bypasses the cadence gate. Returns the available
+/// version string, or `None` when already up to date. Updates the shared state
+/// (tray entry + General affordance) as a side effect.
 #[tauri::command]
-pub fn set_language(app: AppHandle, lang: String) -> Result<(), String> {
-    *app.state::<AppState>().language.lock().unwrap() = lang;
+pub async fn check_for_update(app: AppHandle) -> Result<Option<String>, String> {
+    crate::updates::do_check(&app, true)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+/// Install the available update and relaunch. On success this never returns
+/// (the app restarts). Returns `Ok(false)` when there's nothing to install.
+#[tauri::command]
+pub async fn install_update(app: AppHandle) -> Result<bool, String> {
+    crate::updates::install_now(&app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+/// Push the localized strings for the windowless update flows (notification +
+/// native dialogs) from the frontend, mirroring `update_tray_labels`. Keeps
+/// translations in the JSON locale files as the single source of truth.
+#[tauri::command]
+pub fn set_update_strings(
+    app: AppHandle,
+    strings: crate::updates::UpdateStrings,
+) -> Result<(), String> {
+    *app.state::<AppState>().update_strings.lock().unwrap() = strings;
     Ok(())
 }
 

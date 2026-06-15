@@ -47,6 +47,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             let handle = app.handle();
 
@@ -146,6 +147,11 @@ pub fn run() {
             tray::setup(handle)?;
             tray::apply_hide_tray(handle, hide_tray_initial);
 
+            // Restore a previously-detected "update available" affordance (tray
+            // entry + General-tab state) without hitting the network. Guarded by
+            // a version comparison so an out-of-band upgrade clears it instead.
+            updates::restore_pending(handle);
+
             scheduler::spawn(handle.clone());
             Ok(())
         })
@@ -154,7 +160,9 @@ pub fn run() {
             commands::set_enabled,
             commands::set_hide_tray,
             commands::set_update_check,
-            commands::set_language,
+            commands::check_for_update,
+            commands::install_update,
+            commands::set_update_strings,
             commands::apply_style_settings,
             commands::get_color_defaults,
             commands::regenerate_now,

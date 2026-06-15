@@ -81,5 +81,14 @@
     "regenerateNow": "Regenerate",
     "quit": "Quit InkCity",
     "updateAvailable": "Update available…"
+  },
+  "update": {
+    "notifyBody": "New version {version} is available — open InkCity to update.",
+    "downloading": "Downloading update…",
+    "promptBody": "Version {version} is available. Update now?",
+    "updateNow": "Update now",
+    "later": "Later",
+    "upToDate": "You're already up to date.",
+    "failed": "Update failed. Please try again later."
   }
 }

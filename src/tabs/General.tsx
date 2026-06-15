@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
-import { check, type Update } from "@tauri-apps/plugin-updater";
-import { relaunch } from "@tauri-apps/plugin-process";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,10 +24,12 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
+// Transient UI feedback only. Whether an update *is available* is no longer
+// tracked here — it's read from `status.updateAvailable` (the Rust source of
+// truth), so it survives tab switches and window reopens.
 type UpdateState =
   | "idle"
   | "checking"
-  | "available"
   | "installing"
   | "uptodate"
   | "unavailable"
@@ -65,7 +65,6 @@ export default function General({ status, refresh, onError }: Props) {
   const [autostart, setAutostart] = useState<boolean | null>(null);
   const [locale, setLocale] = useState<LocaleChoice>(getLocaleChoice());
   const [updateState, setUpdateState] = useState<UpdateState>("idle");
-  const [pending, setPending] = useState<Update | null>(null);
 
   useEffect(() => {
     isEnabled().then(setAutostart).catch(onError);
@@ -116,13 +115,12 @@ export default function General({ status, refresh, onError }: Props) {
   const checkForUpdate = async () => {
     setUpdateState("checking");
     try {
-      const upd = await check();
-      if (upd) {
-        setPending(upd);
-        setUpdateState("available");
-      } else {
-        setUpdateState("uptodate");
-      }
+      // Rust runs the check, updates the shared state (tray + status), and
+      // returns the version (or null). The 2s status poll surfaces the
+      // "available" affordance; we just clear the transient feedback.
+      const version = await invoke<string | null>("check_for_update");
+      await refresh();
+      setUpdateState(version ? "idle" : "uptodate");
     } catch (e) {
       console.error("[updater] check failed", e);
       setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
@@ -130,15 +128,18 @@ export default function General({ status, refresh, onError }: Props) {
   };
 
   const installUpdate = async () => {
-    if (!pending) return;
     setUpdateState("installing");
     try {
-      // Downloads, installs, then relaunches into the new version.
-      await pending.downloadAndInstall();
-      await relaunch();
+      // Rust re-checks, downloads, installs, then relaunches — so on success
+      // this never resolves. `false` means there was nothing to install.
+      const installed = await invoke<boolean>("install_update");
+      if (!installed) {
+        await refresh();
+        setUpdateState("uptodate");
+      }
     } catch (e) {
       console.error("[updater] install failed", e);
-      setUpdateState("error");
+      setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
     }
   };
 
@@ -198,7 +199,7 @@ export default function General({ status, refresh, onError }: Props) {
               }
             />
             <div className="flex items-center gap-2">
-              {updateState === "available" || updateState === "installing" ? (
+              {status.updateAvailable || updateState === "installing" ? (
                 <Button size="sm" onClick={installUpdate} disabled={updateBusy}>
                   {updateState === "installing" && <Loader2 className="animate-spin" />}
                   {t(updateState === "installing" ? "general.installing" : "general.installRestart")}
@@ -215,8 +216,8 @@ export default function General({ status, refresh, onError }: Props) {
                 </Button>
               )}
               <span className="text-xs text-muted-foreground">
-                {updateState === "available"
-                  ? t("general.updateAvailable", { version: pending?.version })
+                {status.updateAvailable
+                  ? t("general.updateAvailable", { version: status.updateAvailable })
                   : updateState === "uptodate"
                     ? t("general.upToDate")
                     : updateState === "unavailable"

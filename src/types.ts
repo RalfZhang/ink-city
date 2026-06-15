@@ -19,6 +19,8 @@ export type Status = {
   dark: ColorPair;
   style: StylePreset;
   updateCheck: UpdateCheck;
+  /** Version we can update to, or null. Source of truth for the update prompt. */
+  updateAvailable: string | null;
   showWater: boolean;
   /** Whether the current city's data has a water layer (gates the water toggle). */
   hasWater: boolean;

@@ -4,6 +4,7 @@ use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::{oneshot, Mutex, Notify};
 
 use crate::config::{ColorPair, StylePreset, ThemeMode, UpdateCheck};
+use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
     pub date: String,
@@ -21,13 +22,24 @@ pub struct AppState {
     pub dark: StdMutex<ColorPair>,
     pub style: StdMutex<StylePreset>,
     pub update_check: StdMutex<UpdateCheck>,
+    /// Single source of truth for "an update is available": the version string
+    /// we can upgrade to, or `None`. Seeded on launch from the persisted
+    /// `update.meta.json` (see `updates::restore_pending`), refreshed by every
+    /// check, and surfaced to the frontend via `get_status` so the General tab
+    /// reflects it across tab switches and window reopens.
+    pub available_update: StdMutex<Option<String>>,
+    /// Guards against concurrent/duplicate installs (tray + General + repeated
+    /// clicks can all race to trigger an install).
+    pub update_installing: AtomicBool,
     pub show_water: AtomicBool,
     /// Cache of "does the cached OSM data for this date have a water layer".
     /// Keyed by date so it's computed at most once per day per session (checking
     /// it means scanning the cached OSM file). Updated when the pipeline fetches
     /// data; read by `get_status` to decide whether to surface the water toggle.
     pub has_water: StdMutex<Option<(chrono::NaiveDate, bool)>>,
-    pub language: StdMutex<String>,
+    /// User-facing strings for the windowless update flows, pushed from the
+    /// frontend JSON locale files (see `UpdateStrings`). English until synced.
+    pub update_strings: StdMutex<UpdateStrings>,
     pub running: Mutex<bool>,
     pub quitting: AtomicBool,
     /// The (date, effective theme) the wallpaper was last successfully applied
@@ -49,9 +61,11 @@ impl AppState {
             dark: StdMutex::new(cfg.dark.clone()),
             style: StdMutex::new(cfg.style),
             update_check: StdMutex::new(cfg.update_check),
+            available_update: StdMutex::new(None),
+            update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
             has_water: StdMutex::new(None),
-            language: StdMutex::new("en".into()),
+            update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
             last_applied: StdMutex::new(None),

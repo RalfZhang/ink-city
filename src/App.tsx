@@ -46,8 +46,8 @@ function App() {
     };
   }, []);
 
-  // The tray's "Update available" entry asks us to jump to the About tab,
-  // where the Install & Restart button lives.
+  // Generic "jump to a tab" channel. (The tray's "Update available" entry no
+  // longer uses it — it confirms + installs in place via a native dialog.)
   useEffect(() => {
     const off = listen<string>("open-tab", (e) => setTab(e.payload as TabId));
     return () => {
@@ -55,12 +55,12 @@ function App() {
     };
   }, []);
 
-  // Push the current language's tray-menu translations into Rust so the
-  // OS-rendered tray menu stays in sync with the React UI. Done on mount and
-  // on every language change. Source of truth remains the JSON locale files.
+  // Push the current language's translations for the Rust-rendered surfaces
+  // (tray menu + the windowless update notification/dialogs) into Rust. Done on
+  // mount and on every language change. Source of truth remains the JSON locale
+  // files; Rust just renders whatever it's told.
   useEffect(() => {
     const sync = () => {
-      invoke("set_language", { lang: i18n.language });
       invoke("update_tray_labels", {
         openSettings: i18n.t("tray.openSettings"),
         dailyUpdates: i18n.t("tray.dailyUpdates"),
@@ -68,6 +68,17 @@ function App() {
         quit: i18n.t("tray.quit"),
         updateAvailable: i18n.t("tray.updateAvailable"),
       }).catch((e) => console.warn("[tray] sync failed", e));
+      invoke("set_update_strings", {
+        strings: {
+          notifyBody: i18n.t("update.notifyBody"),
+          downloading: i18n.t("update.downloading"),
+          promptBody: i18n.t("update.promptBody"),
+          updateNow: i18n.t("update.updateNow"),
+          later: i18n.t("update.later"),
+          upToDate: i18n.t("update.upToDate"),
+          failed: i18n.t("update.failed"),
+        },
+      }).catch((e) => console.warn("[update] strings sync failed", e));
     };
     sync();
     i18n.on("languageChanged", sync);
