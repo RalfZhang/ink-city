@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 use std::sync::atomic::Ordering;
+use std::time::Duration;
 
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
@@ -289,22 +290,75 @@ pub fn prompt_and_install(app: &AppHandle) {
         });
 }
 
-/// Fire-and-forget background check honoring the user's cadence. Called from
-/// the scheduler on startup and on every midnight tick; the cadence gate inside
-/// decides whether to actually hit the network. Never blocks or fails the caller.
-pub fn spawn_check(app: AppHandle) {
-    tauri::async_runtime::spawn(async move {
-        if let Err(e) = do_check(&app, false).await {
-            eprintln!("[updater] {e}");
-        }
-    });
+/// Hostname:port of the updater endpoint (see the `updater` plugin config in
+/// `tauri.conf.json`). Used only for the cheap pre-flight handshake below; the
+/// actual manifest fetch goes through the updater plugin.
+const ENDPOINT_HOST: &str = "github.com:443";
+
+/// Best-effort "is the network up?" probe: a short TCP handshake to the release
+/// host. Right after wake-from-sleep the scheduler poll often races ahead of the
+/// Wi-Fi reconnect, and the updater would surface that as an opaque error. We
+/// pre-flight here so that race is treated as "retry next tick" instead. A
+/// failure (or timeout) just means not-reachable-yet; it never fails the caller.
+async fn endpoint_reachable() -> bool {
+    matches!(
+        tokio::time::timeout(
+            Duration::from_secs(5),
+            tokio::net::TcpStream::connect(ENDPOINT_HOST),
+        )
+        .await,
+        Ok(Ok(_))
+    )
+}
+
+/// One cadence-gated update check for the background scheduler, which calls this
+/// on every poll tick. The persisted cadence gate (`is_due`, backed by
+/// `last_check`) is the single source of truth for "is it time yet", so calling
+/// this often is cheap — when nothing is due it's a no-op that touches no network.
+///
+/// Crucially this is safe to retry, unlike the old fire-once-per-day trigger: a
+/// check that can't complete (most commonly the wake-from-sleep race above)
+/// leaves `last_check` untouched, so the next tick tries again instead of the
+/// day's only attempt being burned. It also means a `Daily` cadence fires the
+/// moment 24h have actually elapsed, not only at the next date rollover. Never
+/// blocks meaningfully or fails the caller.
+pub async fn run_scheduled_check(app: &AppHandle) {
+    let meta = load_meta(app);
+    if !is_due(app, &meta) {
+        return; // cadence not elapsed — nothing to do, no network touched
+    }
+    if !endpoint_reachable().await {
+        return; // network not up yet (e.g. just woke) — retry on the next poll
+    }
+    // We've already gated on cadence + reachability, so commit to the check;
+    // `force` skips the redundant in-`do_check` cadence re-evaluation.
+    if let Err(e) = do_check(app, true).await {
+        eprintln!("[updater] {e}");
+    }
+}
+
+/// Request notification permission once, at startup. macOS shows its
+/// authorization dialog only the first time; subsequent calls just return the
+/// stored decision without prompting, so calling this on every launch is
+/// harmless. Doing it here — rather than lazily the moment the first update
+/// notification fires — means the user's choice is already settled by the time
+/// we have something to announce, so that first notification can't be lost to a
+/// still-open permission prompt.
+pub fn ensure_permission(app: &AppHandle) {
+    if !matches!(app.notification().permission_state(), Ok(PermissionState::Granted)) {
+        let _ = app.notification().request_permission();
+    }
 }
 
 fn notify(app: &AppHandle, version: &str) {
-    // macOS (and Windows toast) require the user to have granted notification
-    // permission; request it lazily on first use if not already granted.
+    // macOS (and Windows toast) only deliver notifications once permission has
+    // been granted. We request that up front at startup (see `ensure_permission`),
+    // so by now the decision is settled — we never race the OS prompt and drop
+    // this notification. If it wasn't granted, stay silent: the tray "update
+    // available" entry is still the affordance, and a user who declined
+    // notifications shouldn't be nagged into re-requesting here.
     if !matches!(app.notification().permission_state(), Ok(PermissionState::Granted)) {
-        let _ = app.notification().request_permission();
+        return;
     }
 
     // NOTE: clicking a desktop notification is not delivered as an action by

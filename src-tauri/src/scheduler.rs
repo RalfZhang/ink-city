@@ -20,19 +20,26 @@ const POLL_SECS: u64 = 60;
 
 pub fn spawn(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
-        let mut last_housekeeping: Option<NaiveDate> = None;
+        // Calendar date the cities-list refresh last fired on. It's ETag-gated
+        // and network-light, and there's nothing to retry within a day, so a
+        // single shot when the date rolls over is plenty.
+        let mut cities_checked: Option<NaiveDate> = None;
         loop {
             let today = city::today();
 
-            // Housekeeping (remote cities list + GitHub release check) is daily,
-            // not every tick — gate it on the calendar date rolling over so the
-            // 60s poll doesn't hammer the network. Both have their own internal
-            // freshness gates too (ETag / cadence), so this stays cheap.
-            if last_housekeeping != Some(today) {
+            if cities_checked != Some(today) {
                 cities_update::spawn_check(app.clone());
-                updates::spawn_check(app.clone());
-                last_housekeeping = Some(today);
+                cities_checked = Some(today);
             }
+
+            // The update check has its own persisted cadence gate, so we run it
+            // every tick rather than once per day. That's deliberately not a
+            // calendar gate: it lets the check (1) retry when it can't complete —
+            // e.g. the poll races ahead of the Wi-Fi reconnect on wake-from-sleep
+            // — instead of burning the day's only attempt, and (2) fire the
+            // moment the cadence elapses rather than only at the next rollover.
+            // It's a cheap no-op (no network) whenever nothing is due.
+            updates::run_scheduled_check(&app).await;
 
             reconcile(&app).await;
             tokio::time::sleep(Duration::from_secs(POLL_SECS)).await;

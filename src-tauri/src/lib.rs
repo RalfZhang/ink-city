@@ -152,6 +152,11 @@ pub fn run() {
             // a version comparison so an out-of-band upgrade clears it instead.
             updates::restore_pending(handle);
 
+            // Settle notification permission up front so the first "update
+            // available" notification isn't lost racing the OS prompt. macOS
+            // prompts only on the first ever launch; later launches are no-ops.
+            updates::ensure_permission(handle);
+
             scheduler::spawn(handle.clone());
             Ok(())
         })
