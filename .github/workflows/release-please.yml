@@ -4,16 +4,24 @@
 # release (v0.2.6) and maintains a "release PR" that bumps the version in
 # package.json + src-tauri/tauri.conf.json (see release-please-config.json) and
 # updates CHANGELOG.md. `feat:` -> minor, `fix:` -> patch, `feat!:`/`BREAKING
-# CHANGE` -> major. Merging that PR creates the `vX.Y.Z` tag, which triggers
-# release.yml to build + sign the macOS/Windows bundles and the updater manifest.
+# CHANGE` -> major. Merging that PR makes release-please cut the release.
+#
+# Because the release is a *draft* (release-please-config.json `draft: true`),
+# GitHub does NOT create the git tag for it — the ref only appears on publish.
+# So the "Create tag" step below pushes `vX.Y.Z` explicitly. That tag does two
+# jobs: (1) it triggers release.yml to build + sign the macOS/Windows bundles and
+# the updater manifest, and (2) it gives the *next* release-please run an anchor
+# for "commits since last release". Without the tag, that next run finds 0
+# releases, loses its anchor, and re-collects the ENTIRE history into a bogus
+# release PR (this is exactly what produced the bad #13 PR for v0.4.0).
 #
 # IMPORTANT — the token: a tag pushed with the default GITHUB_TOKEN does NOT
 # trigger other workflows (GitHub blocks recursive workflow runs), so release.yml
 # would never fire. To chain into it, create a fine-grained PAT (or GitHub App
 # token) with `contents: write` + `pull-requests: write`, store it as the repo
-# secret RELEASE_PLEASE_TOKEN, and it's used below. Until that secret exists this
-# still works — it opens/merges release PRs and tags — but you must then push the
-# tag manually (or re-run release.yml via workflow_dispatch) to build.
+# secret RELEASE_PLEASE_TOKEN — it's used below for both the action and the tag
+# push. Without that secret the tag is still created, but it won't trigger
+# release.yml; you'd then re-run release.yml via workflow_dispatch to build.
 name: release-please
 
 on:
@@ -29,5 +37,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+
+      # A draft release gets no git tag from GitHub (the ref is only created on
+      # publish), but release.yml builds `on: push: tags` and the next
+      # release-please run needs the tag to anchor its changelog. So when a
+      # release is cut, create the tag here. Use the PAT so the tag push can
+      # trigger release.yml. Guarded to be idempotent across workflow re-runs.
+      - name: Create tag for the draft release
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${{ steps.release.outputs.tag_name }}"
+          sha="${{ steps.release.outputs.sha }}"
+          if gh api "repos/${{ github.repository }}/git/refs/tags/$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists — nothing to do."
+          else
+            echo "Creating tag $tag at $sha"
+            gh api "repos/${{ github.repository }}/git/refs" \
+              -f ref="refs/tags/$tag" \
+              -f sha="$sha"
+          fi
