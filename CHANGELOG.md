@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/RalfZhang/ink-city/compare/v0.3.1...v0.4.0) (2026-06-15)
+
+
+### Features
+
+* better way to upgrade to a new version ([ab09e13](https://github.com/RalfZhang/ink-city/commit/ab09e13e91f86cb149fb2eebb98da1e5e359b4b1)), closes [#8](https://github.com/RalfZhang/ink-city/issues/8)
+
 ## [0.3.1](https://github.com/RalfZhang/ink-city/compare/v0.3.0...v0.3.1) (2026-06-14)
 
 
