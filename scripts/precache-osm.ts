@@ -82,7 +82,11 @@ async function main() {
     }
   }
 
+  // Track what's on disk after this run: start from what was restored, add each
+  // city we successfully write. Used below to decide whether to alarm.
+  const cached = new Set(present);
   let fetched = 0;
+  let failed = 0;
   let first = true;
   for (const [id, city] of wanted) {
     if (present.has(id)) {
@@ -103,18 +107,49 @@ async function main() {
       // Additive, backward-compatible: old clients read only `elements`.
       const out = { v: OSM_SCHEMA_VERSION, elements: slim.elements ?? [], water };
       writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify(out));
+      cached.add(id);
       fetched++;
       console.log(
         `[precache] cached ${id} (${city.name}) — ${out.elements.length} ways, ${water.length} water`,
       );
     } catch (e) {
       // Don't fail the whole run for one city; the client falls back to
-      // Overpass for any city missing from the CDN.
+      // Overpass for any city missing from the CDN. Persistent failure is
+      // surfaced via the alarm conditions below, not here.
+      failed++;
       console.error(`[precache] FAILED ${id} (${city.name}): ${String(e)}`);
     }
   }
 
-  console.log(`[precache] done — ${wanted.size} in window, ${fetched} newly fetched`);
+  console.log(`[precache] done — ${wanted.size} in window, ${fetched} newly fetched, ${failed} failed`);
+
+  // Decide whether this run should fail the CI job (→ GitHub emails on a failed
+  // scheduled run). Two conditions, both signalling a real problem rather than a
+  // transient single-city blip that the next 6-hourly run will retry:
+  //
+  //   1. Systemic: we needed to fetch new cities but every attempt failed
+  //      (Overpass unreachable, schema change, bbox bug, …).
+  //   2. Imminent: the city the client renders today or tomorrow is still
+  //      uncached after this run — exactly the case precache exists to prevent.
+  const systemic = fetched === 0 && failed > 0;
+  const imminentMissing: City[] = [];
+  const today = new Date();
+  for (let k = 0; k < Math.min(2, DAYS); k++) {
+    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + k));
+    const c = pickCityForDate(d, cities);
+    if (!cached.has(c.id)) imminentMissing.push(c);
+  }
+
+  if (systemic || imminentMissing.length > 0) {
+    if (systemic) {
+      console.error(`[precache] ALARM systemic failure — ${failed} cities needed fetching and all failed`);
+    }
+    if (imminentMissing.length > 0) {
+      const names = imminentMissing.map((c) => `${c.id} (${c.name})`).join(", ");
+      console.error(`[precache] ALARM imminent city uncached after run: ${names}`);
+    }
+    process.exitCode = 1;
+  }
 }
 
 main().catch((e) => {

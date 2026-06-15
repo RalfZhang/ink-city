@@ -59,7 +59,14 @@ jobs:
       - name: Pre-cache upcoming cities
         run: npx -y tsx@4 scripts/precache-osm.ts data-out/osm 7
 
+      # `if: always()` so that when the precache step exits non-zero (its alarm
+      # conditions — see scripts/precache-osm.ts), the cities it *did* fetch this
+      # run still get published instead of being thrown away and re-fetched next
+      # run. The failed precache step still makes the job red (a later
+      # `if: always()` step succeeding doesn't un-fail an earlier failed step),
+      # so GitHub still emails on the failed scheduled run.
       - name: Publish to data branch
+        if: always()
         run: |
           cd data-out
           # Single-commit branch each run: reuse the files restored above, but
