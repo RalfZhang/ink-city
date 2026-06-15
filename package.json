@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run check:i18n && tsc && vite build",
+    "check:i18n": "tsx scripts/check-i18n.ts",
     "preview": "vite preview",
     "tauri": "tauri",
     "build:cities": "node scripts/build-cities.mjs",

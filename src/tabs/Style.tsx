@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
+import type { ParseKeys } from "i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -18,13 +19,13 @@ type Props = {
 
 type Defaults = { light: ColorPair; dark: ColorPair };
 
-const THEMES: { id: ThemeMode; labelKey: string }[] = [
+const THEMES: { id: ThemeMode; labelKey: ParseKeys }[] = [
   { id: "light", labelKey: "style.themeLight" },
   { id: "dark", labelKey: "style.themeDark" },
   { id: "system", labelKey: "style.themeSystem" },
 ];
 
-const PRESETS: { id: StylePreset; labelKey: string; hintKey: string }[] = [
+const PRESETS: { id: StylePreset; labelKey: ParseKeys; hintKey: ParseKeys }[] = [
   { id: "minimal", labelKey: "style.presetMinimal", hintKey: "style.hintMinimal" },
   { id: "standard", labelKey: "style.presetStandard", hintKey: "style.hintStandard" },
   { id: "bold", labelKey: "style.presetBold", hintKey: "style.hintBold" },
