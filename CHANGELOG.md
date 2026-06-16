@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/RalfZhang/ink-city/compare/v0.4.0...v0.5.0) (2026-06-16)
+
+
+### Features
+
+* Auto upgrade ([3a06b71](https://github.com/RalfZhang/ink-city/commit/3a06b71f2f75123e86a0d12f1e1b3911e14d2206)), closes [#7](https://github.com/RalfZhang/ink-city/issues/7)
+
 ## [0.4.0](https://github.com/RalfZhang/ink-city/compare/v0.3.1...v0.4.0) (2026-06-15)
 
 
