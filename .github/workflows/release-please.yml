@@ -1,27 +1,32 @@
 # Automated release management via Conventional Commits.
 #
-# On every push to main, release-please scans the commits since the last
-# release (v0.2.6) and maintains a "release PR" that bumps the version in
-# package.json + src-tauri/tauri.conf.json (see release-please-config.json) and
-# updates CHANGELOG.md. `feat:` -> minor, `fix:` -> patch, `feat!:`/`BREAKING
-# CHANGE` -> major. Merging that PR makes release-please cut the release.
+# On every push to main, release-please scans the commits since the last release
+# and maintains a "release PR" that bumps the version in package.json +
+# src-tauri/tauri.conf.json (see release-please-config.json) and updates
+# CHANGELOG.md. `feat:` -> minor, `fix:` -> patch, `feat!:`/`BREAKING CHANGE`
+# -> major. Merging that PR makes release-please cut the release.
 #
-# Because the release is a *draft* (release-please-config.json `draft: true`),
-# GitHub does NOT create the git tag for it — the ref only appears on publish.
-# So the "Create tag" step below pushes `vX.Y.Z` explicitly. That tag does two
-# jobs: (1) it triggers release.yml to build + sign the macOS/Windows bundles and
-# the updater manifest, and (2) it gives the *next* release-please run an anchor
-# for "commits since last release". Without the tag, that next run finds 0
-# releases, loses its anchor, and re-collects the ENTIRE history into a bogus
-# release PR (this is exactly what produced the bad #13 PR for v0.4.0).
+# The release is created as a *draft* (release-please-config.json `draft: true`)
+# so it stays out of `releases/latest` until release.yml has uploaded all assets
+# — that avoids an updater 404 window. But GitHub does NOT create the git tag for
+# a draft release (the ref only appears on publish), and release-please needs
+# that tag to (1) trigger release.yml (`on: push: tags`) and (2) anchor the NEXT
+# run's "commits since last release". Without the tag, the next run — which the
+# action computes in this SAME invocation, right after cutting the release —
+# finds 0 releases, loses its anchor, and re-collects the ENTIRE history into a
+# bogus release PR (this is what produced the bad #13/#16 PRs).
 #
-# IMPORTANT — the token: a tag pushed with the default GITHUB_TOKEN does NOT
+# The fix is `force-tag-creation: true` in release-please-config.json: it makes
+# release-please create the tag immediately, in-action, BEFORE it computes the
+# next release PR — so the anchor is always present and no bogus PR is generated.
+#
+# IMPORTANT — the token: a tag created with the default GITHUB_TOKEN does NOT
 # trigger other workflows (GitHub blocks recursive workflow runs), so release.yml
-# would never fire. To chain into it, create a fine-grained PAT (or GitHub App
-# token) with `contents: write` + `pull-requests: write`, store it as the repo
-# secret RELEASE_PLEASE_TOKEN — it's used below for both the action and the tag
-# push. Without that secret the tag is still created, but it won't trigger
-# release.yml; you'd then re-run release.yml via workflow_dispatch to build.
+# would never fire. Create a fine-grained PAT (or GitHub App token) with
+# `contents: write` + `pull-requests: write`, store it as the repo secret
+# RELEASE_PLEASE_TOKEN, and it's used below. Without it the tag is still created,
+# but it won't trigger release.yml; you'd then run release.yml via
+# workflow_dispatch to build.
 name: release-please
 
 on:
@@ -37,27 +42,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
-        id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
-
-      # A draft release gets no git tag from GitHub (the ref is only created on
-      # publish), but release.yml builds `on: push: tags` and the next
-      # release-please run needs the tag to anchor its changelog. So when a
-      # release is cut, create the tag here. Use the PAT so the tag push can
-      # trigger release.yml. Guarded to be idempotent across workflow re-runs.
-      - name: Create tag for the draft release
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
-        run: |
-          tag="${{ steps.release.outputs.tag_name }}"
-          sha="${{ steps.release.outputs.sha }}"
-          if gh api "repos/${{ github.repository }}/git/refs/tags/$tag" >/dev/null 2>&1; then
-            echo "Tag $tag already exists — nothing to do."
-          else
-            echo "Creating tag $tag at $sha"
-            gh api "repos/${{ github.repository }}/git/refs" \
-              -f ref="refs/tags/$tag" \
-              -f sha="$sha"
-          fi
