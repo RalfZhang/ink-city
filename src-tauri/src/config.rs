@@ -124,6 +124,28 @@ fn config_path(app: &AppHandle) -> Result<PathBuf> {
     Ok(dir.join("config.json"))
 }
 
+/// Path to the first-run sentinel — an empty marker file whose presence means
+/// the app has completed its one-time first-launch setup.
+fn marker_path(app: &AppHandle) -> Result<PathBuf> {
+    let dir = app.path().app_config_dir()?;
+    fs::create_dir_all(&dir)?;
+    Ok(dir.join(".initialized"))
+}
+
+/// Whether this is the very first launch of a fresh install. Deliberately keyed
+/// off a dedicated sentinel rather than `config.json` so that running first-run
+/// setup never writes `config.json`: users who never touch a setting keep no
+/// config file and so still pick up future changes to `Config::default()`.
+pub fn is_first_run(app: &AppHandle) -> bool {
+    marker_path(app).map(|p| !p.exists()).unwrap_or(false)
+}
+
+/// Record that first-run setup has completed, so it runs exactly once.
+pub fn mark_initialized(app: &AppHandle) -> Result<()> {
+    fs::write(marker_path(app)?, b"")?;
+    Ok(())
+}
+
 pub fn load(app: &AppHandle) -> Config {
     let Ok(path) = config_path(app) else { return Config::default() };
     let Ok(raw) = fs::read_to_string(&path) else { return Config::default() };

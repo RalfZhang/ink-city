@@ -60,9 +60,23 @@ pub fn run() {
             let _ = handle.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
             // Load persisted config and seed AppState from it.
+            let first_run = config::is_first_run(handle);
             let cfg = config::load(handle);
             let hide_tray_initial = cfg.hide_tray;
             handle.manage(AppState::from_config(&cfg));
+
+            // First-launch default: turn on launch-at-login once. Autostart
+            // state lives in the OS (LaunchAgent plist / HKCU Run key), not in
+            // our config, so we gate on a dedicated first-run sentinel rather
+            // than config.json — that keeps config.json absent for users who
+            // never change a setting (preserving future Config::default()
+            // changes for them). A user who later switches it off in the
+            // General tab stays off; the user always keeps full control.
+            if first_run {
+                use tauri_plugin_autostart::ManagerExt;
+                let _ = handle.autolaunch().enable();
+                let _ = config::mark_initialized(handle);
+            }
 
             // Initialize the cities list (cache → bundled fallback) before the
             // scheduler picks today's city.
