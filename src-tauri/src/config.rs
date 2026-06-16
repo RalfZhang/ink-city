@@ -107,10 +107,10 @@ impl Default for Config {
         Self {
             enabled: true,
             hide_tray: false,
-            theme: ThemeMode::System,
+            theme: ThemeMode::default(),
             light: ColorPair::light_default(),
             dark: ColorPair::dark_default(),
-            style: StylePreset::Standard,
+            style: StylePreset::default(),
             update_check: UpdateCheck::default(),
             auto_update: true,
             show_water: false,
