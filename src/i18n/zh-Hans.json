@@ -15,6 +15,8 @@
     "hideTrayDescOff": "在菜单栏保持图标可见",
     "updateCheckLabel": "检查更新",
     "updateCheckDesc": "有新版本时通知我。",
+    "autoUpdateLabel": "自动安装更新",
+    "autoUpdateDesc": "按上面的频率自动下载并安装新版本，然后重启，无需确认。",
     "updateDaily": "每天",
     "updateWeekly": "每周",
     "updateMonthly": "每月",

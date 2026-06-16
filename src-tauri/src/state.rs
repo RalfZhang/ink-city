@@ -22,6 +22,9 @@ pub struct AppState {
     pub dark: StdMutex<ColorPair>,
     pub style: StdMutex<StylePreset>,
     pub update_check: StdMutex<UpdateCheck>,
+    /// Auto-install detected updates (on the `update_check` cadence) and relaunch,
+    /// without confirmation. Read by the background scheduler after each check.
+    pub auto_update: AtomicBool,
     /// Single source of truth for "an update is available": the version string
     /// we can upgrade to, or `None`. Seeded on launch from the persisted
     /// `update.meta.json` (see `updates::restore_pending`), refreshed by every
@@ -68,6 +71,7 @@ impl AppState {
             dark: StdMutex::new(cfg.dark.clone()),
             style: StdMutex::new(cfg.style),
             update_check: StdMutex::new(cfg.update_check),
+            auto_update: AtomicBool::new(cfg.auto_update),
             available_update: StdMutex::new(None),
             update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),

@@ -24,7 +24,7 @@ export default function City({ status, onError }: Props) {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 max-w-2xl">
       <Card>
         <CardContent>
           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">

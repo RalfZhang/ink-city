@@ -19,6 +19,8 @@ export type Status = {
   dark: ColorPair;
   style: StylePreset;
   updateCheck: UpdateCheck;
+  /** Auto-install detected updates on the cadence above, then relaunch. */
+  autoUpdate: boolean;
   /** Version we can update to, or null. Source of truth for the update prompt. */
   updateAvailable: string | null;
   showWater: boolean;

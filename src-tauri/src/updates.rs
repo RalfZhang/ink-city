@@ -145,9 +145,13 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
         Some(upd) => {
             let version = upd.version.clone();
             set_available(app, &mut meta, Some(version.clone()));
-            // Notify once per new version; a freshly-released newer version
-            // re-notifies because its string differs from last_notified_version.
-            if meta.last_notified_version.as_deref() != Some(version.as_str()) {
+            // In auto-update mode the caller installs immediately, so the
+            // "open InkCity to update" nudge would be misleading — the install
+            // path shows its own "Downloading…" notice instead. Otherwise notify
+            // once per new version; a freshly-released newer version re-notifies
+            // because its string differs from last_notified_version.
+            let auto = app.state::<AppState>().auto_update.load(Ordering::Acquire);
+            if !auto && meta.last_notified_version.as_deref() != Some(version.as_str()) {
                 notify(app, &version);
                 meta.last_notified_version = Some(version.clone());
             }
@@ -225,6 +229,19 @@ async fn perform_install(app: &AppHandle) -> Result<bool> {
 /// click). Guards against re-entry, surfaces success/failure via native dialogs
 /// since there may be no webview to show state in, and relaunches on success.
 pub fn spawn_install(app: AppHandle) {
+    spawn_install_impl(app, false);
+}
+
+/// Auto-update install: same as `spawn_install` but `quiet` — no result dialogs.
+/// A silent failure leaves the "update available" affordance (tray entry +
+/// General tab) in place so the user can retry manually, and the next cadence
+/// tick retries automatically; popping an unprompted error dialog on a menu-bar
+/// app would be more alarming than useful.
+pub fn spawn_auto_install(app: AppHandle) {
+    spawn_install_impl(app, true);
+}
+
+fn spawn_install_impl(app: AppHandle, quiet: bool) {
     if app
         .state::<AppState>()
         .update_installing
@@ -235,7 +252,8 @@ pub fn spawn_install(app: AppHandle) {
 
     tauri::async_runtime::spawn(async move {
         // A short "downloading" notification is the only feedback when no window
-        // is open; the relaunch itself signals completion.
+        // is open; the relaunch itself signals completion. Shown in quiet mode
+        // too, so an auto-update gives a heads-up before the app restarts.
         notify_installing(&app);
 
         let res = perform_install(&app).await;
@@ -245,10 +263,16 @@ pub fn spawn_install(app: AppHandle) {
 
         match res {
             Ok(true) => { /* unreachable: perform_install relaunched */ }
-            Ok(false) => info_dialog(&app, strings(&app).up_to_date),
+            Ok(false) => {
+                if !quiet {
+                    info_dialog(&app, strings(&app).up_to_date);
+                }
+            }
             Err(e) => {
                 eprintln!("[updater] install failed: {e}");
-                info_dialog(&app, strings(&app).failed);
+                if !quiet {
+                    info_dialog(&app, strings(&app).failed);
+                }
             }
         }
     });
@@ -337,8 +361,20 @@ pub async fn run_scheduled_check(app: &AppHandle) {
     }
     // We've already gated on cadence + reachability, so commit to the check;
     // `force` skips the redundant in-`do_check` cadence re-evaluation.
-    if let Err(e) = do_check(app, true).await {
-        eprintln!("[updater] {e}");
+    match do_check(app, true).await {
+        // Update found and auto-update is on: install it and relaunch, no
+        // confirmation. `do_check` already recorded `last_check`, so a failed
+        // download won't re-fire until the next cadence window — the tray
+        // affordance it set is the manual fallback in the meantime. When
+        // auto-update is off, `do_check` has already surfaced the notification
+        // and tray entry for a manual install.
+        Ok(Some(_version)) => {
+            if app.state::<AppState>().auto_update.load(Ordering::Acquire) {
+                spawn_auto_install(app.clone());
+            }
+        }
+        Ok(None) => {}
+        Err(e) => eprintln!("[updater] {e}"),
     }
 }
 

@@ -159,7 +159,7 @@ function App() {
           <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
         <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
-          <About />
+          <About status={effectiveStatus} refresh={refresh} onError={onError} />
         </TabsContent>
       </Tabs>
 

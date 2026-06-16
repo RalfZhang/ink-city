@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import SettingRow from "@/components/SettingRow";
 import type { ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
@@ -145,17 +146,17 @@ export default function Style({ status, busy, onError }: Props) {
         <Separator />
 
         {/* Water toggle — only shown when the current city's data has water.
-            Left/right row like the General tab. The hint is always rendered (not
-            gated on the switch) so toggling never shifts the layout below it. */}
+            The hint is always rendered (not gated on the switch) so toggling
+            never shifts the layout below it. */}
         {status.hasWater && (
           <>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <Label className="text-sm">{t("style.showWater")}</Label>
-                <p className="text-xs text-muted-foreground mt-0.5">{t("style.waterHint")}</p>
-              </div>
-              <Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />
-            </div>
+            <SettingRow
+              label={t("style.showWater")}
+              description={t("style.waterHint")}
+              control={
+                <Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />
+              }
+            />
 
             <Separator />
           </>

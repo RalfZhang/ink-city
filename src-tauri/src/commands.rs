@@ -24,6 +24,9 @@ pub struct Status {
     pub style: StylePreset,
     #[serde(rename = "updateCheck")]
     pub update_check: UpdateCheck,
+    /// Whether detected updates are installed automatically (see config field).
+    #[serde(rename = "autoUpdate")]
+    pub auto_update: bool,
     /// The version we can update to, or `None`. Single source of truth for the
     /// "update available" affordance — see `AppState::available_update`.
     #[serde(rename = "updateAvailable")]
@@ -61,6 +64,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         dark: state.dark.lock().unwrap().clone(),
         style: *state.style.lock().unwrap(),
         update_check: *state.update_check.lock().unwrap(),
+        auto_update: state.auto_update.load(Ordering::Acquire),
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
         has_water: pipeline::has_water_for(app, date),
@@ -91,7 +95,23 @@ pub fn set_hide_tray(app: AppHandle, hide: bool) -> Result<(), String> {
 
 #[tauri::command]
 pub fn set_update_check(app: AppHandle, value: UpdateCheck) -> Result<(), String> {
-    *app.state::<AppState>().update_check.lock().unwrap() = value;
+    let state = app.state::<AppState>();
+    *state.update_check.lock().unwrap() = value;
+    // Auto-update rides this cadence; `Never` means no automatic checks fire, so
+    // it can't auto-install — turn it off so the (now-disabled) UI switch and the
+    // persisted state stay consistent.
+    if value == UpdateCheck::Never {
+        state.auto_update.store(false, Ordering::Release);
+    }
+    state.mark_status_dirty();
+    persist(&app)
+}
+
+/// Toggle automatic install-and-relaunch of detected updates. Only meaningful
+/// with a non-`Never` cadence (the frontend disables the switch otherwise).
+#[tauri::command]
+pub fn set_auto_update(app: AppHandle, on: bool) -> Result<(), String> {
+    app.state::<AppState>().auto_update.store(on, Ordering::Release);
     app.state::<AppState>().mark_status_dirty();
     persist(&app)
 }
@@ -267,6 +287,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         dark: s.dark.lock().unwrap().clone(),
         style: *s.style.lock().unwrap(),
         update_check: *s.update_check.lock().unwrap(),
+        auto_update: s.auto_update.load(Ordering::Acquire),
         show_water: s.show_water.load(Ordering::Acquire),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())

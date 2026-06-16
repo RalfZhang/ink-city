@@ -188,6 +188,7 @@ pub fn run() {
             commands::set_enabled,
             commands::set_hide_tray,
             commands::set_update_check,
+            commands::set_auto_update,
             commands::check_for_update,
             commands::install_update,
             commands::set_update_strings,

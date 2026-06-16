@@ -33,7 +33,7 @@ pub enum UpdateCheck {
 
 impl Default for UpdateCheck {
     fn default() -> Self {
-        UpdateCheck::Weekly
+        UpdateCheck::Daily
     }
 }
 
@@ -94,6 +94,12 @@ pub struct Config {
     pub style: StylePreset,
     #[serde(default)]
     pub update_check: UpdateCheck,
+    /// Download and install detected updates automatically (on the `update_check`
+    /// cadence), then relaunch — no confirmation. On by default; meaningless when
+    /// `update_check` is `Never` (no automatic checks fire), so it's forced off in
+    /// that case (see `set_update_check`).
+    #[serde(default = "default_true")]
+    pub auto_update: bool,
     /// Draw the water layer on the wallpaper. Off by default; only surfaced in
     /// the UI when the current city's data actually has water.
     #[serde(default)]
@@ -113,7 +119,8 @@ impl Default for Config {
             light: ColorPair::light_default(),
             dark: ColorPair::dark_default(),
             style: StylePreset::Standard,
-            update_check: UpdateCheck::Weekly,
+            update_check: UpdateCheck::default(),
+            auto_update: true,
             show_water: false,
         }
     }

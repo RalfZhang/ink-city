@@ -15,6 +15,8 @@
     "hideTrayDescOff": "Keep the menu-bar icon visible.",
     "updateCheckLabel": "Check for updates",
     "updateCheckDesc": "Notify me when a new version is available.",
+    "autoUpdateLabel": "Install updates automatically",
+    "autoUpdateDesc": "Download and install new versions on the schedule above, then restart — no confirmation needed.",
     "updateDaily": "Daily",
     "updateWeekly": "Weekly",
     "updateMonthly": "Monthly",
