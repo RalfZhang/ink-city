@@ -24,6 +24,11 @@ pub fn spawn(app: AppHandle) {
         // and network-light, and there's nothing to retry within a day, so a
         // single shot when the date rolls over is plenty.
         let mut cities_checked: Option<NaiveDate> = None;
+        // Last date we observed, to push the city/date rollover to an open
+        // window. Done regardless of `enabled` (reconcile early-returns when
+        // disabled) so the displayed city stays correct across midnight even
+        // when daily updates are off — the date is backend-observable state.
+        let mut last_date: Option<NaiveDate> = None;
         loop {
             let today = city::today();
 
@@ -31,6 +36,11 @@ pub fn spawn(app: AppHandle) {
                 cities_update::spawn_check(app.clone());
                 cities_checked = Some(today);
             }
+
+            if last_date.is_some() && last_date != Some(today) {
+                app.state::<AppState>().mark_status_dirty();
+            }
+            last_date = Some(today);
 
             // The update check has its own persisted cadence gate, so we run it
             // every tick rather than once per day. That's deliberately not a

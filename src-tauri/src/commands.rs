@@ -9,7 +9,7 @@ use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub struct Status {
     pub enabled: bool,
     pub hide_tray: bool,
@@ -35,17 +35,21 @@ pub struct Status {
     pub has_water: bool,
 }
 
-#[tauri::command]
-pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<Status, String> {
+/// Build the current `Status` snapshot. Shared by the `get_status` command
+/// (initial mount fetch) and the status-emitter task (push on every change).
+pub async fn build_status(app: &AppHandle) -> Status {
+    let state = app.state::<AppState>();
     let date = city::today();
     let city = city::pick_for_date(date);
     let running = *state.running.lock().await;
     let theme = *state.theme.lock().unwrap();
-    let effective = match pipeline::effective_theme(&app) {
+    let effective = match pipeline::effective_theme(app) {
         EffectiveTheme::Light => "light",
         EffectiveTheme::Dark => "dark",
     };
-    Ok(Status {
+    // Bound to a local so the lock-guard temporaries in the literal drop before
+    // `state` (the function's tail expression would otherwise outlive it).
+    let status = Status {
         enabled: state.enabled.load(Ordering::Acquire),
         hide_tray: state.hide_tray.load(Ordering::Acquire),
         running,
@@ -59,14 +63,21 @@ pub async fn get_status(app: AppHandle, state: State<'_, AppState>) -> Result<St
         update_check: *state.update_check.lock().unwrap(),
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
-        has_water: pipeline::has_water_for(&app, date),
-    })
+        has_water: pipeline::has_water_for(app, date),
+    };
+    status
+}
+
+#[tauri::command]
+pub async fn get_status(app: AppHandle) -> Result<Status, String> {
+    Ok(build_status(&app).await)
 }
 
 #[tauri::command]
 pub fn set_enabled(app: AppHandle, on: bool) -> Result<(), String> {
     app.state::<AppState>().enabled.store(on, Ordering::Release);
     tray::sync_enabled_to_tray(&app);
+    app.state::<AppState>().mark_status_dirty();
     persist(&app)
 }
 
@@ -74,12 +85,14 @@ pub fn set_enabled(app: AppHandle, on: bool) -> Result<(), String> {
 pub fn set_hide_tray(app: AppHandle, hide: bool) -> Result<(), String> {
     app.state::<AppState>().hide_tray.store(hide, Ordering::Release);
     tray::apply_hide_tray(&app, hide);
+    app.state::<AppState>().mark_status_dirty();
     persist(&app)
 }
 
 #[tauri::command]
 pub fn set_update_check(app: AppHandle, value: UpdateCheck) -> Result<(), String> {
     *app.state::<AppState>().update_check.lock().unwrap() = value;
+    app.state::<AppState>().mark_status_dirty();
     persist(&app)
 }
 
@@ -151,6 +164,9 @@ pub fn apply_style_settings(
         s.show_water.store(show_water, Ordering::Release);
     }
     persist(&app)?;
+    // Push the new theme/style/colors/water immediately, even when no re-render
+    // is triggered below (a render, if any, will mark dirty again on completion).
+    app.state::<AppState>().mark_status_dirty();
 
     let after_colors = current_effective_colors(&app);
     let after_style = *app.state::<AppState>().style.lock().unwrap();

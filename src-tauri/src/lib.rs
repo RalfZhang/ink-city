@@ -4,6 +4,7 @@ mod cities_update;
 mod city;
 mod commands;
 mod config;
+mod events;
 mod overpass;
 mod pipeline;
 mod scheduler;
@@ -131,6 +132,10 @@ pub fn run() {
                         if mode == ThemeMode::System {
                             pipeline::spawn_force_regen(app_handle.clone());
                         }
+                        // Push the (possibly changed) effectiveTheme so the Style
+                        // tab's active-palette highlight updates even if the
+                        // regen above is a no-op or skipped.
+                        app_handle.state::<AppState>().mark_status_dirty();
                     }
                     _ => {}
                 });
@@ -158,6 +163,24 @@ pub fn run() {
             updates::ensure_permission(handle);
 
             scheduler::spawn(handle.clone());
+
+            // Status-emitter task: the single point that pushes state to the
+            // frontend, replacing the old 2s poll. Mutation sites only call
+            // `mark_status_dirty()`; this task builds the snapshot once and
+            // emits it. `notify_one`'s stored permit means the trailing state is
+            // never lost even if signals arrive mid-build. No window gate: a
+            // closed settings window is only hidden (its webview stays alive and
+            // subscribed), so emitting keeps it current for an instant reopen.
+            let emit_handle = handle.clone();
+            tauri::async_runtime::spawn(async move {
+                let dirty = emit_handle.state::<AppState>().status_dirty.clone();
+                loop {
+                    dirty.notified().await;
+                    let status = commands::build_status(&emit_handle).await;
+                    crate::events::FrontendEvent::StatusChanged(status).emit(&emit_handle);
+                }
+            });
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

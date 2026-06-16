@@ -13,6 +13,7 @@ use crate::bbox::{bbox_for_screen, Bbox};
 use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, StylePreset, ThemeMode};
+use crate::events::FrontendEvent;
 use crate::overpass;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
@@ -155,14 +156,17 @@ pub async fn run_for_date(app: AppHandle, date: NaiveDate) -> Result<()> {
         }
         *g = true;
     }
-    let _ = app.emit("pipeline:start", ());
+    FrontendEvent::PipelineStart.emit(&app);
     let r = run_inner(&app, date).await;
     {
         let state = app.state::<AppState>();
         let mut g = state.running.lock().await;
         *g = false;
     }
-    let _ = app.emit("pipeline:end", ());
+    FrontendEvent::PipelineEnd.emit(&app);
+    // Push the post-render snapshot: running back to false, plus any new
+    // date/city/has_water (e.g. the scheduler's midnight reconcile).
+    app.state::<AppState>().mark_status_dirty();
     r
 }
 

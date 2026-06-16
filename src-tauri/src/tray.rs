@@ -95,6 +95,11 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
                     let new_val = !state.enabled.load(Ordering::Acquire);
                     state.enabled.store(new_val, Ordering::Release);
                     sync_enabled_to_tray(&app);
+                    // Tray is the one path the frontend can't observe via its own
+                    // command round-trip — the push is what keeps an open window
+                    // in sync. (Note: unlike `commands::set_enabled`, this path
+                    // doesn't persist — pre-existing, out of scope here.)
+                    state.mark_status_dirty();
                 }
                 "regen" => {
                     tauri::async_runtime::spawn(async move {

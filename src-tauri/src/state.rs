@@ -46,6 +46,13 @@ pub struct AppState {
     /// for. In-memory only (None on launch → forces a reconcile at startup).
     /// The scheduler's poll uses it to skip work when nothing has changed.
     pub last_applied: StdMutex<Option<(chrono::NaiveDate, crate::pipeline::EffectiveTheme)>>,
+    /// Signal that some `Status`-affecting state changed. The status-emitter
+    /// task waits on it and pushes a fresh snapshot to the frontend, replacing
+    /// the old 2s poll. Mutation sites only signal (`mark_status_dirty`); the
+    /// snapshot is built in one place. `notify_one` stores a permit, so a signal
+    /// raised while the emitter is mid-build is not lost — the trailing state is
+    /// always delivered.
+    pub status_dirty: Arc<Notify>,
 }
 
 impl AppState {
@@ -69,6 +76,13 @@ impl AppState {
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
             last_applied: StdMutex::new(None),
+            status_dirty: Arc::new(Notify::new()),
         }
+    }
+
+    /// Signal the status-emitter task to push a fresh snapshot. Call from every
+    /// site that mutates a field reflected in `Status`.
+    pub fn mark_status_dirty(&self) {
+        self.status_dirty.notify_one();
     }
 }

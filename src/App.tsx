@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,6 @@ import City from "./tabs/City";
 import Style from "./tabs/Style";
 import About from "./tabs/About";
 import type { Status } from "./types";
-import { STATUS_POLL_MS } from "./constants";
 
 type TabId = "general" | "city" | "style" | "about";
 
@@ -28,10 +27,27 @@ function App() {
     }
   };
 
+  // The backend pushes a fresh Status snapshot on every change (replacing the
+  // old 2s poll). Subscribe first, then fetch the initial snapshot — so a
+  // change landing between fetch and subscribe can't be missed (a redundant
+  // push during the gap is harmless: last-write-wins).
   useEffect(() => {
-    refresh();
-    const id = setInterval(refresh, STATUS_POLL_MS);
-    return () => clearInterval(id);
+    let off: (() => void) | undefined;
+    let cancelled = false;
+    listen<Status>("status:changed", (e) => setStatus(e.payload)).then((f) => {
+      // If cleanup already ran before `listen` resolved (StrictMode remount, or
+      // a fast unmount), unsubscribe immediately instead of leaking the listener.
+      if (cancelled) {
+        f();
+        return;
+      }
+      off = f;
+      refresh();
+    });
+    return () => {
+      cancelled = true;
+      off?.();
+    };
   }, []);
 
   useEffect(() => {
@@ -100,24 +116,11 @@ function App() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // When the calendar date rolls over while the settings window is open, the
-  // 2s poll surfaces the new city before the backend's reconcile (≤60s) repaints
-  // the wallpaper. Kick a regenerate the moment we observe that rollover so the
-  // visible city and the desktop stay in sync. This is an immediacy optimization
-  // only — the backend poll remains the reliable source of truth (it runs in
-  // Rust regardless of window/webview state). Gated on `enabled` so it never
-  // overrides a user who turned daily updates off, and skipped if a render is
-  // already in flight (the backend likely beat us to it; coalescing covers the
-  // rest). Skips the first observed date so opening the app never re-renders.
-  const prevDateRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (!status) return;
-    const prev = prevDateRef.current;
-    prevDateRef.current = status.date;
-    if (prev === null || prev === status.date) return;
-    if (!status.enabled || status.running) return;
-    invoke("regenerate_now").catch((e) => setErr(String(e)));
-  }, [status?.date, status?.enabled, status?.running]);
+  // Cross-midnight rollover is handled entirely by the backend now: the
+  // scheduler detects the date change and pushes a fresh Status (and, when
+  // daily updates are enabled, repaints within its ≤60s reconcile). No frontend
+  // timer is needed — which also sidesteps wall-clock timer fragility across
+  // sleep/wake and DST.
 
   const onError = (e: unknown) => setErr(String(e));
 

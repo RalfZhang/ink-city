@@ -117,6 +117,7 @@ fn set_available(app: &AppHandle, meta: &mut CheckMeta, version: Option<String>)
     } else {
         tray::hide_update_available(app);
     }
+    app.state::<AppState>().mark_status_dirty();
 }
 
 /// Run an update check. `force` bypasses the cadence gate (used by the manual
@@ -179,6 +180,10 @@ pub fn restore_pending(app: &AppHandle) {
     if still_newer {
         *app.state::<AppState>().available_update.lock().unwrap() = Some(v);
         tray::show_update_available(app);
+        // Bypasses `set_available`'s direct write — mark here too. Runs at
+        // startup before any window listener (a harmless no-op then; the mount
+        // `get_status` covers it).
+        app.state::<AppState>().mark_status_dirty();
     } else {
         // Stale or unparseable — forget it so we don't prompt for a version the
         // user is already on (or past).
