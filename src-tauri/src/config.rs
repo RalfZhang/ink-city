@@ -78,36 +78,28 @@ impl ColorPair {
     }
 }
 
+/// Persisted user settings. The container-level `#[serde(default)]` fills any
+/// field absent from `config.json` from `Config::default()` below, so every
+/// default lives in exactly one place — the `Default` impl — with no per-field
+/// serde mirror to keep in sync.
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(default)]
 pub struct Config {
-    #[serde(default = "default_true")]
     pub enabled: bool,
-    #[serde(default)]
     pub hide_tray: bool,
-    #[serde(default)]
     pub theme: ThemeMode,
-    #[serde(default = "ColorPair::light_default")]
     pub light: ColorPair,
-    #[serde(default = "ColorPair::dark_default")]
     pub dark: ColorPair,
-    #[serde(default)]
     pub style: StylePreset,
-    #[serde(default)]
     pub update_check: UpdateCheck,
     /// Download and install detected updates automatically (on the `update_check`
     /// cadence), then relaunch — no confirmation. On by default; meaningless when
     /// `update_check` is `Never` (no automatic checks fire), so it's forced off in
     /// that case (see `set_update_check`).
-    #[serde(default = "default_true")]
     pub auto_update: bool,
     /// Draw the water layer on the wallpaper. Off by default; only surfaced in
     /// the UI when the current city's data actually has water.
-    #[serde(default)]
     pub show_water: bool,
-}
-
-fn default_true() -> bool {
-    true
 }
 
 impl Default for Config {
