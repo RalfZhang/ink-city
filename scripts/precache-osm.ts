@@ -45,7 +45,7 @@ function loadCities(): City[] {
 function windowCities(cities: City[], days: number): Map<number, City> {
   const out = new Map<number, City>();
   const today = new Date();
-  for (let k = 0; k < days; k++) {
+  for (let k = -2; k < days; k++) {
     const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + k));
     const c = pickCityForDate(d, cities);
     out.set(c.id, c);
