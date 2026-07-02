@@ -44,7 +44,7 @@ export type Way = { type: "way"; geometry?: Geom[]; tags?: { highway?: string } 
 export type WaterPolygon = { outer: Geom[]; holes?: Geom[][] };
 
 /** Classes of linear waterway we render as strokes (centerlines, no area). */
-export type WaterLineClass = "river" | "canal" | "stream";
+export type WaterLineClass = "river" | "canal" | "stream" | "drain" | "ditch";
 
 /**
  * A slimmed water feature. `area` = a real polygon water body (lake, reservoir,

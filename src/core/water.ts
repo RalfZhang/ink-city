@@ -31,7 +31,7 @@ type RawRel = { type: "relation"; id?: number; tags?: Record<string, string>; me
 type RawElement = RawWay | RawRel;
 type RawOsm = { elements?: RawElement[] };
 
-const LINE_CLASSES = new Set<WaterLineClass>(["river", "canal", "stream"]);
+const LINE_CLASSES = new Set<WaterLineClass>(["river", "canal", "stream", "drain", "ditch"]);
 
 /** Overpass QL fetching area water, coastline, and linear waterways. */
 export function buildWaterQuery(b: Bbox): string {
@@ -44,6 +44,7 @@ export function buildWaterQuery(b: Bbox): string {
     `relation[water](${bb});relation[landuse=reservoir](${bb});relation[landuse=basin](${bb});` +
     `way[natural=coastline](${bb});` +
     `way[waterway=river](${bb});way[waterway=canal](${bb});way[waterway=stream](${bb});` +
+    `way[waterway=drain](${bb});way[waterway=ditch](${bb});` +
     `);out geom;`
   );
 }
@@ -406,7 +407,14 @@ export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecisio
     }
     const wt = el.tags?.waterway as WaterLineClass | undefined;
     if (wt && LINE_CLASSES.has(wt) && el.tags?.tunnel !== "yes") {
-      features.push({ kind: "line", cls: wt, line: dedupeAdjacent(el.geometry) });
+      // drain/ditch are usually anonymous roadside/field channels; keep only
+      // the named ones — that captures urban rivers loosely tagged as drain
+      // (e.g. Nanyang's 三里河) without flooding other cities with every ditch.
+      // river/canal/stream are kept regardless of name.
+      const minor = wt === "drain" || wt === "ditch";
+      if (!minor || el.tags?.name) {
+        features.push({ kind: "line", cls: wt, line: dedupeAdjacent(el.geometry) });
+      }
     }
   }
 

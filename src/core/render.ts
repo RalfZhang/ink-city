@@ -117,7 +117,7 @@ function waterLineWidth(cls: string, scale: number): number {
   switch (cls) {
     case "river": return scale * 1.6;
     case "canal": return scale * 1.3;
-    default:      return scale * 0.7; // stream
+    default:      return scale * 0.7; // stream / drain / ditch (thinnest)
   }
 }
 
