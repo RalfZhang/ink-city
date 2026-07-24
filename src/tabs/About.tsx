@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { getVersion } from "@tauri-apps/api/app";
@@ -31,7 +31,14 @@ type Props = {
   status: Status;
   refresh: () => Promise<void>;
   onError: (e: unknown) => void;
+  onToggleDevMode: () => void;
 };
+
+// Clicks reset if more than this elapses between them, so it takes seven
+// clicks *in a row* (per the feature request), not seven cumulative clicks
+// over an arbitrarily long session.
+const DEV_MODE_CLICK_WINDOW_MS = 1500;
+const DEV_MODE_CLICKS_REQUIRED = 7;
 
 // Transient UI feedback only. Whether an update *is available* is read from
 // `status.updateAvailable` (the Rust source of truth), so it survives tab
@@ -83,14 +90,26 @@ function ExtLink({ href, children }: { href: string; children?: ReactNode }) {
   );
 }
 
-export default function About({ status, refresh, onError }: Props) {
+export default function About({ status, refresh, onError, onToggleDevMode }: Props) {
   const { t } = useTranslation();
   const [version, setVersion] = useState("");
   const [updateState, setUpdateState] = useState<UpdateState>("idle");
+  const versionClicks = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
 
   useEffect(() => {
     getVersion().then(setVersion).catch(() => {});
   }, []);
+
+  const onVersionClick = () => {
+    const now = Date.now();
+    const clicks = versionClicks.current;
+    clicks.count = now - clicks.last <= DEV_MODE_CLICK_WINDOW_MS ? clicks.count + 1 : 1;
+    clicks.last = now;
+    if (clicks.count >= DEV_MODE_CLICKS_REQUIRED) {
+      clicks.count = 0;
+      onToggleDevMode();
+    }
+  };
 
   const openLogs = async () => {
     try {
@@ -292,7 +311,8 @@ export default function About({ status, refresh, onError }: Props) {
       </div>
 
       <p className="text-center text-xs text-muted-foreground mb-4">
-        {version ? `InkCity v${version}` : "InkCity"} · © 2026 Ralf Zhang
+        <span onClick={onVersionClick}>{version ? `InkCity v${version}` : "InkCity"}</span> · © 2026
+        Ralf Zhang
       </p>
     </div>
   );

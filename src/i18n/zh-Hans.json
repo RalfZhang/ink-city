@@ -4,7 +4,8 @@
     "city": "城市",
     "style": "样式",
     "lab": "实验室",
-    "about": "关于"
+    "about": "关于",
+    "devMode": "开发者模式"
   },
   "general": {
     "enabledLabel": "开启每日更新",
@@ -85,6 +86,11 @@
     "dataTitle": "数据来源与致谢",
     "osmAttribution": "道路地图数据 © <0>OpenStreetMap</0> 贡献者，依 <1>ODbL</1> 协议授权。",
     "geonamesAttribution": "城市列表来自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授权。"
+  },
+  "devMode": {
+    "advancePreviewTitle": "提前预览",
+    "advancePreviewDesc": "预览轮换中未来某一天将显示的城市地图，不会更改今天的壁纸。",
+    "loading": "正在渲染预览…"
   },
   "common": {
     "loading": "加载中…"

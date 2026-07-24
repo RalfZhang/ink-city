@@ -167,6 +167,27 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
         return Ok(());
     }
 
+    let bytes = render_bytes_for(app, &cache, date, &city).await?;
+
+    fs::write(&png_path, &bytes)?;
+    wallpaper_set::set(&png_path)?;
+    mark_applied(app, date, theme);
+    let _ = cleanup_cache(&cache, KEEP_DAYS);
+    log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
+    Ok(())
+}
+
+/// Fetch `date`'s OSM data (city + bbox derived from it) and render it via the
+/// hidden renderer window, returning the raw PNG bytes. Shared by the real
+/// pipeline (`run_inner`, which then writes/applies the PNG) and
+/// `render_preview` (Dev Mode's "Advance Preview", which does neither — see
+/// its doc comment for why).
+async fn render_bytes_for(
+    app: &AppHandle,
+    cache: &Path,
+    date: NaiveDate,
+    city: &city::City,
+) -> Result<Vec<u8>> {
     let renderer = ensure_renderer(app).await?;
     let (w, h) = primary_size(&renderer)?;
     let aspect = w as f64 / h as f64;
@@ -206,6 +227,7 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     // decide whether to surface layer toggles (e.g. "show water").
     set_present_layers(app, date, layers::detect_present_value(&osm));
 
+    let theme = effective_theme(app);
     let colors = colors_for(app, theme);
     let preset = *app.state::<AppState>().style.lock().unwrap();
     let show_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
@@ -223,17 +245,48 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     let req = RenderRequest { date: date.to_string(), bbox, width: w, height: h, style, osm };
     renderer.emit("render-request", &req)?;
 
-    let bytes = tokio::time::timeout(Duration::from_secs(120), rx)
+    tokio::time::timeout(Duration::from_secs(120), rx)
         .await
         .map_err(|_| anyhow!("renderer timeout"))?
-        .map_err(|_| anyhow!("renderer dropped"))?;
+        .map_err(|_| anyhow!("renderer dropped"))
+}
 
-    fs::write(&png_path, &bytes)?;
-    wallpaper_set::set(&png_path)?;
-    mark_applied(app, date, theme);
-    let _ = cleanup_cache(&cache, KEEP_DAYS);
-    log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
-    Ok(())
+/// Render (but do not apply or cache as a wallpaper) `date`'s city map — Dev
+/// Mode's "Advance Preview". Reuses the same OSM-data cache as the real
+/// pipeline (harmless: it's the exact theme-independent payload the real
+/// pipeline will fetch anyway once that day's rotation arrives), but
+/// deliberately does NOT write to the PNG cache path (`{date}-{theme}.png`):
+/// the real pipeline treats that path's mere existence as "already rendered,
+/// just reapply it" with no staleness check, so a preview-cached PNG would
+/// silently outlive a later style/color change and get wrongly reapplied when
+/// that day actually arrives. Shares `state.running` with the real pipeline
+/// (both drive the same single renderer window/channel, so only one may be
+/// in flight at a time) — callers see this as the same "busy" state as a
+/// normal regen.
+pub async fn render_preview(app: &AppHandle, date: NaiveDate) -> Result<(city::City, Vec<u8>)> {
+    {
+        let state = app.state::<AppState>();
+        let mut g = state.running.lock().await;
+        if *g {
+            return Err(anyhow!("pipeline busy"));
+        }
+        *g = true;
+    }
+    FrontendEvent::PipelineStart.emit(app);
+    let city = city::pick_for_date(date);
+    let cache = cache_dir(app);
+    let r = match cache {
+        Ok(cache) => render_bytes_for(app, &cache, date, &city).await,
+        Err(e) => Err(e),
+    };
+    {
+        let state = app.state::<AppState>();
+        let mut g = state.running.lock().await;
+        *g = false;
+    }
+    FrontendEvent::PipelineEnd.emit(app);
+    app.state::<AppState>().mark_status_dirty();
+    r.map(|bytes| (city, bytes))
 }
 
 async fn ensure_renderer(app: &AppHandle) -> Result<WebviewWindow> {

@@ -250,6 +250,32 @@ pub async fn regenerate_now(app: AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PreviewResult {
+    pub city: City,
+    pub date: String,
+    /// Base64-encoded PNG, ready for an `<img src="data:image/png;base64,...">`.
+    pub png_base64: String,
+}
+
+/// Dev Mode's "Advance Preview": render (without applying) the city map for
+/// `days_ahead` days from today, so a developer can see an upcoming
+/// rotation day without waiting for it or touching the real wallpaper.
+#[tauri::command]
+pub async fn preview_city(app: AppHandle, days_ahead: i64) -> Result<PreviewResult, String> {
+    if !(0..=5).contains(&days_ahead) {
+        return Err("daysAhead must be between 0 and 5".to_string());
+    }
+    let date = city::today() + chrono::Duration::days(days_ahead);
+    let (city, bytes) = pipeline::render_preview(&app, date).await.map_err(|e| e.to_string())?;
+    Ok(PreviewResult {
+        city,
+        date: date.to_string(),
+        png_base64: base64::Engine::encode(&base64::engine::general_purpose::STANDARD, bytes),
+    })
+}
+
 #[tauri::command]
 pub fn renderer_ready(state: State<'_, AppState>) {
     state.renderer_ready.store(true, Ordering::Release);

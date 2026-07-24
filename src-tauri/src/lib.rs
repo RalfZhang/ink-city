@@ -306,6 +306,7 @@ pub fn run() {
             commands::hide_window,
             commands::update_tray_labels,
             commands::open_log_dir,
+            commands::preview_city,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

@@ -4,7 +4,8 @@
     "city": "City",
     "style": "Style",
     "lab": "Lab",
-    "about": "About"
+    "about": "About",
+    "devMode": "Dev Mode"
   },
   "general": {
     "enabledLabel": "Enable daily updates",
@@ -85,6 +86,11 @@
     "dataTitle": "Data & Acknowledgements",
     "osmAttribution": "Road map data © <0>OpenStreetMap</0> contributors, licensed under <1>ODbL</1>.",
     "geonamesAttribution": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>."
+  },
+  "devMode": {
+    "advancePreviewTitle": "Advance Preview",
+    "advancePreviewDesc": "Preview the city map for an upcoming day in the rotation, without changing today's wallpaper.",
+    "loading": "Rendering preview…"
   },
   "common": {
     "loading": "loading…"

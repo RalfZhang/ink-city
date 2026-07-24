@@ -10,9 +10,10 @@ import City from "./tabs/City";
 import Style from "./tabs/Style";
 import Lab from "./tabs/Lab";
 import About from "./tabs/About";
+import DevMode from "./tabs/DevMode";
 import type { Status } from "./types";
 
-type TabId = "general" | "city" | "style" | "lab" | "about";
+type TabId = "general" | "city" | "style" | "lab" | "about" | "devMode";
 
 function App() {
   const { t } = useTranslation();
@@ -20,6 +21,10 @@ function App() {
   const [tab, setTab] = useState<TabId>("general");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // In-memory only (no persistence across restarts) — a hidden, session-scoped
+  // toggle, not a real user-facing setting. Unlocked by clicking the version
+  // number in About seven times in a row (see About.tsx).
+  const [devMode, setDevMode] = useState(false);
 
   const refresh = async () => {
     try {
@@ -126,6 +131,16 @@ function App() {
 
   const onError = (e: unknown) => setErr(String(e));
 
+  const toggleDevMode = () => {
+    setDevMode((on) => {
+      const next = !on;
+      // Leaving devMode while it's the active tab would otherwise strand the
+      // Tabs component on a value with no matching trigger/content.
+      if (!next && tab === "devMode") setTab("general");
+      return next;
+    });
+  };
+
   if (!status) {
     return (
       <main className="p-4 text-sm text-muted-foreground">
@@ -150,6 +165,7 @@ function App() {
           <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
           <TabsTrigger value="lab">{t("sidebar.lab")}</TabsTrigger>
           <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
+          {devMode && <TabsTrigger value="devMode">{t("sidebar.devMode")}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="general" className="flex-1 overflow-y-auto border-l px-4 py-4">
@@ -165,8 +181,18 @@ function App() {
           <Lab status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
         <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
-          <About status={effectiveStatus} refresh={refresh} onError={onError} />
+          <About
+            status={effectiveStatus}
+            refresh={refresh}
+            onError={onError}
+            onToggleDevMode={toggleDevMode}
+          />
         </TabsContent>
+        {devMode && (
+          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-l px-4 py-4">
+            <DevMode onError={onError} />
+          </TabsContent>
+        )}
       </Tabs>
 
       {err && (
