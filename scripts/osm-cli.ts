@@ -14,7 +14,12 @@
 // `precache` mode: for the next N days, pick the rotation's city (same logic
 // the desktop client uses) and fetch a 20km-square, slimmed for size, into
 // <outDir>/<city.id>.json. Already-present cities are skipped; cities no
-// longer in the window are removed.
+// longer in the window are removed. The CI workflow gzip-compresses each
+// <city.id>.json into a <city.id>.json.gz sibling before publishing (both are
+// served from the `data` branch — jsDelivr enforces a per-file size cap that
+// the plain JSON can exceed for large/dense cities, so the client prefers the
+// .gz and falls back to the plain .json for older data/clients — see
+// src-tauri/src/cdn.rs).
 //
 // `fetch` mode: fetch exactly the given bbox and print one JSON payload to
 // stdout (nothing else goes to stdout — diagnostics go to stderr). This is
@@ -119,10 +124,17 @@ async function runPrecache(args: string[]): Promise<void> {
   mkdirSync(OUT_DIR, { recursive: true });
   const present = existingIds(OUT_DIR);
 
-  // Prune cities that have rolled out of the window.
+  // Prune cities that have rolled out of the window. Also remove the gzip
+  // sibling (published alongside every .json — see .github/workflows/precache.yml)
+  // so stale ids don't linger in the data branch forever.
   for (const id of present) {
     if (!wanted.has(id)) {
       rmSync(join(OUT_DIR, `${id}.json`));
+      try {
+        rmSync(join(OUT_DIR, `${id}.json.gz`));
+      } catch {
+        // no gzip sibling to remove (e.g. published before gzip existed) — fine.
+      }
       console.log(`[precache] pruned ${id}.json`);
     }
   }

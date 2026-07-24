@@ -6,6 +6,11 @@ name: Precache OSM
 # binary run live (as a sidecar), so users on slow / Overpass-blocked networks
 # (notably mainland China) get fast, reliable data. See scripts/osm-cli.ts and
 # src-tauri/src/cdn.rs.
+#
+# Each <id>.json is also published gzip-compressed as <id>.json.gz — jsDelivr
+# rejects individual files over its size cap, which large/dense cities' plain
+# JSON can exceed; the client fetches the .gz first and falls back to the
+# plain .json (kept for older clients / as a fallback) if that 404s.
 
 on:
   schedule:
@@ -78,6 +83,23 @@ jobs:
 
       - name: Pre-cache upcoming cities
         run: npx -y tsx@4 scripts/osm-cli.ts precache data-out/osm 7
+
+      # Gzip every cached payload alongside the original (kept for older
+      # clients / as a fallback — see cdn.rs). `if: always()` so cities fetched
+      # before an alarming precache failure still get compressed and
+      # published. `-f` re-compresses on every run so a changed .json (or a
+      # first-time-gzip of a payload restored from before this step existed)
+      # never drifts out of sync with its .gz.
+      - name: Gzip-compress cached payloads
+        if: always()
+        run: |
+          shopt -s nullglob
+          files=(data-out/osm/*.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "nothing to compress"
+          else
+            gzip -k -f -9 "${files[@]}"
+          fi
 
       # `if: always()` so that when the precache step exits non-zero (its alarm
       # conditions — see scripts/osm-cli.ts), the cities it *did* fetch this
