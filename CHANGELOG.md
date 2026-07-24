@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/RalfZhang/ink-city/compare/v0.5.2...v0.5.3) (2026-07-24)
+
+
+### Bug Fixes
+
+* ci issue ([08893db](https://github.com/RalfZhang/ink-city/commit/08893db0f4a2439eb0e46d1fcd9568c40435256d))
+
 ## [0.5.2](https://github.com/RalfZhang/ink-city/compare/v0.5.1...v0.5.2) (2026-07-24)
 
 
