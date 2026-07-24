@@ -127,9 +127,10 @@ async function runPrecache(args: string[]): Promise<void> {
     }
   }
 
-  // Track what's on disk after this run: start from what was restored, add each
-  // city we successfully write. Used below to decide whether to alarm.
-  const cached = new Set(present);
+  // Track what's on disk after this run: start from what was restored *and
+  // survived pruning*, then add each city we successfully write. Used below to
+  // decide whether to alarm.
+  const cached = new Set([...present].filter((id) => wanted.has(id)));
   let fetched = 0;
   let failed = 0;
   let first = true;
