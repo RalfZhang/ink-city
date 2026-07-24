@@ -39,7 +39,8 @@
     "population": "人口 {{value}}",
     "regenerate": "立即重新生成",
     "regenerating": "生成中…",
-    "wikipedia": "在 Wikipedia 上查看"
+    "wikipedia": "查看 Wikipedia",
+    "googleMaps": "查看 Google 地图"
   },
   "style": {
     "theme": "地图主题",

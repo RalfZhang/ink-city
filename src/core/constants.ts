@@ -21,6 +21,13 @@ export function wikipediaUrl(cityName: string): string {
   return WIKIPEDIA_BASE + encodeURIComponent(cityName.replace(/ /g, "_"));
 }
 
+export const GOOGLE_MAPS_BASE = "https://www.google.com/maps/@";
+const GOOGLE_MAPS_ZOOM = "13";
+
+export function googleMapsUrl(lat: number, lon: number): string {
+  return `${GOOGLE_MAPS_BASE}${lat},${lon},${GOOGLE_MAPS_ZOOM}z`;
+}
+
 // Data-source attribution (legal obligation; also used by the website). Road
 // geometry is OpenStreetMap under ODbL; the city list is GeoNames under CC BY 4.0.
 export const OSM_COPYRIGHT_URL = "https://www.openstreetmap.org/copyright";

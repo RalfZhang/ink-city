@@ -5,6 +5,8 @@ export {
   GITHUB_ISSUES,
   WIKIPEDIA_BASE,
   wikipediaUrl,
+  GOOGLE_MAPS_BASE,
+  googleMapsUrl,
   OSM_COPYRIGHT_URL,
   ODBL_URL,
   GEONAMES_URL,

@@ -39,7 +39,8 @@
     "population": "pop {{value}}",
     "regenerate": "Regenerate",
     "regenerating": "Generating…",
-    "wikipedia": "Open on Wikipedia"
+    "wikipedia": "Open on Wikipedia",
+    "googleMaps": "Open on Google Maps"
   },
   "style": {
     "theme": "Map theme",

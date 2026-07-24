@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Status } from "../types";
-import { wikipediaUrl } from "../constants";
+import { wikipediaUrl, googleMapsUrl } from "../constants";
 
 type Props = {
   status: Status;
@@ -43,6 +43,13 @@ export default function City({ status, onError }: Props) {
         <CardFooter className="min-w-32 justify-end gap-2">
           <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
             {t("city.wikipedia")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openUrl(googleMapsUrl(city.lat, city.lon))}
+          >
+            {t("city.googleMaps")}
           </Button>
           <Button className="min-w-32" onClick={regenerate} disabled={status.running} size="sm">
             {status.running ? t("city.regenerating") : t("city.regenerate")}
