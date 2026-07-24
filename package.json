@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.5.1",
   "type": "module",
+  "packageManager": "pnpm@11.11.0",
   "scripts": {
     "dev": "vite",
     "build": "npm run check:i18n && tsc && vite build",
