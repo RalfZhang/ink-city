@@ -1,19 +1,21 @@
 use std::fs;
 use std::path::PathBuf;
-use std::time::Duration;
 
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-/// Remote canonical cities list. We pull from jsDelivr (a Cloudflare-fronted
-/// CDN of GitHub) rather than raw.githubusercontent.com because the latter is
-/// frequently DNS-poisoned in mainland China and unreliable for users there;
-/// jsDelivr also has 12h edge-cache propagation, fine for our daily-check
-/// cadence. ETag-based conditional GETs avoid re-downloading unchanged
-/// content. Update this URL if the repo / branch moves.
-const REMOTE_URL: &str =
-    "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@main/src/data/cities.json";
+use crate::github_mirror;
+
+/// Remote canonical cities list. ETag-based conditional GETs avoid
+/// re-downloading unchanged content, but only against the primary host
+/// below (see `check_update`) — jsDelivr's 12h edge-cache propagation is
+/// fine for our daily-check cadence.
+///
+/// See `github_mirror` for the mirrored-host fallback order and rationale.
+/// Update `GIT_REF` / `REMOTE_PATH` if the repo / branch moves.
+const GIT_REF: &str = "main";
+const REMOTE_PATH: &str = "src/data/cities.json";
 
 const CACHE_FILE: &str = "cities.json";
 const META_FILE: &str = "cities.meta.json";
@@ -43,25 +45,50 @@ fn save_meta(app: &AppHandle, meta: &CacheMeta) -> Result<()> {
 
 async fn check_update(app: &AppHandle) -> Result<()> {
     let mut meta = load_meta(app);
-    let client = reqwest::Client::builder()
-        .user_agent("InkCity/0.1")
-        .timeout(Duration::from_secs(30))
-        .build()?;
+    let client = github_mirror::client()?;
+    let urls = github_mirror::mirror_urls(GIT_REF, REMOTE_PATH);
 
-    let mut req = client.get(REMOTE_URL);
-    if let Some(etag) = &meta.etag {
-        req = req.header("If-None-Match", etag);
-    }
-    let res = req.send().await?;
+    let mut last_err = None;
+    for (i, url) in urls.iter().enumerate() {
+        let mut req = client.get(url);
+        // Conditional GET only makes sense against the primary host: its
+        // ETag is what we cached last time, and the fallback hosts are
+        // different CDN providers entirely (e.g. Bunny for
+        // jsdelivr.b-cdn.net), not guaranteed to compute the same ETag for
+        // identical content.
+        if i == 0 {
+            if let Some(etag) = &meta.etag {
+                req = req.header("If-None-Match", etag);
+            }
+        }
 
-    if res.status().as_u16() == 304 {
-        eprintln!("[cities] remote unchanged (304)");
-        return Ok(());
-    }
-    if !res.status().is_success() {
-        return Err(anyhow!("HTTP {}", res.status()));
-    }
+        let res = match req.send().await {
+            Ok(res) => res,
+            Err(e) => {
+                last_err = Some(anyhow!("{e} ({url})"));
+                continue;
+            }
+        };
 
+        if i == 0 && res.status().as_u16() == 304 {
+            eprintln!("[cities] remote unchanged (304)");
+            return Ok(());
+        }
+        if !res.status().is_success() {
+            last_err = Some(anyhow!("HTTP {} ({url})", res.status()));
+            continue;
+        }
+
+        return apply_update(app, &mut meta, res).await;
+    }
+    Err(last_err.unwrap_or_else(|| anyhow!("no remote hosts configured")))
+}
+
+async fn apply_update(
+    app: &AppHandle,
+    meta: &mut CacheMeta,
+    res: reqwest::Response,
+) -> Result<()> {
     let new_etag = res
         .headers()
         .get("etag")
@@ -79,7 +106,7 @@ async fn check_update(app: &AppHandle) -> Result<()> {
     fs::write(d.join(CACHE_FILE), &body)?;
 
     meta.etag = new_etag;
-    save_meta(app, &meta)?;
+    save_meta(app, meta)?;
 
     eprintln!("[cities] cache updated ({} entries)", parsed.len());
     Ok(())

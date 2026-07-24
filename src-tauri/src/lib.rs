@@ -5,6 +5,7 @@ mod city;
 mod commands;
 mod config;
 mod events;
+mod github_mirror;
 mod layers;
 mod osm_sidecar;
 mod pipeline;
