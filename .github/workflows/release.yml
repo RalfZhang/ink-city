@@ -77,6 +77,16 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
+      # `tauri build --target universal-apple-darwin` needs sidecar binaries
+      # under BOTH naming schemes, because two different stages resolve the
+      # externalBin path independently: build.rs runs once per real arch
+      # (TARGET=aarch64-apple-darwin, then TARGET=x86_64-apple-darwin — cargo
+      # has no such thing as a "universal" target) and looks up the
+      # arch-specific name each time, while the bundler's final packaging
+      # step runs once, after both cargo passes, and looks up the
+      # `-universal-apple-darwin` name to embed in the app. So all three
+      # files — both arch binaries and the lipo'd universal one — must exist
+      # together; don't delete the arch ones after lipo-ing.
       - name: Build osm-cli sidecar (macOS universal)
         if: matrix.platform == 'macos-latest'
         run: |
@@ -86,7 +96,6 @@ jobs:
             src-tauri/binaries/osm-cli-aarch64-apple-darwin \
             src-tauri/binaries/osm-cli-x86_64-apple-darwin \
             -output src-tauri/binaries/osm-cli-universal-apple-darwin
-          rm src-tauri/binaries/osm-cli-aarch64-apple-darwin src-tauri/binaries/osm-cli-x86_64-apple-darwin
 
       - name: Build osm-cli sidecar (Windows)
         if: matrix.platform == 'windows-latest'

@@ -21,6 +21,12 @@
 // produce directly: build the two arch-specific binaries above, then
 //   lipo -create -output src-tauri/binaries/osm-cli-universal-apple-darwin \
 //     src-tauri/binaries/osm-cli-aarch64-apple-darwin src-tauri/binaries/osm-cli-x86_64-apple-darwin
+// Keep all three files — don't delete the arch-specific ones afterward.
+// `tauri build --target universal-apple-darwin` needs both: build.rs runs
+// once per real arch (cargo has no literal "universal" target) and looks up
+// the arch-specific name each time, while the bundler's final packaging step
+// runs once, after both cargo passes, and looks up the
+// `-universal-apple-darwin` name to embed in the app.
 
 import { execFileSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
