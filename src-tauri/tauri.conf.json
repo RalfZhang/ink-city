@@ -31,6 +31,7 @@
     "active": true,
     "targets": "all",
     "createUpdaterArtifacts": true,
+    "externalBin": ["binaries/osm-cli"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

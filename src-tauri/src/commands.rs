@@ -67,7 +67,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         auto_update: state.auto_update.load(Ordering::Acquire),
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
-        has_water: pipeline::has_water_for(app, date),
+        has_water: pipeline::has_layer_for(app, date, "water"),
     };
     status
 }

@@ -1,45 +1,87 @@
 #!/usr/bin/env -S npx tsx
-// Daily OSM pre-cache. For the next N days, pick the rotation's city (same
-// logic the desktop client uses) and fetch a 40km-square road network, slimmed
-// for size, into <outDir>/<city.id>.json. Already-present cities are skipped;
-// cities no longer in the window are removed. The CI workflow then publishes
-// <outDir> to the `data` branch, which jsDelivr serves as a CDN.
+// Single entry point for OSM data acquisition — used both as the CI batch
+// pre-cacher (publishing to the `data` branch, served by jsDelivr) and, once
+// compiled to a standalone binary, as the desktop app's sidecar for live
+// fetches (a CDN miss on the daily rotation, or a user-entered custom
+// city/coordinates, which are never precached). Both paths go through the same
+// src/core/fetch-city.ts, so the live fallback always gets the same layers
+// (water included) as the CDN — see that module's header for why.
 //
-// Keyed by city id (not date) so the file is intrinsically tied to the city the
-// client renders, dedups across the rotation, and is reusable by a future
-// custom-city-list feature. Run with: npm run precache -- [outDir] [days]
+// Usage:
+//   osm-cli precache [outDir] [days]
+//   osm-cli fetch --south=.. --west=.. --north=.. --east=.. [--layers=water] [--precision=5]
+//
+// `precache` mode: for the next N days, pick the rotation's city (same logic
+// the desktop client uses) and fetch a 20km-square, slimmed for size, into
+// <outDir>/<city.id>.json. Already-present cities are skipped; cities no
+// longer in the window are removed.
+//
+// `fetch` mode: fetch exactly the given bbox and print one JSON payload to
+// stdout (nothing else goes to stdout — diagnostics go to stderr). This is
+// what the desktop sidecar invokes.
 
 import { readFileSync, readdirSync, writeFileSync, rmSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  pickCityForDate,
-  bboxForScreen,
-  fetchRoads,
-  slimRoads,
-  OSM_SCHEMA_VERSION,
-  type City,
-} from "../src/core/index.ts";
-// water.ts is precache-only (pulls in polygon-clipping); import it directly,
-// not via the client barrel.
-import { fetchWater, slimWater } from "../src/core/water.ts";
+import { pickCityForDate, bboxForScreen, type City, type Bbox } from "../src/core/index.ts";
+import { fetchCityData } from "../src/core/fetch-city.ts";
+import { LAYER_IDS, isLayerId, type LayerId } from "../src/core/layers.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 
-const OUT_DIR = process.argv[2] ?? join(ROOT, "data", "osm");
-const DAYS = Number(process.argv[3] ?? 7);
-
+const COORD_PRECISION = 5;
 // Match the client: bbox_for_screen(lat, lon, max_half_km = 10, aspect = 1)
 // yields a 20km square that is a superset of every screen-aspect rectangle.
 const MAX_HALF_KM = 10;
-const COORD_PRECISION = 5;
 
 function loadCities(): City[] {
   const raw = readFileSync(join(ROOT, "src", "data", "cities.json"), "utf8");
   return JSON.parse(raw) as City[];
 }
+
+function parseFlags(args: string[]): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const a of args) {
+    const m = a.match(/^--([^=]+)=(.*)$/);
+    if (m) out[m[1]] = m[2];
+  }
+  return out;
+}
+
+function parseLayers(spec: string | undefined): LayerId[] {
+  if (spec === undefined) return [...LAYER_IDS];
+  return spec
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((id) => {
+      if (!isLayerId(id)) throw new Error(`unknown layer "${id}" (known: ${LAYER_IDS.join(", ")})`);
+      return id;
+    });
+}
+
+// ---- fetch mode: one bbox, one JSON payload to stdout ----
+
+async function runFetch(args: string[]): Promise<void> {
+  const flags = parseFlags(args);
+  const need = (k: string): number => {
+    const v = flags[k];
+    if (v === undefined) throw new Error(`missing --${k}`);
+    const n = Number(v);
+    if (!Number.isFinite(n)) throw new Error(`--${k} must be a number`);
+    return n;
+  };
+  const bbox: Bbox = { south: need("south"), west: need("west"), north: need("north"), east: need("east") };
+  const layers = parseLayers(flags.layers);
+  const precision = flags.precision !== undefined ? Number(flags.precision) : COORD_PRECISION;
+
+  const data = await fetchCityData(bbox, { layers, coordPrecision: precision, spacingMs: 1500 });
+  process.stdout.write(JSON.stringify(data));
+}
+
+// ---- precache mode: batch over the rotation window, publish to outDir ----
 
 /** Unique city ids the client will need over the next `days` days. */
 function windowCities(cities: City[], days: number): Map<number, City> {
@@ -68,7 +110,10 @@ function existingIds(dir: string): Set<number> {
   return ids;
 }
 
-async function main() {
+async function runPrecache(args: string[]): Promise<void> {
+  const OUT_DIR = args[0] ?? join(ROOT, "data", "osm");
+  const DAYS = Number(args[1] ?? 7);
+
   const cities = loadCities();
   const wanted = windowCities(cities, DAYS);
   mkdirSync(OUT_DIR, { recursive: true });
@@ -98,23 +143,16 @@ async function main() {
     first = false;
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
-      const osm = await fetchRoads(bbox);
-      const slim = slimRoads(osm, COORD_PRECISION);
-      // Water is a separate fetch; space it out so we don't hammer Overpass.
-      await new Promise((r) => setTimeout(r, 1500));
-      const rawWater = await fetchWater(bbox);
-      const water = slimWater(rawWater, bbox, slim.elements?.length ?? 0, COORD_PRECISION);
-      // Additive, backward-compatible: old clients read only `elements`.
-      const out = { v: OSM_SCHEMA_VERSION, elements: slim.elements ?? [], water };
+      const out = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION, spacingMs: 1500 });
       writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify(out));
       cached.add(id);
       fetched++;
       console.log(
-        `[precache] cached ${id} (${city.name}) — ${out.elements.length} ways, ${water.length} water`,
+        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ${out.water?.length ?? 0} water`,
       );
     } catch (e) {
-      // Don't fail the whole run for one city; the client falls back to
-      // Overpass for any city missing from the CDN. Persistent failure is
+      // Don't fail the whole run for one city; the client falls back to the
+      // sidecar for any city missing from the CDN. Persistent failure is
       // surfaced via the alarm conditions below, not here.
       failed++;
       console.error(`[precache] FAILED ${id} (${city.name}): ${String(e)}`);
@@ -150,6 +188,13 @@ async function main() {
     }
     process.exitCode = 1;
   }
+}
+
+async function main() {
+  const [mode, ...rest] = process.argv.slice(2);
+  if (mode === "fetch") return runFetch(rest);
+  if (mode === "precache") return runPrecache(rest);
+  throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir] [days]\n  fetch --south=.. --west=.. --north=.. --east=.. [--layers=water] [--precision=5]`);
 }
 
 main().catch((e) => {

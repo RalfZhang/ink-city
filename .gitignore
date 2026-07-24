@@ -25,10 +25,15 @@ dist-ssr
 
 idea.md
 
-# OSM pre-cache output (scripts/precache-osm.ts); published to the `data`
+# OSM pre-cache output (scripts/osm-cli.ts); published to the `data`
 # branch by CI, never committed to main.
 /data/
 /data-out/
+
+# Compiled osm-cli sidecar binaries (scripts/build-sidecar.ts); build
+# artifacts, rebuilt locally with `npm run build:sidecar` or by CI.
+/src-tauri/binaries/
+*.bun-build
 
 # render-map.ts output (local map previews)
 /test-out/

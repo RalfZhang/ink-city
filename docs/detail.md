@@ -12,20 +12,22 @@ index = (days_since_2023-03-03 * 379) % N
 
 ```
 src/core/          Portable, dependency-free logic (city pick, bbox math,
-                   Overpass fetch, canvas rendering) shared by the desktop
-                   renderer, the CI script, and a future website.
+                   Overpass fetch, water/coastline assembly, canvas
+                   rendering) shared by the desktop renderer, osm-cli, and a
+                   future website.
 src/                React + TypeScript settings UI (Vite).
 src/renderer/       Hidden WebView that draws the map to a canvas → PNG.
 src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting,
-                   tray, config, CDN + Overpass fetch.
-scripts/            build-cities (GeoNames → cities.json) and
-                   precache-osm (CI OSM pre-cache).
+                   tray, config, CDN fetch, and the osm-cli sidecar invocation.
+scripts/            build-cities (GeoNames → cities.json) and osm-cli (the
+                   single OSM acquisition CLI: CI's batch precache mode and
+                   the desktop app's live single-fetch sidecar mode).
 .github/workflows/  Daily OSM pre-cache published to the `data` branch.
 ```
 
-**Data flow:** scheduler picks today's city → computes a screen-sized bbox → fetches road data (local cache → jsDelivr CDN → Overpass mirrors) → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). OSM and PNG artifacts are cached for 7 days so re-rendering after a theme change needs no network.
+**Data flow:** scheduler picks today's city → computes a screen-sized bbox → fetches road + water data (local cache → jsDelivr CDN → the `osm-cli` sidecar, run live) → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). OSM and PNG artifacts are cached for 7 days so re-rendering after a theme change needs no network.
 
-**CDN pre-cache:** a daily GitHub Action fetches the upcoming cities' road data, slims it, and force-pushes it to the `data` branch, which [jsDelivr](https://www.jsdelivr.com/) serves as a CDN. This keeps the app fast and reachable on networks where Overpass is slow or blocked (notably mainland China).
+**CDN pre-cache:** a daily GitHub Action runs `osm-cli precache`, which fetches the upcoming cities' road + water data, slims it, and force-pushes it to the `data` branch, which [jsDelivr](https://www.jsdelivr.com/) serves as a CDN. This keeps the app fast and reachable on networks where Overpass is slow or blocked (notably mainland China). The desktop app's live fallback (`osm-cli fetch`, run as a bundled sidecar) shares the exact same TypeScript implementation, so a CDN miss never produces data poorer than the CDN's — see `src/core/fetch-city.ts`.
 
 ## Build from source
 
@@ -34,6 +36,7 @@ scripts/            build-cities (GeoNames → cities.json) and
 - [Node.js](https://nodejs.org/) 20+
 - [Rust](https://www.rust-lang.org/tools/install) (stable)
 - Platform toolchain for Tauri — see [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Xcode Command Line Tools on macOS; the WebView2 runtime + MSVC build tools on Windows)
+- [Bun](https://bun.sh) — build-time only, to compile the `osm-cli` sidecar. Not needed at app runtime.
 
 **Develop**
 
@@ -41,6 +44,8 @@ scripts/            build-cities (GeoNames → cities.json) and
 npm install
 npm run tauri dev
 ```
+
+`npm run tauri dev`/`build` always compiles the `osm-cli` sidecar for your machine first (the `pretauri` script runs `npm run build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `npm run build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
 
 **Build a release bundle**
 

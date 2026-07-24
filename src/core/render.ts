@@ -124,15 +124,16 @@ function waterLineWidth(cls: string, scale: number): number {
 /**
  * Draw the water layer under the roads: filled bodies (lakes, sea) plus thin
  * linear waterways (creeks/canals). No-op when the OSM data has no `water` key
- * (old cached data or the roads-only live fallback), so older payloads degrade
- * gracefully. Polygon holes (islands) are punched out with the even-odd rule,
- * which is winding-direction agnostic — water.ts only guarantees rings are
- * closed, not their orientation.
+ * (only possible for data cached before the water layer shipped), so older
+ * payloads degrade gracefully. Polygon holes (islands) are punched out with
+ * the even-odd rule, which is winding-direction agnostic — water.ts only
+ * guarantees rings are closed, not their orientation.
  */
 export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
   const water = req.osm.water;
   // Gated by the user's "show water" setting (default off, see Style tab) and a
-  // no-op when the data has no water layer (old cached data / live fallback).
+  // no-op when the data has no water layer (only possible for pre-water
+  // cached data).
   if (!req.style.showWater || !water || water.length === 0) return;
   const { bbox, width, height, style } = req;
   const color = mixColor(style.foreground, style.background);

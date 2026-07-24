@@ -14,7 +14,8 @@ use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, StylePreset, ThemeMode};
 use crate::events::FrontendEvent;
-use crate::overpass;
+use crate::layers;
+use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
 
@@ -51,56 +52,38 @@ pub fn cache_dir(app: &AppHandle) -> Result<PathBuf> {
     Ok(d)
 }
 
-/// True if a parsed OSM value carries a non-empty `water` layer.
-fn osm_value_has_water(v: &serde_json::Value) -> bool {
-    v.get("water").and_then(|w| w.as_array()).map_or(false, |a| !a.is_empty())
+fn set_present_layers(app: &AppHandle, date: NaiveDate, present: std::collections::HashSet<String>) {
+    *app.state::<AppState>().present_layers.lock().unwrap() = Some((date, present));
 }
 
-fn set_has_water(app: &AppHandle, date: NaiveDate, has: bool) {
-    *app.state::<AppState>().has_water.lock().unwrap() = Some((date, has));
-}
-
-/// True if a JSON document text contains a non-empty top-level `"water"` array.
-/// Deliberately a byte scan, not a `serde_json` parse: these payloads reach tens
-/// of MB for dense cities, and materializing a full `Value` tree just to read one
-/// bit would cost hundreds of ms on the async worker. We already hold the text;
-/// finding the key and peeking the first non-space char after its `[` is enough.
-/// Tolerates whitespace around `:` and `[`, so it survives even if the cache is
-/// ever written pretty-printed instead of compact (the one realistic way the old
-/// fixed-substring check could have silently broken).
-fn json_has_nonempty_water(s: &str) -> bool {
-    let Some(i) = s.find("\"water\"") else { return false };
-    let after_key = s[i + "\"water\"".len()..].trim_start();
-    let Some(after_colon) = after_key.strip_prefix(':') else { return false };
-    let Some(in_array) = after_colon.trim_start().strip_prefix('[') else { return false };
-    // Non-empty iff the next non-space char isn't the array's closing bracket.
-    in_array.trim_start().starts_with(|c| c != ']')
-}
-
-/// Whether the cached OSM file for `date` has a water layer. Used by
-/// `get_status` when the wallpaper was already cached this session (so the
-/// pipeline never parsed the data). See `json_has_nonempty_water` for why this
-/// scans rather than parses.
-pub fn cached_data_has_water(cache: &Path, date: NaiveDate) -> bool {
-    let path = cache.join(format!("{}.osm.json", date));
-    fs::read_to_string(path).map_or(false, |s| json_has_nonempty_water(&s))
-}
-
-/// Read the `has_water` flag for `date`, computing and caching it from the
-/// cached OSM file on first miss.
-pub fn has_water_for(app: &AppHandle, date: NaiveDate) -> bool {
+/// Which optional layers (see `layers::LAYER_KEYS`) are present for `date`,
+/// computing and caching them from the cached OSM file on first miss this
+/// session. Used by `get_status` when the wallpaper was already cached this
+/// session (so the pipeline never parsed the data) — see
+/// `layers::detect_present_text` for why this scans rather than parses.
+fn present_layers_for(app: &AppHandle, date: NaiveDate) -> std::collections::HashSet<String> {
     let state = app.state::<AppState>();
     {
-        let g = state.has_water.lock().unwrap();
-        if let Some((d, v)) = *g {
-            if d == date {
-                return v;
+        let g = state.present_layers.lock().unwrap();
+        if let Some((d, set)) = &*g {
+            if *d == date {
+                return set.clone();
             }
         }
     }
-    let has = cache_dir(app).map(|c| cached_data_has_water(&c, date)).unwrap_or(false);
-    *state.has_water.lock().unwrap() = Some((date, has));
-    has
+    let present = cache_dir(app)
+        .ok()
+        .and_then(|c| fs::read_to_string(c.join(format!("{}.osm.json", date))).ok())
+        .map(|s| layers::detect_present_text(&s))
+        .unwrap_or_default();
+    *state.present_layers.lock().unwrap() = Some((date, present.clone()));
+    present
+}
+
+/// Whether the current city's cached data for `date` carries `layer` (e.g.
+/// `"water"`). Gates the corresponding UI toggle in `get_status`.
+pub fn has_layer_for(app: &AppHandle, date: NaiveDate, layer: &str) -> bool {
+    present_layers_for(app, date).contains(layer)
 }
 
 pub fn effective_theme(app: &AppHandle) -> EffectiveTheme {
@@ -186,15 +169,19 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     let (w, h) = primary_size(&renderer)?;
     let aspect = w as f64 / h as f64;
     // 10km half = 20km long side. MUST match MAX_HALF_KM in
-    // scripts/precache-osm.ts: the precached square (aspect=1) is the superset
+    // scripts/osm-cli.ts: the precached square (aspect=1) is the superset
     // every screen-aspect rectangle here must fit inside, so the CDN data
     // always covers the wallpaper.
     let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
 
     // OSM acquisition order: local day cache → jsDelivr CDN (pre-cached 20km
-    // square, China-reachable) → live Overpass (screen rectangle). The CDN
-    // square is a superset of `bbox`, so the renderer projects within `bbox`
-    // and clips the rest; Overpass fetches exactly `bbox` to save bandwidth.
+    // square, China-reachable) → the osm-cli sidecar, run live (screen
+    // rectangle). The CDN square is a superset of `bbox`, so the renderer
+    // projects within `bbox` and clips the rest; the sidecar fetches exactly
+    // `bbox` to save bandwidth. Both the CDN payload and the sidecar go
+    // through the same TS implementation (src/core/fetch-city.ts), so a CDN
+    // miss never produces data poorer than the CDN's (e.g. water is never
+    // missing just because we fell back).
     let osm_path = cache.join(format!("{}.osm.json", date));
     let osm: serde_json::Value = if osm_path.exists() {
         serde_json::from_str(&fs::read_to_string(&osm_path)?)?
@@ -205,17 +192,17 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
                 v
             }
             Err(e) => {
-                eprintln!("[pipeline] CDN miss ({}), falling back to Overpass: {}", city.id, e);
-                overpass::fetch_roads(bbox).await?
+                eprintln!("[pipeline] CDN miss ({}), falling back to sidecar: {}", city.id, e);
+                osm_sidecar::fetch(app, bbox).await?
             }
         };
         fs::write(&osm_path, v.to_string())?;
         v
     };
 
-    // Record whether this city's data has a water layer so the UI can decide
-    // whether to surface the "show water" toggle.
-    set_has_water(app, date, osm_value_has_water(&osm));
+    // Record which optional layers this city's data carries so the UI can
+    // decide whether to surface layer toggles (e.g. "show water").
+    set_present_layers(app, date, layers::detect_present_value(&osm));
 
     let colors = colors_for(app, theme);
     let preset = *app.state::<AppState>().style.lock().unwrap();

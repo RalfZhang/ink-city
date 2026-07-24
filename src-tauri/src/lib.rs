@@ -5,7 +5,8 @@ mod city;
 mod commands;
 mod config;
 mod events;
-mod overpass;
+mod layers;
+mod osm_sidecar;
 mod pipeline;
 mod scheduler;
 mod state;
@@ -49,6 +50,7 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             let handle = app.handle();
 

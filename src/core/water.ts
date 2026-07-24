@@ -7,16 +7,19 @@ const { difference, union } = polygonClipping;
 import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "./types";
 import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
 
-// Water layer extraction. Runs at PRECACHE time (Node/CI), never on the client:
-// it fetches OSM water + coastline for a bbox and assembles it into ready-to-fill
-// polygons (+ thin waterway lines) so the renderer (src/core/render.ts) only has
-// to fill/stroke them. All the fiddly geometry lives here, in geographic
-// (lat/lon) space where OSM's "land on the left, water on the right" rule for
-// coastlines holds as written. Mirrors the road path in overpass.ts.
+// Water layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
+// batch precache and the desktop app's live sidecar fallback alike), never on
+// the client: it fetches OSM water + coastline for a bbox and assembles it
+// into ready-to-fill polygons (+ thin waterway lines) so the renderer
+// (src/core/render.ts) only has to fill/stroke them. All the fiddly geometry
+// lives here, in geographic (lat/lon) space where OSM's "land on the left,
+// water on the right" rule for coastlines holds as written. Mirrors the road
+// path in overpass.ts. The "water" layer implementation dispatched by
+// fetch-city.ts's fetchCityData().
 //
 // This module is deliberately NOT re-exported from ./index (the client barrel):
 // it depends on `polygon-clipping`, which we keep out of the desktop/website
-// bundle. Precache imports it directly.
+// bundle. fetch-city.ts imports it directly.
 //
 // Scope: area water = natural=water + waterway=riverbank + water=* +
 // landuse=reservoir/basin; ocean from natural=coastline (robustly, via

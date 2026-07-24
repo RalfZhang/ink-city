@@ -60,7 +60,8 @@ export type WaterFeature =
  * The OSM container the renderer reads. `elements` (roads) is the original,
  * always-present shape. `water` and `v` are additive and backward-compatible:
  * old clients ignore unknown keys and render roads only, and new clients treat
- * a missing `water` (old data or the roads-only live fallback) as "no water".
+ * a missing `water` (only possible for data cached before the water layer
+ * shipped) as "no water".
  */
 export type Osm = {
   elements?: Way[];

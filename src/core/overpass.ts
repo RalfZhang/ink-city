@@ -2,7 +2,9 @@ import type { Bbox, Osm } from "./types";
 
 // Overpass road-geometry fetch with mirror fallback. Uses the global `fetch`,
 // so it runs in the browser, in Node 18+ (the CI pre-cache script), and in
-// Deno. Mirrors the mirror list / query in src-tauri/src/overpass.rs.
+// Deno. The only Overpass client in the codebase — src-tauri's live fallback
+// shells out to this via scripts/osm-cli.ts (see src-tauri/src/osm_sidecar.rs)
+// instead of maintaining a separate Rust implementation.
 
 export const MIRRORS = [
   "https://overpass-api.de/api/interpreter",
@@ -18,7 +20,7 @@ export function buildQuery(b: Bbox): string {
  * Strip an Overpass response down to only what the renderer reads: `way`
  * elements with a `highway` tag and a 2+ point geometry. Drops node ids, bounds
  * and every other tag. Optionally rounds coordinates to `coordPrecision`
- * decimals (5 ≈ 1m, sub-pixel at our 40km scale) to shrink the payload further.
+ * decimals (5 ≈ 1m, sub-pixel at our 20km scale) to shrink the payload further.
  * Used to keep the CDN-served cache small for slow/blocked networks.
  */
 export function slimRoads(osm: Osm, coordPrecision?: number): Osm {

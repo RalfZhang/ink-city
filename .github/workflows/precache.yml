@@ -1,10 +1,11 @@
 name: Precache OSM
 
-# Fetches road data for the next few days' cities and publishes it to the
-# `data` branch, which jsDelivr serves as a CDN (cdn.jsdelivr.net/gh/<repo>@data).
-# The desktop client pulls from there before hitting Overpass directly, so users
-# on slow / Overpass-blocked networks (notably mainland China) get fast,
-# reliable data. See scripts/precache-osm.ts and src-tauri/src/cdn.rs.
+# Fetches road + water data for the next few days' cities and publishes it to
+# the `data` branch, which jsDelivr serves as a CDN (cdn.jsdelivr.net/gh/<repo>@data).
+# The desktop client pulls from there before falling back to the same osm-cli
+# binary run live (as a sidecar), so users on slow / Overpass-blocked networks
+# (notably mainland China) get fast, reliable data. See scripts/osm-cli.ts and
+# src-tauri/src/cdn.rs.
 
 on:
   schedule:
@@ -34,7 +35,7 @@ jobs:
         with:
           node-version: 24
 
-      # Water assembly (scripts/precache-osm.ts → src/core/water.ts) needs
+      # Water assembly (scripts/osm-cli.ts → src/core/water.ts) needs
       # `polygon-clipping`. `--ignore-scripts` skips the `canvas` native build,
       # which is a devDependency only used by the local render harness, not here.
       - name: Install dependencies
@@ -57,10 +58,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-cache upcoming cities
-        run: npx -y tsx@4 scripts/precache-osm.ts data-out/osm 7
+        run: npx -y tsx@4 scripts/osm-cli.ts precache data-out/osm 7
 
       # `if: always()` so that when the precache step exits non-zero (its alarm
-      # conditions — see scripts/precache-osm.ts), the cities it *did* fetch this
+      # conditions — see scripts/osm-cli.ts), the cities it *did* fetch this
       # run still get published instead of being thrown away and re-fetched next
       # run. The failed precache step still makes the job red (a later
       # `if: always()` step succeeding doesn't un-fail an earlier failed step),

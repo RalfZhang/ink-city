@@ -8,9 +8,11 @@
     "build": "npm run check:i18n && tsc && vite build",
     "check:i18n": "tsx scripts/check-i18n.ts",
     "preview": "vite preview",
+    "pretauri": "npm run build:sidecar",
     "tauri": "tauri",
     "build:cities": "node scripts/build-cities.mjs",
-    "precache": "tsx scripts/precache-osm.ts",
+    "precache": "tsx scripts/osm-cli.ts precache",
+    "build:sidecar": "tsx scripts/build-sidecar.ts",
     "render-test": "tsx scripts/render-test.ts",
     "render-map": "tsx scripts/render-map.ts"
   },

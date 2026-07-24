@@ -4,8 +4,10 @@ export * from "./types";
 export * from "./city";
 export * from "./bbox";
 export * from "./overpass";
-// NOTE: ./water is intentionally NOT re-exported here. It is precache-only
-// (Node/CI) and pulls in `polygon-clipping`; the desktop/website client must
-// not bundle it. Precache imports it directly from "./water".
+export * from "./layers";
+// NOTE: ./water and ./fetch-city are intentionally NOT re-exported here. Both
+// are precache/sidecar-only (Node/Deno/Bun, never the client): ./water pulls
+// in `polygon-clipping`, and ./fetch-city imports ./water directly.
+// scripts/osm-cli.ts imports ./fetch-city (not ./water).
 export * from "./render";
 export * from "./constants";

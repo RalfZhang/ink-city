@@ -32,15 +32,8 @@ import { fileURLToPath } from "node:url";
 
 import { createCanvas } from "canvas";
 
-import {
-  drawRoads,
-  bboxForScreen,
-  fetchRoads,
-  slimRoads,
-  OSM_SCHEMA_VERSION,
-  type StylePreset,
-} from "../src/core/index.ts";
-import { fetchWater, slimWater } from "../src/core/water.ts";
+import { drawRoads, bboxForScreen, type StylePreset } from "../src/core/index.ts";
+import { fetchCityData } from "../src/core/fetch-city.ts";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");
@@ -113,11 +106,8 @@ async function main() {
 
   console.log(`[render-map] ${lat}/${lon} @ ${width}x${height} ${preset} → ${types.join("+")} (${themes.join(", ")})`);
   console.log(`[render-map] fetching roads + water from Overpass ...`);
-  const slim = slimRoads(await fetchRoads(bbox), COORD_PRECISION);
-  await new Promise((r) => setTimeout(r, 1500)); // space out Overpass calls
-  const water = slimWater(await fetchWater(bbox), bbox, slim.elements?.length ?? 0, COORD_PRECISION);
-  const osm = { v: OSM_SCHEMA_VERSION, elements: slim.elements ?? [], water };
-  console.log(`[render-map] ${osm.elements.length} ways, ${water.length} water features`);
+  const osm = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION, spacingMs: 1500 });
+  console.log(`[render-map] ${osm.elements?.length ?? 0} ways, ${osm.water?.length ?? 0} water features`);
 
   mkdirSync(outDir, { recursive: true });
 

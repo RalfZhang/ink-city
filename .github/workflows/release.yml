@@ -64,6 +64,30 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      # Compiles scripts/osm-cli.ts (see src/core/fetch-city.ts) into the
+      # bundled sidecar binary the desktop app runs for live OSM fetches (a
+      # CDN miss, or — in the future — a user-entered custom city). Same
+      # implementation as the daily precache job, just packaged for the app
+      # instead of run from CI. See scripts/build-sidecar.ts and
+      # tauri.conf.json's bundle.externalBin.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Build osm-cli sidecar (macOS universal)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          npx tsx scripts/build-sidecar.ts --bun-target=bun-darwin-arm64 --triple=aarch64-apple-darwin
+          npx tsx scripts/build-sidecar.ts --bun-target=bun-darwin-x64 --triple=x86_64-apple-darwin
+          lipo -create \
+            src-tauri/binaries/osm-cli-aarch64-apple-darwin \
+            src-tauri/binaries/osm-cli-x86_64-apple-darwin \
+            -output src-tauri/binaries/osm-cli-universal-apple-darwin
+          rm src-tauri/binaries/osm-cli-aarch64-apple-darwin src-tauri/binaries/osm-cli-x86_64-apple-darwin
+
+      - name: Build osm-cli sidecar (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: npx tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
+
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:
