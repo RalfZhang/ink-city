@@ -48,15 +48,30 @@ jobs:
       # Pull the current data branch so we only fetch cities that aren't cached
       # yet. If the branch doesn't exist yet (first run, or it was deleted), we
       # start fresh — handled gracefully so the step never reports a failure.
+      # Any *other* clone failure (auth hiccup, network blip, GitHub outage) must
+      # NOT fall into that same "start fresh" path: silently discarding the
+      # restored cache would force a full re-fetch of the whole window, and if
+      # this run then also can't reach every city, the publish step's force-push
+      # would replace the real data branch with that thinner set. So we only
+      # treat it as "no branch yet" when git actually says the ref is missing;
+      # anything else fails the step (and thus the job) loudly instead.
       - name: Restore existing data branch
         run: |
-          if git clone --depth 1 --branch data --single-branch \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data-out 2>/dev/null; then
+          set +e
+          clone_err=$(git clone --depth 1 --branch data --single-branch \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data-out 2>&1)
+          status=$?
+          set -e
+          if [ $status -eq 0 ]; then
             echo "restored existing data branch"
             rm -rf data-out/.git
-          else
+          elif echo "$clone_err" | grep -qiE "not found in upstream|couldn't find remote ref|remote branch .* not found"; then
             echo "no data branch yet — starting fresh"
             mkdir -p data-out
+          else
+            echo "$clone_err" >&2
+            echo "::error::git clone of the data branch failed for a reason other than 'branch missing' — aborting instead of silently starting fresh" >&2
+            exit 1
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
