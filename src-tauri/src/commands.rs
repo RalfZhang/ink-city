@@ -2,6 +2,7 @@ use std::sync::atomic::Ordering;
 
 use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
+use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
 use crate::config::{self, ColorPair, StylePreset, ThemeMode, UpdateCheck};
@@ -266,7 +267,7 @@ pub async fn submit_render_result(
         if p.date == date {
             let _ = p.tx.send(bytes);
         } else {
-            eprintln!("[commands] stale render result for {}, expected {}", date, p.date);
+            log::warn!("[commands] stale render result for {}, expected {}", date, p.date);
         }
     }
     Ok(())
@@ -303,6 +304,16 @@ pub fn quit_app(app: AppHandle) -> Result<(), String> {
     app.state::<AppState>().quitting.store(true, Ordering::Release);
     app.exit(0);
     Ok(())
+}
+
+/// Reveal the log directory (see the `tauri_plugin_log` registration in
+/// lib.rs) in Finder/Explorer, so a user reporting a bug can find and attach
+/// the log file without knowing the platform-specific path themselves.
+#[tauri::command]
+pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
+    let dir = app.path().app_log_dir().map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    app.opener().open_path(dir.to_string_lossy(), None::<&str>).map_err(|e| e.to_string())
 }
 
 fn persist(app: &AppHandle) -> Result<(), String> {

@@ -44,10 +44,10 @@ pub fn initialize(app: &AppHandle) {
 
 fn load_from_cache_or_bundled(app: &AppHandle) -> Vec<City> {
     if let Some(cities) = load_from_cache(app) {
-        eprintln!("[city] loaded {} cities from cache", cities.len());
+        log::info!("[city] loaded {} cities from cache", cities.len());
         return cities;
     }
-    eprintln!("[city] using bundled cities list");
+    log::info!("[city] using bundled cities list");
     serde_json::from_str(BUNDLED_CITIES).expect("bundled cities.json invalid")
 }
 

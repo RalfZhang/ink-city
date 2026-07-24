@@ -93,6 +93,21 @@ pub fn run() {
                 tray::show_settings(app);
             }
         }))
+        // Registered early so setup()/plugin init issues are captured too.
+        // Persists to the OS log dir (`commands::open_log_dir` surfaces the
+        // exact per-platform path to the user) so a user hitting a bug can
+        // find and attach it, instead of the previous
+        // eprintln!-to-a-console-nobody-sees. Capped and rotated (2 MiB × 3
+        // files) so it never grows unbounded — this app's log volume is low
+        // (daily regen, occasional network retries), so that comfortably
+        // covers weeks of history.
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(log::LevelFilter::Info)
+                .max_file_size(2 * 1024 * 1024)
+                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepSome(3))
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
@@ -290,6 +305,7 @@ pub fn run() {
             commands::quit_app,
             commands::hide_window,
             commands::update_tray_labels,
+            commands::open_log_dir,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

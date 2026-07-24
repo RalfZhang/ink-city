@@ -2,6 +2,7 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 
 import { drawRoads, type DrawReq } from "@/core";
+import { logError, logInfo } from "@/lib/log";
 
 // Thin Tauri adapter: receive a render request over IPC, draw via the portable
 // core, and hand the PNG bytes back to Rust. All drawing logic lives in
@@ -17,7 +18,7 @@ async function render(req: RenderReq): Promise<void> {
   if (!ctx) throw new Error("canvas 2d unavailable");
 
   const drawn = drawRoads(ctx, req);
-  console.log(`[renderer] drew ${drawn} ways at ${req.width}x${req.height} (preset=${req.style.preset})`);
+  logInfo(`[renderer] drew ${drawn} ways at ${req.width}x${req.height} (preset=${req.style.preset})`);
 
   const blob: Blob | null = await new Promise((r) => canvas.toBlob((b) => r(b), "image/png"));
   if (!blob) throw new Error("toBlob returned null");
@@ -28,9 +29,9 @@ async function render(req: RenderReq): Promise<void> {
 (async () => {
   await listen<RenderReq>("render-request", (e) => {
     render(e.payload).catch((err) => {
-      console.error("[renderer] render failed", err);
+      logError("[renderer] render failed", err);
     });
   });
   await invoke("renderer_ready");
-  console.log("[renderer] ready");
+  logInfo("[renderer] ready");
 })();

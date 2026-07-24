@@ -79,6 +79,9 @@
     "feedbackTitle": "Feedback",
     "feedbackDesc": "Found a bug or have an idea? Open an issue on GitHub. For bug reports please include your OS version, and if relevant the city / date that triggered the problem.",
     "openIssues": "Submit feedback",
+    "logsTitle": "Logs",
+    "logsDesc": "InkCity keeps a log file to help diagnose problems. Attach it when reporting a bug.",
+    "openLogs": "Open logs folder",
     "dataTitle": "Data & Acknowledgements",
     "osmAttribution": "Road map data © <0>OpenStreetMap</0> contributors, licensed under <1>ODbL</1>.",
     "geonamesAttribution": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>."

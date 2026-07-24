@@ -190,11 +190,11 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     } else {
         let v = match cdn::fetch_cached_osm(city.id).await {
             Ok(v) => {
-                eprintln!("[pipeline] osm from CDN ({})", city.id);
+                log::info!("[pipeline] osm from CDN ({})", city.id);
                 v
             }
             Err(e) => {
-                eprintln!("[pipeline] CDN miss ({}), falling back to sidecar: {}", city.id, e);
+                log::warn!("[pipeline] CDN miss ({}), falling back to sidecar: {}", city.id, e);
                 osm_sidecar::fetch(app, bbox).await?
             }
         };
@@ -232,7 +232,7 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     wallpaper_set::set(&png_path)?;
     mark_applied(app, date, theme);
     let _ = cleanup_cache(&cache, KEEP_DAYS);
-    eprintln!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
+    log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
     Ok(())
 }
 
@@ -296,14 +296,14 @@ pub fn spawn_force_regen(app: AppHandle) {
         let cache = match cache_dir(&app) {
             Ok(c) => c,
             Err(e) => {
-                eprintln!("[pipeline] cache_dir: {}", e);
+                log::error!("[pipeline] cache_dir: {}", e);
                 return;
             }
         };
         let _ = fs::remove_file(png_path(&cache, date, theme));
         *app.state::<AppState>().last_applied.lock().unwrap() = None;
         if let Err(e) = run_for_date(app, date).await {
-            eprintln!("[pipeline] force regen failed: {}", e);
+            log::error!("[pipeline] force regen failed: {}", e);
         }
     });
 }

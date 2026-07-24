@@ -52,7 +52,7 @@ impl FrontendEvent {
             Self::OpenTab(tab) => app.emit(name, tab),
         };
         if let Err(e) = result {
-            eprintln!("[events] emit {name} failed: {e}");
+            log::warn!("[events] emit {name} failed: {e}");
         }
     }
 }

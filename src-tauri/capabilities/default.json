@@ -17,6 +17,7 @@
     "updater:allow-download-and-install",
     "process:allow-restart",
     "notification:default",
+    "log:default",
     {
       "identifier": "shell:allow-execute",
       "allow": [{ "name": "binaries/osm-cli", "sidecar": true }]

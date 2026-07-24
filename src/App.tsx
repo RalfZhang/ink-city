@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
+import { logWarn } from "@/lib/log";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import General from "./tabs/General";
 import City from "./tabs/City";
@@ -84,7 +85,7 @@ function App() {
         regenerateNow: i18n.t("tray.regenerateNow"),
         quit: i18n.t("tray.quit"),
         updateAvailable: i18n.t("tray.updateAvailable"),
-      }).catch((e) => console.warn("[tray] sync failed", e));
+      }).catch((e) => logWarn("[tray] sync failed", e));
       invoke("set_update_strings", {
         strings: {
           notifyBody: i18n.t("update.notifyBody"),
@@ -95,7 +96,7 @@ function App() {
           upToDate: i18n.t("update.upToDate"),
           failed: i18n.t("update.failed"),
         },
-      }).catch((e) => console.warn("[update] strings sync failed", e));
+      }).catch((e) => logWarn("[update] strings sync failed", e));
     };
     sync();
     i18n.on("languageChanged", sync);

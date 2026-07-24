@@ -105,7 +105,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
                     tauri::async_runtime::spawn(async move {
                         let date = city::today();
                         if let Err(e) = pipeline::run_for_date(app, date).await {
-                            eprintln!("[tray] regenerate failed: {}", e);
+                            log::warn!("[tray] regenerate failed: {}", e);
                         }
                     });
                 }

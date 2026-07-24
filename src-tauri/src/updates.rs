@@ -269,7 +269,7 @@ fn spawn_install_impl(app: AppHandle, quiet: bool) {
                 }
             }
             Err(e) => {
-                eprintln!("[updater] install failed: {e}");
+                log::error!("[updater] install failed: {e}");
                 if !quiet {
                     info_dialog(&app, strings(&app).failed);
                 }
@@ -374,7 +374,7 @@ pub async fn run_scheduled_check(app: &AppHandle) {
             }
         }
         Ok(None) => {}
-        Err(e) => eprintln!("[updater] {e}"),
+        Err(e) => log::warn!("[updater] {e}"),
     }
 }
 
@@ -409,7 +409,7 @@ fn notify(app: &AppHandle, version: &str) {
     // don't route the click back, so there the tray entry is the actionable path.
     let body = strings(app).notify_body.replace("{version}", version);
     if let Err(e) = app.notification().builder().title(TITLE).body(body).show() {
-        eprintln!("[updater] notification failed: {e}");
+        log::warn!("[updater] notification failed: {e}");
     }
 }
 

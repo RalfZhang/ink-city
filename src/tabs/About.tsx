@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SettingRow from "@/components/SettingRow";
+import { logError } from "@/lib/log";
 import {
   GITHUB_ISSUES,
   GITHUB_REPO,
@@ -91,6 +92,14 @@ export default function About({ status, refresh, onError }: Props) {
     getVersion().then(setVersion).catch(() => {});
   }, []);
 
+  const openLogs = async () => {
+    try {
+      await invoke("open_log_dir");
+    } catch (e) {
+      onError(e);
+    }
+  };
+
   const pickUpdateCheck = async (v: UpdateCheck) => {
     try {
       await invoke("set_update_check", { value: v });
@@ -120,7 +129,7 @@ export default function About({ status, refresh, onError }: Props) {
         setUpdateState("uptodate");
       }
     } catch (e) {
-      console.error("[updater] install failed", e);
+      logError("[updater] install failed", e);
       setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
     }
   };
@@ -147,7 +156,7 @@ export default function About({ status, refresh, onError }: Props) {
         setUpdateState("idle");
       }
     } catch (e) {
-      console.error("[updater] check failed", e);
+      logError("[updater] check failed", e);
       setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
     }
   };
@@ -245,6 +254,16 @@ export default function About({ status, refresh, onError }: Props) {
               control={
                 <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_ISSUES)}>
                   {t("about.openIssues")}
+                </Button>
+              }
+            />
+            <Separator />
+            <SettingRow
+              label={t("about.logsTitle")}
+              description={t("about.logsDesc")}
+              control={
+                <Button variant="outline" size="sm" onClick={openLogs}>
+                  {t("about.openLogs")}
                 </Button>
               }
             />

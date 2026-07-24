@@ -71,6 +71,6 @@ async fn reconcile(app: &AppHandle) {
         return;
     }
     if let Err(e) = pipeline::run_for_date(app.clone(), date).await {
-        eprintln!("[scheduler] pipeline failed for {}: {}", date, e);
+        log::error!("[scheduler] pipeline failed for {}: {}", date, e);
     }
 }

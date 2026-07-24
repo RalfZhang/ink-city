@@ -79,6 +79,9 @@
     "feedbackTitle": "反馈",
     "feedbackDesc": "发现 bug 或有建议？欢迎在 GitHub 提 issue。如果是 bug，请附上你的操作系统版本，必要时附上触发问题的城市和日期。",
     "openIssues": "提交反馈",
+    "logsTitle": "日志",
+    "logsDesc": "InkCity 会保留日志文件以便排查问题。反馈 bug 时请附上日志文件。",
+    "openLogs": "打开日志文件夹",
     "dataTitle": "数据来源与致谢",
     "osmAttribution": "道路地图数据 © <0>OpenStreetMap</0> 贡献者，依 <1>ODbL</1> 协议授权。",
     "geonamesAttribution": "城市列表来自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授权。"

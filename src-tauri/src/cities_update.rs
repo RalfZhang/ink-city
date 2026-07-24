@@ -71,7 +71,7 @@ async fn check_update(app: &AppHandle) -> Result<()> {
         };
 
         if i == 0 && res.status().as_u16() == 304 {
-            eprintln!("[cities] remote unchanged (304)");
+            log::info!("[cities] remote unchanged (304)");
             return Ok(());
         }
         if !res.status().is_success() {
@@ -108,7 +108,7 @@ async fn apply_update(
     meta.etag = new_etag;
     save_meta(app, meta)?;
 
-    eprintln!("[cities] cache updated ({} entries)", parsed.len());
+    log::info!("[cities] cache updated ({} entries)", parsed.len());
     Ok(())
 }
 
@@ -117,7 +117,7 @@ async fn apply_update(
 pub fn spawn_check(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
         if let Err(e) = check_update(&app).await {
-            eprintln!("[cities] update check failed: {}", e);
+            log::warn!("[cities] update check failed: {}", e);
         }
     });
 }
