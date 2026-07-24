@@ -28,7 +28,53 @@ use crate::state::AppState;
 const AUTOSTART_FLAG: &str = "--autostart";
 
 fn launched_by_autostart() -> bool {
-    std::env::args().any(|a| a == AUTOSTART_FLAG)
+    args_have_autostart_flag(std::env::args())
+}
+
+fn args_have_autostart_flag(args: impl IntoIterator<Item = String>) -> bool {
+    args.into_iter().any(|a| a == AUTOSTART_FLAG)
+}
+
+/// Ask Windows to relaunch us with `--autostart` if it ever restarts this app
+/// on our behalf (e.g. "Restart apps after sign-in" following a Windows
+/// Update reboot). That relaunch is otherwise indistinguishable from a user
+/// double-click — it carries no CLI args of our choosing — which would make
+/// `launched_by_autostart()` wrongly conclude the window should be shown.
+/// Must be (re-)registered on every launch; Windows does not persist it.
+#[cfg(target_os = "windows")]
+fn register_restart_with_autostart_flag() {
+    use windows_sys::Win32::System::Recovery::RegisterApplicationRestart;
+
+    let cmdline: Vec<u16> = AUTOSTART_FLAG.encode_utf16().chain(std::iter::once(0)).collect();
+    unsafe {
+        RegisterApplicationRestart(cmdline.as_ptr(), 0);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn flag_present_when_launched_via_autostart() {
+        let argv = vec!["/path/to/InkCity".to_string(), AUTOSTART_FLAG.to_string()];
+        assert!(args_have_autostart_flag(argv));
+    }
+
+    #[test]
+    fn flag_absent_on_a_plain_user_launch() {
+        let argv = vec!["/path/to/InkCity".to_string()];
+        assert!(!args_have_autostart_flag(argv));
+    }
+
+    #[test]
+    fn flag_check_ignores_other_args() {
+        let argv = vec![
+            "/path/to/InkCity".to_string(),
+            "--some-other-flag".to_string(),
+        ];
+        assert!(!args_have_autostart_flag(argv));
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -37,9 +83,14 @@ pub fn run() {
         // single-instance must be the first plugin: a second launch (e.g. the
         // user reopening from Applications while we're already running) is
         // funneled into this callback instead of starting a new process, and we
-        // surface the existing settings window.
-        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
-            tray::show_settings(app);
+        // surface the existing settings window. Except when that second launch
+        // is itself an autostart relaunch (e.g. an OS session-resume feature
+        // racing our own LaunchAgent/Run-key entry at login) — that should stay
+        // just as silent as a first-instance autostart launch.
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            if !args_have_autostart_flag(argv) {
+                tray::show_settings(app);
+            }
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(
@@ -60,6 +111,15 @@ pub fn run() {
             // Dock-icon flash on launch.
             #[cfg(target_os = "macos")]
             let _ = handle.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
+            // Must be (re-)registered every launch (Windows does not persist
+            // it): if Windows ever restarts this app on our behalf (e.g.
+            // "Restart apps after sign-in" following an update reboot), make
+            // sure that relaunch carries `--autostart` too, so it stays as
+            // silent as a real login autostart instead of surfacing the
+            // window like a fresh user launch.
+            #[cfg(target_os = "windows")]
+            register_restart_with_autostart_flag();
 
             // Load persisted config and seed AppState from it.
             let first_run = config::is_first_run(handle);
@@ -120,6 +180,18 @@ pub fn run() {
                             let current: usize = msg_send![ns_window, collectionBehavior];
                             let new_behavior = (current & !(1usize << 7)) | (1usize << 9);
                             let _: () = msg_send![ns_window, setCollectionBehavior: new_behavior];
+
+                            // Opt this window out of macOS's automatic window
+                            // restoration ("Reopen windows when logging back
+                            // in"). That system feature can relaunch us at the
+                            // next login independent of (and in addition to)
+                            // our own LaunchAgent, with no way for us to tell
+                            // that relaunch apart from a real user launch —
+                            // and it would restore the window to whatever
+                            // visibility it had at logout. We don't rely on
+                            // window-restoration state for anything, so
+                            // disabling it is free and closes that gap.
+                            let _: () = msg_send![ns_window, setRestorable: false];
                         }
                     }
                 }

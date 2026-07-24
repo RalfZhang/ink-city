@@ -1927,6 +1927,7 @@ dependencies = [
  "tokio",
  "wallpaper",
  "window-vibrancy",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
