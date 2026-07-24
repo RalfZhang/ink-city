@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1](https://github.com/RalfZhang/ink-city/compare/v0.5.0...v0.5.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* show named drain & ditch ([7bbb7ab](https://github.com/RalfZhang/ink-city/commit/7bbb7ab5306c37868df1d716a4ebcc097af638e7))
+* unify the data flow from ts & rs to src/core ([193a5dd](https://github.com/RalfZhang/ink-city/commit/193a5dd5ca6649af0fb0ec62cbf124f13fa0dc1e)), closes [#22](https://github.com/RalfZhang/ink-city/issues/22)
+
 ## [0.5.0](https://github.com/RalfZhang/ink-city/compare/v0.4.0...v0.5.0) (2026-06-16)
 
 
