@@ -11,7 +11,7 @@ use std::collections::HashSet;
 
 /// Top-level JSON keys of optional layers an OSM payload may carry, beyond
 /// the always-present `elements`.
-pub const LAYER_KEYS: &[&str] = &["water"];
+pub const LAYER_KEYS: &[&str] = &["water", "airports"];
 
 /// Which of `LAYER_KEYS` are present (as non-empty arrays) in an already
 /// parsed JSON value. Used right after a fetch, when we already hold a parsed

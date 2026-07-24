@@ -34,6 +34,8 @@ struct Style {
     preset: StylePreset,
     #[serde(rename = "showWater")]
     show_water: bool,
+    #[serde(rename = "showAirports")]
+    show_airports: bool,
 }
 
 #[derive(Serialize, Clone)]
@@ -207,7 +209,9 @@ async fn run_inner(app: &AppHandle, date: NaiveDate) -> Result<()> {
     let colors = colors_for(app, theme);
     let preset = *app.state::<AppState>().style.lock().unwrap();
     let show_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
-    let style = Style { background: colors.background, foreground: colors.foreground, preset, show_water };
+    let show_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
+    let style =
+        Style { background: colors.background, foreground: colors.foreground, preset, show_water, show_airports };
 
     let (tx, rx) = oneshot::channel::<Vec<u8>>();
     {

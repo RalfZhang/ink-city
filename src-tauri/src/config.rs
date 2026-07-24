@@ -100,6 +100,10 @@ pub struct Config {
     /// Draw the water layer on the wallpaper. Off by default; only surfaced in
     /// the UI when the current city's data actually has water.
     pub show_water: bool,
+    /// Draw the airport layer (runways + aprons) on the wallpaper. Off by
+    /// default; only surfaced in the UI when the current city's data actually
+    /// has an airport.
+    pub show_airports: bool,
 }
 
 impl Default for Config {
@@ -114,6 +118,7 @@ impl Default for Config {
             update_check: UpdateCheck::default(),
             auto_update: true,
             show_water: false,
+            show_airports: false,
         }
     }
 }

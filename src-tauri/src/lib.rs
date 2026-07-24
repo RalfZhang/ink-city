@@ -282,6 +282,7 @@ pub fn run() {
             commands::install_update,
             commands::set_update_strings,
             commands::apply_style_settings,
+            commands::apply_lab_settings,
             commands::get_color_defaults,
             commands::regenerate_now,
             commands::renderer_ready,

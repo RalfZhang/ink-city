@@ -1,7 +1,8 @@
 #!/usr/bin/env -S npx tsx
-// Render any location's map (roads + water) to PNG or SVG, both themes, without
-// the Tauri app. Reuses the portable core (drawRoads → drawWater) on a
-// node-canvas surface, so the output matches the desktop wallpaper exactly.
+// Render any location's map (roads + water + airports) to PNG or SVG, both
+// themes, without the Tauri app. Reuses the portable core (drawRoads →
+// drawWater/drawAirports) on a node-canvas surface, so the output matches the
+// desktop wallpaper exactly.
 // Unlike render-test (which replays a pre-generated city.json offline), this
 // fetches roads + water live from Overpass for any lat/lon. node-canvas resolves
 // only from the project's node_modules, so run this from inside the repo.
@@ -105,9 +106,12 @@ async function main() {
   const bbox = bboxForScreen(lat, lon, 10, width / height);
 
   console.log(`[render-map] ${lat}/${lon} @ ${width}x${height} ${preset} → ${types.join("+")} (${themes.join(", ")})`);
-  console.log(`[render-map] fetching roads + water from Overpass ...`);
+  console.log(`[render-map] fetching roads + water + airports from Overpass ...`);
   const osm = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION, spacingMs: 1500 });
-  console.log(`[render-map] ${osm.elements?.length ?? 0} ways, ${osm.water?.length ?? 0} water features`);
+  console.log(
+    `[render-map] ${osm.elements?.length ?? 0} ways, ${osm.water?.length ?? 0} water features, ` +
+      `${osm.airports?.length ?? 0} airport features`,
+  );
 
   mkdirSync(outDir, { recursive: true });
 
@@ -120,7 +124,13 @@ async function main() {
         bbox,
         width,
         height,
-        style: { background: theme.background, foreground: theme.foreground, preset, showWater: true },
+        style: {
+          background: theme.background,
+          foreground: theme.foreground,
+          preset,
+          showWater: true,
+          showAirports: true,
+        },
         osm,
       });
       const buf = type === "svg" ? canvas.toBuffer() : canvas.toBuffer("image/png");

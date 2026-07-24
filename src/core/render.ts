@@ -1,6 +1,6 @@
 import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
 import { project } from "./bbox";
-import { WATER_ALPHA } from "./constants";
+import { WATER_ALPHA, AIRPORT_ALPHA } from "./constants";
 
 // Pure canvas-drawing logic, decoupled from any IO. Takes a 2D context so it
 // works with a DOM canvas (desktop renderer + website) and with a headless
@@ -176,6 +176,51 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
   }
 }
 
+/**
+ * Draw airport runways (stroked centerlines) and aprons (filled polygons) on
+ * top of the roads — an airport is an opaque paved surface, so it covers any
+ * road that crosses it (see the layering note in drawRoads). Gated by the
+ * user's "show airports" Lab toggle (default off), and a no-op when the data
+ * has no `airports` key (older cached data, or no airport in this bbox).
+ * Runways use a fixed width rather than a real-world scale: OSM rarely tags
+ * `width` on them, and unlike roads there's no hierarchy to differentiate by
+ * preset.
+ */
+export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+  const airports = req.osm.airports;
+  if (!req.style.showAirports || !airports || airports.length === 0) return;
+  const { bbox, width, height, style } = req;
+  const color = mixColor(style.foreground, style.background, AIRPORT_ALPHA);
+
+  // Aprons: filled polygons.
+  ctx.fillStyle = color;
+  for (const f of airports) {
+    if (f.kind !== "apron" || f.polygon.outer.length < 3) continue;
+    ctx.beginPath();
+    addRing(ctx, f.polygon.outer, bbox, width, height);
+    ctx.fill();
+  }
+
+  // Runways: stroked centerlines. Square (`butt`) caps, unlike roads' round
+  // ones — a runway is a rectangular strip, not a network of joined lines.
+  const scale = Math.max(1, height / 1000);
+  ctx.strokeStyle = color;
+  ctx.lineCap = "butt";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = scale * 3.5;
+  ctx.beginPath();
+  for (const f of airports) {
+    if (f.kind !== "runway" || f.line.length < 2) continue;
+    const [x0, y0] = project(f.line[0].lat, f.line[0].lon, bbox, width, height);
+    ctx.moveTo(x0, y0);
+    for (let i = 1; i < f.line.length; i++) {
+      const [x, y] = project(f.line[i].lat, f.line[i].lon, bbox, width, height);
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+}
+
 /** Draw the road network onto `ctx`. Returns the number of ways drawn. */
 export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
@@ -183,8 +228,9 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   ctx.fillStyle = style.background;
   ctx.fillRect(0, 0, width, height);
 
-  // Water sits on the background, under the roads. drawWater leaves fillStyle
-  // changed, so set stroke state for roads afterwards.
+  // Water sits on the background, under everything. drawWater leaves fillStyle
+  // changed, so set stroke state for roads afterwards. (Airports draw last, on
+  // top of the roads — see the note at the drawAirports call below.)
   drawWater(ctx, req);
 
   ctx.strokeStyle = style.foreground;
@@ -224,5 +270,12 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
     }
     ctx.stroke();
   }
+
+  // Airports go on top of the roads: unlike water (a translucent underlay), a
+  // runway/apron is an opaque paved surface, and where a road crosses an
+  // airport the real-world layering is almost always road-under (roads tunnel
+  // beneath runways; overpasses across active runways are precluded by
+  // airspace clearance). Drawing last makes the airport read as one solid shape.
+  drawAirports(ctx, req);
   return drawn;
 }

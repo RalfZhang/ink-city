@@ -1,5 +1,5 @@
 #!/usr/bin/env -S npx tsx
-// Headless render harness for eyeballing the map (roads + water) without the
+// Headless render harness for eyeballing the map (roads + water + airports) without the
 // Tauri app. Reuses the portable `drawRoads` (which now also fills water) on a
 // node-canvas context — the core is written to be canvas-implementation
 // agnostic. Renders both themes so light/dark can be compared side by side.
@@ -57,12 +57,21 @@ function main() {
       bbox,
       width,
       height,
-      style: { background: theme.background, foreground: theme.foreground, preset, showWater: true },
+      style: {
+        background: theme.background,
+        foreground: theme.foreground,
+        preset,
+        showWater: true,
+        showAirports: true,
+      },
       osm,
     });
     const file = join(outDir, `${base}_${theme.name}_${ts}.png`);
     writeFileSync(file, canvas.toBuffer("image/png"));
-    console.log(`[render-test] ${theme.name}: ${drawn} ways, ${osm.water?.length ?? 0} water → ${file}`);
+    console.log(
+      `[render-test] ${theme.name}: ${drawn} ways, ${osm.water?.length ?? 0} water, ` +
+        `${osm.airports?.length ?? 0} airports → ${file}`,
+    );
   }
 }
 

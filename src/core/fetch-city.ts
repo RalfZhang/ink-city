@@ -13,6 +13,7 @@
 import type { Bbox, Osm } from "./types";
 import { fetchRoads, slimRoads } from "./overpass";
 import { fetchWater, slimWater } from "./water";
+import { fetchAirports, slimAirports } from "./airports";
 import { OSM_SCHEMA_VERSION } from "./constants";
 import { LAYER_IDS, type LayerId } from "./layers";
 
@@ -20,7 +21,7 @@ export type FetchCityOptions = {
   /** Which optional layers to fetch, beyond roads. Default: all of them. */
   layers?: readonly LayerId[];
   coordPrecision?: number;
-  /** Delay before the water fetch, so we don't hammer Overpass back-to-back. */
+  /** Delay before each optional-layer fetch, so we don't hammer Overpass back-to-back. */
   spacingMs?: number;
 };
 
@@ -28,7 +29,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * Fetch + slim every requested layer for `bbox`, returning one payload shaped
- * exactly like a precached CDN file: `{ v, elements, water? }`.
+ * exactly like a precached CDN file: `{ v, elements, water?, airports? }`.
  */
 export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Promise<Osm> {
   const layers = opts.layers ?? LAYER_IDS;
@@ -42,6 +43,12 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
     if (opts.spacingMs) await sleep(opts.spacingMs);
     const rawWater = await fetchWater(bbox);
     out.water = slimWater(rawWater, bbox, out.elements?.length ?? 0, precision);
+  }
+
+  if (layers.includes("airports")) {
+    if (opts.spacingMs) await sleep(opts.spacingMs);
+    const rawAirports = await fetchAirports(bbox);
+    out.airports = slimAirports(rawAirports, precision);
   }
 
   return out;

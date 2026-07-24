@@ -35,6 +35,7 @@ pub struct AppState {
     /// clicks can all race to trigger an install).
     pub update_installing: AtomicBool,
     pub show_water: AtomicBool,
+    pub show_airports: AtomicBool,
     /// Cache of "which optional layers (see `crate::layers::LAYER_KEYS`) does
     /// the cached OSM data for this date carry". Keyed by date so it's
     /// computed at most once per day per session (checking it means scanning
@@ -77,6 +78,7 @@ impl AppState {
             available_update: StdMutex::new(None),
             update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
+            show_airports: AtomicBool::new(cfg.show_airports),
             present_layers: StdMutex::new(None),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),

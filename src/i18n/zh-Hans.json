@@ -3,6 +3,7 @@
     "general": "通用",
     "city": "城市",
     "style": "样式",
+    "lab": "实验室",
     "about": "关于"
   },
   "general": {
@@ -62,6 +63,13 @@
     "background": "底色",
     "foreground": "线条",
     "reset": "重置",
+    "save": "保存"
+  },
+  "lab": {
+    "intro": "实验性地图图层。为壁纸开启额外数据——每一项只在今天的城市确实包含该数据时才出现。",
+    "showAirports": "显示机场",
+    "airportsHint": "机场跑道与停机坪以线条色填充。",
+    "noneAvailable": "今天的城市没有可配置的可选图层。",
     "save": "保存"
   },
   "about": {

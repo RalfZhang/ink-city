@@ -7,10 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import General from "./tabs/General";
 import City from "./tabs/City";
 import Style from "./tabs/Style";
+import Lab from "./tabs/Lab";
 import About from "./tabs/About";
 import type { Status } from "./types";
 
-type TabId = "general" | "city" | "style" | "about";
+type TabId = "general" | "city" | "style" | "lab" | "about";
 
 function App() {
   const { t } = useTranslation();
@@ -146,6 +147,7 @@ function App() {
           <TabsTrigger value="general">{t("sidebar.general")}</TabsTrigger>
           <TabsTrigger value="city">{t("sidebar.city")}</TabsTrigger>
           <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
+          <TabsTrigger value="lab">{t("sidebar.lab")}</TabsTrigger>
           <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
         </TabsList>
 
@@ -157,6 +159,9 @@ function App() {
         </TabsContent>
         <TabsContent value="style" className="flex-1 overflow-y-auto border-l px-4 py-4">
           <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
+        </TabsContent>
+        <TabsContent value="lab" className="flex-1 overflow-y-auto border-l px-4 py-4">
+          <Lab status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
         <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
           <About status={effectiveStatus} refresh={refresh} onError={onError} />

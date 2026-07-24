@@ -1,15 +1,22 @@
 // Opacity of the water fill/lines, composited over the background as a tint of
 // the foreground "ink" color (see mixColor in core/render.ts). Kept here so the
-// renderer and any future water UI share one source of truth.
+// renderer and the Lab-tab water UI share one source of truth.
 export const WATER_ALPHA = 0.3;
 
-// Schema version stamped on the OSM payload (`{ v, elements, water }`), whether
-// precached to the `data` branch or fetched live via the sidecar (both go
-// through fetch-city.ts). Bump this whenever the `water` shape changes in a
-// non-additive way, so a client can recognize data newer than it understands
-// and fall back instead of mis-rendering it. Absent ⇒ pre-water data (roads
-// only). Single source of truth for both the producer (scripts/osm-cli.ts)
-// and any future consumer.
+// Opacity of the airport fill/stroke, baked into an opaque color the same way
+// as WATER_ALPHA (see mixColor). Much higher than water because runways/aprons
+// read as solid paved surfaces, not a translucent tint. Same
+// single-source-of-truth rationale — the renderer and the Lab-tab UI both use it.
+export const AIRPORT_ALPHA = 0.8;
+
+// Schema version stamped on the OSM payload (`{ v, elements, water, airports }`),
+// whether precached to the `data` branch or fetched live via the sidecar (both
+// go through fetch-city.ts). Bump this whenever an existing layer's shape
+// changes in a non-additive way, so a client can recognize data newer than it
+// understands and fall back instead of mis-rendering it. Additive new layers
+// (water, airports) don't need a bump — old clients ignore unknown keys and a
+// missing layer reads as "off". Absent ⇒ pre-water data (roads only). Single
+// source of truth for both the producer (scripts/osm-cli.ts) and any consumer.
 export const OSM_SCHEMA_VERSION = 1;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";

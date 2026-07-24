@@ -26,4 +26,7 @@ export type Status = {
   showWater: boolean;
   /** Whether the current city's data has a water layer (gates the water toggle). */
   hasWater: boolean;
+  showAirports: boolean;
+  /** Whether the current city's data has an airport layer (gates the airport toggle). */
+  hasAirports: boolean;
 };

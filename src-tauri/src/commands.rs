@@ -36,6 +36,11 @@ pub struct Status {
     /// Whether the current city's data has a water layer (gates the UI toggle).
     #[serde(rename = "hasWater")]
     pub has_water: bool,
+    #[serde(rename = "showAirports")]
+    pub show_airports: bool,
+    /// Whether the current city's data has an airport layer (gates the UI toggle).
+    #[serde(rename = "hasAirports")]
+    pub has_airports: bool,
 }
 
 /// Build the current `Status` snapshot. Shared by the `get_status` command
@@ -68,6 +73,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
         has_water: pipeline::has_layer_for(app, date, "water"),
+        show_airports: state.show_airports.load(Ordering::Acquire),
+        has_airports: pipeline::has_layer_for(app, date, "airports"),
     };
     status
 }
@@ -199,6 +206,27 @@ pub fn apply_style_settings(
     Ok(ApplyResult { regen_started })
 }
 
+/// Atomic write of the Lab-tab settings. For now that's just the airport
+/// toggle; the water toggle still lives in the Style tab (a later commit will
+/// move it here). Same return contract as `apply_style_settings`: whether a
+/// re-render started.
+#[tauri::command]
+pub fn apply_lab_settings(app: AppHandle, show_airports: bool) -> Result<ApplyResult, String> {
+    let before_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
+
+    app.state::<AppState>().show_airports.store(show_airports, Ordering::Release);
+    persist(&app)?;
+    // Push the new flag immediately, even when no re-render is triggered below
+    // (a render, if any, will mark dirty again on completion).
+    app.state::<AppState>().mark_status_dirty();
+
+    let regen_started = before_airports != show_airports;
+    if regen_started {
+        pipeline::spawn_force_regen(app);
+    }
+    Ok(ApplyResult { regen_started })
+}
+
 #[tauri::command]
 pub fn get_color_defaults() -> ColorDefaults {
     ColorDefaults {
@@ -289,6 +317,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         update_check: *s.update_check.lock().unwrap(),
         auto_update: s.auto_update.load(Ordering::Acquire),
         show_water: s.show_water.load(Ordering::Acquire),
+        show_airports: s.show_airports.load(Ordering::Acquire),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }
