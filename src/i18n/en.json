@@ -89,7 +89,13 @@
   "devMode": {
     "advancePreviewTitle": "Advance Preview",
     "advancePreviewDesc": "Preview the city map for an upcoming day in the rotation, without changing today's wallpaper.",
-    "loading": "Rendering preview…"
+    "loading": "Rendering preview…",
+    "cleanCacheTitle": "Clean cache",
+    "cleanCacheDesc": "Delete downloaded map data and rendered wallpapers. They're re-fetched and re-rendered on the next update.",
+    "cleanCacheButton": "Clean",
+    "cleaning": "Cleaning…",
+    "cleanCacheResult": "Removed {{files}} files · freed {{size}}",
+    "cleanCacheEmpty": "Cache is already empty"
   },
   "common": {
     "loading": "loading…"

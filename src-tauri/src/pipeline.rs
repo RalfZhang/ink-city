@@ -280,22 +280,33 @@ fn primary_size(win: &WebviewWindow) -> Result<(u32, u32)> {
     Ok((s.width, s.height))
 }
 
-fn cleanup_cache(dir: &Path, keep_days: i64) -> Result<()> {
-    let today = city::today();
+/// Visit every file in `dir` that InkCity itself wrote — the downloaded OSM data
+/// (`YYYY-MM-DD.osm.json`) and the rendered wallpapers (`YYYY-MM-DD-<theme>.png`).
+/// Everything we write is keyed by a leading 10-char ISO date, so we match on
+/// that prefix (slicing rather than splitting on '.') and never touch anything
+/// else that might live in the cache dir. `f` receives each matching entry and
+/// its parsed date. Shared by `cleanup_cache` (age-based prune) and the Dev Mode
+/// `clean_cache` command (delete-all).
+pub fn for_each_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDate)) -> Result<()> {
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
         let name = entry.file_name();
         let name = name.to_string_lossy();
-        // Both `YYYY-MM-DD-<theme>.png` and `YYYY-MM-DD.osm.json` start with the
-        // 10-char ISO date, so slice the prefix rather than splitting on '.'.
         let date_part = name.get(..10).unwrap_or("");
         if let Ok(d) = NaiveDate::parse_from_str(date_part, "%Y-%m-%d") {
-            if (today - d).num_days() > keep_days {
-                let _ = fs::remove_file(entry.path());
-            }
+            f(&entry, d);
         }
     }
     Ok(())
+}
+
+fn cleanup_cache(dir: &Path, keep_days: i64) -> Result<()> {
+    let today = city::today();
+    for_each_artifact(dir, |entry, d| {
+        if (today - d).num_days() > keep_days {
+            let _ = fs::remove_file(entry.path());
+        }
+    })
 }
 
 /// Delete the current (date, theme) PNG and re-run the pipeline (OSM data is

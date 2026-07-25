@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -18,14 +19,25 @@ type Props = {
 
 type PreviewCity = { name: string; localName: string; country: string };
 type PreviewResult = { city: PreviewCity; date: string; pngBase64: string };
+type CleanCacheResult = { removedFiles: number; freedBytes: number };
 
 const DAYS_AHEAD_OPTIONS = [0, 1, 2, 3, 4, 5];
+
+/** Human-readable byte size (e.g. 1536 → "1.5 KB"). */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
+}
 
 export default function DevMode({ onError }: Props) {
   const { t } = useTranslation();
   const [daysAhead, setDaysAhead] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
+  const [cleaning, setCleaning] = useState(false);
+  const [cleanResult, setCleanResult] = useState<string | null>(null);
 
   const runPreview = async (value: string) => {
     setDaysAhead(value);
@@ -37,6 +49,26 @@ export default function DevMode({ onError }: Props) {
       onError(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const cleanCache = async () => {
+    setCleaning(true);
+    setCleanResult(null);
+    try {
+      const { removedFiles, freedBytes } = await invoke<CleanCacheResult>("clean_cache");
+      setCleanResult(
+        removedFiles === 0
+          ? t("devMode.cleanCacheEmpty")
+          : t("devMode.cleanCacheResult", {
+              files: removedFiles,
+              size: formatBytes(freedBytes),
+            }),
+      );
+    } catch (e) {
+      onError(e);
+    } finally {
+      setCleaning(false);
     }
   };
 
@@ -81,6 +113,33 @@ export default function DevMode({ onError }: Props) {
                 className="w-full rounded border"
               />
             </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-2">
+          <SettingRow
+            label={t("devMode.cleanCacheTitle")}
+            description={t("devMode.cleanCacheDesc")}
+            control={
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={cleanCache}
+                disabled={cleaning}
+              >
+                {cleaning ? (
+                  <Loader2 className="animate-spin size-3.5" />
+                ) : (
+                  <Trash2 className="size-3.5" />
+                )}
+                {cleaning ? t("devMode.cleaning") : t("devMode.cleanCacheButton")}
+              </Button>
+            }
+          />
+          {cleanResult && (
+            <div className="text-xs text-muted-foreground">{cleanResult}</div>
           )}
         </CardContent>
       </Card>

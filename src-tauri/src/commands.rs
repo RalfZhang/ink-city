@@ -336,6 +336,43 @@ pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
     app.opener().open_path(dir.to_string_lossy(), None::<&str>).map_err(|e| e.to_string())
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CleanCacheResult {
+    /// Number of cache files deleted.
+    pub removed_files: usize,
+    /// Total size of the deleted files, in bytes.
+    pub freed_bytes: u64,
+}
+
+/// Dev Mode's "Clean cache": delete every cached artifact in the app cache dir
+/// — the downloaded OSM data (`{date}.osm.json`) and the rendered wallpapers
+/// (`{date}-{theme}.png`). Everything we write there is keyed by a leading
+/// 10-char ISO date, so we match on that prefix (like `pipeline::cleanup_cache`)
+/// and never touch anything else that might live in the cache dir. The cache is
+/// fully regenerable: the next render re-fetches from the CDN / sidecar and
+/// re-renders. Returns how many files were removed and how many bytes were
+/// freed, for UI feedback.
+#[tauri::command]
+pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
+    let cache = pipeline::cache_dir(&app).map_err(|e| e.to_string())?;
+    let mut removed_files = 0usize;
+    let mut freed_bytes = 0u64;
+    // Delete every artifact `for_each_artifact` matches (the same date-prefix
+    // whitelist `pipeline::cleanup_cache` prunes by age), counting files and
+    // bytes freed for UI feedback.
+    pipeline::for_each_artifact(&cache, |entry, _date| {
+        let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
+        if std::fs::remove_file(entry.path()).is_ok() {
+            removed_files += 1;
+            freed_bytes += size;
+        }
+    })
+    .map_err(|e| e.to_string())?;
+    log::info!("[commands] clean_cache removed {} files ({} bytes)", removed_files, freed_bytes);
+    Ok(CleanCacheResult { removed_files, freed_bytes })
+}
+
 fn persist(app: &AppHandle) -> Result<(), String> {
     let s = app.state::<AppState>();
     let cfg = config::Config {
