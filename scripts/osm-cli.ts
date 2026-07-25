@@ -190,7 +190,7 @@ async function runPrecache(args: string[]): Promise<void> {
       cached.add(id);
       fetched++;
       console.log(
-        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ${out.water?.length ?? 0} water`,
+        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ${out.water?.length ?? 0} water, ${out.railways?.length ?? 0} railways`,
       );
     } catch (e) {
       // Don't fail the whole run for one city; the client falls back to the

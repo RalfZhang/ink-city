@@ -6,6 +6,7 @@ const { difference, union } = polygonClipping;
 
 import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "./types";
 import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
+import { TOL, samePt, dedupeAdjacent, roundPts } from "./geom";
 
 // Water layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
@@ -63,16 +64,7 @@ export async function fetchWater(
 
 // --- geometry helpers ---
 
-const TOL = 1e-7; // ~1cm; endpoint-match precision (before final coord rounding)
 const qkey = (p: RawGeom) => `${Math.round(p.lat / TOL)},${Math.round(p.lon / TOL)}`;
-const samePt = (a: RawGeom, b: RawGeom) => Math.abs(a.lat - b.lat) < TOL && Math.abs(a.lon - b.lon) < TOL;
-
-/** Drop consecutive duplicate points (cheap, avoids zero-length segments). */
-function dedupeAdjacent(pts: RawGeom[]): RawGeom[] {
-  const out: RawGeom[] = [];
-  for (const p of pts) if (out.length === 0 || !samePt(out[out.length - 1], p)) out.push(p);
-  return out;
-}
 
 /**
  * Greedily join segments sharing endpoints into maximal chains, tracking which
@@ -429,9 +421,7 @@ export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecisio
 }
 
 function roundFeatures(features: WaterFeature[], precision: number): WaterFeature[] {
-  const f = 10 ** precision;
-  const r = (v: number) => Math.round(v * f) / f;
-  const ring = (pts: Geom[]) => pts.map((p) => ({ lat: r(p.lat), lon: r(p.lon) }));
+  const ring = (pts: Geom[]) => roundPts(pts, precision);
   return features.map((feat) => {
     if (feat.kind === "line") return { kind: "line", cls: feat.cls, line: ring(feat.line) };
     return {

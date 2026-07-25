@@ -26,6 +26,7 @@ export default function Lab({ status, busy, onError }: Props) {
 
   const [showAirports, setShowAirports] = useState<boolean>(status.showAirports);
   const [showWater, setShowWater] = useState<boolean>(status.showWater);
+  const [showRailways, setShowRailways] = useState<boolean>(status.showRailways);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
@@ -53,7 +54,10 @@ export default function Lab({ status, busy, onError }: Props) {
     return () => clearTimeout(timer);
   }, [saving]);
 
-  const dirty = showAirports !== status.showAirports || showWater !== status.showWater;
+  const dirty =
+    showAirports !== status.showAirports ||
+    showWater !== status.showWater ||
+    showRailways !== status.showRailways;
 
   const save = async () => {
     setSaving(true);
@@ -62,6 +66,7 @@ export default function Lab({ status, busy, onError }: Props) {
       const result = await invoke<{ regenStarted: boolean }>("apply_lab_settings", {
         showAirports,
         showWater,
+        showRailways,
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -80,6 +85,16 @@ export default function Lab({ status, busy, onError }: Props) {
           description={t("lab.airportsHint")}
           control={
             <Switch checked={showAirports} onCheckedChange={setShowAirports} disabled={saving} />
+          }
+        />
+
+        <Separator />
+
+        <SettingRow
+          label={t("lab.showRailways")}
+          description={t("lab.railwaysHint")}
+          control={
+            <Switch checked={showRailways} onCheckedChange={setShowRailways} disabled={saving} />
           }
         />
 

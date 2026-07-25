@@ -1,6 +1,6 @@
 import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
 import { project } from "./bbox";
-import { WATER_ALPHA, RUNWAY_ALPHA } from "./constants";
+import { WATER_ALPHA, RUNWAY_ALPHA, RAILWAY_ALPHA } from "./constants";
 
 // Pure canvas-drawing logic, decoupled from any IO. Takes a 2D context so it
 // works with a DOM canvas (desktop renderer + website) and with a headless
@@ -218,6 +218,41 @@ export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): void 
   strokeKind("runway", scale * 5);
 }
 
+/**
+ * Draw the railway layer on top of the roads: surface rail centerlines as a
+ * dashed line — the classic cartographic railway symbol, and visually distinct
+ * from the solid road network. Gated by the user's "show railways" Lab toggle
+ * (default off), and a no-op when the data has no `railways` key (older cached
+ * data, or no railway in this bbox). Butt caps give clean rectangular dash
+ * segments; the dash is reset before returning so it can't leak into the
+ * airport layer drawn afterwards.
+ */
+export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+  const railways = req.osm.railways;
+  if (!req.style.showRailways || !railways || railways.length === 0) return;
+  const { bbox, width, height, style } = req;
+  const color = mixColor(style.foreground, style.background, RAILWAY_ALPHA);
+  const scale = Math.max(1, height / 1000);
+
+  ctx.strokeStyle = color;
+  ctx.lineCap = "butt";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = scale * 0.9;
+  ctx.setLineDash([scale * 4.5, scale * 3.5]);
+  ctx.beginPath();
+  for (const f of railways) {
+    if (f.line.length < 2) continue;
+    const [x0, y0] = project(f.line[0].lat, f.line[0].lon, bbox, width, height);
+    ctx.moveTo(x0, y0);
+    for (let i = 1; i < f.line.length; i++) {
+      const [x, y] = project(f.line[i].lat, f.line[i].lon, bbox, width, height);
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.stroke();
+  ctx.setLineDash([]); // don't leak the dash into later layers (airports)
+}
+
 /** Draw the road network onto `ctx`. Returns the number of ways drawn. */
 export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
@@ -268,11 +303,17 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
     ctx.stroke();
   }
 
-  // Airports go on top of the roads: where a road crosses a runway/taxiway the
-  // real-world layering is almost always road-under (roads tunnel beneath
-  // runways; overpasses across active runways are precluded by airspace
-  // clearance). Drawing last makes the runway/taxiway network read as one
-  // continuous shape rather than being broken up by the roads underneath.
+  // Railways sit on top of the roads (dashed centerlines), then airports on top
+  // of everything. Railways-over-roads keeps the rail network reading as one
+  // continuous dashed line at grade crossings instead of being chopped up by
+  // the roads it crosses.
+  drawRailways(ctx, req);
+
+  // Airports go on top: where a road crosses a runway/taxiway the real-world
+  // layering is almost always road-under (roads tunnel beneath runways;
+  // overpasses across active runways are precluded by airspace clearance).
+  // Drawing last makes the runway/taxiway network read as one continuous shape
+  // rather than being broken up by the roads underneath.
   drawAirports(ctx, req);
   return drawn;
 }

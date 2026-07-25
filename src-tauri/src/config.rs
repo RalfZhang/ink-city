@@ -104,6 +104,9 @@ pub struct Config {
     /// default; only surfaced in the UI when the current city's data actually
     /// has an airport.
     pub show_airports: bool,
+    /// Draw the railway layer (surface rail centerlines) on the wallpaper. Off
+    /// by default.
+    pub show_railways: bool,
     /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
     /// the 7-click gesture on the version number in About. Persisted so the tab
     /// stays unlocked across restarts. (The dev-only "bypass cache & CDN" toggle
@@ -125,6 +128,7 @@ impl Default for Config {
             auto_update: true,
             show_water: false,
             show_airports: false,
+            show_railways: false,
             dev_mode: false,
         }
     }

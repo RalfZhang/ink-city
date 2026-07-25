@@ -1,5 +1,6 @@
-import type { AirportFeature, Bbox, Geom } from "./types";
+import type { AirportFeature, Bbox } from "./types";
 import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
+import { dedupeAdjacent, roundPts } from "./geom";
 
 // Airport layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
@@ -37,16 +38,6 @@ export async function fetchAirports(
   return (await fetchOverpass(buildAirportsQuery(b), mirrors, opts)) as RawOsm;
 }
 
-const TOL = 1e-7; // ~1cm; matches water.ts's endpoint-match precision
-const samePt = (a: RawGeom, b: RawGeom) => Math.abs(a.lat - b.lat) < TOL && Math.abs(a.lon - b.lon) < TOL;
-
-/** Drop consecutive duplicate points (cheap, avoids zero-length segments). */
-function dedupeAdjacent(pts: RawGeom[]): RawGeom[] {
-  const out: RawGeom[] = [];
-  for (const p of pts) if (out.length === 0 || !samePt(out[out.length - 1], p)) out.push(p);
-  return out;
-}
-
 /**
  * Assemble a raw runway/taxiway Overpass response into slim, render-ready
  * features. Coordinates are optionally rounded to `coordPrecision` decimals —
@@ -71,8 +62,5 @@ export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeatu
 }
 
 function roundFeatures(features: AirportFeature[], precision: number): AirportFeature[] {
-  const f = 10 ** precision;
-  const r = (v: number) => Math.round(v * f) / f;
-  const ring = (pts: Geom[]) => pts.map((p) => ({ lat: r(p.lat), lon: r(p.lon) }));
-  return features.map((feat) => ({ kind: feat.kind, line: ring(feat.line) }));
+  return features.map((feat) => ({ kind: feat.kind, line: roundPts(feat.line, precision) }));
 }

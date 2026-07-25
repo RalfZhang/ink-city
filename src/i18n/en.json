@@ -68,6 +68,8 @@
     "intro": "These features are experimental, may be buggy, and aren't guaranteed to work.",
     "showAirports": "Show airports",
     "airportsHint": "Airport runways and taxiways are drawn in the line color.",
+    "showRailways": "Show railways",
+    "railwaysHint": "Surface rail lines are drawn as a dashed line in the line color.",
     "showWater": "Show water bodies",
     "waterHint": "Rivers, lakes and sea are tinted with the line color",
     "save": "Save"

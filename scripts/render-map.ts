@@ -130,6 +130,7 @@ async function main() {
           preset,
           showWater: true,
           showAirports: true,
+          showRailways: true,
         },
         osm,
       });

@@ -31,6 +31,8 @@ export type Style = {
   showWater?: boolean;
   /** Whether to draw the airport layer. Absent ⇒ off (matches the config default). */
   showAirports?: boolean;
+  /** Whether to draw the railway layer. Absent ⇒ off (matches the config default). */
+  showRailways?: boolean;
 };
 
 // --- OSM Overpass shapes (only the fields we read) ---
@@ -72,6 +74,15 @@ export type WaterFeature =
  */
 export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
 
+// --- Railway layer ---
+// Surface heavy/light rail centerlines (railway=rail / light_rail /
+// narrow_gauge), stroked as a dashed line — the classic cartographic railway
+// symbol, which also reads as distinct from the solid road network. Underground
+// (subway) and on-street (tram) tracks are deliberately excluded upstream (see
+// core/railways.ts): the wallpaper shows above-ground features, and trams would
+// just double up the roads they run in. Like airports, a single polyline shape.
+export type RailwayFeature = { line: Geom[] };
+
 /**
  * The OSM container the renderer reads. `elements` (roads) is the original,
  * always-present shape. `water`, `airports`, and `v` are additive and
@@ -81,10 +92,12 @@ export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
  */
 export type Osm = {
   elements?: Way[];
-  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`+ = adds airports. */
+  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`/`3` = adds airports; `4`+ = adds railways. */
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
   /** Pre-assembled runway/taxiway centerlines. Absent ⇒ no airport layer. */
   airports?: AirportFeature[];
+  /** Pre-assembled railway centerlines. Absent ⇒ no railway layer. */
+  railways?: RailwayFeature[];
 };

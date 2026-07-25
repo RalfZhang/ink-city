@@ -63,6 +63,7 @@ function main() {
         preset,
         showWater: true,
         showAirports: true,
+        showRailways: true,
       },
       osm,
     });
@@ -70,7 +71,7 @@ function main() {
     writeFileSync(file, canvas.toBuffer("image/png"));
     console.log(
       `[render-test] ${theme.name}: ${drawn} ways, ${osm.water?.length ?? 0} water, ` +
-        `${osm.airports?.length ?? 0} airports → ${file}`,
+        `${osm.airports?.length ?? 0} airports, ${osm.railways?.length ?? 0} railways → ${file}`,
     );
   }
 }

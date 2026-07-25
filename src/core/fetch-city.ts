@@ -14,6 +14,7 @@ import type { Bbox, Osm } from "./types";
 import { fetchRoads, slimRoads } from "./overpass";
 import { fetchWater, slimWater } from "./water";
 import { fetchAirports, slimAirports } from "./airports";
+import { fetchRailways, slimRailways } from "./railways";
 import { OSM_SCHEMA_VERSION } from "./constants";
 import { LAYER_IDS, type LayerId } from "./layers";
 
@@ -49,6 +50,12 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
     if (opts.spacingMs) await sleep(opts.spacingMs);
     const rawAirports = await fetchAirports(bbox);
     out.airports = slimAirports(rawAirports, precision);
+  }
+
+  if (layers.includes("railways")) {
+    if (opts.spacingMs) await sleep(opts.spacingMs);
+    const rawRailways = await fetchRailways(bbox);
+    out.railways = slimRailways(rawRailways, precision);
   }
 
   return out;
