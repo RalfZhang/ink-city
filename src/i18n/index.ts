@@ -2,26 +2,39 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import en from "./en.json";
 import zhHans from "./zh-Hans.json";
+import zhHant from "./zh-Hant.json";
+import es from "./es.json";
+import fr from "./fr.json";
+import de from "./de.json";
 
 export const STORAGE_KEY = "inkcity:lang";
 
-export type LocaleCode = "en" | "zh-Hans";
+export type LocaleCode = "en" | "zh-Hans" | "zh-Hant" | "es" | "fr" | "de";
 export type LocaleChoice = "auto" | LocaleCode;
 
-const SUPPORTED: LocaleCode[] = ["en", "zh-Hans"];
+const SUPPORTED: LocaleCode[] = ["en", "zh-Hans", "zh-Hant", "es", "fr", "de"];
 
 function isLocaleCode(v: unknown): v is LocaleCode {
   return typeof v === "string" && (SUPPORTED as string[]).includes(v);
 }
 
 /**
- * Resolve the OS locale to one of our supported codes.
- * All `zh-*` variants currently collapse to `zh-Hans`; when `zh-Hant` is added
- * we'll branch here.
+ * Resolve the OS locale to one of our supported codes. Chinese branches on
+ * script/region: Traditional for Taiwan / Hong Kong / Macau (or an explicit
+ * `Hant` script), Simplified otherwise. Spanish / French / German match on the
+ * primary subtag (any region — `es-419`, `fr-CA`, `de-AT`, … all collapse).
  */
 function detectFromNavigator(): LocaleCode {
   const lang = (navigator.language || "en").toLowerCase();
-  if (lang.startsWith("zh")) return "zh-Hans";
+  if (lang.startsWith("zh")) {
+    if (lang.includes("hant") || lang.includes("tw") || lang.includes("hk") || lang.includes("mo")) {
+      return "zh-Hant";
+    }
+    return "zh-Hans";
+  }
+  if (lang.startsWith("es")) return "es";
+  if (lang.startsWith("fr")) return "fr";
+  if (lang.startsWith("de")) return "de";
   return "en";
 }
 
@@ -35,6 +48,10 @@ i18n.use(initReactI18next).init({
   resources: {
     en: { translation: en },
     "zh-Hans": { translation: zhHans },
+    "zh-Hant": { translation: zhHant },
+    es: { translation: es },
+    fr: { translation: fr },
+    de: { translation: de },
   },
   lng: initialLanguage(),
   fallbackLng: "en",

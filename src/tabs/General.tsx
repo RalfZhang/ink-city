@@ -108,6 +108,10 @@ export default function General({ status, refresh, onError }: Props) {
                   <SelectItem value="auto">{t("general.languageAuto")}</SelectItem>
                   <SelectItem value="en">English</SelectItem>
                   <SelectItem value="zh-Hans">简体中文</SelectItem>
+                  <SelectItem value="zh-Hant">繁體中文</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
                 </SelectContent>
               </Select>
             }

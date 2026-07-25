@@ -1,0 +1,113 @@
+{
+  "sidebar": {
+    "general": "一般",
+    "city": "城市",
+    "style": "樣式",
+    "lab": "實驗室",
+    "about": "關於",
+    "devMode": "開發者模式"
+  },
+  "general": {
+    "enabledLabel": "開啟每日更新",
+    "enabledDesc": "每天午夜自動切換到下一個城市的桌布",
+    "autostartLabel": "登入時啟動",
+    "autostartDesc": "登入系統時自動啟動 InkCity",
+    "hideTrayLabel": "隱藏系統匣圖示",
+    "hideTrayDescOn": "系統匣圖示隱藏後，需要重新啟動應用程式才能開啟此視窗",
+    "hideTrayDescOff": "在選單列保持圖示可見",
+    "updateCheckLabel": "檢查更新",
+    "updateCheckDesc": "有新版本時通知我。",
+    "autoUpdateLabel": "自動安裝更新",
+    "autoUpdateDesc": "按上面的頻率自動下載並安裝新版本，然後重啟，無需確認。",
+    "updateDaily": "每天",
+    "updateWeekly": "每週",
+    "updateMonthly": "每月",
+    "updateNever": "不自動檢查",
+    "checkNow": "立即檢查",
+    "checking": "檢查中…",
+    "upToDate": "已是最新版本",
+    "updateAvailable": "有新版本 {{version}}",
+    "installRestart": "安裝並重啟",
+    "installing": "下載中…",
+    "updateError": "檢查更新失敗",
+    "updateUnavailable": "暫時無法連線更新伺服器，請稍後再試",
+    "languageLabel": "語言",
+    "languageAuto": "跟隨系統",
+    "hideWindow": "隱藏視窗",
+    "quit": "結束"
+  },
+  "city": {
+    "today": "今日",
+    "population": "人口 {{value}}",
+    "regenerate": "重新生成",
+    "regenerating": "生成中…",
+    "wikipedia": "Wikipedia",
+    "googleMaps": "Google 地圖"
+  },
+  "style": {
+    "theme": "地圖主題",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeSystem": "跟隨系統",
+    "mapStyle": "地圖樣式",
+    "presetMinimal": "極簡",
+    "presetStandard": "標準",
+    "presetBold": "強烈",
+    "hintMinimal": "僅顯示主幹道",
+    "hintStandard": "按道路等級分級線寬",
+    "hintBold": "高對比度層級",
+    "lightColors": "淺色模式地圖配色",
+    "darkColors": "深色模式地圖配色",
+    "active": "目前",
+    "background": "底色",
+    "foreground": "線條",
+    "reset": "重設",
+    "save": "儲存"
+  },
+  "lab": {
+    "intro": "實驗性功能，可能存在 bug，不保證可用。",
+    "showAirports": "顯示機場",
+    "airportsHint": "機場跑道與滑行道以線條色繪製。",
+    "showWater": "顯示水體",
+    "waterHint": "河流、湖泊與海洋以線條色淡染",
+    "save": "儲存"
+  },
+  "about": {
+    "p1": "InkCity 每天把你的桌布換成不同城市的道路地圖。",
+    "p2": "更多功能正在開發中。",
+    "github": "GitHub",
+    "feedbackTitle": "意見回饋",
+    "feedbackDesc": "發現 bug 或有建議？歡迎至 GitHub 提出 issue。如果是 bug，請附上你的作業系統版本，必要時附上觸發問題的城市和日期。",
+    "openIssues": "提交意見回饋",
+    "logsTitle": "記錄檔",
+    "logsDesc": "InkCity 會保留記錄檔以便排查問題。回報 bug 時請附上記錄檔。",
+    "openLogs": "開啟記錄檔",
+    "dataTitle": "資料來源與致謝",
+    "osmAttribution": "道路地圖資料 © <0>OpenStreetMap</0> 貢獻者，依 <1>ODbL</1> 協議授權。",
+    "geonamesAttribution": "城市清單來自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授權。"
+  },
+  "devMode": {
+    "advancePreviewTitle": "提前預覽",
+    "advancePreviewDesc": "預覽輪替中未來某一天將顯示的城市地圖，不會更改今天的桌布。",
+    "loading": "正在渲染預覽…"
+  },
+  "common": {
+    "loading": "載入中…"
+  },
+  "tray": {
+    "openSettings": "開啟設定",
+    "dailyUpdates": "每日更新",
+    "regenerateNow": "立即重新生成",
+    "quit": "結束 InkCity",
+    "updateAvailable": "有可用更新…"
+  },
+  "update": {
+    "notifyBody": "有新版本 {version} 可用 — 開啟 InkCity 更新",
+    "downloading": "正在下載更新…",
+    "promptBody": "有新版本 {version} 可用，是否立即更新？",
+    "updateNow": "立即更新",
+    "later": "稍後",
+    "upToDate": "已是最新版本。",
+    "failed": "更新失敗，請稍後再試。"
+  }
+}

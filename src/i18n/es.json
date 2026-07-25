@@ -1,0 +1,113 @@
+{
+  "sidebar": {
+    "general": "General",
+    "city": "Ciudad",
+    "style": "Estilo",
+    "lab": "Laboratorio",
+    "about": "Acerca de",
+    "devMode": "Modo desarrollador"
+  },
+  "general": {
+    "enabledLabel": "Activar actualizaciones diarias",
+    "enabledDesc": "Cambia el fondo de pantalla a medianoche por el de la siguiente ciudad.",
+    "autostartLabel": "Abrir al iniciar sesión",
+    "autostartDesc": "Inicia InkCity automáticamente al iniciar sesión.",
+    "hideTrayLabel": "Ocultar el icono de la bandeja del sistema",
+    "hideTrayDescOn": "Con el icono oculto, vuelve a abrir la aplicación para mostrar esta ventana.",
+    "hideTrayDescOff": "El icono permanece visible en la barra de menús.",
+    "updateCheckLabel": "Buscar actualizaciones",
+    "updateCheckDesc": "Avisarme cuando haya una nueva versión disponible.",
+    "autoUpdateLabel": "Instalar actualizaciones automáticamente",
+    "autoUpdateDesc": "Descarga e instala las nuevas versiones según la frecuencia indicada arriba y reinicia — sin necesidad de confirmación.",
+    "updateDaily": "Diaria",
+    "updateWeekly": "Semanal",
+    "updateMonthly": "Mensual",
+    "updateNever": "Nunca",
+    "checkNow": "Buscar ahora",
+    "checking": "Buscando…",
+    "upToDate": "Ya tienes la última versión",
+    "updateAvailable": "Versión {{version}} disponible",
+    "installRestart": "Instalar y reiniciar",
+    "installing": "Descargando…",
+    "updateError": "Error al buscar actualizaciones",
+    "updateUnavailable": "Servidor de actualizaciones no disponible, inténtalo más tarde",
+    "languageLabel": "Idioma",
+    "languageAuto": "Automático",
+    "hideWindow": "Ocultar ventana",
+    "quit": "Salir"
+  },
+  "city": {
+    "today": "Hoy",
+    "population": "pob. {{value}}",
+    "regenerate": "Regenerar",
+    "regenerating": "Generando…",
+    "wikipedia": "Wikipedia",
+    "googleMaps": "Google Maps"
+  },
+  "style": {
+    "theme": "Tema del mapa",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Automático",
+    "mapStyle": "Estilo del mapa",
+    "presetMinimal": "Minimalista",
+    "presetStandard": "Estándar",
+    "presetBold": "Intenso",
+    "hintMinimal": "Solo vías principales",
+    "hintStandard": "Grosor según la clase de vía",
+    "hintBold": "Jerarquía de alto contraste",
+    "lightColors": "Paleta clara",
+    "darkColors": "Paleta oscura",
+    "active": "Activo",
+    "background": "Fondo",
+    "foreground": "Líneas",
+    "reset": "Restablecer",
+    "save": "Guardar"
+  },
+  "lab": {
+    "intro": "Estas funciones son experimentales, pueden tener errores y no se garantiza que funcionen.",
+    "showAirports": "Mostrar aeropuertos",
+    "airportsHint": "Las pistas y calles de rodaje se dibujan con el color de las líneas.",
+    "showWater": "Mostrar masas de agua",
+    "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas",
+    "save": "Guardar"
+  },
+  "about": {
+    "p1": "InkCity cambia el fondo de escritorio cada día por el mapa de carreteras de una ciudad distinta.",
+    "p2": "Próximamente más funciones.",
+    "github": "GitHub",
+    "feedbackTitle": "Comentarios",
+    "feedbackDesc": "¿Encontraste un error o tienes una idea? Abre un issue en GitHub. Para informes de errores, incluye la versión de tu sistema operativo y, si es relevante, la ciudad y la fecha en que ocurrió el problema.",
+    "openIssues": "Enviar comentarios",
+    "logsTitle": "Registros",
+    "logsDesc": "InkCity guarda un archivo de registro para ayudar a diagnosticar problemas. Adjúntalo al reportar un error.",
+    "openLogs": "Abrir registros",
+    "dataTitle": "Datos y agradecimientos",
+    "osmAttribution": "Datos del mapa de carreteras © <0>OpenStreetMap</0>, con licencia <1>ODbL</1>.",
+    "geonamesAttribution": "Lista de ciudades de <0>GeoNames</0>, con licencia <1>CC BY 4.0</1>."
+  },
+  "devMode": {
+    "advancePreviewTitle": "Vista previa anticipada",
+    "advancePreviewDesc": "Muestra la vista previa del mapa de una ciudad para un día próximo en la rotación, sin cambiar el fondo de pantalla de hoy.",
+    "loading": "Generando vista previa…"
+  },
+  "common": {
+    "loading": "cargando…"
+  },
+  "tray": {
+    "openSettings": "Abrir ajustes",
+    "dailyUpdates": "Actualizaciones diarias",
+    "regenerateNow": "Regenerar",
+    "quit": "Salir de InkCity",
+    "updateAvailable": "Actualización disponible…"
+  },
+  "update": {
+    "notifyBody": "La nueva versión {version} ya está disponible — abre InkCity para actualizar.",
+    "downloading": "Descargando actualización…",
+    "promptBody": "La versión {version} está disponible. ¿Actualizar ahora?",
+    "updateNow": "Actualizar ahora",
+    "later": "Más tarde",
+    "upToDate": "Ya tienes la última versión.",
+    "failed": "Error al actualizar. Inténtalo de nuevo más tarde."
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "sidebar": {
+    "general": "Général",
+    "city": "Ville",
+    "style": "Style",
+    "lab": "Labo",
+    "about": "À propos",
+    "devMode": "Mode développeur"
+  },
+  "general": {
+    "enabledLabel": "Activer les mises à jour quotidiennes",
+    "enabledDesc": "Change le fond d'écran à minuit pour celui de la ville suivante.",
+    "autostartLabel": "Ouvrir à la connexion",
+    "autostartDesc": "Démarre InkCity automatiquement à la connexion.",
+    "hideTrayLabel": "Masquer l'icône dans la zone de notification",
+    "hideTrayDescOn": "Une fois l'icône masquée, relancez l'application pour rouvrir cette fenêtre.",
+    "hideTrayDescOff": "L'icône reste visible dans la barre des menus.",
+    "updateCheckLabel": "Rechercher des mises à jour",
+    "updateCheckDesc": "Me prévenir quand une nouvelle version est disponible.",
+    "autoUpdateLabel": "Installer les mises à jour automatiquement",
+    "autoUpdateDesc": "Télécharge et installe les nouvelles versions selon la fréquence ci-dessus, puis redémarre — sans confirmation.",
+    "updateDaily": "Quotidienne",
+    "updateWeekly": "Hebdomadaire",
+    "updateMonthly": "Mensuelle",
+    "updateNever": "Jamais",
+    "checkNow": "Vérifier maintenant",
+    "checking": "Vérification…",
+    "upToDate": "Vous êtes à jour",
+    "updateAvailable": "Version {{version}} disponible",
+    "installRestart": "Installer et redémarrer",
+    "installing": "Téléchargement…",
+    "updateError": "Échec de la vérification des mises à jour",
+    "updateUnavailable": "Serveur de mise à jour indisponible, réessayez plus tard",
+    "languageLabel": "Langue",
+    "languageAuto": "Automatique",
+    "hideWindow": "Masquer la fenêtre",
+    "quit": "Quitter"
+  },
+  "city": {
+    "today": "Aujourd'hui",
+    "population": "pop. {{value}}",
+    "regenerate": "Régénérer",
+    "regenerating": "Génération…",
+    "wikipedia": "Wikipedia",
+    "googleMaps": "Google Maps"
+  },
+  "style": {
+    "theme": "Thème de la carte",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "themeSystem": "Automatique",
+    "mapStyle": "Style de carte",
+    "presetMinimal": "Minimaliste",
+    "presetStandard": "Standard",
+    "presetBold": "Contrasté",
+    "hintMinimal": "Routes principales uniquement",
+    "hintStandard": "Largeur selon la catégorie de route",
+    "hintBold": "Hiérarchie à fort contraste",
+    "lightColors": "Palette claire",
+    "darkColors": "Palette sombre",
+    "active": "Actif",
+    "background": "Arrière-plan",
+    "foreground": "Lignes",
+    "reset": "Réinitialiser",
+    "save": "Enregistrer"
+  },
+  "lab": {
+    "intro": "Ces fonctionnalités sont expérimentales, peuvent contenir des bugs et ne sont pas garanties de fonctionner.",
+    "showAirports": "Afficher les aéroports",
+    "airportsHint": "Les pistes et voies de circulation des aéroports sont tracées dans la couleur des lignes.",
+    "showWater": "Afficher les plans d'eau",
+    "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes",
+    "save": "Enregistrer"
+  },
+  "about": {
+    "p1": "InkCity remplace chaque jour votre fond d'écran par la carte routière d'une ville différente.",
+    "p2": "D'autres fonctionnalités arrivent bientôt.",
+    "github": "GitHub",
+    "feedbackTitle": "Commentaires",
+    "feedbackDesc": "Vous avez trouvé un bug ou avez une idée ? Ouvrez une issue sur GitHub. Pour un rapport de bug, merci d'indiquer la version de votre système d'exploitation et, si pertinent, la ville et la date concernées.",
+    "openIssues": "Envoyer des commentaires",
+    "logsTitle": "Journaux",
+    "logsDesc": "InkCity conserve un fichier journal pour aider à diagnostiquer les problèmes. Joignez-le lors d'un signalement de bug.",
+    "openLogs": "Ouvrir les journaux",
+    "dataTitle": "Données et remerciements",
+    "osmAttribution": "Données cartographiques © <0>OpenStreetMap</0>, sous licence <1>ODbL</1>.",
+    "geonamesAttribution": "Liste des villes fournie par <0>GeoNames</0>, sous licence <1>CC BY 4.0</1>."
+  },
+  "devMode": {
+    "advancePreviewTitle": "Aperçu anticipé",
+    "advancePreviewDesc": "Prévisualisez la carte d'une ville pour un jour à venir dans la rotation, sans changer le fond d'écran du jour.",
+    "loading": "Génération de l'aperçu…"
+  },
+  "common": {
+    "loading": "chargement…"
+  },
+  "tray": {
+    "openSettings": "Ouvrir les paramètres",
+    "dailyUpdates": "Mises à jour quotidiennes",
+    "regenerateNow": "Régénérer",
+    "quit": "Quitter InkCity",
+    "updateAvailable": "Mise à jour disponible…"
+  },
+  "update": {
+    "notifyBody": "La nouvelle version {version} est disponible — ouvrez InkCity pour la mettre à jour.",
+    "downloading": "Téléchargement de la mise à jour…",
+    "promptBody": "La version {version} est disponible. Mettre à jour maintenant ?",
+    "updateNow": "Mettre à jour",
+    "later": "Plus tard",
+    "upToDate": "Vous êtes déjà à jour.",
+    "failed": "Échec de la mise à jour. Veuillez réessayer plus tard."
+  }
+}
