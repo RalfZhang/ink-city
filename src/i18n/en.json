@@ -34,15 +34,15 @@
     "languageLabel": "Language",
     "languageAuto": "Auto",
     "hideWindow": "Hide window",
-    "quit": "Quit InkCity"
+    "quit": "Quit"
   },
   "city": {
     "today": "Today",
     "population": "pop {{value}}",
     "regenerate": "Regenerate",
     "regenerating": "Generating…",
-    "wikipedia": "Open on Wikipedia",
-    "googleMaps": "Open on Google Maps"
+    "wikipedia": "Wikipedia",
+    "googleMaps": "Google Maps"
   },
   "style": {
     "theme": "Map theme",
@@ -81,7 +81,7 @@
     "openIssues": "Submit feedback",
     "logsTitle": "Logs",
     "logsDesc": "InkCity keeps a log file to help diagnose problems. Attach it when reporting a bug.",
-    "openLogs": "Open logs folder",
+    "openLogs": "Open logs",
     "dataTitle": "Data & Acknowledgements",
     "osmAttribution": "Road map data © <0>OpenStreetMap</0> contributors, licensed under <1>ODbL</1>.",
     "geonamesAttribution": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>."

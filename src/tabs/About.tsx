@@ -192,7 +192,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
             <p className="text-sm text-muted-foreground mt-2">{t("about.p2")}</p>
           </CardContent>
           <CardFooter className="justify-end">
-            <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_REPO)}>
+            <Button className="min-w-28" variant="outline" size="sm" onClick={() => openUrl(GITHUB_REPO)}>
               {t("about.github")}
             </Button>
           </CardFooter>
@@ -281,7 +281,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
               label={t("about.logsTitle")}
               description={t("about.logsDesc")}
               control={
-                <Button variant="outline" size="sm" onClick={openLogs}>
+                <Button className="min-w-28" variant="outline" size="sm" onClick={openLogs}>
                   {t("about.openLogs")}
                 </Button>
               }
