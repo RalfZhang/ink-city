@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import SettingRow from "@/components/SettingRow";
 import type { Status } from "../types";
@@ -14,16 +15,17 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
-// "Lab": home for optional data-layer toggles. For now just the airport toggle
-// (the water toggle still lives in the Style tab; a later commit moves it here).
-// A layer is only meaningful when the current city's OSM data actually carries
-// it, so the toggle appears only when its `has*` flag is set. Mirrors the Style
-// tab's save/regen lifecycle: Save stays disabled until an edit is made, then
-// spins until the wallpaper re-render (triggered by apply_lab_settings) completes.
+// "Lab": home for optional data-layer toggles (airports, water). The toggles
+// are always shown regardless of whether today's city actually carries the
+// layer — a city that lacks the data simply renders nothing for it, so there's
+// no need to probe the OSM payload first. Mirrors the Style tab's save/regen
+// lifecycle: Save stays disabled until an edit is made, then spins until the
+// wallpaper re-render (triggered by apply_lab_settings) completes.
 export default function Lab({ status, busy, onError }: Props) {
   const { t } = useTranslation();
 
   const [showAirports, setShowAirports] = useState<boolean>(status.showAirports);
+  const [showWater, setShowWater] = useState<boolean>(status.showWater);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
@@ -51,7 +53,7 @@ export default function Lab({ status, busy, onError }: Props) {
     return () => clearTimeout(timer);
   }, [saving]);
 
-  const dirty = showAirports !== status.showAirports;
+  const dirty = showAirports !== status.showAirports || showWater !== status.showWater;
 
   const save = async () => {
     setSaving(true);
@@ -59,6 +61,7 @@ export default function Lab({ status, busy, onError }: Props) {
     try {
       const result = await invoke<{ regenStarted: boolean }>("apply_lab_settings", {
         showAirports,
+        showWater,
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -72,17 +75,21 @@ export default function Lab({ status, busy, onError }: Props) {
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">{t("lab.intro")}</p>
 
-        {status.hasAirports ? (
-          <SettingRow
-            label={t("lab.showAirports")}
-            description={t("lab.airportsHint")}
-            control={
-              <Switch checked={showAirports} onCheckedChange={setShowAirports} disabled={saving} />
-            }
-          />
-        ) : (
-          <p className="text-sm text-muted-foreground">{t("lab.noneAvailable")}</p>
-        )}
+        <SettingRow
+          label={t("lab.showAirports")}
+          description={t("lab.airportsHint")}
+          control={
+            <Switch checked={showAirports} onCheckedChange={setShowAirports} disabled={saving} />
+          }
+        />
+
+        <Separator />
+
+        <SettingRow
+          label={t("lab.showWater")}
+          description={t("lab.waterHint")}
+          control={<Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />}
+        />
       </CardContent>
 
       <CardFooter className="justify-end">

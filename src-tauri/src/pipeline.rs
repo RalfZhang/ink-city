@@ -14,7 +14,6 @@ use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, StylePreset, ThemeMode};
 use crate::events::FrontendEvent;
-use crate::layers;
 use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
@@ -52,40 +51,6 @@ pub fn cache_dir(app: &AppHandle) -> Result<PathBuf> {
     let d = app.path().app_cache_dir()?;
     fs::create_dir_all(&d)?;
     Ok(d)
-}
-
-fn set_present_layers(app: &AppHandle, date: NaiveDate, present: std::collections::HashSet<String>) {
-    *app.state::<AppState>().present_layers.lock().unwrap() = Some((date, present));
-}
-
-/// Which optional layers (see `layers::LAYER_KEYS`) are present for `date`,
-/// computing and caching them from the cached OSM file on first miss this
-/// session. Used by `get_status` when the wallpaper was already cached this
-/// session (so the pipeline never parsed the data) — see
-/// `layers::detect_present_text` for why this scans rather than parses.
-fn present_layers_for(app: &AppHandle, date: NaiveDate) -> std::collections::HashSet<String> {
-    let state = app.state::<AppState>();
-    {
-        let g = state.present_layers.lock().unwrap();
-        if let Some((d, set)) = &*g {
-            if *d == date {
-                return set.clone();
-            }
-        }
-    }
-    let present = cache_dir(app)
-        .ok()
-        .and_then(|c| fs::read_to_string(c.join(format!("{}.osm.json", date))).ok())
-        .map(|s| layers::detect_present_text(&s))
-        .unwrap_or_default();
-    *state.present_layers.lock().unwrap() = Some((date, present.clone()));
-    present
-}
-
-/// Whether the current city's cached data for `date` carries `layer` (e.g.
-/// `"water"`). Gates the corresponding UI toggle in `get_status`.
-pub fn has_layer_for(app: &AppHandle, date: NaiveDate, layer: &str) -> bool {
-    present_layers_for(app, date).contains(layer)
 }
 
 pub fn effective_theme(app: &AppHandle) -> EffectiveTheme {
@@ -222,10 +187,6 @@ async fn render_bytes_for(
         fs::write(&osm_path, v.to_string())?;
         v
     };
-
-    // Record which optional layers this city's data carries so the UI can
-    // decide whether to surface layer toggles (e.g. "show water").
-    set_present_layers(app, date, layers::detect_present_value(&osm));
 
     let theme = effective_theme(app);
     let colors = colors_for(app, theme);

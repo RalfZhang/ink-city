@@ -36,13 +36,6 @@ pub struct AppState {
     pub update_installing: AtomicBool,
     pub show_water: AtomicBool,
     pub show_airports: AtomicBool,
-    /// Cache of "which optional layers (see `crate::layers::LAYER_KEYS`) does
-    /// the cached OSM data for this date carry". Keyed by date so it's
-    /// computed at most once per day per session (checking it means scanning
-    /// the cached OSM file). Updated when the pipeline fetches data; read by
-    /// `get_status` (via `pipeline::has_layer_for`) to decide whether to
-    /// surface a layer's UI toggle — e.g. `has_water`.
-    pub present_layers: StdMutex<Option<(chrono::NaiveDate, std::collections::HashSet<String>)>>,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
@@ -79,7 +72,6 @@ impl AppState {
             update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
             show_airports: AtomicBool::new(cfg.show_airports),
-            present_layers: StdMutex::new(None),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),

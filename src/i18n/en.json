@@ -56,8 +56,6 @@
     "hintMinimal": "Major roads only",
     "hintStandard": "Width by road class",
     "hintBold": "High contrast hierarchy",
-    "showWater": "Show water bodies",
-    "waterHint": "Rivers, lakes and sea are tinted with the line color",
     "lightColors": "Light palette",
     "darkColors": "Dark palette",
     "active": "Active",
@@ -67,16 +65,17 @@
     "save": "Save"
   },
   "lab": {
-    "intro": "Experimental map layers. Toggle extra data on the wallpaper — each option appears only when today's city actually has it.",
+    "intro": "These features are experimental, may be buggy, and aren't guaranteed to work.",
     "showAirports": "Show airports",
     "airportsHint": "Airport runways and taxiways are drawn in the line color.",
-    "noneAvailable": "Today's city has no optional layers to configure.",
+    "showWater": "Show water bodies",
+    "waterHint": "Rivers, lakes and sea are tinted with the line color",
     "save": "Save"
   },
   "about": {
     "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day.",
     "p2": "More features coming soon.",
-    "github": "GitHub repository",
+    "github": "GitHub",
     "feedbackTitle": "Feedback",
     "feedbackDesc": "Found a bug or have an idea? Open an issue on GitHub. For bug reports please include your OS version, and if relevant the city / date that triggered the problem.",
     "openIssues": "Submit feedback",

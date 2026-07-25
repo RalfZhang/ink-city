@@ -56,8 +56,6 @@
     "hintMinimal": "仅显示主干道",
     "hintStandard": "按道路等级分级线宽",
     "hintBold": "高对比度层级",
-    "showWater": "显示水体",
-    "waterHint": "河流、湖泊与海洋以线条色淡染",
     "lightColors": "浅色模式地图配色",
     "darkColors": "深色模式地图配色",
     "active": "当前",
@@ -67,10 +65,11 @@
     "save": "保存"
   },
   "lab": {
-    "intro": "实验性地图图层。为壁纸开启额外数据——每一项只在今天的城市确实包含该数据时才出现。",
+    "intro": "试验性功能，可能存在 bug，不保证可用。",
     "showAirports": "显示机场",
     "airportsHint": "机场跑道与滑行道以线条色绘制。",
-    "noneAvailable": "今天的城市没有可配置的可选图层。",
+    "showWater": "显示水体",
+    "waterHint": "河流、湖泊与海洋以线条色淡染",
     "save": "保存"
   },
   "about": {

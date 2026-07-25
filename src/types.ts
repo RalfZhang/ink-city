@@ -24,9 +24,5 @@ export type Status = {
   /** Version we can update to, or null. Source of truth for the update prompt. */
   updateAvailable: string | null;
   showWater: boolean;
-  /** Whether the current city's data has a water layer (gates the water toggle). */
-  hasWater: boolean;
   showAirports: boolean;
-  /** Whether the current city's data has an airport layer (gates the airport toggle). */
-  hasAirports: boolean;
 };

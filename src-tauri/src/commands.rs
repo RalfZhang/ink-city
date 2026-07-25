@@ -34,14 +34,8 @@ pub struct Status {
     pub update_available: Option<String>,
     #[serde(rename = "showWater")]
     pub show_water: bool,
-    /// Whether the current city's data has a water layer (gates the UI toggle).
-    #[serde(rename = "hasWater")]
-    pub has_water: bool,
     #[serde(rename = "showAirports")]
     pub show_airports: bool,
-    /// Whether the current city's data has an airport layer (gates the UI toggle).
-    #[serde(rename = "hasAirports")]
-    pub has_airports: bool,
 }
 
 /// Build the current `Status` snapshot. Shared by the `get_status` command
@@ -73,9 +67,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         auto_update: state.auto_update.load(Ordering::Acquire),
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
-        has_water: pipeline::has_layer_for(app, date, "water"),
         show_airports: state.show_airports.load(Ordering::Acquire),
-        has_airports: pipeline::has_layer_for(app, date, "airports"),
     };
     status
 }
@@ -177,11 +169,9 @@ pub fn apply_style_settings(
     style: StylePreset,
     light: ColorPair,
     dark: ColorPair,
-    show_water: bool,
 ) -> Result<ApplyResult, String> {
     let before_colors = current_effective_colors(&app);
     let before_style = *app.state::<AppState>().style.lock().unwrap();
-    let before_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
 
     {
         let s = app.state::<AppState>();
@@ -189,39 +179,43 @@ pub fn apply_style_settings(
         *s.style.lock().unwrap() = style;
         *s.light.lock().unwrap() = light;
         *s.dark.lock().unwrap() = dark;
-        s.show_water.store(show_water, Ordering::Release);
     }
     persist(&app)?;
-    // Push the new theme/style/colors/water immediately, even when no re-render
-    // is triggered below (a render, if any, will mark dirty again on completion).
+    // Push the new theme/style/colors immediately, even when no re-render is
+    // triggered below (a render, if any, will mark dirty again on completion).
     app.state::<AppState>().mark_status_dirty();
 
     let after_colors = current_effective_colors(&app);
     let after_style = *app.state::<AppState>().style.lock().unwrap();
 
-    let regen_started =
-        before_colors != after_colors || before_style != after_style || before_water != show_water;
+    let regen_started = before_colors != after_colors || before_style != after_style;
     if regen_started {
         pipeline::spawn_force_regen(app);
     }
     Ok(ApplyResult { regen_started })
 }
 
-/// Atomic write of the Lab-tab settings. For now that's just the airport
-/// toggle; the water toggle still lives in the Style tab (a later commit will
-/// move it here). Same return contract as `apply_style_settings`: whether a
+/// Atomic write of the Lab-tab settings: the optional data-layer toggles
+/// (airports, water). Same return contract as `apply_style_settings`: whether a
 /// re-render started.
 #[tauri::command]
-pub fn apply_lab_settings(app: AppHandle, show_airports: bool) -> Result<ApplyResult, String> {
-    let before_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
+pub fn apply_lab_settings(
+    app: AppHandle,
+    show_airports: bool,
+    show_water: bool,
+) -> Result<ApplyResult, String> {
+    let state = app.state::<AppState>();
+    let before_airports = state.show_airports.load(Ordering::Acquire);
+    let before_water = state.show_water.load(Ordering::Acquire);
 
-    app.state::<AppState>().show_airports.store(show_airports, Ordering::Release);
+    state.show_airports.store(show_airports, Ordering::Release);
+    state.show_water.store(show_water, Ordering::Release);
     persist(&app)?;
-    // Push the new flag immediately, even when no re-render is triggered below
+    // Push the new flags immediately, even when no re-render is triggered below
     // (a render, if any, will mark dirty again on completion).
     app.state::<AppState>().mark_status_dirty();
 
-    let regen_started = before_airports != show_airports;
+    let regen_started = before_airports != show_airports || before_water != show_water;
     if regen_started {
         pipeline::spawn_force_regen(app);
     }

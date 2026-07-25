@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import SettingRow from "@/components/SettingRow";
 import type { ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
@@ -39,7 +37,6 @@ export default function Style({ status, busy, onError }: Props) {
   const [preset, setPreset] = useState<StylePreset>(status.style);
   const [light, setLight] = useState<ColorPair>(status.light);
   const [dark, setDark] = useState<ColorPair>(status.dark);
-  const [showWater, setShowWater] = useState<boolean>(status.showWater);
   const [defaults, setDefaults] = useState<Defaults | null>(null);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
@@ -79,8 +76,7 @@ export default function Style({ status, busy, onError }: Props) {
     light.background !== status.light.background ||
     light.foreground !== status.light.foreground ||
     dark.background !== status.dark.background ||
-    dark.foreground !== status.dark.foreground ||
-    showWater !== status.showWater;
+    dark.foreground !== status.dark.foreground;
 
   const save = async () => {
     setSaving(true);
@@ -91,7 +87,6 @@ export default function Style({ status, busy, onError }: Props) {
         style: preset,
         light,
         dark,
-        showWater,
       });
       if (!result.regenStarted) {
         setSaving(false);
@@ -144,23 +139,6 @@ export default function Style({ status, busy, onError }: Props) {
         </Section>
 
         <Separator />
-
-        {/* Water toggle — only shown when the current city's data has water.
-            The hint is always rendered (not gated on the switch) so toggling
-            never shifts the layout below it. */}
-        {status.hasWater && (
-          <>
-            <SettingRow
-              label={t("style.showWater")}
-              description={t("style.waterHint")}
-              control={
-                <Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />
-              }
-            />
-
-            <Separator />
-          </>
-        )}
 
         <PaletteSection
           title={t("style.lightColors")}
