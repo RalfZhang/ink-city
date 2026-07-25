@@ -11,13 +11,21 @@ export const AIRPORT_ALPHA = 0.8;
 
 // Schema version stamped on the OSM payload (`{ v, elements, water, airports }`),
 // whether precached to the `data` branch or fetched live via the sidecar (both
-// go through fetch-city.ts). Bump this whenever an existing layer's shape
-// changes in a non-additive way, so a client can recognize data newer than it
-// understands and fall back instead of mis-rendering it. Additive new layers
-// (water, airports) don't need a bump — old clients ignore unknown keys and a
-// missing layer reads as "off". Absent ⇒ pre-water data (roads only). Single
-// source of truth for both the producer (scripts/osm-cli.ts) and any consumer.
-export const OSM_SCHEMA_VERSION = 1;
+// go through fetch-city.ts). Two consumers rely on it, so bump it on ANY change
+// to what the payload carries — a non-additive reshape of an existing layer AND
+// an additive new layer alike:
+//   • client (forward-compat): a bump lets a client recognize data newer than
+//     it understands. Purely additive layers stay backward-compatible anyway —
+//     old clients ignore unknown keys and a missing layer reads as "off" — so
+//     this side only strictly needs a bump on a non-additive reshape.
+//   • precache CI (cache invalidation, scripts/osm-cli.ts): a cached
+//     `<id>.json` whose `v` differs from this constant is discarded and
+//     re-fetched. This is why even an additive layer bumps `v`: without it, a
+//     newly added layer would never backfill into already-cached cities.
+// Absent ⇒ pre-water data (roads only). Single source of truth for the producer
+// (scripts/osm-cli.ts) and every consumer.
+// History: 1 = roads + water; 2 = adds the airports layer.
+export const OSM_SCHEMA_VERSION = 2;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;

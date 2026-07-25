@@ -29,7 +29,7 @@ import { readFileSync, readdirSync, writeFileSync, rmSync, mkdirSync } from "nod
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { pickCityForDate, bboxForScreen, type City, type Bbox } from "../src/core/index.ts";
+import { pickCityForDate, bboxForScreen, OSM_SCHEMA_VERSION, type City, type Bbox } from "../src/core/index.ts";
 import { fetchCityData } from "../src/core/fetch-city.ts";
 import { LAYER_IDS, isLayerId, type LayerId } from "../src/core/layers.ts";
 
@@ -115,6 +115,21 @@ function existingIds(dir: string): Set<number> {
   return ids;
 }
 
+/**
+ * The schema version stamped on a cached payload, or `undefined` when the file
+ * is missing / unreadable / corrupt / has no numeric `v`. The caller treats
+ * every `undefined` as stale (→ re-fetch), which is what we want: a version-less
+ * file predates the `v` stamp entirely, and a corrupt one shouldn't be trusted.
+ */
+function readSchemaVersion(path: string): number | undefined {
+  try {
+    const parsed = JSON.parse(readFileSync(path, "utf8")) as { v?: unknown };
+    return typeof parsed.v === "number" ? parsed.v : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function runPrecache(args: string[]): Promise<void> {
   const OUT_DIR = args[0] ?? join(ROOT, "data", "osm");
   const DAYS = Number(args[1] ?? 7);
@@ -122,27 +137,41 @@ async function runPrecache(args: string[]): Promise<void> {
   const cities = loadCities();
   const wanted = windowCities(cities, DAYS);
   mkdirSync(OUT_DIR, { recursive: true });
-  const present = existingIds(OUT_DIR);
+  const onDisk = existingIds(OUT_DIR);
 
-  // Prune cities that have rolled out of the window. Also remove the gzip
-  // sibling (published alongside every .json — see .github/workflows/precache.yml)
-  // so stale ids don't linger in the data branch forever.
-  for (const id of present) {
-    if (!wanted.has(id)) {
+  // Prune restored cache entries we can't reuse, removing both the .json and its
+  // gzip sibling (published alongside it — see .github/workflows/precache.yml) so
+  // stale ids don't linger in the data branch forever. Two reasons to drop one:
+  //
+  //   1. Out of window — the city has rolled past the precache horizon.
+  //   2. Stale schema — its `v` differs from OSM_SCHEMA_VERSION (e.g. cached
+  //      before the airports layer shipped, or ahead of a future non-additive
+  //      reshape). We re-fetch these below so a newly added layer backfills into
+  //      already-cached cities. The drop happens up front, *before* the fetch, on
+  //      purpose: if the re-fetch then fails the known-stale payload stays gone
+  //      (absent from the published branch) rather than being kept — a CDN miss
+  //      just falls back to the live sidecar, so discarding is always safe.
+  const present = new Set<number>();
+  for (const id of onDisk) {
+    const outOfWindow = !wanted.has(id);
+    const staleSchema = !outOfWindow && readSchemaVersion(join(OUT_DIR, `${id}.json`)) !== OSM_SCHEMA_VERSION;
+    if (outOfWindow || staleSchema) {
       rmSync(join(OUT_DIR, `${id}.json`));
       try {
         rmSync(join(OUT_DIR, `${id}.json.gz`));
       } catch {
         // no gzip sibling to remove (e.g. published before gzip existed) — fine.
       }
-      console.log(`[precache] pruned ${id}.json`);
+      console.log(`[precache] pruned ${id}.json (${outOfWindow ? "out of window" : "stale schema v"})`);
+      continue;
     }
+    present.add(id);
   }
 
   // Track what's on disk after this run: start from what was restored *and
-  // survived pruning*, then add each city we successfully write. Used below to
-  // decide whether to alarm.
-  const cached = new Set([...present].filter((id) => wanted.has(id)));
+  // survived pruning* (all in-window and current-version now), then add each
+  // city we successfully write. Used below to decide whether to alarm.
+  const cached = new Set(present);
   let fetched = 0;
   let failed = 0;
   let first = true;

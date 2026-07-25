@@ -79,7 +79,7 @@ export type AirportFeature =
  */
 export type Osm = {
   elements?: Way[];
-  /** Schema version. Absent ⇒ pre-water data (roads only). Water-aware data is `1`. */
+  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2` = adds airports. */
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
