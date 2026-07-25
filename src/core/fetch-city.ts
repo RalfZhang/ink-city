@@ -15,6 +15,7 @@ import { fetchRoads, slimRoads } from "./overpass";
 import { fetchWater, slimWater } from "./water";
 import { fetchAirports, slimAirports } from "./airports";
 import { fetchRailways, slimRailways } from "./railways";
+import { fetchAerialways, slimAerialways } from "./aerialways";
 import { OSM_SCHEMA_VERSION } from "./constants";
 import { LAYER_IDS, type LayerId } from "./layers";
 
@@ -56,6 +57,12 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
     if (opts.spacingMs) await sleep(opts.spacingMs);
     const rawRailways = await fetchRailways(bbox);
     out.railways = slimRailways(rawRailways, precision);
+  }
+
+  if (layers.includes("aerialways")) {
+    if (opts.spacingMs) await sleep(opts.spacingMs);
+    const rawAerialways = await fetchAerialways(bbox);
+    out.aerialways = slimAerialways(rawAerialways, precision);
   }
 
   return out;

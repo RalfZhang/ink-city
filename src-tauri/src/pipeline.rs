@@ -37,6 +37,8 @@ struct Style {
     show_airports: bool,
     #[serde(rename = "showRailways")]
     show_railways: bool,
+    #[serde(rename = "showAerialways")]
+    show_aerialways: bool,
 }
 
 #[derive(Serialize, Clone)]
@@ -205,6 +207,7 @@ async fn render_bytes_for(
     let show_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
     let show_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
     let show_railways = app.state::<AppState>().show_railways.load(Ordering::Acquire);
+    let show_aerialways = app.state::<AppState>().show_aerialways.load(Ordering::Acquire);
     let style = Style {
         background: colors.background,
         foreground: colors.foreground,
@@ -212,6 +215,7 @@ async fn render_bytes_for(
         show_water,
         show_airports,
         show_railways,
+        show_aerialways,
     };
 
     let (tx, rx) = oneshot::channel::<Vec<u8>>();

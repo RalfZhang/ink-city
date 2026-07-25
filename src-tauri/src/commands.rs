@@ -38,6 +38,8 @@ pub struct Status {
     pub show_airports: bool,
     #[serde(rename = "showRailways")]
     pub show_railways: bool,
+    #[serde(rename = "showAerialways")]
+    pub show_aerialways: bool,
     /// Whether the hidden Dev Mode tab is unlocked (persisted). See
     /// `AppState::dev_mode`.
     #[serde(rename = "devMode")]
@@ -79,6 +81,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
         show_railways: state.show_railways.load(Ordering::Acquire),
+        show_aerialways: state.show_aerialways.load(Ordering::Acquire),
         dev_mode: state.dev_mode.load(Ordering::Acquire),
         bypass_cache: state.effective_bypass_cache(),
     };
@@ -209,7 +212,7 @@ pub fn apply_style_settings(
 }
 
 /// Atomic write of the Lab-tab settings: the optional data-layer toggles
-/// (airports, water, railways). Same return contract as `apply_style_settings`:
+/// (airports, water, railways, aerialways). Same return contract as `apply_style_settings`:
 /// whether a re-render started.
 #[tauri::command]
 pub fn apply_lab_settings(
@@ -217,15 +220,18 @@ pub fn apply_lab_settings(
     show_airports: bool,
     show_water: bool,
     show_railways: bool,
+    show_aerialways: bool,
 ) -> Result<ApplyResult, String> {
     let state = app.state::<AppState>();
     let before_airports = state.show_airports.load(Ordering::Acquire);
     let before_water = state.show_water.load(Ordering::Acquire);
     let before_railways = state.show_railways.load(Ordering::Acquire);
+    let before_aerialways = state.show_aerialways.load(Ordering::Acquire);
 
     state.show_airports.store(show_airports, Ordering::Release);
     state.show_water.store(show_water, Ordering::Release);
     state.show_railways.store(show_railways, Ordering::Release);
+    state.show_aerialways.store(show_aerialways, Ordering::Release);
     persist(&app)?;
     // Push the new flags immediately, even when no re-render is triggered below
     // (a render, if any, will mark dirty again on completion).
@@ -233,7 +239,8 @@ pub fn apply_lab_settings(
 
     let regen_started = before_airports != show_airports
         || before_water != show_water
-        || before_railways != show_railways;
+        || before_railways != show_railways
+        || before_aerialways != show_aerialways;
     if regen_started {
         pipeline::spawn_force_regen(app);
     }
@@ -431,6 +438,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         show_water: s.show_water.load(Ordering::Acquire),
         show_airports: s.show_airports.load(Ordering::Acquire),
         show_railways: s.show_railways.load(Ordering::Acquire),
+        show_aerialways: s.show_aerialways.load(Ordering::Acquire),
         dev_mode: s.dev_mode.load(Ordering::Acquire),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())

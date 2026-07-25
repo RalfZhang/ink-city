@@ -107,6 +107,9 @@ pub struct Config {
     /// Draw the railway layer (surface rail centerlines) on the wallpaper. Off
     /// by default.
     pub show_railways: bool,
+    /// Draw the aerialway layer (cable cars / ropeways) on the wallpaper. Off by
+    /// default.
+    pub show_aerialways: bool,
     /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
     /// the 7-click gesture on the version number in About. Persisted so the tab
     /// stays unlocked across restarts. (The dev-only "bypass cache & CDN" toggle
@@ -129,6 +132,7 @@ impl Default for Config {
             show_water: false,
             show_airports: false,
             show_railways: false,
+            show_aerialways: false,
             dev_mode: false,
         }
     }

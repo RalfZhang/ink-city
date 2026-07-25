@@ -27,6 +27,7 @@ export default function Lab({ status, busy, onError }: Props) {
   const [showAirports, setShowAirports] = useState<boolean>(status.showAirports);
   const [showWater, setShowWater] = useState<boolean>(status.showWater);
   const [showRailways, setShowRailways] = useState<boolean>(status.showRailways);
+  const [showAerialways, setShowAerialways] = useState<boolean>(status.showAerialways);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
@@ -57,7 +58,8 @@ export default function Lab({ status, busy, onError }: Props) {
   const dirty =
     showAirports !== status.showAirports ||
     showWater !== status.showWater ||
-    showRailways !== status.showRailways;
+    showRailways !== status.showRailways ||
+    showAerialways !== status.showAerialways;
 
   const save = async () => {
     setSaving(true);
@@ -67,6 +69,7 @@ export default function Lab({ status, busy, onError }: Props) {
         showAirports,
         showWater,
         showRailways,
+        showAerialways,
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -95,6 +98,14 @@ export default function Lab({ status, busy, onError }: Props) {
           description={t("lab.railwaysHint")}
           control={
             <Switch checked={showRailways} onCheckedChange={setShowRailways} disabled={saving} />
+          }
+        />
+
+        <SettingRow
+          label={t("lab.showAerialways")}
+          description={t("lab.aerialwaysHint")}
+          control={
+            <Switch checked={showAerialways} onCheckedChange={setShowAerialways} disabled={saving} />
           }
         />
 

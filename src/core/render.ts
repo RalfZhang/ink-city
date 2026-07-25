@@ -253,6 +253,80 @@ export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): void 
   ctx.setLineDash([]); // don't leak the dash into later layers (airports)
 }
 
+/**
+ * Draw the aerialway layer (cable cars / ropeways) on top of the roads in OSM's
+ * default symbol: a thin continuous "cable" line with round "cabin" dots strung
+ * along it at even arc-length spacing — the line reads as the cable, the dots as
+ * the cars, distinct from both the solid roads and the dashed railways. Gated by
+ * the user's "show cable cars" Lab toggle (default off), and a no-op when the
+ * data has no `aerialways` key (older cached data, or none in this bbox).
+ *
+ * The five tuning knobs below (line width/alpha, dot radius/spacing/alpha) are
+ * inlined here — the *_WIDTH/_RADIUS/_SPACING are in "px at 1000px tall" and get
+ * multiplied by `scale`. Dots are placed by walking each polyline in screen
+ * space and stepping a running distance so spacing is uniform regardless of how
+ * densely the source vertices are sampled; the carry across segments keeps the
+ * rhythm unbroken through the bends.
+ */
+export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+  const aerialways = req.osm.aerialways;
+  if (!req.style.showAerialways || !aerialways || aerialways.length === 0) return;
+  const { bbox, width, height, style } = req;
+  // Tuning knobs — the cable line's opacity/width and the cabin dots'
+  // opacity/radius/spacing. Tweak in place.
+  const LINE_ALPHA = 0.5;
+  const LINE_WIDTH = 0.6;
+  const DOT_ALPHA = 0.7;
+  const DOT_RADIUS = 1.1;
+  const DOT_SPACING = 12;
+  const lineColor = mixColor(style.foreground, style.background, LINE_ALPHA);
+  const dotColor = mixColor(style.foreground, style.background, DOT_ALPHA);
+  const scale = Math.max(1, height / 1000);
+  const dotRadius = scale * DOT_RADIUS;
+  const dotSpacing = scale * DOT_SPACING;
+
+  // Project once and reuse for both the line and the dots.
+  const lines: [number, number][][] = [];
+  for (const f of aerialways) {
+    if (f.line.length < 2) continue;
+    lines.push(f.line.map((p) => project(p.lat, p.lon, bbox, width, height)));
+  }
+
+  // 1) the continuous cable line.
+  ctx.strokeStyle = lineColor;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = scale * LINE_WIDTH;
+  ctx.beginPath();
+  for (const pts of lines) {
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  }
+  ctx.stroke();
+
+  // 2) evenly spaced cabin dots along each cable. `dist` is the arc length until
+  // the next dot: start at 0 (dot at the cable's start), and carry the remainder
+  // across segment boundaries so spacing stays uniform through the bends.
+  ctx.fillStyle = dotColor;
+  for (const pts of lines) {
+    let dist = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [x0, y0] = pts[i];
+      const [x1, y1] = pts[i + 1];
+      const segLen = Math.hypot(x1 - x0, y1 - y0);
+      if (segLen === 0) continue;
+      while (dist <= segLen) {
+        const t = dist / segLen;
+        ctx.beginPath();
+        ctx.arc(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, dotRadius, 0, Math.PI * 2);
+        ctx.fill();
+        dist += dotSpacing;
+      }
+      dist -= segLen;
+    }
+  }
+}
+
 /** Draw the road network onto `ctx`. Returns the number of ways drawn. */
 export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
@@ -308,6 +382,10 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   // continuous dashed line at grade crossings instead of being chopped up by
   // the roads it crosses.
   drawRailways(ctx, req);
+  // Aerialways (cable cars / ropeways) sit on top of the roads as dotted lines,
+  // then airports on top of everything. They're overhead cables, so drawing them
+  // above the ground network reads correctly.
+  drawAerialways(ctx, req);
 
   // Airports go on top: where a road crosses a runway/taxiway the real-world
   // layering is almost always road-under (roads tunnel beneath runways;

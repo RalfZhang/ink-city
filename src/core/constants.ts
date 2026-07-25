@@ -16,7 +16,7 @@ export const RUNWAY_ALPHA = 0.6;
 export const RAILWAY_ALPHA = 0.7;
 
 // Schema version stamped on the OSM payload
-// (`{ v, elements, water, airports, railways }`),
+// (`{ v, elements, water, airports, railways, aerialways }`),
 // whether precached to the `data` branch or fetched live via the sidecar (both
 // go through fetch-city.ts). Two consumers rely on it, so bump it on ANY change
 // to what the payload carries — a non-additive reshape of an existing layer AND
@@ -33,7 +33,8 @@ export const RAILWAY_ALPHA = 0.7;
 // (scripts/osm-cli.ts) and every consumer.
 // History: 1 = roads + water; 2 = adds the airports layer (runway + apron);
 // 3 = airports layer reshaped to runway + taxiway centerlines (apron dropped);
-// 4 = adds the railways layer (surface rail centerlines).
+// 4 = adds the railways layer (surface rail centerlines);
+// 5 = adds the aerialways layer (cable car / ropeway centerlines).
 export const OSM_SCHEMA_VERSION = 4;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";

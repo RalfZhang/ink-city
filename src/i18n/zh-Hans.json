@@ -70,6 +70,8 @@
     "airportsHint": "机场跑道与滑行道以线条色绘制。",
     "showRailways": "显示铁路",
     "railwaysHint": "地面铁路线以线条色的虚线绘制。",
+    "showAerialways": "显示缆车索道",
+    "aerialwaysHint": "缆车与索道以线条色的点线绘制。",
     "showWater": "显示水体",
     "waterHint": "河流、湖泊与海洋以线条色淡染",
     "save": "保存"

@@ -9,7 +9,7 @@
 // src-tauri/src/layers.rs, which uses it only for presence detection/UI
 // gating; the Rust side never fetches a layer itself.
 
-export const LAYER_IDS = ["water", "airports", "railways"] as const;
+export const LAYER_IDS = ["water", "airports", "railways", "aerialways"] as const;
 export type LayerId = (typeof LAYER_IDS)[number];
 
 /** Top-level JSON key each layer's data is stored under in the `Osm` payload. */
@@ -17,6 +17,7 @@ export const LAYER_KEYS: Record<LayerId, string> = {
   water: "water",
   airports: "airports",
   railways: "railways",
+  aerialways: "aerialways",
 };
 
 export function isLayerId(s: string): s is LayerId {

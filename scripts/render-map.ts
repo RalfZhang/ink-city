@@ -131,6 +131,7 @@ async function main() {
           showWater: true,
           showAirports: true,
           showRailways: true,
+          showAerialways: true,
         },
         osm,
       });

@@ -37,6 +37,7 @@ pub struct AppState {
     pub show_water: AtomicBool,
     pub show_airports: AtomicBool,
     pub show_railways: AtomicBool,
+    pub show_aerialways: AtomicBool,
     /// Whether the hidden Dev Mode tab is unlocked. Unlike `bypass_cache`, this
     /// is persisted (see `config::Config::dev_mode`) so the tab stays unlocked
     /// across restarts once the 7-click gesture in About has revealed it.
@@ -85,6 +86,7 @@ impl AppState {
             show_water: AtomicBool::new(cfg.show_water),
             show_airports: AtomicBool::new(cfg.show_airports),
             show_railways: AtomicBool::new(cfg.show_railways),
+            show_aerialways: AtomicBool::new(cfg.show_aerialways),
             dev_mode: AtomicBool::new(cfg.dev_mode),
             bypass_cache: AtomicBool::new(false),
             update_strings: StdMutex::new(UpdateStrings::default()),

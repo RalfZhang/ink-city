@@ -33,6 +33,8 @@ export type Style = {
   showAirports?: boolean;
   /** Whether to draw the railway layer. Absent ⇒ off (matches the config default). */
   showRailways?: boolean;
+  /** Whether to draw the aerialway (cable car / ropeway) layer. Absent ⇒ off. */
+  showAerialways?: boolean;
 };
 
 // --- OSM Overpass shapes (only the fields we read) ---
@@ -83,6 +85,14 @@ export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
 // just double up the roads they run in. Like airports, a single polyline shape.
 export type RailwayFeature = { line: Geom[] };
 
+// --- Aerialway layer ---
+// Cable cars, gondolas, chair lifts, drag lifts, … (OSM aerialway=*), popular in
+// ski resorts and mountain cities. All rendered identically as a thin dotted
+// line — evoking the cabins/cars strung along the cable, and distinct from both
+// the solid roads and the dashed railways. Like airports, a single polyline
+// shape (no filled areas, no clipping needed).
+export type AerialwayFeature = { line: Geom[] };
+
 /**
  * The OSM container the renderer reads. `elements` (roads) is the original,
  * always-present shape. `water`, `airports`, and `v` are additive and
@@ -92,7 +102,7 @@ export type RailwayFeature = { line: Geom[] };
  */
 export type Osm = {
   elements?: Way[];
-  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`/`3` = adds airports; `4`+ = adds railways. */
+  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`/`3` = adds airports; `4` = adds railways; `5`+ = adds aerialways. */
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
@@ -100,4 +110,6 @@ export type Osm = {
   airports?: AirportFeature[];
   /** Pre-assembled railway centerlines. Absent ⇒ no railway layer. */
   railways?: RailwayFeature[];
+  /** Pre-assembled cable car / ropeway centerlines. Absent ⇒ no aerialway layer. */
+  aerialways?: AerialwayFeature[];
 };
