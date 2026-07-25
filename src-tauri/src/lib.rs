@@ -297,6 +297,8 @@ pub fn run() {
             commands::set_update_strings,
             commands::apply_style_settings,
             commands::apply_lab_settings,
+            commands::set_bypass_cache,
+            commands::set_dev_mode,
             commands::get_color_defaults,
             commands::regenerate_now,
             commands::renderer_ready,

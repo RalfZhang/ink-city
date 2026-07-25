@@ -25,4 +25,8 @@ export type Status = {
   updateAvailable: string | null;
   showWater: boolean;
   showAirports: boolean;
+  /** Whether the hidden Dev Mode tab is unlocked. Persisted across restarts. */
+  devMode: boolean;
+  /** Dev-only: bypass the local cache and CDN, fetch OSM live from Overpass. In-memory only (off on launch). */
+  bypassCache: boolean;
 };

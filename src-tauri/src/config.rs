@@ -104,6 +104,12 @@ pub struct Config {
     /// default; only surfaced in the UI when the current city's data actually
     /// has an airport.
     pub show_airports: bool,
+    /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
+    /// the 7-click gesture on the version number in About. Persisted so the tab
+    /// stays unlocked across restarts. (The dev-only "bypass cache & CDN" toggle
+    /// inside that tab is a separate, deliberately in-memory-only flag — see
+    /// `AppState::bypass_cache`.)
+    pub dev_mode: bool,
 }
 
 impl Default for Config {
@@ -119,6 +125,7 @@ impl Default for Config {
             auto_update: true,
             show_water: false,
             show_airports: false,
+            dev_mode: false,
         }
     }
 }

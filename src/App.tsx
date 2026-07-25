@@ -21,10 +21,6 @@ function App() {
   const [tab, setTab] = useState<TabId>("general");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  // In-memory only (no persistence across restarts) — a hidden, session-scoped
-  // toggle, not a real user-facing setting. Unlocked by clicking the version
-  // number in About seven times in a row (see About.tsx).
-  const [devMode, setDevMode] = useState(false);
 
   const refresh = async () => {
     try {
@@ -131,14 +127,16 @@ function App() {
 
   const onError = (e: unknown) => setErr(String(e));
 
+  // Dev Mode's unlocked state is persisted in config.json (backend) so the tab
+  // stays revealed across restarts. Unlocked by clicking the version number in
+  // About seven times in a row (see About.tsx). The toggle just tells the
+  // backend; the fresh status:changed push flips `devMode` below.
   const toggleDevMode = () => {
-    setDevMode((on) => {
-      const next = !on;
-      // Leaving devMode while it's the active tab would otherwise strand the
-      // Tabs component on a value with no matching trigger/content.
-      if (!next && tab === "devMode") setTab("general");
-      return next;
-    });
+    const next = !(status?.devMode ?? false);
+    // Leaving devMode while it's the active tab would otherwise strand the Tabs
+    // component on a value with no matching trigger/content.
+    if (!next && tab === "devMode") setTab("general");
+    invoke("set_dev_mode", { on: next }).catch(onError);
   };
 
   if (!status) {
@@ -150,6 +148,7 @@ function App() {
   }
 
   const effectiveStatus = { ...status, running: busy || status.running };
+  const devMode = status.devMode;
 
   return (
     <div className="h-screen flex flex-col">
@@ -190,7 +189,7 @@ function App() {
         </TabsContent>
         {devMode && (
           <TabsContent value="devMode" className="flex-1 overflow-y-auto border-l px-4 py-4">
-            <DevMode onError={onError} />
+            <DevMode status={effectiveStatus} onError={onError} />
           </TabsContent>
         )}
       </Tabs>

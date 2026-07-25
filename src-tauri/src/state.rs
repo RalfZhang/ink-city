@@ -1,4 +1,4 @@
-use std::sync::atomic::AtomicBool;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex as StdMutex};
 
 use tokio::sync::{oneshot, Mutex, Notify};
@@ -36,6 +36,17 @@ pub struct AppState {
     pub update_installing: AtomicBool,
     pub show_water: AtomicBool,
     pub show_airports: AtomicBool,
+    /// Whether the hidden Dev Mode tab is unlocked. Unlike `bypass_cache`, this
+    /// is persisted (see `config::Config::dev_mode`) so the tab stays unlocked
+    /// across restarts once the 7-click gesture in About has revealed it.
+    pub dev_mode: AtomicBool,
+    /// Dev-only: when on, `render_bytes_for` skips the day-cache read and the
+    /// CDN, fetches OSM live from the Overpass sidecar, and overwrites the local
+    /// cache with it, so map-data edits are tested against fresh data. In-memory
+    /// only (always off on launch) and deliberately never persisted — leaving it
+    /// on would make every render hit Overpass live, which isn't always
+    /// China-reachable (the reason the CDN exists).
+    pub bypass_cache: AtomicBool,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
@@ -72,6 +83,8 @@ impl AppState {
             update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
             show_airports: AtomicBool::new(cfg.show_airports),
+            dev_mode: AtomicBool::new(cfg.dev_mode),
+            bypass_cache: AtomicBool::new(false),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
@@ -84,5 +97,14 @@ impl AppState {
     /// site that mutates a field reflected in `Status`.
     pub fn mark_status_dirty(&self) {
         self.status_dirty.notify_one();
+    }
+
+    /// Effective value of the Dev Mode "bypass cache & CDN" switch: gated on
+    /// `dev_mode`, so while the tab is locked it always reads as off. The stored
+    /// `bypass_cache` is left untouched, so the real setting is restored the
+    /// moment the tab is unlocked again. Every consumer of the switch (pipeline,
+    /// `Status`) reads through here rather than the raw atom.
+    pub fn effective_bypass_cache(&self) -> bool {
+        self.dev_mode.load(Ordering::Acquire) && self.bypass_cache.load(Ordering::Acquire)
     }
 }

@@ -11,9 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import SettingRow from "@/components/SettingRow";
+import type { Status } from "../types";
 
 type Props = {
+  status: Status;
   onError: (e: unknown) => void;
 };
 
@@ -31,13 +34,24 @@ function formatBytes(bytes: number): string {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
-export default function DevMode({ onError }: Props) {
+export default function DevMode({ status, onError }: Props) {
   const { t } = useTranslation();
   const [daysAhead, setDaysAhead] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [cleaning, setCleaning] = useState(false);
   const [cleanResult, setCleanResult] = useState<string | null>(null);
+  const [bypassCache, setBypassCache] = useState(status.bypassCache);
+
+  const toggleBypassCache = async (on: boolean) => {
+    setBypassCache(on);
+    try {
+      await invoke("set_bypass_cache", { on });
+    } catch (e) {
+      setBypassCache(!on);
+      onError(e);
+    }
+  };
 
   const runPreview = async (value: string) => {
     setDaysAhead(value);
@@ -114,6 +128,18 @@ export default function DevMode({ onError }: Props) {
               />
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <SettingRow
+            label={t("devMode.bypassCacheTitle")}
+            description={t("devMode.bypassCacheDesc")}
+            control={
+              <Switch checked={bypassCache} onCheckedChange={toggleBypassCache} />
+            }
+          />
         </CardContent>
       </Card>
 

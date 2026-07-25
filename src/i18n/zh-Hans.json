@@ -95,7 +95,9 @@
     "cleanCacheButton": "清理",
     "cleaning": "清理中…",
     "cleanCacheResult": "已清理 {{files}} 个文件 · 释放 {{size}}",
-    "cleanCacheEmpty": "缓存已为空"
+    "cleanCacheEmpty": "缓存已为空",
+    "bypassCacheTitle": "绕过缓存和 CDN",
+    "bypassCacheDesc": "跳过 CDN，直接通过 Overpass API 实时获取地图数据并覆盖本地缓存。调试地图数据改动时使用。重启后自动关闭。"
   },
   "common": {
     "loading": "加载中…"

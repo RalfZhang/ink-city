@@ -170,18 +170,27 @@ async fn render_bytes_for(
     // through the same TS implementation (src/core/fetch-city.ts), so a CDN
     // miss never produces data poorer than the CDN's (e.g. water is never
     // missing just because we fell back).
+    // Dev Mode's "bypass cache & CDN" toggle: skip the day-cache read and the
+    // CDN, fetch live from the sidecar, and write it back so it overwrites the
+    // stale local data. Gated read — see `AppState::effective_bypass_cache`.
+    let bypass = app.state::<AppState>().effective_bypass_cache();
     let osm_path = cache.join(format!("{}.osm.json", date));
-    let osm: serde_json::Value = if osm_path.exists() {
+    let osm: serde_json::Value = if !bypass && osm_path.exists() {
         serde_json::from_str(&fs::read_to_string(&osm_path)?)?
     } else {
-        let v = match cdn::fetch_cached_osm(city.id).await {
-            Ok(v) => {
-                log::info!("[pipeline] osm from CDN ({})", city.id);
-                v
-            }
-            Err(e) => {
-                log::warn!("[pipeline] CDN miss ({}), falling back to sidecar: {}", city.id, e);
-                osm_sidecar::fetch(app, bbox).await?
+        let v = if bypass {
+            log::info!("[pipeline] bypass on: fetching osm live from sidecar (overwriting cache)");
+            osm_sidecar::fetch(app, bbox).await?
+        } else {
+            match cdn::fetch_cached_osm(city.id).await {
+                Ok(v) => {
+                    log::info!("[pipeline] osm from CDN ({})", city.id);
+                    v
+                }
+                Err(e) => {
+                    log::warn!("[pipeline] CDN miss ({}), falling back to sidecar: {}", city.id, e);
+                    osm_sidecar::fetch(app, bbox).await?
+                }
             }
         };
         fs::write(&osm_path, v.to_string())?;

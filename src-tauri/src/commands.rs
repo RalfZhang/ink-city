@@ -36,6 +36,14 @@ pub struct Status {
     pub show_water: bool,
     #[serde(rename = "showAirports")]
     pub show_airports: bool,
+    /// Whether the hidden Dev Mode tab is unlocked (persisted). See
+    /// `AppState::dev_mode`.
+    #[serde(rename = "devMode")]
+    pub dev_mode: bool,
+    /// Dev-only "bypass cache & CDN" toggle (in-memory, never persisted). See
+    /// `AppState::bypass_cache`.
+    #[serde(rename = "bypassCache")]
+    pub bypass_cache: bool,
 }
 
 /// Build the current `Status` snapshot. Shared by the `get_status` command
@@ -68,6 +76,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
         update_available: state.available_update.lock().unwrap().clone(),
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
+        dev_mode: state.dev_mode.load(Ordering::Acquire),
+        bypass_cache: state.effective_bypass_cache(),
     };
     status
 }
@@ -220,6 +230,32 @@ pub fn apply_lab_settings(
         pipeline::spawn_force_regen(app);
     }
     Ok(ApplyResult { regen_started })
+}
+
+/// Dev Mode's "bypass cache & CDN" toggle (see `AppState::bypass_cache`). Only
+/// flips the flag; the next render picks it up — toggling never kicks off a
+/// render on its own.
+#[tauri::command]
+pub fn set_bypass_cache(app: AppHandle, on: bool) -> Result<(), String> {
+    let state = app.state::<AppState>();
+    state.bypass_cache.store(on, Ordering::Release);
+    state.mark_status_dirty();
+    Ok(())
+}
+
+/// Unlock or hide the Dev Mode tab. Toggled by the 7-click gesture on the
+/// version number in About. Persisted (see `Config::dev_mode`) so the tab stays
+/// unlocked across restarts.
+#[tauri::command]
+pub fn set_dev_mode(app: AppHandle, on: bool) -> Result<(), String> {
+    let state = app.state::<AppState>();
+    state.dev_mode.store(on, Ordering::Release);
+    state.mark_status_dirty();
+    persist(&app)?;
+    // Locking the tab makes every `dev_mode`-gated Dev Mode switch/setting read
+    // as off (today just `bypass_cache`; see `AppState::effective_bypass_cache`);
+    // no render is kicked off here.
+    Ok(())
 }
 
 #[tauri::command]
@@ -386,6 +422,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         auto_update: s.auto_update.load(Ordering::Acquire),
         show_water: s.show_water.load(Ordering::Acquire),
         show_airports: s.show_airports.load(Ordering::Acquire),
+        dev_mode: s.dev_mode.load(Ordering::Acquire),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }
