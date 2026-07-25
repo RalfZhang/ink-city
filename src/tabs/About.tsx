@@ -271,7 +271,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
               label={t("about.feedbackTitle")}
               description={t("about.feedbackDesc")}
               control={
-                <Button variant="outline" size="sm" onClick={() => openUrl(GITHUB_ISSUES)}>
+                <Button className="min-w-28" variant="outline" size="sm" onClick={() => openUrl(GITHUB_ISSUES)}>
                   {t("about.openIssues")}
                 </Button>
               }

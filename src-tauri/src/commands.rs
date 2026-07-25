@@ -48,6 +48,10 @@ pub struct Status {
     /// `AppState::bypass_cache`.
     #[serde(rename = "bypassCache")]
     pub bypass_cache: bool,
+    #[serde(rename = "proxyEnabled")]
+    pub proxy_enabled: bool,
+    #[serde(rename = "proxyUrl")]
+    pub proxy_url: String,
 }
 
 /// Build the current `Status` snapshot. Shared by the `get_status` command
@@ -84,6 +88,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
         dev_mode: state.dev_mode.load(Ordering::Acquire),
         bypass_cache: state.effective_bypass_cache(),
+        proxy_enabled: state.proxy_enabled.load(Ordering::Acquire),
+        proxy_url: state.proxy_url.lock().unwrap().clone(),
     };
     status
 }
@@ -273,6 +279,33 @@ pub fn set_dev_mode(app: AppHandle, on: bool) -> Result<(), String> {
     Ok(())
 }
 
+/// Persist + apply the Proxy setting. When enabled, validates the URL up front
+/// (so the UI can surface a bad value) before applying it to the shared HTTP
+/// client. The osm-cli sidecar picks the proxy up from its environment on its
+/// next spawn (see `osm_sidecar::fetch`), so no restart is needed.
+#[tauri::command]
+pub fn apply_proxy_settings(
+    app: AppHandle,
+    proxy_enabled: bool,
+    proxy_url: String,
+) -> Result<(), String> {
+    let url = proxy_url.trim().to_string();
+    if proxy_enabled && !url.is_empty() {
+        // Reject a malformed URL up front so the user sees the error immediately,
+        // rather than silently falling back to a direct connection later.
+        reqwest::Proxy::all(&url).map_err(|e| format!("Invalid proxy URL: {e}"))?;
+    }
+    {
+        let state = app.state::<AppState>();
+        state.proxy_enabled.store(proxy_enabled, Ordering::Release);
+        *state.proxy_url.lock().unwrap() = url.clone();
+    }
+    let active = if proxy_enabled && !url.is_empty() { Some(url) } else { None };
+    crate::github_mirror::set_proxy(active);
+    app.state::<AppState>().mark_status_dirty();
+    persist(&app)
+}
+
 #[tauri::command]
 pub fn get_color_defaults() -> ColorDefaults {
     ColorDefaults {
@@ -440,6 +473,8 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         show_railways: s.show_railways.load(Ordering::Acquire),
         show_aerialways: s.show_aerialways.load(Ordering::Acquire),
         dev_mode: s.dev_mode.load(Ordering::Acquire),
+        proxy_enabled: s.proxy_enabled.load(Ordering::Acquire),
+        proxy_url: s.proxy_url.lock().unwrap().clone(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

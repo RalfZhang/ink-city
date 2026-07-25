@@ -116,6 +116,13 @@ pub struct Config {
     /// inside that tab is a separate, deliberately in-memory-only flag — see
     /// `AppState::bypass_cache`.)
     pub dev_mode: bool,
+    /// Route network requests (CDN/GitHub via reqwest, and the osm-cli sidecar's
+    /// live Overpass fetch) through a proxy. Off by default. For regions where
+    /// OpenStreetMap/Overpass is unreachable directly.
+    pub proxy_enabled: bool,
+    /// Proxy URL, e.g. `http://127.0.0.1:7890` or `socks5://127.0.0.1:1080`.
+    /// Only used when `proxy_enabled`.
+    pub proxy_url: String,
 }
 
 impl Default for Config {
@@ -134,6 +141,8 @@ impl Default for Config {
             show_railways: false,
             show_aerialways: false,
             dev_mode: false,
+            proxy_enabled: false,
+            proxy_url: String::new(),
         }
     }
 }

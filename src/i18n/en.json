@@ -33,6 +33,8 @@
     "updateUnavailable": "Update server unavailable, try again later",
     "languageLabel": "Language",
     "languageAuto": "Auto",
+    "proxyLabel": "Proxy",
+    "proxyDesc": "Route map data requests through a proxy, for networks where OpenStreetMap is unreachable directly. Supports http:// and socks5:// URLs.",
     "hideWindow": "Hide window",
     "quit": "Quit"
   },

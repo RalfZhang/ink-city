@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 use tauri_plugin_notification::{NotificationExt, PermissionState};
-use tauri_plugin_updater::UpdaterExt;
+use tauri_plugin_updater::{Updater, UpdaterExt};
 
 use crate::state::AppState;
 use crate::tray;
@@ -120,6 +120,27 @@ fn set_available(app: &AppHandle, meta: &mut CheckMeta, version: Option<String>)
     app.state::<AppState>().mark_status_dirty();
 }
 
+/// Build the updater with the user's proxy applied when enabled, so update
+/// checks and downloads take the same route as the rest of the app's traffic.
+/// The proxy exists precisely for networks where the release host isn't reachable
+/// directly, so a direct-connecting updater would be broken exactly when the
+/// proxy is needed. Falls back to a direct connection when the proxy is off or
+/// the stored URL is unparseable (logged, mirroring `github_mirror`).
+fn updater(app: &AppHandle) -> Result<Updater> {
+    let mut builder = app.updater_builder();
+    let st = app.state::<AppState>();
+    if st.proxy_enabled.load(Ordering::Acquire) {
+        let url = st.proxy_url.lock().unwrap().trim().to_string();
+        if !url.is_empty() {
+            match reqwest::Url::parse(&url) {
+                Ok(parsed) => builder = builder.proxy(parsed),
+                Err(e) => log::warn!("[updater] ignoring invalid proxy URL {url:?}: {e}"),
+            }
+        }
+    }
+    builder.build().map_err(|e| anyhow!("updater unavailable: {e}"))
+}
+
 /// Run an update check. `force` bypasses the cadence gate (used by the manual
 /// "Check now" button); the background scheduler passes `false`. Returns the
 /// available version string, or `None` when already up to date / the check was
@@ -130,9 +151,7 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
         return Ok(None);
     }
 
-    let update = app
-        .updater()
-        .map_err(|e| anyhow!("updater unavailable: {e}"))?
+    let update = updater(app)?
         .check()
         .await
         .map_err(|e| anyhow!("update check failed: {e}"))?;
@@ -202,9 +221,7 @@ pub fn restore_pending(app: &AppHandle) {
 /// clear the affordance and report `Ok(false)` ("already up to date").
 /// On success this calls `app.restart()` and never returns.
 async fn perform_install(app: &AppHandle) -> Result<bool> {
-    let update = app
-        .updater()
-        .map_err(|e| anyhow!("updater unavailable: {e}"))?
+    let update = updater(app)?
         .check()
         .await
         .map_err(|e| anyhow!("update check failed: {e}"))?;
@@ -356,7 +373,12 @@ pub async fn run_scheduled_check(app: &AppHandle) {
     if !is_due(app, &meta) {
         return; // cadence not elapsed — nothing to do, no network touched
     }
-    if !endpoint_reachable().await {
+    // The reachability probe is a *direct* TCP handshake to the release host. With
+    // a proxy set that host is typically unreachable directly by design, so the
+    // probe would gate the check off forever. Skip it and let the proxied check
+    // try — a failure just leaves `last_check` untouched and retries next tick.
+    let proxied = app.state::<AppState>().proxy_enabled.load(Ordering::Acquire);
+    if !proxied && !endpoint_reachable().await {
         return; // network not up yet (e.g. just woke) — retry on the next poll
     }
     // We've already gated on cadence + reachability, so commit to the check;

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SettingRow from "@/components/SettingRow";
+import ProxySetting from "@/components/ProxySetting";
 import { getLocaleChoice, setLocaleChoice, type LocaleChoice } from "../i18n";
 import type { Status } from "../types";
 
@@ -66,7 +67,8 @@ export default function General({ status, refresh, onError }: Props) {
   };
 
   return (
-    <div className="min-h-full space-y-4 max-w-2xl flex flex-col justify-between">
+    <div className="min-h-full gap-4 max-w-2xl flex flex-col justify-between">
+      <div className="space-y-4">
       <Card>
         <CardContent className="space-y-4">
           <SettingRow
@@ -116,8 +118,17 @@ export default function General({ status, refresh, onError }: Props) {
               </Select>
             }
           />
+          <Separator />
+          <ProxySetting
+            enabled={status.proxyEnabled}
+            url={status.proxyUrl}
+            refresh={refresh}
+            onError={onError}
+          />
         </CardContent>
       </Card>
+
+      </div>
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>

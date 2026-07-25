@@ -1,9 +1,13 @@
+use std::collections::HashMap;
+use std::sync::atomic::Ordering;
+
 use anyhow::{anyhow, Result};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
 
 use crate::bbox::Bbox;
+use crate::state::AppState;
 
 /// Fetch OSM data for `b` by invoking the bundled `osm-cli` sidecar in
 /// single-shot "fetch" mode — the exact same TypeScript implementation
@@ -21,14 +25,35 @@ pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
         .sidecar("osm-cli")
         .map_err(|e| anyhow!("osm-cli sidecar not available: {}", e))?;
 
-    let (mut rx, _child) = sidecar
-        .args([
-            "fetch".to_string(),
-            format!("--south={}", b.south),
-            format!("--west={}", b.west),
-            format!("--north={}", b.north),
-            format!("--east={}", b.east),
-        ])
+    let mut cmd = sidecar.args([
+        "fetch".to_string(),
+        format!("--south={}", b.south),
+        format!("--west={}", b.west),
+        format!("--north={}", b.north),
+        format!("--east={}", b.east),
+    ]);
+
+    // Route the sidecar's live Overpass fetch through the user's proxy when set.
+    // The sidecar is a compiled Bun binary whose `fetch` honors the standard
+    // HTTPS_PROXY / HTTP_PROXY / ALL_PROXY environment variables, so handing the
+    // child those vars is all that's needed — no JS-side change. Extends the
+    // inherited environment (doesn't clear it).
+    {
+        let state = app.state::<AppState>();
+        if state.proxy_enabled.load(Ordering::Acquire) {
+            let url = state.proxy_url.lock().unwrap().trim().to_string();
+            if !url.is_empty() {
+                let env = HashMap::from([
+                    ("HTTPS_PROXY".to_string(), url.clone()),
+                    ("HTTP_PROXY".to_string(), url.clone()),
+                    ("ALL_PROXY".to_string(), url),
+                ]);
+                cmd = cmd.envs(env);
+            }
+        }
+    }
+
+    let (mut rx, _child) = cmd
         .spawn()
         .map_err(|e| anyhow!("failed to spawn osm-cli sidecar: {}", e))?;
 

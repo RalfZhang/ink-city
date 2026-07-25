@@ -33,6 +33,8 @@
     "updateUnavailable": "暂时无法连接更新服务器，请稍后再试",
     "languageLabel": "语言",
     "languageAuto": "跟随系统",
+    "proxyLabel": "代理",
+    "proxyDesc": "通过代理连接地图数据服务器，适用于无法直连 OpenStreetMap 的网络。支持 http:// 与 socks5:// 地址。",
     "hideWindow": "隐藏窗口",
     "quit": "退出"
   },

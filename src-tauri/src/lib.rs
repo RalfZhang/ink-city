@@ -140,6 +140,12 @@ pub fn run() {
             let first_run = config::is_first_run(handle);
             let cfg = config::load(handle);
             let hide_tray_initial = cfg.hide_tray;
+            // Apply the persisted proxy to the shared HTTP client before any
+            // fetch runs (the sidecar reads it from env at spawn — see
+            // osm_sidecar). Empty/disabled ⇒ direct connection.
+            if cfg.proxy_enabled && !cfg.proxy_url.trim().is_empty() {
+                github_mirror::set_proxy(Some(cfg.proxy_url.clone()));
+            }
             handle.manage(AppState::from_config(&cfg));
 
             // First-launch default: turn on launch-at-login once. Autostart
@@ -299,6 +305,7 @@ pub fn run() {
             commands::apply_lab_settings,
             commands::set_bypass_cache,
             commands::set_dev_mode,
+            commands::apply_proxy_settings,
             commands::get_color_defaults,
             commands::regenerate_now,
             commands::renderer_ready,

@@ -31,4 +31,6 @@ export type Status = {
   devMode: boolean;
   /** Dev-only: bypass the local cache and CDN, fetch OSM live from Overpass. In-memory only (off on launch). */
   bypassCache: boolean;
+  proxyEnabled: boolean;
+  proxyUrl: string;
 };

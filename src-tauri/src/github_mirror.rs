@@ -1,6 +1,22 @@
+use std::sync::RwLock;
 use std::time::Duration;
 
 use anyhow::Result;
+
+/// Process-wide proxy URL applied to every mirror fetch, or `None` for a direct
+/// connection. Set once at startup from the persisted config and again whenever
+/// the user changes the Proxy setting (see `commands::apply_proxy_settings`).
+/// A module-level holder rather than a `client()` parameter because the callers
+/// (`cdn.rs`, `cities_update.rs`) have no `AppState` handle, and the proxy is a
+/// single app-wide setting.
+static PROXY: RwLock<Option<String>> = RwLock::new(None);
+
+/// Update the proxy applied to future `client()` builds. `None` (or the empty
+/// string) means a direct connection.
+pub fn set_proxy(url: Option<String>) {
+    let normalized = url.filter(|u| !u.trim().is_empty());
+    *PROXY.write().unwrap() = normalized;
+}
 
 /// Repo these mirrors serve. Update if the repo moves.
 pub const REPO: &str = "RalfZhang/ink-city";
@@ -36,13 +52,22 @@ pub const RAW_STYLE_HOSTS: &[&str] = &["https://raw.githack.com", "https://raw.g
 
 const USER_AGENT: &str = "InkCity/0.1";
 
-/// HTTP client shared by all GitHub-mirror fetches.
+/// HTTP client shared by all GitHub-mirror fetches. Applies the configured proxy
+/// (see `set_proxy`) when set. An invalid proxy URL is logged and skipped rather
+/// than propagated, so a bad setting degrades to a direct connection instead of
+/// breaking every fetch.
 pub fn client() -> Result<reqwest::Client> {
-    Ok(reqwest::Client::builder()
+    let mut builder = reqwest::Client::builder()
         .user_agent(USER_AGENT)
         .connect_timeout(Duration::from_secs(5))
-        .timeout(Duration::from_secs(60))
-        .build()?)
+        .timeout(Duration::from_secs(60));
+    if let Some(url) = PROXY.read().unwrap().as_ref() {
+        match reqwest::Proxy::all(url) {
+            Ok(proxy) => builder = builder.proxy(proxy),
+            Err(e) => log::warn!("[proxy] ignoring invalid proxy URL {:?}: {}", url, e),
+        }
+    }
+    Ok(builder.build()?)
 }
 
 /// Ordered candidate URLs mirroring `{REPO}@{git_ref}/{path}` across the

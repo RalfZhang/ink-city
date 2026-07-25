@@ -49,6 +49,8 @@ pub struct AppState {
     /// on would make every render hit Overpass live, which isn't always
     /// China-reachable (the reason the CDN exists).
     pub bypass_cache: AtomicBool,
+    pub proxy_enabled: AtomicBool,
+    pub proxy_url: StdMutex<String>,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
@@ -89,6 +91,8 @@ impl AppState {
             show_aerialways: AtomicBool::new(cfg.show_aerialways),
             dev_mode: AtomicBool::new(cfg.dev_mode),
             bypass_cache: AtomicBool::new(false),
+            proxy_enabled: AtomicBool::new(cfg.proxy_enabled),
+            proxy_url: StdMutex::new(cfg.proxy_url.clone()),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),

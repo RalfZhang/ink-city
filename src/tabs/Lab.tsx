@@ -101,6 +101,8 @@ export default function Lab({ status, busy, onError }: Props) {
           }
         />
 
+        <Separator />
+
         <SettingRow
           label={t("lab.showAerialways")}
           description={t("lab.aerialwaysHint")}
