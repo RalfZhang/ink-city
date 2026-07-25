@@ -25,7 +25,18 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: {}
+  # Manually re-run the full signed build against an EXISTING version tag. A
+  # `ci:`-only commit never cuts a new release (release-please only bumps on
+  # feat/fix), so it never creates the `vX.Y.Z` tag that normally triggers this
+  # workflow — meaning a fix to this very workflow can't be exercised by the
+  # commit that makes it. Dispatching with the last version tag rebuilds it and
+  # re-uploads assets to its (draft) release. See docs/ci-release-troubleshooting.md.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing version tag to (re)build, e.g. v0.6.0"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -45,6 +56,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          # On a tag push this resolves to the pushed tag; on manual dispatch,
+          # to the `tag` input — so we always build the tagged commit, never
+          # whatever branch the dispatch happened from.
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -108,8 +124,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: "InkCity ${{ github.ref_name }}"
+          tagName: ${{ inputs.tag || github.ref_name }}
+          releaseName: "InkCity ${{ inputs.tag || github.ref_name }}"
           releaseBody: "See the assets below to download and install."
           releaseDraft: true
           prerelease: false
@@ -128,4 +144,4 @@ jobs:
       - name: Publish release (draft -> public + latest)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release edit "${{ github.ref_name }}" --repo "${{ github.repository }}" --draft=false --latest
+        run: gh release edit "${{ inputs.tag || github.ref_name }}" --repo "${{ github.repository }}" --draft=false --latest
