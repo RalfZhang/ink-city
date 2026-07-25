@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.6.0](https://github.com/RalfZhang/ink-city/compare/v0.5.3...v0.6.0) (2026-07-25)
+
+
+### Features
+
+* Add more CDNs ([0f9c291](https://github.com/RalfZhang/ink-city/commit/0f9c2916b56e71c703b3d8773fb2b425addab936)), closes [#23](https://github.com/RalfZhang/ink-city/issues/23)
+* Dev Mode ([f49e325](https://github.com/RalfZhang/ink-city/commit/f49e32507b6252f6e802bafb3c83a7df0ea4a2ad)), closes [#17](https://github.com/RalfZhang/ink-city/issues/17)
+* Logs ([5d4c7df](https://github.com/RalfZhang/ink-city/commit/5d4c7df90e27bedd5f4685ec18ae7977a10f9649)), closes [#24](https://github.com/RalfZhang/ink-city/issues/24)
+* move water switch to lab tab ([5d63660](https://github.com/RalfZhang/ink-city/commit/5d636608e13153e6d37ab63102bfa39ca0f98a5b))
+* Open on Google map ([7eb669e](https://github.com/RalfZhang/ink-city/commit/7eb669e138ad4780a03855610d814011ee6ec27f)), closes [#25](https://github.com/RalfZhang/ink-city/issues/25)
+* Render airport runways and aprons ([a34b4b0](https://github.com/RalfZhang/ink-city/commit/a34b4b0fd88894bf13886650f7e21430af237a5b)), closes [#5](https://github.com/RalfZhang/ink-city/issues/5)
+* Solve limited file size on jsdelivr ([0a6861b](https://github.com/RalfZhang/ink-city/commit/0a6861bbfde87b3c7d9c74d1d8ce6587606aae8e)), closes [#26](https://github.com/RalfZhang/ink-city/issues/26)
+
+
+### Bug Fixes
+
+* render airport only with runway & taxiway ([0b642a3](https://github.com/RalfZhang/ink-city/commit/0b642a3bdc53a41c2d9f03aa78e6524e0c7fa86b))
+* Settings window should not show up on startup ([1875c6f](https://github.com/RalfZhang/ink-city/commit/1875c6f9af40abaeb5f2cb3fb4195e34daa51c0f)), closes [#9](https://github.com/RalfZhang/ink-city/issues/9)
+* update precache when versions conflict ([1bce4d6](https://github.com/RalfZhang/ink-city/commit/1bce4d6eff826801efe1857a7e197d1068f741d2))
+
 ## [0.5.3](https://github.com/RalfZhang/ink-city/compare/v0.5.2...v0.5.3) (2026-07-24)
 
 
