@@ -59,16 +59,18 @@ export type WaterFeature =
   | { kind: "line"; cls: WaterLineClass; line: Geom[] };
 
 // --- Airport layer ---
-// Standalone ways only (no multipolygon relations — real-world aprons/runways
-// are overwhelmingly simple ways; see core/airports.ts). Unlike water's
-// `ocean` kind, these never span the whole bbox, so no edge-of-bbox clipping
-// is needed: a runway/apron that only partially falls inside the requested
-// area is passed through as-is and simply clips at the canvas edge when drawn.
+// Standalone ways only (no multipolygon relations; see core/airports.ts).
+// Unlike water's `ocean` kind, these never span the whole bbox, so no
+// edge-of-bbox clipping is needed: a runway/taxiway that only partially falls
+// inside the requested area is passed through as-is and simply clips at the
+// canvas edge when drawn.
 
-/** `apron` = paved area (filled polygon); `runway` = centerline (stroked). */
-export type AirportFeature =
-  | { kind: "apron"; polygon: WaterPolygon }
-  | { kind: "runway"; line: Geom[] };
+/**
+ * `runway` / `taxiway` = centerlines (stroked). They share the same slim shape
+ * (a polyline) and differ only at render time in stroke width and layering — a
+ * taxiway is thinner and drawn beneath runways.
+ */
+export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
 
 /**
  * The OSM container the renderer reads. `elements` (roads) is the original,
@@ -79,10 +81,10 @@ export type AirportFeature =
  */
 export type Osm = {
   elements?: Way[];
-  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2` = adds airports. */
+  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`+ = adds airports. */
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
-  /** Pre-assembled runway/apron shapes. Absent ⇒ no airport layer. */
+  /** Pre-assembled runway/taxiway centerlines. Absent ⇒ no airport layer. */
   airports?: AirportFeature[];
 };

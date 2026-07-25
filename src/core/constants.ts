@@ -3,11 +3,11 @@
 // renderer and the Lab-tab water UI share one source of truth.
 export const WATER_ALPHA = 0.3;
 
-// Opacity of the airport fill/stroke, baked into an opaque color the same way
-// as WATER_ALPHA (see mixColor). Much higher than water because runways/aprons
-// read as solid paved surfaces, not a translucent tint. Same
-// single-source-of-truth rationale — the renderer and the Lab-tab UI both use it.
-export const AIRPORT_ALPHA = 0.8;
+// Opacity of the airport centerlines (runways + taxiways), baked into an opaque
+// color the same way as WATER_ALPHA (see mixColor). Both share one alpha and
+// differ only in stroke width; the airport is pure linework, with no filled
+// surfaces.
+export const RUNWAY_ALPHA = 0.6;
 
 // Schema version stamped on the OSM payload (`{ v, elements, water, airports }`),
 // whether precached to the `data` branch or fetched live via the sidecar (both
@@ -24,8 +24,9 @@ export const AIRPORT_ALPHA = 0.8;
 //     newly added layer would never backfill into already-cached cities.
 // Absent ⇒ pre-water data (roads only). Single source of truth for the producer
 // (scripts/osm-cli.ts) and every consumer.
-// History: 1 = roads + water; 2 = adds the airports layer.
-export const OSM_SCHEMA_VERSION = 2;
+// History: 1 = roads + water; 2 = adds the airports layer (runway + apron);
+// 3 = airports layer reshaped to runway + taxiway centerlines (apron dropped).
+export const OSM_SCHEMA_VERSION = 3;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;

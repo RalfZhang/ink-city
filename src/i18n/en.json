@@ -69,7 +69,7 @@
   "lab": {
     "intro": "Experimental map layers. Toggle extra data on the wallpaper — each option appears only when today's city actually has it.",
     "showAirports": "Show airports",
-    "airportsHint": "Airport runways and aprons are filled with the line color.",
+    "airportsHint": "Airport runways and taxiways are drawn in the line color.",
     "noneAvailable": "Today's city has no optional layers to configure.",
     "save": "Save"
   },

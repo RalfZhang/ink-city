@@ -4,27 +4,26 @@ import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
 // Airport layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
 // the client — mirrors water.ts, but far simpler: unlike coastline-derived
-// ocean fill, a runway/apron never spans the whole bbox, so there's no
+// ocean fill, a runway/taxiway never spans the whole bbox, so there's no
 // edge-tracing/clipping to do. The "airports" layer implementation dispatched
 // by fetch-city.ts's fetchCityData().
 //
-// Scope: standalone ways only — aeroway=runway (rendered as a stroked
-// centerline, matching how the overwhelming majority of OSM data tags it) and
-// aeroway=apron (rendered as a filled polygon when the way is closed).
-// Multipolygon-relation aprons (holes, complex shapes) exist in OSM but are
-// rare enough to skip for now; a way tagged aeroway=apron that isn't closed is
-// dropped rather than guessed at.
+// Scope: standalone ways only — aeroway=runway and aeroway=taxiway, both
+// rendered as stroked centerlines (matching how the overwhelming majority of OSM
+// data tags them; taxiways draw thinner and beneath runways). Aprons and other
+// filled aeroway areas are intentionally not collected — the airport reads as
+// pure linework, consistent with the road/water styling.
 
 type RawGeom = { lat: number; lon: number };
 type RawWay = { type: "way"; tags?: Record<string, string>; geometry?: RawGeom[] };
 type RawOsm = { elements?: RawWay[] };
 
-/** Overpass QL fetching runway and apron ways. */
+/** Overpass QL fetching runway and taxiway ways. */
 export function buildAirportsQuery(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
   return (
     `[out:json][timeout:90];(` +
-    `way[aeroway=runway](${bb});way[aeroway=apron](${bb});` +
+    `way[aeroway=runway](${bb});way[aeroway=taxiway](${bb});` +
     `);out geom;`
   );
 }
@@ -48,12 +47,10 @@ function dedupeAdjacent(pts: RawGeom[]): RawGeom[] {
   return out;
 }
 
-const isClosed = (line: RawGeom[]) => line.length >= 4 && samePt(line[0], line[line.length - 1]);
-
 /**
- * Assemble a raw runway/apron Overpass response into slim, render-ready
- * features. Coordinates are optionally rounded to `coordPrecision` decimals
- * (after endpoint matching, which needs full precision) — mirrors slimWater.
+ * Assemble a raw runway/taxiway Overpass response into slim, render-ready
+ * features. Coordinates are optionally rounded to `coordPrecision` decimals —
+ * mirrors slimWater.
  */
 export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeature[] {
   const features: AirportFeature[] = [];
@@ -65,8 +62,8 @@ export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeatu
 
     if (el.tags?.aeroway === "runway") {
       features.push({ kind: "runway", line: pts });
-    } else if (el.tags?.aeroway === "apron" && isClosed(pts)) {
-      features.push({ kind: "apron", polygon: { outer: pts } });
+    } else if (el.tags?.aeroway === "taxiway") {
+      features.push({ kind: "taxiway", line: pts });
     }
   }
 
@@ -77,9 +74,5 @@ function roundFeatures(features: AirportFeature[], precision: number): AirportFe
   const f = 10 ** precision;
   const r = (v: number) => Math.round(v * f) / f;
   const ring = (pts: Geom[]) => pts.map((p) => ({ lat: r(p.lat), lon: r(p.lon) }));
-  return features.map((feat) =>
-    feat.kind === "runway"
-      ? { kind: "runway", line: ring(feat.line) }
-      : { kind: "apron", polygon: { outer: ring(feat.polygon.outer) } },
-  );
+  return features.map((feat) => ({ kind: feat.kind, line: ring(feat.line) }));
 }
