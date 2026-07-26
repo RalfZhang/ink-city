@@ -119,7 +119,7 @@ export default function General({ status, refresh, onError }: Props) {
         <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
           {t("general.quit")}
         </Button>
-        <Button size="sm" onClick={() => invoke("hide_window")}>
+        <Button className="min-w-28" size="sm" onClick={() => invoke("hide_window")}>
           {t("general.hideWindow")}
         </Button>
       </div>
