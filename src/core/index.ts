@@ -5,12 +5,12 @@ export * from "./city";
 export * from "./bbox";
 export * from "./overpass";
 export * from "./layers";
-// NOTE: ./water, ./airports, and ./fetch-city are intentionally NOT
-// re-exported here. All three are precache/sidecar-only (Node/Deno/Bun, never
-// the client): ./water pulls in `polygon-clipping`, and ./fetch-city imports
-// both ./water and ./airports directly. scripts/osm-cli.ts imports
-// ./fetch-city (not ./water or ./airports). The client only needs the
-// `AirportFeature`/`Osm` types (from ./types, exported above) and the
-// `drawAirports` renderer (from ./render, exported below).
+// NOTE: ./water, ./airports, ./railways, ./aerialways, and ./fetch-city are
+// intentionally NOT re-exported here. All are precache/sidecar-only
+// (Node/Deno/Bun, never the client): ./water pulls in `polygon-clipping`, and
+// ./fetch-city imports every layer module directly. scripts/osm-cli.ts imports
+// ./fetch-city (not the individual layer modules). The client only needs the
+// layer feature types (e.g. `AirportFeature`) and `Osm` (from ./types, exported
+// above) plus the renderers (from ./render, exported below).
 export * from "./render";
 export * from "./constants";
