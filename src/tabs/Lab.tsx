@@ -122,7 +122,7 @@ export default function Lab({ status, busy, onError }: Props) {
 
       <CardFooter className="justify-end">
         <Button onClick={save} disabled={!dirty || saving} size="sm">
-          {saving && <Loader2 className="animate-spin size-3.5 mr-1.5" />}
+          {saving && <Loader2 className="animate-spin size-3.5 me-1.5" />}
           {t("lab.save")}
         </Button>
       </CardFooter>

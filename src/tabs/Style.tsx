@@ -171,7 +171,7 @@ export default function Style({ status, busy, onError }: Props) {
 
       <CardFooter className="justify-end">
         <Button onClick={save} disabled={!dirty || saving} size="sm">
-          {saving && <Loader2 className="animate-spin size-3.5 mr-1.5" />}
+          {saving && <Loader2 className="animate-spin size-3.5 me-1.5" />}
           {t("style.save")}
         </Button>
       </CardFooter>
@@ -274,7 +274,7 @@ function ColorField({
         className="w-9 h-7 rounded border border-border bg-transparent cursor-pointer p-0 disabled:cursor-not-allowed disabled:opacity-50"
       />
       <span className="text-muted-foreground">{label}</span>
-      <code className="text-xs text-muted-foreground">{value}</code>
+      <code dir="ltr" className="text-xs text-muted-foreground">{value}</code>
     </label>
   );
 }

@@ -114,6 +114,7 @@ export default function General({ status, refresh, onError }: Props) {
                   <SelectItem value="es">Español</SelectItem>
                   <SelectItem value="fr">Français</SelectItem>
                   <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="ar">العربية</SelectItem>
                 </SelectContent>
               </Select>
             }

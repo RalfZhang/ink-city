@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
-import i18n from "@/i18n";
+import { Direction } from "radix-ui";
+import i18n, { dirForLocale } from "@/i18n";
 import { logWarn } from "@/lib/log";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import General from "./tabs/General";
@@ -150,7 +151,13 @@ function App() {
   const effectiveStatus = { ...status, running: busy || status.running };
   const devMode = status.devMode;
 
+  // Radix reads direction from this provider, not the DOM `dir`; without it its
+  // roots force `dir="ltr"` and cancel the RTL mirroring. `useTranslation`
+  // re-renders on language change, so `i18n.language` here stays current.
+  const dir = dirForLocale(i18n.language);
+
   return (
+    <Direction.Provider dir={dir}>
     <div className="h-screen flex flex-col">
       <Tabs
         orientation="vertical"
@@ -167,19 +174,19 @@ function App() {
           {devMode && <TabsTrigger value="devMode">{t("sidebar.devMode")}</TabsTrigger>}
         </TabsList>
 
-        <TabsContent value="general" className="flex-1 overflow-y-auto border-l px-4 py-4">
+        <TabsContent value="general" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <General status={effectiveStatus} refresh={refresh} onError={onError} />
         </TabsContent>
-        <TabsContent value="city" className="flex-1 overflow-y-auto border-l px-4 py-4">
+        <TabsContent value="city" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <City status={effectiveStatus} onError={onError} />
         </TabsContent>
-        <TabsContent value="style" className="flex-1 overflow-y-auto border-l px-4 py-4">
+        <TabsContent value="style" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
-        <TabsContent value="lab" className="flex-1 overflow-y-auto border-l px-4 py-4">
+        <TabsContent value="lab" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <Lab status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
-        <TabsContent value="about" className="flex-1 overflow-y-auto border-l px-4 py-4">
+        <TabsContent value="about" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <About
             status={effectiveStatus}
             refresh={refresh}
@@ -188,7 +195,7 @@ function App() {
           />
         </TabsContent>
         {devMode && (
-          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-l px-4 py-4">
+          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-s px-4 py-4">
             <DevMode status={effectiveStatus} onError={onError} />
           </TabsContent>
         )}
@@ -200,6 +207,7 @@ function App() {
         </div>
       )}
     </div>
+    </Direction.Provider>
   );
 }
 
