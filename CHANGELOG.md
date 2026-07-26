@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/RalfZhang/ink-city/compare/v0.7.0...v0.7.1) (2026-07-26)
+
+
+### Bug Fixes
+
+* i18n update ([4800031](https://github.com/RalfZhang/ink-city/commit/48000311702122d6929a988898a43c9848e69862))
+
 ## [0.7.0](https://github.com/RalfZhang/ink-city/compare/v0.6.0...v0.7.0) (2026-07-26)
 
 
