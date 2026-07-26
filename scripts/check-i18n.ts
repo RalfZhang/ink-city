@@ -19,7 +19,27 @@ const i18nDir = join(here, "..", "src", "i18n");
 
 // The first entry is the source of truth (matches `fallbackLng` in index.ts).
 const SOURCE = "en";
-const OTHERS = ["zh-Hans", "zh-Hant", "es", "fr", "de", "ar"];
+const OTHERS = [
+  "zh-Hans",
+  "zh-Hant",
+  "es",
+  "fr",
+  "de",
+  "ar",
+  "ja",
+  "ko",
+  "pt",
+  "hi",
+  "id",
+  "vi",
+  "th",
+  "it",
+  "tr",
+  "ru",
+  "nl",
+  "pl",
+  "uk",
+];
 
 type Json = Record<string, unknown>;
 
