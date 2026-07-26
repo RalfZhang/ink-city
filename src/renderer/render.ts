@@ -1,7 +1,7 @@
 import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 
-import { drawRoads, type DrawReq } from "@/core";
+import { drawScene, type DrawReq } from "@/core";
 import { logError, logInfo } from "@/lib/log";
 
 // Thin Tauri adapter: receive a render request over IPC, draw via the portable
@@ -17,7 +17,7 @@ async function render(req: RenderReq): Promise<void> {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("canvas 2d unavailable");
 
-  const drawn = drawRoads(ctx, req);
+  const drawn = drawScene(ctx, req);
   logInfo(`[renderer] drew ${drawn} ways at ${req.width}x${req.height} (preset=${req.style.preset})`);
 
   const blob: Blob | null = await new Promise((r) => canvas.toBlob((b) => r(b), "image/png"));

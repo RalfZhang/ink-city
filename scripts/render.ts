@@ -42,7 +42,7 @@ import { fileURLToPath } from "node:url";
 import { createCanvas } from "canvas";
 
 import {
-  drawRoads,
+  drawScene,
   bboxForScreen,
   LAYER_IDS,
   type Bbox,
@@ -198,7 +198,7 @@ async function main() {
     for (const type of types) {
       const canvas = type === "svg" ? createCanvas(width, height, "svg") : createCanvas(width, height);
       const ctx = canvas.getContext("2d") as unknown as CanvasRenderingContext2D;
-      const drawn = drawRoads(ctx, {
+      const drawn = drawScene(ctx, {
         bbox,
         width,
         height,
