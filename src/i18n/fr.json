@@ -33,6 +33,8 @@
     "updateUnavailable": "Serveur de mise à jour indisponible, réessayez plus tard",
     "languageLabel": "Langue",
     "languageAuto": "Automatique",
+    "proxyLabel": "Proxy",
+    "proxyDesc": "Achemine les requêtes de données cartographiques via un proxy, pour les réseaux où OpenStreetMap n'est pas accessible directement. Prend en charge les URL http:// et socks5://.",
     "hideWindow": "Masquer la fenêtre",
     "quit": "Quitter"
   },
@@ -68,6 +70,10 @@
     "intro": "Ces fonctionnalités sont expérimentales, peuvent contenir des bugs et ne sont pas garanties de fonctionner.",
     "showAirports": "Afficher les aéroports",
     "airportsHint": "Les pistes et voies de circulation des aéroports sont tracées dans la couleur des lignes.",
+    "showRailways": "Afficher les voies ferrées",
+    "railwaysHint": "Les lignes ferroviaires en surface sont tracées en tirets dans la couleur des lignes.",
+    "showAerialways": "Afficher les téléphériques",
+    "aerialwaysHint": "Les téléphériques et remontées mécaniques sont tracés en pointillés dans la couleur des lignes.",
     "showWater": "Afficher les plans d'eau",
     "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes",
     "save": "Enregistrer"
@@ -89,7 +95,15 @@
   "devMode": {
     "advancePreviewTitle": "Aperçu anticipé",
     "advancePreviewDesc": "Prévisualisez la carte d'une ville pour un jour à venir dans la rotation, sans changer le fond d'écran du jour.",
-    "loading": "Génération de l'aperçu…"
+    "loading": "Génération de l'aperçu…",
+    "cleanCacheTitle": "Vider le cache",
+    "cleanCacheDesc": "Supprime les données cartographiques téléchargées et les fonds d'écran générés. Ils sont de nouveau récupérés et générés lors de la prochaine mise à jour.",
+    "cleanCacheButton": "Vider",
+    "cleaning": "Vidage…",
+    "cleanCacheResult": "{{files}} fichiers supprimés · {{size}} libérés",
+    "cleanCacheEmpty": "Le cache est déjà vide",
+    "bypassCacheTitle": "Contourner le cache et le CDN",
+    "bypassCacheDesc": "Récupère les données cartographiques en direct depuis l'API Overpass, en contournant le CDN et en écrasant le cache local. À utiliser pour tester des modifications des données cartographiques. Réinitialisé au redémarrage."
   },
   "common": {
     "loading": "chargement…"
