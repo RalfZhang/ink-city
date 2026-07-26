@@ -14,7 +14,8 @@
     "build:cities": "node scripts/build-cities.mjs",
     "precache": "tsx scripts/osm-cli.ts precache",
     "build:sidecar": "tsx scripts/build-sidecar.ts",
-    "render": "tsx scripts/render.ts"
+    "render": "tsx scripts/render.ts",
+    "schedule-test": "tsx scripts/schedule-test.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

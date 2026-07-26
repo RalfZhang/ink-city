@@ -98,7 +98,15 @@ jobs:
         if: always()
         run: |
           shopt -s nullglob
-          files=(data-out/osm/*.json)
+          # Both the id-keyed osm/ payloads and the date-keyed osm-v2/data/
+          # manifests (issue #1); nullglob drops either if empty/absent.
+          # osm-v2/city-list.json is deliberately outside data/, so this glob
+          # can't reach it: it's the schedule's state file, read by the next CI
+          # run (and edited by hand) rather than fetched by the client, so a .gz
+          # sibling would just be dead weight.
+          # The paths must match SCHEDULE_ROOT/SCHEDULE_DATA_DIR in
+          # src/core/schedule.ts, which is where the layout is defined.
+          files=(data-out/osm/*.json data-out/osm-v2/data/*.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "nothing to compress"
           else
@@ -118,8 +126,26 @@ jobs:
           # Single-commit branch each run: reuse the files restored above, but
           # drop history so the repo never bloats with old OSM blobs.
           rm -rf .git
-          if [ -z "$(ls -A osm 2>/dev/null)" ]; then
-            echo "nothing to publish (no cities cached)"
+          # Publish if *either* flow produced something. Checking only osm/ (as
+          # this did before osm-v2/ existed) would silently discard a successful
+          # schedule run — and still report the job green, since a run that
+          # fetched schedule days but no rotation cities isn't a failure. It
+          # would also stop publishing entirely if the legacy osm/ flow is ever
+          # retired.
+          #
+          # Note this is now a *narrow* guard, not the safety net it reads as. Any
+          # run that reached the schedule leaves osm-v2/city-list.json behind even
+          # when every fetch failed (intended — the schedule state is worth
+          # publishing on its own), so all it still catches is a precache step that
+          # died before writing anything at all: `git commit` on an empty tree
+          # exits non-zero and would fail this step for no reason. It does NOT
+          # protect against publishing a *thinner* tree than the branch already
+          # has; that's the restore step's job, which aborts the whole run on any
+          # clone failure other than "branch missing".
+          #
+          # osm-v2/ must match SCHEDULE_ROOT in src/core/schedule.ts.
+          if [ -z "$(ls -A osm 2>/dev/null)" ] && [ -z "$(ls -A osm-v2 2>/dev/null)" ]; then
+            echo "nothing to publish (no cities cached, no schedule)"
             exit 0
           fi
           git init -q -b data

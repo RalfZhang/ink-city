@@ -17,6 +17,14 @@ const EPOCH: (i32, u32, u32) = (2023, 3, 3);
 /// MUST stay equivalent to the TS port in `src/core/city.ts` (the website / CI
 /// pick the same city there); if they diverge the website shows a different
 /// city than the user's wallpaper.
+///
+/// Since issue #1 this rotation is the *fallback*, not the daily city: the
+/// wallpaper prefers the CI-authored schedule manifest, which no formula can
+/// reproduce (see `docs/random-city-strategy.md`). So in-process, nothing but
+/// `pipeline::resolve_city_and_osm` may call `pick_for_date` — everything else
+/// goes through `pipeline::city_for_status` to get the city actually rendered.
+/// The website still recomputes it and will name the rotation city until it
+/// reads the manifests too.
 const MULTIPLIER: i64 = 379;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

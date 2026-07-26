@@ -2,12 +2,15 @@
 
 Three **schema-identical** JSON pools — each entry is
 `{ id, name, localName, country, lat, lon, population }`, so they're drop-in
-interchangeable:
+interchangeable. `id` is the GeoNames `geonameid` in **all three**, so the same city
+carries the same id across pools and they can be joined/deduped by id.
+`cities-famous.json` carries one extra key, `wikiId` — additive, so it still
+deserializes anywhere the others do.
 
 | File | Pins | What it is |
 |---|---|---|
 | `cities.json` | 1000 | Top cities by population (GeoNames). **The only one wired into the app.** |
-| `cities-famous.json` | 993 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). |
+| `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). |
 | `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. |
 
 Only `cities.json` is loaded at runtime — it's hardcoded in
@@ -65,9 +68,27 @@ don't reformat).
 
 ### `cities-famous.json` specifics
 
-Same baseline, **plus** sub-national overrides the countries file lacks. (Its ids are
-*not* GeoNames ids, so pins were coord+name joined to GeoNames, preferring max-population
-within ~0.2° to avoid matching sub-districts.)
+Same baseline, **plus** sub-national overrides the countries file lacks.
+
+#### `id` / `wikiId`
+
+The pin *list* is chosen from Wikidata, so each pin keeps its Wikidata Q-number (minus
+the `Q`) in **`wikiId`** — `id` itself is the GeoNames `geonameid`, backfilled by a
+coord+name join against `cities1000.txt`. Ranking of candidates within ~80 km:
+`name` == GeoNames primary name, then `name` in its alternate names, then the same two
+for `localName`, then max population. **Name signals must outrank population** — going
+by population alone pulls a city onto its larger neighbour (Offenbach → Frankfurt,
+Ludwigshafen → Mannheim, Kotte → Colombo, New Delhi → Delhi), and preferring
+`name` over `localName` is what saves those cases when the `localName` is itself wrong.
+
+All 992 ids resolved. Cross-check: of the pins that independently name+coord-match an
+entry in the two GeoNames-sourced pools, **480/480** agree with that entry's id, and
+513 famous pins now share an id with those pools. Two hand-checked exceptions:
+**Monte Águila (CL)** is `3879476`, which is missing from `cities1000.txt` because
+GeoNames records it with population 0; **Bremen** was 993 pins because the list
+carried both the city (`Q24879`)
+and the *Land* (`Q1209`, de label "Freie Hansestadt Bremen", pop = city + Bremerhaven) —
+GeoNames has only the city, so the Land was dropped.
 
 Target-language priority: **CURATED > China autonomous region > India state > multilingual-country region > country-primary.**
 
@@ -89,3 +110,9 @@ Target-language priority: **CURATED > China autonomous region > India state > mu
   (not pre-2018 इलाहाबाद), Ho Chi Minh City → Thành phố Hồ Chí Minh (not abbrev TPHCM),
   Rhodes → Ρόδος, Basra → البصرة (not "Old Basra"), Espoo → Espoo (GeoNames had only
   Swedish "Esbo"). TD/DJ curated to Arabic to **match `cities-countries.json`.**
+- **Neighbour bleed** — three pins had a *different* city's name as their `localName`,
+  found by the geonameid join and fixed from Wikidata labels: Offenbach am Main
+  (was "Frankfurt am Main"), Ludwigshafen → Ludwigshafen am Rhein (was "Mannheim"),
+  Sri Jayawardenepura Kotte → ශ්‍රී ජයවර්ධනපුර කෝට්ටේ (was කොළඹ, i.e. Colombo — GeoNames
+  has no Sinhala name for Kotte at all, so rule 6's "keep current value" had nothing
+  to keep).

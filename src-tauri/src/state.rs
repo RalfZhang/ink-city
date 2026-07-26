@@ -60,6 +60,14 @@ pub struct AppState {
     /// for. In-memory only (None on launch → forces a reconcile at startup).
     /// The scheduler's poll uses it to skip work when nothing has changed.
     pub last_applied: StdMutex<Option<(chrono::NaiveDate, crate::pipeline::EffectiveTheme)>>,
+    /// The city the pipeline actually resolved for a date — the schedule
+    /// manifest's pick when the CDN served one, else the rotation fallback.
+    /// `Status` reads it through `pipeline::city_for_status` rather than calling
+    /// `city::pick_for_date` itself, which would name a different city than the
+    /// wallpaper on every day the schedule was used. In-memory only; see
+    /// `city_for_status` for how a restart onto an already-rendered day recovers
+    /// it from that day's cached payload.
+    pub resolved_city: StdMutex<Option<(chrono::NaiveDate, crate::city::City)>>,
     /// Signal that some `Status`-affecting state changed. The status-emitter
     /// task waits on it and pushes a fresh snapshot to the frontend, replacing
     /// the old 2s poll. Mutation sites only signal (`mark_status_dirty`); the
@@ -97,6 +105,7 @@ impl AppState {
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),
             last_applied: StdMutex::new(None),
+            resolved_city: StdMutex::new(None),
             status_dirty: Arc::new(Notify::new()),
         }
     }

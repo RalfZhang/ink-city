@@ -59,7 +59,11 @@ pub struct Status {
 pub async fn build_status(app: &AppHandle) -> Status {
     let state = app.state::<AppState>();
     let date = city::today();
-    let city = city::pick_for_date(date);
+    // The city the pipeline actually rendered, not a second, independent
+    // rotation pick — those disagree on every day served from the schedule
+    // (issue #1), and this one drives the City tab's name, coordinates and
+    // Wikipedia / Maps links.
+    let city = pipeline::city_for_status(app, date);
     let running = *state.running.lock().await;
     let theme = *state.theme.lock().unwrap();
     let effective = match pipeline::effective_theme(app) {

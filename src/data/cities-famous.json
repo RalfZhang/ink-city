@@ -1,6 +1,7 @@
 [
   {
-    "id": 84,
+    "id": 2643743,
+    "wikiId": 84,
     "name": "London",
     "localName": "London",
     "country": "GB",
@@ -9,7 +10,8 @@
     "population": 8799728
   },
   {
-    "id": 649,
+    "id": 524901,
+    "wikiId": 649,
     "name": "Moscow",
     "localName": "Москва",
     "country": "RU",
@@ -18,7 +20,8 @@
     "population": 13274285
   },
   {
-    "id": 90,
+    "id": 2988507,
+    "wikiId": 90,
     "name": "Paris",
     "localName": "Paris",
     "country": "FR",
@@ -27,7 +30,8 @@
     "population": 2103778
   },
   {
-    "id": 60,
+    "id": 5128581,
+    "wikiId": 60,
     "name": "New York City",
     "localName": "New York",
     "country": "US",
@@ -36,7 +40,8 @@
     "population": 8804190
   },
   {
-    "id": 956,
+    "id": 1816670,
+    "wikiId": 956,
     "name": "Beijing",
     "localName": "北京",
     "country": "CN",
@@ -45,7 +50,8 @@
     "population": 21893095
   },
   {
-    "id": 334,
+    "id": 1880252,
+    "wikiId": 334,
     "name": "Singapore",
     "localName": "Republic of Singapore",
     "country": "SG",
@@ -54,7 +60,8 @@
     "population": 5866139
   },
   {
-    "id": 220,
+    "id": 3169070,
+    "wikiId": 220,
     "name": "Rome",
     "localName": "Roma",
     "country": "IT",
@@ -63,7 +70,8 @@
     "population": 2748109
   },
   {
-    "id": 64,
+    "id": 2950159,
+    "wikiId": 64,
     "name": "Berlin",
     "localName": "Berlin",
     "country": "DE",
@@ -72,7 +80,8 @@
     "population": 3782202
   },
   {
-    "id": 1490,
+    "id": 1850147,
+    "wikiId": 1490,
     "name": "Tokyo",
     "localName": "東京",
     "country": "JP",
@@ -81,7 +90,8 @@
     "population": 14264798
   },
   {
-    "id": 8646,
+    "id": 1819729,
+    "wikiId": 8646,
     "name": "Hong Kong",
     "localName": "香港",
     "country": "CN",
@@ -90,7 +100,8 @@
     "population": 7413070
   },
   {
-    "id": 406,
+    "id": 745044,
+    "wikiId": 406,
     "name": "Istanbul",
     "localName": "İstanbul",
     "country": "TR",
@@ -99,7 +110,8 @@
     "population": 15655924
   },
   {
-    "id": 8678,
+    "id": 3451190,
+    "wikiId": 8678,
     "name": "Rio de Janeiro",
     "localName": "Rio de Janeiro",
     "country": "BR",
@@ -108,7 +120,8 @@
     "population": 6211223
   },
   {
-    "id": 2807,
+    "id": 3117735,
+    "wikiId": 2807,
     "name": "Madrid",
     "localName": "Madrid",
     "country": "ES",
@@ -117,7 +130,8 @@
     "population": 3506730
   },
   {
-    "id": 2841,
+    "id": 3688689,
+    "wikiId": 2841,
     "name": "Bogotá",
     "localName": "Bogotá",
     "country": "CO",
@@ -126,7 +140,8 @@
     "population": 8034649
   },
   {
-    "id": 2887,
+    "id": 3871336,
+    "wikiId": 2887,
     "name": "Santiago",
     "localName": "Santiago de Chile",
     "country": "CL",
@@ -135,7 +150,8 @@
     "population": 6257516
   },
   {
-    "id": 8686,
+    "id": 1796236,
+    "wikiId": 8686,
     "name": "Shanghai",
     "localName": "上海",
     "country": "CN",
@@ -144,7 +160,8 @@
     "population": 24870895
   },
   {
-    "id": 1854,
+    "id": 1566083,
+    "wikiId": 1854,
     "name": "Ho Chi Minh City",
     "localName": "Thành phố Hồ Chí Minh",
     "country": "VN",
@@ -153,7 +170,8 @@
     "population": 14002598
   },
   {
-    "id": 65,
+    "id": 5368361,
+    "wikiId": 65,
     "name": "Los Angeles",
     "localName": "Los Angeles",
     "country": "US",
@@ -162,7 +180,8 @@
     "population": 3898747
   },
   {
-    "id": 85,
+    "id": 360630,
+    "wikiId": 85,
     "name": "Cairo",
     "localName": "القاهرة",
     "country": "EG",
@@ -171,7 +190,8 @@
     "population": 9801536
   },
   {
-    "id": 1741,
+    "id": 2761369,
+    "wikiId": 1741,
     "name": "Vienna",
     "localName": "Wien",
     "country": "AT",
@@ -180,7 +200,8 @@
     "population": 2028289
   },
   {
-    "id": 656,
+    "id": 498817,
+    "wikiId": 656,
     "name": "Saint Petersburg",
     "localName": "Санкт-Петербург",
     "country": "RU",
@@ -189,7 +210,8 @@
     "population": 5652922
   },
   {
-    "id": 270,
+    "id": 756135,
+    "wikiId": 270,
     "name": "Warsaw",
     "localName": "Warszawa",
     "country": "PL",
@@ -198,7 +220,8 @@
     "population": 1862402
   },
   {
-    "id": 174,
+    "id": 3448439,
+    "wikiId": 174,
     "name": "São Paulo",
     "localName": "São Paulo",
     "country": "BR",
@@ -207,7 +230,8 @@
     "population": 11451999
   },
   {
-    "id": 1297,
+    "id": 4887398,
+    "wikiId": 1297,
     "name": "Chicago",
     "localName": "Chicago",
     "country": "US",
@@ -216,7 +240,8 @@
     "population": 2746388
   },
   {
-    "id": 1486,
+    "id": 3435910,
+    "wikiId": 1486,
     "name": "Buenos Aires",
     "localName": "Buenos Aires",
     "country": "AR",
@@ -225,7 +250,8 @@
     "population": 3121707
   },
   {
-    "id": 1489,
+    "id": 3530597,
+    "wikiId": 1489,
     "name": "Mexico City",
     "localName": "Ciudad de México",
     "country": "MX",
@@ -234,7 +260,8 @@
     "population": 9209944
   },
   {
-    "id": 1218,
+    "id": 281184,
+    "wikiId": 1218,
     "name": "Jerusalem",
     "localName": "ירושלים",
     "country": "IL",
@@ -243,7 +270,8 @@
     "population": 936425
   },
   {
-    "id": 8684,
+    "id": 1835848,
+    "wikiId": 8684,
     "name": "Seoul",
     "localName": "서울",
     "country": "KR",
@@ -252,7 +280,8 @@
     "population": 9668465
   },
   {
-    "id": 1899,
+    "id": 703448,
+    "wikiId": 1899,
     "name": "Kyiv",
     "localName": "Київ",
     "country": "UA",
@@ -261,7 +290,8 @@
     "population": 2952301
   },
   {
-    "id": 3630,
+    "id": 1642911,
+    "wikiId": 3630,
     "name": "Jakarta",
     "localName": "Jakarta",
     "country": "ID",
@@ -270,7 +300,8 @@
     "population": 11135191
   },
   {
-    "id": 3130,
+    "id": 2147714,
+    "wikiId": 3130,
     "name": "Sydney",
     "localName": "Sydney",
     "country": "AU",
@@ -279,7 +310,8 @@
     "population": 5450496
   },
   {
-    "id": 1861,
+    "id": 1609350,
+    "wikiId": 1861,
     "name": "Bangkok",
     "localName": "กรุงเทพฯ",
     "country": "TH",
@@ -288,7 +320,8 @@
     "population": 5676648
   },
   {
-    "id": 61,
+    "id": 4140963,
+    "wikiId": 61,
     "name": "Washington, D.C.",
     "localName": "Washington",
     "country": "US",
@@ -297,7 +330,8 @@
     "population": 689545
   },
   {
-    "id": 1530,
+    "id": 98182,
+    "wikiId": 1530,
     "name": "Baghdad",
     "localName": "بغداد",
     "country": "IQ",
@@ -306,7 +340,8 @@
     "population": 8126755
   },
   {
-    "id": 1757,
+    "id": 658225,
+    "wikiId": 1757,
     "name": "Helsinki",
     "localName": "Helsinki",
     "country": "FI",
@@ -315,7 +350,8 @@
     "population": 694392
   },
   {
-    "id": 1524,
+    "id": 264371,
+    "wikiId": 1524,
     "name": "Athens",
     "localName": "Αθήνα",
     "country": "GR",
@@ -324,7 +360,8 @@
     "population": 643452
   },
   {
-    "id": 1754,
+    "id": 2673730,
+    "wikiId": 1754,
     "name": "Stockholm",
     "localName": "Stockholm",
     "country": "SE",
@@ -333,7 +370,8 @@
     "population": 984748
   },
   {
-    "id": 3616,
+    "id": 112931,
+    "wikiId": 3616,
     "name": "Tehran",
     "localName": "تهران",
     "country": "IR",
@@ -342,7 +380,8 @@
     "population": 8693706
   },
   {
-    "id": 1085,
+    "id": 3067696,
+    "wikiId": 1085,
     "name": "Prague",
     "localName": "Praha",
     "country": "CZ",
@@ -351,7 +390,8 @@
     "population": 1397880
   },
   {
-    "id": 4361,
+    "id": 3464975,
+    "wikiId": 4361,
     "name": "Curitiba",
     "localName": "Curitiba",
     "country": "BR",
@@ -360,7 +400,8 @@
     "population": 1773718
   },
   {
-    "id": 1156,
+    "id": 1275339,
+    "wikiId": 1156,
     "name": "Mumbai",
     "localName": "मुंबई",
     "country": "IN",
@@ -369,7 +410,8 @@
     "population": 15414288
   },
   {
-    "id": 3640,
+    "id": 323786,
+    "wikiId": 3640,
     "name": "Ankara",
     "localName": "Ankara",
     "country": "TR",
@@ -378,7 +420,8 @@
     "population": 5803482
   },
   {
-    "id": 1781,
+    "id": 3054643,
+    "wikiId": 1781,
     "name": "Budapest",
     "localName": "Budapest",
     "country": "HU",
@@ -387,7 +430,8 @@
     "population": 1685209
   },
   {
-    "id": 34600,
+    "id": 1857910,
+    "wikiId": 34600,
     "name": "Kyoto",
     "localName": "京都市",
     "country": "JP",
@@ -396,7 +440,8 @@
     "population": 1463723
   },
   {
-    "id": 1354,
+    "id": 1185241,
+    "wikiId": 1354,
     "name": "Dhaka",
     "localName": "ঢাকা",
     "country": "BD",
@@ -405,7 +450,8 @@
     "population": 16800000
   },
   {
-    "id": 3870,
+    "id": 184745,
+    "wikiId": 3870,
     "name": "Nairobi",
     "localName": "Nairobi",
     "country": "KE",
@@ -414,7 +460,8 @@
     "population": 5545000
   },
   {
-    "id": 9248,
+    "id": 587084,
+    "wikiId": 9248,
     "name": "Baku",
     "localName": "Bakı",
     "country": "AZ",
@@ -423,7 +470,8 @@
     "population": 2300500
   },
   {
-    "id": 19689,
+    "id": 3183875,
+    "wikiId": 19689,
     "name": "Tirana",
     "localName": "Tirana",
     "country": "AL",
@@ -432,7 +480,8 @@
     "population": 389323
   },
   {
-    "id": 3766,
+    "id": 170654,
+    "wikiId": 3766,
     "name": "Damascus",
     "localName": "دمشق",
     "country": "SY",
@@ -441,7 +490,8 @@
     "population": 2685360
   },
   {
-    "id": 1492,
+    "id": 3128760,
+    "wikiId": 1492,
     "name": "Barcelona",
     "localName": "Barcelona",
     "country": "ES",
@@ -450,7 +500,8 @@
     "population": 1731649
   },
   {
-    "id": 2868,
+    "id": 3936456,
+    "wikiId": 2868,
     "name": "Lima",
     "localName": "Lima",
     "country": "PE",
@@ -459,7 +510,8 @@
     "population": 9943800
   },
   {
-    "id": 597,
+    "id": 2267057,
+    "wikiId": 597,
     "name": "Lisbon",
     "localName": "Lisboa",
     "country": "PT",
@@ -468,7 +520,8 @@
     "population": 545796
   },
   {
-    "id": 43387,
+    "id": 747712,
+    "wikiId": 43387,
     "name": "Edirne",
     "localName": "Edirne",
     "country": "TR",
@@ -477,7 +530,8 @@
     "population": 180327
   },
   {
-    "id": 1353,
+    "id": 1273294,
+    "wikiId": 1353,
     "name": "Delhi",
     "localName": "दिल्ली",
     "country": "IN",
@@ -486,7 +540,8 @@
     "population": 26495000
   },
   {
-    "id": 1726,
+    "id": 2867714,
+    "wikiId": 1726,
     "name": "Munich",
     "localName": "München",
     "country": "DE",
@@ -495,7 +550,8 @@
     "population": 1510378
   },
   {
-    "id": 1865,
+    "id": 1735161,
+    "wikiId": 1865,
     "name": "Kuala Lumpur",
     "localName": "Kuala Lumpur",
     "country": "MY",
@@ -504,7 +560,8 @@
     "population": 9000280
   },
   {
-    "id": 5838,
+    "id": 1138958,
+    "wikiId": 5838,
     "name": "Kabul",
     "localName": "کابل",
     "country": "AF",
@@ -513,7 +570,8 @@
     "population": 5333284
   },
   {
-    "id": 235,
+    "id": 2993458,
+    "wikiId": 235,
     "name": "Monaco",
     "localName": "Monaco",
     "country": "MC",
@@ -522,7 +580,8 @@
     "population": 38857
   },
   {
-    "id": 3838,
+    "id": 2314302,
+    "wikiId": 3838,
     "name": "Kinshasa",
     "localName": "Kinshasa",
     "country": "CD",
@@ -531,7 +590,8 @@
     "population": 14565700
   },
   {
-    "id": 19660,
+    "id": 683506,
+    "wikiId": 19660,
     "name": "Bucharest",
     "localName": "București",
     "country": "RO",
@@ -540,7 +600,8 @@
     "population": 1716961
   },
   {
-    "id": 2844,
+    "id": 3469058,
+    "wikiId": 2844,
     "name": "Brasília",
     "localName": "Brasília",
     "country": "BR",
@@ -549,7 +610,8 @@
     "population": 2996899
   },
   {
-    "id": 8660,
+    "id": 1174872,
+    "wikiId": 8660,
     "name": "Karachi",
     "localName": "کراچی",
     "country": "PK",
@@ -558,7 +620,8 @@
     "population": 14910352
   },
   {
-    "id": 1055,
+    "id": 2911298,
+    "wikiId": 1055,
     "name": "Hamburg",
     "localName": "Hamburg",
     "country": "DE",
@@ -567,7 +630,8 @@
     "population": 1910160
   },
   {
-    "id": 2280,
+    "id": 625144,
+    "wikiId": 2280,
     "name": "Minsk",
     "localName": "Мінск",
     "country": "BY",
@@ -576,7 +640,8 @@
     "population": 1995091
   },
   {
-    "id": 612,
+    "id": 292223,
+    "wikiId": 612,
     "name": "Dubai",
     "localName": "دبي",
     "country": "AE",
@@ -585,7 +650,8 @@
     "population": 3944751
   },
   {
-    "id": 172,
+    "id": 6167865,
+    "wikiId": 172,
     "name": "Toronto",
     "localName": "Toronto",
     "country": "CA",
@@ -594,7 +660,8 @@
     "population": 2794356
   },
   {
-    "id": 1748,
+    "id": 2618425,
+    "wikiId": 1748,
     "name": "Copenhagen",
     "localName": "København",
     "country": "DK",
@@ -603,7 +670,8 @@
     "population": 667099
   },
   {
-    "id": 5465,
+    "id": 3369157,
+    "wikiId": 5465,
     "name": "Cape Town",
     "localName": "iKapa",
     "country": "ZA",
@@ -612,7 +680,8 @@
     "population": 3776313
   },
   {
-    "id": 585,
+    "id": 3143244,
+    "wikiId": 585,
     "name": "Oslo",
     "localName": "Oslo",
     "country": "NO",
@@ -621,7 +690,8 @@
     "population": 717710
   },
   {
-    "id": 62,
+    "id": 5391959,
+    "wikiId": 62,
     "name": "San Francisco",
     "localName": "San Francisco",
     "country": "US",
@@ -630,7 +700,8 @@
     "population": 873965
   },
   {
-    "id": 3711,
+    "id": 792680,
+    "wikiId": 3711,
     "name": "Belgrade",
     "localName": "Београд",
     "country": "RS",
@@ -639,7 +710,8 @@
     "population": 1197714
   },
   {
-    "id": 1930,
+    "id": 6094817,
+    "wikiId": 1930,
     "name": "Ottawa",
     "localName": "Ottawa",
     "country": "CA",
@@ -648,7 +720,8 @@
     "population": 1017449
   },
   {
-    "id": 1858,
+    "id": 1581130,
+    "wikiId": 1858,
     "name": "Hanoi",
     "localName": "Hà Nội",
     "country": "VN",
@@ -657,7 +730,8 @@
     "population": 8717600
   },
   {
-    "id": 3141,
+    "id": 2158177,
+    "wikiId": 3141,
     "name": "Melbourne",
     "localName": "Melbourne",
     "country": "AU",
@@ -666,7 +740,8 @@
     "population": 5350705
   },
   {
-    "id": 490,
+    "id": 3173435,
+    "wikiId": 490,
     "name": "Milan",
     "localName": "Milano",
     "country": "IT",
@@ -675,7 +750,8 @@
     "population": 1354196
   },
   {
-    "id": 1533,
+    "id": 3646738,
+    "wikiId": 1533,
     "name": "Caracas",
     "localName": "Caracas",
     "country": "VE",
@@ -684,7 +760,8 @@
     "population": 2245744
   },
   {
-    "id": 3646,
+    "id": 542420,
+    "wikiId": 3646,
     "name": "Krasnodar",
     "localName": "Краснодар",
     "country": "RU",
@@ -693,7 +770,8 @@
     "population": 1154885
   },
   {
-    "id": 3561,
+    "id": 2507480,
+    "wikiId": 3561,
     "name": "Algiers",
     "localName": "الجزائر",
     "country": "DZ",
@@ -702,7 +780,8 @@
     "population": 2364230
   },
   {
-    "id": 472,
+    "id": 727011,
+    "wikiId": 472,
     "name": "Sofia",
     "localName": "София",
     "country": "BG",
@@ -711,7 +790,8 @@
     "population": 1213134
   },
   {
-    "id": 994,
+    "id": 611717,
+    "wikiId": 994,
     "name": "Tbilisi",
     "localName": "თბილისი",
     "country": "GE",
@@ -720,7 +800,8 @@
     "population": 1118035
   },
   {
-    "id": 8673,
+    "id": 2332459,
+    "wikiId": 8673,
     "name": "Lagos",
     "localName": "Lagos",
     "country": "NG",
@@ -729,7 +810,8 @@
     "population": 15070000
   },
   {
-    "id": 1761,
+    "id": 2964574,
+    "wikiId": 1761,
     "name": "Dublin",
     "localName": "Dublin",
     "country": "IE",
@@ -738,7 +820,8 @@
     "population": 592713
   },
   {
-    "id": 3820,
+    "id": 276781,
+    "wikiId": 3820,
     "name": "Beirut",
     "localName": "بيروت",
     "country": "LB",
@@ -747,7 +830,8 @@
     "population": 2421354
   },
   {
-    "id": 3624,
+    "id": 344979,
+    "wikiId": 3624,
     "name": "Addis Ababa",
     "localName": "አዲስ አበባ",
     "country": "ET",
@@ -756,7 +840,8 @@
     "population": 5704000
   },
   {
-    "id": 1348,
+    "id": 1275004,
+    "wikiId": 1348,
     "name": "Kolkata",
     "localName": "কলকাতা",
     "country": "IN",
@@ -765,7 +850,8 @@
     "population": 4496694
   },
   {
-    "id": 3692,
+    "id": 108410,
+    "wikiId": 3692,
     "name": "Riyadh",
     "localName": "الرياض",
     "country": "SA",
@@ -774,7 +860,8 @@
     "population": 7009100
   },
   {
-    "id": 216,
+    "id": 593116,
+    "wikiId": 216,
     "name": "Vilnius",
     "localName": "Vilnius",
     "country": "LT",
@@ -783,7 +870,8 @@
     "population": 581475
   },
   {
-    "id": 33986,
+    "id": 3868626,
+    "wikiId": 33986,
     "name": "Valparaíso",
     "localName": "Valparaíso",
     "country": "CL",
@@ -792,7 +880,8 @@
     "population": 296655
   },
   {
-    "id": 14773,
+    "id": 1821274,
+    "wikiId": 14773,
     "name": "Macau",
     "localName": "澳門",
     "country": "CN",
@@ -801,7 +890,8 @@
     "population": 682100
   },
   {
-    "id": 1770,
+    "id": 588409,
+    "wikiId": 1770,
     "name": "Tallinn",
     "localName": "Tallinn",
     "country": "EE",
@@ -810,7 +900,8 @@
     "population": 457572
   },
   {
-    "id": 1461,
+    "id": 1701668,
+    "wikiId": 1461,
     "name": "Manila",
     "localName": "Maynila",
     "country": "PH",
@@ -819,7 +910,8 @@
     "population": 1902590
   },
   {
-    "id": 1773,
+    "id": 456172,
+    "wikiId": 1773,
     "name": "Riga",
     "localName": "Rīga",
     "country": "LV",
@@ -828,7 +920,8 @@
     "population": 595053
   },
   {
-    "id": 1520,
+    "id": 1526273,
+    "wikiId": 1520,
     "name": "Astana",
     "localName": "Астана",
     "country": "KZ",
@@ -837,7 +930,8 @@
     "population": 1078362
   },
   {
-    "id": 11746,
+    "id": 1791247,
+    "wikiId": 11746,
     "name": "Wuhan",
     "localName": "武汉",
     "country": "CN",
@@ -846,7 +940,8 @@
     "population": 12326518
   },
   {
-    "id": 3805,
+    "id": 250441,
+    "wikiId": 3805,
     "name": "Amman",
     "localName": "عمّان",
     "country": "JO",
@@ -855,7 +950,8 @@
     "population": 4007526
   },
   {
-    "id": 1780,
+    "id": 3060972,
+    "wikiId": 1780,
     "name": "Bratislava",
     "localName": "Bratislava",
     "country": "SK",
@@ -864,7 +960,8 @@
     "population": 480902
   },
   {
-    "id": 18808,
+    "id": 1871859,
+    "wikiId": 18808,
     "name": "Pyongyang",
     "localName": "평양직할",
     "country": "KP",
@@ -873,7 +970,8 @@
     "population": 2863000
   },
   {
-    "id": 1435,
+    "id": 3186886,
+    "wikiId": 1435,
     "name": "Zagreb",
     "localName": "Zagreb",
     "country": "HR",
@@ -882,7 +980,8 @@
     "population": 767131
   },
   {
-    "id": 1953,
+    "id": 616052,
+    "wikiId": 1953,
     "name": "Yerevan",
     "localName": "Երևան",
     "country": "AM",
@@ -891,7 +990,8 @@
     "population": 1106300
   },
   {
-    "id": 1563,
+    "id": 3553478,
+    "wikiId": 1563,
     "name": "Havana",
     "localName": "La Habana",
     "country": "CU",
@@ -900,7 +1000,8 @@
     "population": 2492618
   },
   {
-    "id": 1345,
+    "id": 4560349,
+    "wikiId": 1345,
     "name": "Philadelphia",
     "localName": "Philadelphia",
     "country": "US",
@@ -909,7 +1010,8 @@
     "population": 1603797
   },
   {
-    "id": 239,
+    "id": 2800866,
+    "wikiId": 239,
     "name": "Brussels",
     "localName": "Bruxelles",
     "country": "BE",
@@ -918,7 +1020,8 @@
     "population": 195546
   },
   {
-    "id": 35765,
+    "id": 1853909,
+    "wikiId": 35765,
     "name": "Osaka",
     "localName": "大阪市",
     "country": "JP",
@@ -927,7 +1030,8 @@
     "population": 2751862
   },
   {
-    "id": 100,
+    "id": 4930956,
+    "wikiId": 100,
     "name": "Boston",
     "localName": "Boston",
     "country": "US",
@@ -936,7 +1040,8 @@
     "population": 675647
   },
   {
-    "id": 34647,
+    "id": 993800,
+    "wikiId": 34647,
     "name": "Johannesburg",
     "localName": "EGoli",
     "country": "ZA",
@@ -945,7 +1050,8 @@
     "population": 4803262
   },
   {
-    "id": 1335,
+    "id": 3441575,
+    "wikiId": 1335,
     "name": "Montevideo",
     "localName": "Montevideo",
     "country": "UY",
@@ -954,7 +1060,8 @@
     "population": 1302954
   },
   {
-    "id": 1867,
+    "id": 1668341,
+    "wikiId": 1867,
     "name": "Taipei",
     "localName": "台北",
     "country": "TW",
@@ -963,7 +1070,8 @@
     "population": 2442991
   },
   {
-    "id": 1794,
+    "id": 2925533,
+    "wikiId": 1794,
     "name": "Frankfurt",
     "localName": "Frankfurt am Main",
     "country": "DE",
@@ -972,7 +1080,8 @@
     "population": 775790
   },
   {
-    "id": 269,
+    "id": 1512569,
+    "wikiId": 269,
     "name": "Tashkent",
     "localName": "Toshkent",
     "country": "UZ",
@@ -981,7 +1090,8 @@
     "population": 2956384
   },
   {
-    "id": 16572,
+    "id": 1809858,
+    "wikiId": 16572,
     "name": "Guangzhou",
     "localName": "广州",
     "country": "CN",
@@ -990,7 +1100,8 @@
     "population": 18676605
   },
   {
-    "id": 3761,
+    "id": 2306104,
+    "wikiId": 3761,
     "name": "Accra",
     "localName": "Accra",
     "country": "GH",
@@ -999,7 +1110,8 @@
     "population": 1782150
   },
   {
-    "id": 3787,
+    "id": 2352778,
+    "wikiId": 3787,
     "name": "Abuja",
     "localName": "Abuja",
     "country": "NG",
@@ -1008,7 +1120,8 @@
     "population": 1693400
   },
   {
-    "id": 641,
+    "id": 3164603,
+    "wikiId": 641,
     "name": "Venice",
     "localName": "Venezia",
     "country": "IT",
@@ -1017,7 +1130,8 @@
     "population": 250369
   },
   {
-    "id": 1963,
+    "id": 379252,
+    "wikiId": 1963,
     "name": "Khartoum",
     "localName": "خرطوم",
     "country": "SD",
@@ -1026,7 +1140,8 @@
     "population": 5345000
   },
   {
-    "id": 2634,
+    "id": 3172394,
+    "wikiId": 2634,
     "name": "Naples",
     "localName": "Napoli",
     "country": "IT",
@@ -1035,7 +1150,8 @@
     "population": 913462
   },
   {
-    "id": 1880,
+    "id": 3893894,
+    "wikiId": 1880,
     "name": "Concepción",
     "localName": "Concepción",
     "country": "CL",
@@ -1044,7 +1160,8 @@
     "population": 217537
   },
   {
-    "id": 16555,
+    "id": 4699066,
+    "wikiId": 16555,
     "name": "Houston",
     "localName": "Houston",
     "country": "US",
@@ -1053,7 +1170,8 @@
     "population": 2304580
   },
   {
-    "id": 340,
+    "id": 6077243,
+    "wikiId": 340,
     "name": "Montreal",
     "localName": "Montréal",
     "country": "CA",
@@ -1062,7 +1180,8 @@
     "population": 1895211
   },
   {
-    "id": 1877,
+    "id": 1582886,
+    "wikiId": 1877,
     "name": "Đồng Hới",
     "localName": "Đồng Hới",
     "country": "VN",
@@ -1071,7 +1190,8 @@
     "population": 160325
   },
   {
-    "id": 23556,
+    "id": 4180439,
+    "wikiId": 23556,
     "name": "Atlanta",
     "localName": "Atlanta",
     "country": "US",
@@ -1080,7 +1200,8 @@
     "population": 498715
   },
   {
-    "id": 87,
+    "id": 361058,
+    "wikiId": 87,
     "name": "Alexandria",
     "localName": "الإسكندرية",
     "country": "EG",
@@ -1089,7 +1210,8 @@
     "population": 5362517
   },
   {
-    "id": 3897,
+    "id": 2240449,
+    "wikiId": 3897,
     "name": "Luanda",
     "localName": "Luanda",
     "country": "AO",
@@ -1098,7 +1220,8 @@
     "population": 2487444
   },
   {
-    "id": 987,
+    "id": 1261481,
+    "wikiId": 987,
     "name": "New Delhi",
     "localName": "नई दिल्ली",
     "country": "IN",
@@ -1107,7 +1230,8 @@
     "population": 249998
   },
   {
-    "id": 3114,
+    "id": 2172517,
+    "wikiId": 3114,
     "name": "Canberra",
     "localName": "Canberra",
     "country": "AU",
@@ -1116,7 +1240,8 @@
     "population": 381488
   },
   {
-    "id": 3703,
+    "id": 2460596,
+    "wikiId": 3703,
     "name": "Bamako",
     "localName": "Bamako",
     "country": "ML",
@@ -1125,7 +1250,8 @@
     "population": 4227569
   },
   {
-    "id": 11194,
+    "id": 3191281,
+    "wikiId": 11194,
     "name": "Sarajevo",
     "localName": "Sarajevo",
     "country": "BA",
@@ -1134,7 +1260,8 @@
     "population": 275524
   },
   {
-    "id": 2044,
+    "id": 3176959,
+    "wikiId": 2044,
     "name": "Florence",
     "localName": "Firenze",
     "country": "IT",
@@ -1143,7 +1270,8 @@
     "population": 360930
   },
   {
-    "id": 23430,
+    "id": 2028462,
+    "wikiId": 23430,
     "name": "Ulaanbaatar",
     "localName": "Улаанбаатар",
     "country": "MN",
@@ -1152,7 +1280,8 @@
     "population": 1396288
   },
   {
-    "id": 1362,
+    "id": 1176615,
+    "wikiId": 1362,
     "name": "Islamabad",
     "localName": "اسلام آباد",
     "country": "PK",
@@ -1161,7 +1290,8 @@
     "population": 1014825
   },
   {
-    "id": 3037,
+    "id": 1283240,
+    "wikiId": 3037,
     "name": "Kathmandu",
     "localName": "काठमाडौं",
     "country": "NP",
@@ -1170,7 +1300,8 @@
     "population": 845767
   },
   {
-    "id": 3579,
+    "id": 2210247,
+    "wikiId": 3579,
     "name": "Tripoli",
     "localName": "طرابلس",
     "country": "LY",
@@ -1179,7 +1310,8 @@
     "population": 1293016
   },
   {
-    "id": 1355,
+    "id": 1277333,
+    "wikiId": 1355,
     "name": "Bengaluru",
     "localName": "ಬೆಂಗಳೂರು",
     "country": "IN",
@@ -1188,7 +1320,8 @@
     "population": 12327000
   },
   {
-    "id": 365,
+    "id": 2886242,
+    "wikiId": 365,
     "name": "Cologne",
     "localName": "Köln",
     "country": "DE",
@@ -1197,7 +1330,8 @@
     "population": 1087353
   },
   {
-    "id": 1519,
+    "id": 292968,
+    "wikiId": 1519,
     "name": "Abu Dhabi",
     "localName": "أبوظبي",
     "country": "AE",
@@ -1206,7 +1340,8 @@
     "population": 1570000
   },
   {
-    "id": 3894,
+    "id": 232422,
+    "wikiId": 3894,
     "name": "Kampala",
     "localName": "Kampala",
     "country": "UG",
@@ -1215,7 +1350,8 @@
     "population": 1680600
   },
   {
-    "id": 23482,
+    "id": 2995469,
+    "wikiId": 23482,
     "name": "Marseille",
     "localName": "Marseille",
     "country": "FR",
@@ -1224,7 +1360,8 @@
     "population": 886040
   },
   {
-    "id": 11725,
+    "id": 1814906,
+    "wikiId": 11725,
     "name": "Chongqing",
     "localName": "重庆",
     "country": "CN",
@@ -1233,7 +1370,8 @@
     "population": 32054159
   },
   {
-    "id": 1850,
+    "id": 1821306,
+    "wikiId": 1850,
     "name": "Phnom Penh",
     "localName": "ភ្នំពេញ",
     "country": "KH",
@@ -1242,7 +1380,8 @@
     "population": 2129371
   },
   {
-    "id": 23768,
+    "id": 5506956,
+    "wikiId": 23768,
     "name": "Las Vegas",
     "localName": "Las Vegas",
     "country": "US",
@@ -1251,7 +1390,8 @@
     "population": 641903
   },
   {
-    "id": 3861,
+    "id": 290030,
+    "wikiId": 3861,
     "name": "Doha",
     "localName": "الدوحة",
     "country": "QA",
@@ -1260,7 +1400,8 @@
     "population": 1186023
   },
   {
-    "id": 8652,
+    "id": 4164138,
+    "wikiId": 8652,
     "name": "Miami",
     "localName": "Miami",
     "country": "US",
@@ -1269,7 +1410,8 @@
     "population": 442241
   },
   {
-    "id": 2900,
+    "id": 3652462,
+    "wikiId": 2900,
     "name": "Quito",
     "localName": "Quito",
     "country": "EC",
@@ -1278,7 +1420,8 @@
     "population": 1763275
   },
   {
-    "id": 3926,
+    "id": 964137,
+    "wikiId": 3926,
     "name": "Pretoria",
     "localName": "IPitoli",
     "country": "ZA",
@@ -1287,7 +1430,8 @@
     "population": 741651
   },
   {
-    "id": 456,
+    "id": 2996944,
+    "wikiId": 456,
     "name": "Lyon",
     "localName": "Lyon",
     "country": "FR",
@@ -1296,7 +1440,8 @@
     "population": 519127
   },
   {
-    "id": 72,
+    "id": 2657896,
+    "wikiId": 72,
     "name": "Zurich",
     "localName": "Zürich",
     "country": "CH",
@@ -1305,7 +1450,8 @@
     "population": 452421
   },
   {
-    "id": 9361,
+    "id": 1528675,
+    "wikiId": 9361,
     "name": "Bishkek",
     "localName": "Бишкек",
     "country": "KG",
@@ -1314,7 +1460,8 @@
     "population": 1191000
   },
   {
-    "id": 9022,
+    "id": 4005539,
+    "wikiId": 9022,
     "name": "Guadalajara",
     "localName": "Guadalajara",
     "country": "MX",
@@ -1323,7 +1470,8 @@
     "population": 1385621
   },
   {
-    "id": 16556,
+    "id": 5308655,
+    "wikiId": 16556,
     "name": "Phoenix",
     "localName": "Phoenix",
     "country": "US",
@@ -1332,7 +1480,8 @@
     "population": 1608139
   },
   {
-    "id": 21197,
+    "id": 618426,
+    "wikiId": 21197,
     "name": "Chișinău",
     "localName": "Chișinău",
     "country": "MD",
@@ -1341,7 +1490,8 @@
     "population": 567038
   },
   {
-    "id": 437,
+    "id": 3196359,
+    "wikiId": 437,
     "name": "Ljubljana",
     "localName": "Ljubljana",
     "country": "SI",
@@ -1350,7 +1500,8 @@
     "population": 284293
   },
   {
-    "id": 11736,
+    "id": 1792947,
+    "wikiId": 11736,
     "name": "Tianjin",
     "localName": "天津",
     "country": "CN",
@@ -1359,7 +1510,8 @@
     "population": 13866009
   },
   {
-    "id": 2471,
+    "id": 71137,
+    "wikiId": 2471,
     "name": "Sanaa",
     "localName": "صنعاء",
     "country": "YE",
@@ -1368,7 +1520,8 @@
     "population": 2957000
   },
   {
-    "id": 23438,
+    "id": 162183,
+    "wikiId": 23438,
     "name": "Ashgabat",
     "localName": "Aşgabat",
     "country": "TM",
@@ -1377,7 +1530,8 @@
     "population": 1030063
   },
   {
-    "id": 1764,
+    "id": 3413829,
+    "wikiId": 1764,
     "name": "Reykjavík",
     "localName": "Reykjavík",
     "country": "IS",
@@ -1386,7 +1540,8 @@
     "population": 138772
   },
   {
-    "id": 3921,
+    "id": 890299,
+    "wikiId": 3921,
     "name": "Harare",
     "localName": "Harare",
     "country": "ZW",
@@ -1395,7 +1550,8 @@
     "population": 2150000
   },
   {
-    "id": 38283,
+    "id": 1848354,
+    "wikiId": 38283,
     "name": "Yokohama",
     "localName": "横浜",
     "country": "JP",
@@ -1404,7 +1560,8 @@
     "population": 3757630
   },
   {
-    "id": 35997,
+    "id": 311046,
+    "wikiId": 35997,
     "name": "İzmir",
     "localName": "İzmir",
     "country": "TR",
@@ -1413,7 +1570,8 @@
     "population": 4493242
   },
   {
-    "id": 3844,
+    "id": 2260535,
+    "wikiId": 3844,
     "name": "Brazzaville",
     "localName": "Brazzaville",
     "country": "CG",
@@ -1422,7 +1580,8 @@
     "population": 2145783
   },
   {
-    "id": 23436,
+    "id": 2650225,
+    "wikiId": 23436,
     "name": "Edinburgh",
     "localName": "Edinburgh",
     "country": "GB",
@@ -1431,7 +1590,8 @@
     "population": 488050
   },
   {
-    "id": 5083,
+    "id": 5809844,
+    "wikiId": 5083,
     "name": "Seattle",
     "localName": "Seattle",
     "country": "US",
@@ -1440,7 +1600,8 @@
     "population": 737015
   },
   {
-    "id": 35178,
+    "id": 285787,
+    "wikiId": 35178,
     "name": "Kuwait City",
     "localName": "اَلْكُوَيْت",
     "country": "KW",
@@ -1449,7 +1610,8 @@
     "population": 2989000
   },
   {
-    "id": 31487,
+    "id": 3094802,
+    "wikiId": 31487,
     "name": "Kraków",
     "localName": "Kraków",
     "country": "PL",
@@ -1458,7 +1620,8 @@
     "population": 804237
   },
   {
-    "id": 3718,
+    "id": 2253354,
+    "wikiId": 3718,
     "name": "Dakar",
     "localName": "Dakar",
     "country": "SN",
@@ -1467,7 +1630,8 @@
     "population": 1438725
   },
   {
-    "id": 16554,
+    "id": 5419384,
+    "wikiId": 16554,
     "name": "Denver",
     "localName": "Denver",
     "country": "US",
@@ -1476,7 +1640,8 @@
     "population": 715522
   },
   {
-    "id": 33935,
+    "id": 293397,
+    "wikiId": 33935,
     "name": "Tel Aviv",
     "localName": "תל אביב-יפו",
     "country": "IL",
@@ -1485,7 +1650,8 @@
     "population": 467875
   },
   {
-    "id": 374365,
+    "id": 105343,
+    "wikiId": 374365,
     "name": "Jeddah",
     "localName": "جدة",
     "country": "SA",
@@ -1494,7 +1660,8 @@
     "population": 4697000
   },
   {
-    "id": 3551,
+    "id": 2538475,
+    "wikiId": 3551,
     "name": "Rabat",
     "localName": "رباط",
     "country": "MA",
@@ -1503,7 +1670,8 @@
     "population": 572717
   },
   {
-    "id": 3183,
+    "id": 2063523,
+    "wikiId": 3183,
     "name": "Perth",
     "localName": "Perth",
     "country": "AU",
@@ -1512,7 +1680,8 @@
     "population": 2141834
   },
   {
-    "id": 2449,
+    "id": 53654,
+    "wikiId": 2449,
     "name": "Mogadishu",
     "localName": "Muqdisho",
     "country": "SO",
@@ -1521,7 +1690,8 @@
     "population": 2120000
   },
   {
-    "id": 384,
+    "id": 785842,
+    "wikiId": 384,
     "name": "Skopje",
     "localName": "Скопје",
     "country": "MK",
@@ -1530,7 +1700,8 @@
     "population": 422540
   },
   {
-    "id": 3777,
+    "id": 2357048,
+    "wikiId": 3777,
     "name": "Ouagadougou",
     "localName": "Ouagadougou",
     "country": "BF",
@@ -1539,7 +1710,8 @@
     "population": 2453496
   },
   {
-    "id": 1352,
+    "id": 1264527,
+    "wikiId": 1352,
     "name": "Chennai",
     "localName": "சென்னை",
     "country": "IN",
@@ -1548,7 +1720,8 @@
     "population": 6599000
   },
   {
-    "id": 16557,
+    "id": 4684888,
+    "wikiId": 16557,
     "name": "Dallas",
     "localName": "Dallas",
     "country": "US",
@@ -1557,7 +1730,8 @@
     "population": 1304379
   },
   {
-    "id": 18125,
+    "id": 2643123,
+    "wikiId": 18125,
     "name": "Manchester",
     "localName": "Manchester",
     "country": "GB",
@@ -1566,7 +1740,8 @@
     "population": 547627
   },
   {
-    "id": 495,
+    "id": 3165524,
+    "wikiId": 495,
     "name": "Turin",
     "localName": "Torino",
     "country": "IT",
@@ -1575,7 +1750,8 @@
     "population": 841600
   },
   {
-    "id": 70,
+    "id": 2661552,
+    "wikiId": 70,
     "name": "Bern",
     "localName": "Bern",
     "country": "CH",
@@ -1584,7 +1760,8 @@
     "population": 136988
   },
   {
-    "id": 1022,
+    "id": 2825297,
+    "wikiId": 1022,
     "name": "Stuttgart",
     "localName": "Stuttgart",
     "country": "DE",
@@ -1593,7 +1770,8 @@
     "population": 633484
   },
   {
-    "id": 34932,
+    "id": 2174003,
+    "wikiId": 34932,
     "name": "Brisbane",
     "localName": "Brisbane",
     "country": "AU",
@@ -1602,7 +1780,8 @@
     "population": 2706966
   },
   {
-    "id": 18094,
+    "id": 5856195,
+    "wikiId": 18094,
     "name": "Honolulu",
     "localName": "Honolulu",
     "country": "US",
@@ -1611,7 +1790,8 @@
     "population": 350964
   },
   {
-    "id": 71,
+    "id": 2660646,
+    "wikiId": 71,
     "name": "Geneva",
     "localName": "Genève",
     "country": "CH",
@@ -1620,7 +1800,8 @@
     "population": 209061
   },
   {
-    "id": 3572,
+    "id": 2464470,
+    "wikiId": 3572,
     "name": "Tunis",
     "localName": "تونس",
     "country": "TN",
@@ -1629,7 +1810,8 @@
     "population": 602560
   },
   {
-    "id": 9365,
+    "id": 1221874,
+    "wikiId": 9365,
     "name": "Dushanbe",
     "localName": "Душанбе",
     "country": "TJ",
@@ -1638,7 +1820,8 @@
     "population": 948251
   },
   {
-    "id": 1874,
+    "id": 698740,
+    "wikiId": 1874,
     "name": "Odesa",
     "localName": "Одеса",
     "country": "UA",
@@ -1647,7 +1830,8 @@
     "population": 1010537
   },
   {
-    "id": 3881,
+    "id": 909137,
+    "wikiId": 3881,
     "name": "Lusaka",
     "localName": "Lusaka",
     "country": "ZM",
@@ -1656,7 +1840,8 @@
     "population": 2467563
   },
   {
-    "id": 24639,
+    "id": 6173331,
+    "wikiId": 24639,
     "name": "Vancouver",
     "localName": "Vancouver",
     "country": "CA",
@@ -1665,7 +1850,8 @@
     "population": 662248
   },
   {
-    "id": 3808,
+    "id": 2220957,
+    "wikiId": 3808,
     "name": "Yaoundé",
     "localName": "Yaoundé",
     "country": "CM",
@@ -1674,7 +1860,8 @@
     "population": 2440462
   },
   {
-    "id": 1731,
+    "id": 2935022,
+    "wikiId": 1731,
     "name": "Dresden",
     "localName": "Dresden",
     "country": "DE",
@@ -1683,7 +1870,8 @@
     "population": 566222
   },
   {
-    "id": 1515,
+    "id": 2293538,
+    "wikiId": 1515,
     "name": "Abidjan",
     "localName": "Abidjan",
     "country": "CI",
@@ -1692,7 +1880,8 @@
     "population": 5616633
   },
   {
-    "id": 42308,
+    "id": 706483,
+    "wikiId": 42308,
     "name": "Kharkiv",
     "localName": "Харків",
     "country": "UA",
@@ -1701,7 +1890,8 @@
     "population": 1421125
   },
   {
-    "id": 6602,
+    "id": 2973783,
+    "wikiId": 6602,
     "name": "Strasbourg",
     "localName": "Strasbourg",
     "country": "FR",
@@ -1710,7 +1900,8 @@
     "population": 293771
   },
   {
-    "id": 24826,
+    "id": 2644210,
+    "wikiId": 24826,
     "name": "Liverpool",
     "localName": "Liverpool",
     "country": "GB",
@@ -1719,7 +1910,8 @@
     "population": 513441
   },
   {
-    "id": 3792,
+    "id": 2365267,
+    "wikiId": 3792,
     "name": "Lomé",
     "localName": "Lomé",
     "country": "TG",
@@ -1728,7 +1920,8 @@
     "population": 2188376
   },
   {
-    "id": 37995,
+    "id": 1298824,
+    "wikiId": 37995,
     "name": "Yangon",
     "localName": "ရန်ကုန်",
     "country": "MM",
@@ -1737,7 +1930,8 @@
     "population": 6874000
   },
   {
-    "id": 1449,
+    "id": 3176219,
+    "wikiId": 1449,
     "name": "Genoa",
     "localName": "Genova",
     "country": "IT",
@@ -1746,7 +1940,8 @@
     "population": 558745
   },
   {
-    "id": 36036,
+    "id": 702550,
+    "wikiId": 36036,
     "name": "Lviv",
     "localName": "Львів",
     "country": "UA",
@@ -1755,7 +1950,8 @@
     "population": 717273
   },
   {
-    "id": 3859,
+    "id": 202061,
+    "wikiId": 3859,
     "name": "Kigali",
     "localName": "Kigali",
     "country": "RW",
@@ -1764,7 +1960,8 @@
     "population": 1745555
   },
   {
-    "id": 12439,
+    "id": 4990729,
+    "wikiId": 12439,
     "name": "Detroit",
     "localName": "Detroit",
     "country": "US",
@@ -1773,7 +1970,8 @@
     "population": 639111
   },
   {
-    "id": 1718,
+    "id": 2934246,
+    "wikiId": 1718,
     "name": "Düsseldorf",
     "localName": "Düsseldorf",
     "country": "DE",
@@ -1782,7 +1980,8 @@
     "population": 631217
   },
   {
-    "id": 2656,
+    "id": 2523920,
+    "wikiId": 2656,
     "name": "Palermo",
     "localName": "Palermo",
     "country": "IT",
@@ -1791,7 +1990,8 @@
     "population": 630167
   },
   {
-    "id": 4093,
+    "id": 2648579,
+    "wikiId": 4093,
     "name": "Glasgow",
     "localName": "Glasgow",
     "country": "GB",
@@ -1800,7 +2000,8 @@
     "population": 626410
   },
   {
-    "id": 3733,
+    "id": 2422465,
+    "wikiId": 3733,
     "name": "Conakry",
     "localName": "Conakry",
     "country": "GN",
@@ -1809,7 +2010,8 @@
     "population": 1667864
   },
   {
-    "id": 16552,
+    "id": 5391811,
+    "wikiId": 16552,
     "name": "San Diego",
     "localName": "San Diego",
     "country": "US",
@@ -1818,7 +2020,8 @@
     "population": 1386932
   },
   {
-    "id": 1410,
+    "id": 2411585,
+    "wikiId": 1410,
     "name": "Gibraltar",
     "localName": "Gibraltar",
     "country": "GB",
@@ -1827,7 +2030,8 @@
     "population": 34003
   },
   {
-    "id": 16559,
+    "id": 4671654,
+    "wikiId": 16559,
     "name": "Austin",
     "localName": "Austin",
     "country": "US",
@@ -1836,7 +2040,8 @@
     "population": 961855
   },
   {
-    "id": 2933,
+    "id": 3439389,
+    "wikiId": 2933,
     "name": "Asunción",
     "localName": "Asunción",
     "country": "PY",
@@ -1845,7 +2050,8 @@
     "population": 462241
   },
   {
-    "id": 35484,
+    "id": 109223,
+    "wikiId": 35484,
     "name": "Medina",
     "localName": "المدينة",
     "country": "SA",
@@ -1854,7 +2060,8 @@
     "population": 1411599
   },
   {
-    "id": 3674,
+    "id": 2440485,
+    "wikiId": 3674,
     "name": "Niamey",
     "localName": "Niamey",
     "country": "NE",
@@ -1863,7 +2070,8 @@
     "population": 1496260
   },
   {
-    "id": 11751,
+    "id": 1856057,
+    "wikiId": 11751,
     "name": "Nagoya",
     "localName": "名古屋",
     "country": "JP",
@@ -1872,7 +2080,8 @@
     "population": 2326844
   },
   {
-    "id": 900,
+    "id": 551487,
+    "wikiId": 900,
     "name": "Kazan",
     "localName": "Казань",
     "country": "RU",
@@ -1881,7 +2090,8 @@
     "population": 1329825
   },
   {
-    "id": 1361,
+    "id": 1269843,
+    "wikiId": 1361,
     "name": "Hyderabad",
     "localName": "హైదరాబాదు",
     "country": "IN",
@@ -1890,7 +2100,8 @@
     "population": 9191000
   },
   {
-    "id": 5826,
+    "id": 1790630,
+    "wikiId": 5826,
     "name": "Xi'an",
     "localName": "西安",
     "country": "CN",
@@ -1899,7 +2110,8 @@
     "population": 12952907
   },
   {
-    "id": 7903,
+    "id": 2553604,
+    "wikiId": 7903,
     "name": "Casablanca",
     "localName": "الدار البيضاء",
     "country": "MA",
@@ -1908,7 +2120,8 @@
     "population": 3215935
   },
   {
-    "id": 18013,
+    "id": 5389489,
+    "wikiId": 18013,
     "name": "Sacramento",
     "localName": "Sacramento",
     "country": "US",
@@ -1917,7 +2130,8 @@
     "population": 524943
   },
   {
-    "id": 3915,
+    "id": 1070940,
+    "wikiId": 3915,
     "name": "Antananarivo",
     "localName": "Tananarive",
     "country": "MG",
@@ -1926,7 +2140,8 @@
     "population": 1275207
   },
   {
-    "id": 11739,
+    "id": 1172451,
+    "wikiId": 11739,
     "name": "Lahore",
     "localName": "لاھور",
     "country": "PK",
@@ -1935,7 +2150,8 @@
     "population": 11126285
   },
   {
-    "id": 3889,
+    "id": 1040652,
+    "wikiId": 3889,
     "name": "Maputo",
     "localName": "Maputo",
     "country": "MZ",
@@ -1944,7 +2160,8 @@
     "population": 1133200
   },
   {
-    "id": 237,
+    "id": 6691831,
+    "wikiId": 237,
     "name": "Vatican City",
     "localName": "Civitas Vaticana",
     "country": "VA",
@@ -1953,7 +2170,8 @@
     "population": 882
   },
   {
-    "id": 3935,
+    "id": 3352136,
+    "wikiId": 3935,
     "name": "Windhoek",
     "localName": "Windhoek",
     "country": "NA",
@@ -1962,7 +2180,8 @@
     "population": 486169
   },
   {
-    "id": 1479,
+    "id": 3031582,
+    "wikiId": 1479,
     "name": "Bordeaux",
     "localName": "Bordeaux",
     "country": "FR",
@@ -1971,7 +2190,8 @@
     "population": 267991
   },
   {
-    "id": 1715,
+    "id": 2910831,
+    "wikiId": 1715,
     "name": "Hanover",
     "localName": "Hannover",
     "country": "DE",
@@ -1980,7 +2200,8 @@
     "population": 548186
   },
   {
-    "id": 2256,
+    "id": 2655603,
+    "wikiId": 2256,
     "name": "Birmingham",
     "localName": "Birmingham",
     "country": "GB",
@@ -1989,7 +2210,8 @@
     "population": 1137100
   },
   {
-    "id": 30340,
+    "id": 1784658,
+    "wikiId": 30340,
     "name": "Zhengzhou",
     "localName": "郑州",
     "country": "CN",
@@ -1998,7 +2220,8 @@
     "population": 12600574
   },
   {
-    "id": 23661,
+    "id": 2179537,
+    "wikiId": 23661,
     "name": "Wellington",
     "localName": "Wellington",
     "country": "NZ",
@@ -2007,7 +2230,8 @@
     "population": 216200
   },
   {
-    "id": 37100,
+    "id": 2193733,
+    "wikiId": 37100,
     "name": "Auckland",
     "localName": "Auckland",
     "country": "NZ",
@@ -2016,7 +2240,8 @@
     "population": 1470100
   },
   {
-    "id": 2079,
+    "id": 2879139,
+    "wikiId": 2079,
     "name": "Leipzig",
     "localName": "Leipzig",
     "country": "DE",
@@ -2025,7 +2250,8 @@
     "population": 619879
   },
   {
-    "id": 1070,
+    "id": 1279233,
+    "wikiId": 1070,
     "name": "Ahmedabad",
     "localName": "અમદાવાદ",
     "country": "IN",
@@ -2034,7 +2260,8 @@
     "population": 7645000
   },
   {
-    "id": 3306,
+    "id": 3703443,
+    "wikiId": 3306,
     "name": "Panama City",
     "localName": "Panamá",
     "country": "PA",
@@ -2043,7 +2270,8 @@
     "population": 1540000
   },
   {
-    "id": 16666,
+    "id": 1799962,
+    "wikiId": 16666,
     "name": "Nanjing",
     "localName": "南京",
     "country": "CN",
@@ -2052,7 +2280,8 @@
     "population": 9314685
   },
   {
-    "id": 3642,
+    "id": 343300,
+    "wikiId": 3642,
     "name": "Asmara",
     "localName": "ኣስመራ",
     "country": "ER",
@@ -2061,7 +2290,8 @@
     "population": 963000
   },
   {
-    "id": 23564,
+    "id": 3193044,
+    "wikiId": 23564,
     "name": "Podgorica",
     "localName": "Подгорица",
     "country": "ME",
@@ -2070,7 +2300,8 @@
     "population": 150977
   },
   {
-    "id": 3659,
+    "id": 2427123,
+    "wikiId": 3659,
     "name": "N'Djamena",
     "localName": "نجامينا",
     "country": "TD",
@@ -2079,7 +2310,8 @@
     "population": 1092066
   },
   {
-    "id": 15174,
+    "id": 1795565,
+    "wikiId": 15174,
     "name": "Shenzhen",
     "localName": "深圳",
     "country": "CN",
@@ -2088,7 +2320,8 @@
     "population": 17494398
   },
   {
-    "id": 34404,
+    "id": 4335045,
+    "wikiId": 34404,
     "name": "New Orleans",
     "localName": "New Orleans",
     "country": "US",
@@ -2097,7 +2330,8 @@
     "population": 383997
   },
   {
-    "id": 7880,
+    "id": 2972315,
+    "wikiId": 7880,
     "name": "Toulouse",
     "localName": "Toulouse",
     "country": "FR",
@@ -2106,7 +2340,8 @@
     "population": 514819
   },
   {
-    "id": 883,
+    "id": 1496747,
+    "wikiId": 883,
     "name": "Novosibirsk",
     "localName": "Новосибирск",
     "country": "RU",
@@ -2115,7 +2350,8 @@
     "population": 1637266
   },
   {
-    "id": 37951,
+    "id": 2128295,
+    "wikiId": 37951,
     "name": "Sapporo",
     "localName": "札幌市",
     "country": "JP",
@@ -2124,7 +2360,8 @@
     "population": 1959313
   },
   {
-    "id": 1792,
+    "id": 3099434,
+    "wikiId": 1792,
     "name": "Gdańsk",
     "localName": "Gdańsk",
     "country": "PL",
@@ -2133,7 +2370,8 @@
     "population": 487834
   },
   {
-    "id": 3826,
+    "id": 287286,
+    "wikiId": 3826,
     "name": "Muscat",
     "localName": "مسقط",
     "country": "OM",
@@ -2142,7 +2380,8 @@
     "population": 1421409
   },
   {
-    "id": 35493,
+    "id": 1526384,
+    "wikiId": 35493,
     "name": "Almaty",
     "localName": "Almaty",
     "country": "KZ",
@@ -2151,7 +2390,8 @@
     "population": 2228675
   },
   {
-    "id": 5112,
+    "id": 2078025,
+    "wikiId": 5112,
     "name": "Adelaide",
     "localName": "Adelaide",
     "country": "AU",
@@ -2160,7 +2400,8 @@
     "population": 1387290
   },
   {
-    "id": 34820,
+    "id": 3492908,
+    "wikiId": 34820,
     "name": "Santo Domingo",
     "localName": "Santo Domingo",
     "country": "DO",
@@ -2169,7 +2410,8 @@
     "population": 2201941
   },
   {
-    "id": 3748,
+    "id": 2274895,
+    "wikiId": 3748,
     "name": "Monrovia",
     "localName": "Monrovia",
     "country": "LR",
@@ -2178,7 +2420,8 @@
     "population": 1021762
   },
   {
-    "id": 33959,
+    "id": 2990440,
+    "wikiId": 33959,
     "name": "Nice",
     "localName": "Nice",
     "country": "FR",
@@ -2187,7 +2430,8 @@
     "population": 357737
   },
   {
-    "id": 6346,
+    "id": 4259418,
+    "wikiId": 6346,
     "name": "Indianapolis",
     "localName": "Indpls",
     "country": "US",
@@ -2196,7 +2440,8 @@
     "population": 887642
   },
   {
-    "id": 1404,
+    "id": 2818067,
+    "wikiId": 1404,
     "name": "Uetersen",
     "localName": "Uetersen",
     "country": "DE",
@@ -2205,7 +2450,8 @@
     "population": 18776
   },
   {
-    "id": 48278,
+    "id": 3674962,
+    "wikiId": 48278,
     "name": "Medellín",
     "localName": "Medellín",
     "country": "CO",
@@ -2214,7 +2460,8 @@
     "population": 2529403
   },
   {
-    "id": 3856,
+    "id": 146268,
+    "wikiId": 3856,
     "name": "Nicosia",
     "localName": "Λευκωσία",
     "country": "CY",
@@ -2223,7 +2470,8 @@
     "population": 56848
   },
   {
-    "id": 30002,
+    "id": 1815286,
+    "wikiId": 30002,
     "name": "Chengdu",
     "localName": "成都",
     "country": "CN",
@@ -2232,7 +2480,8 @@
     "population": 20937757
   },
   {
-    "id": 34664,
+    "id": 1862415,
+    "wikiId": 34664,
     "name": "Hiroshima",
     "localName": "広島",
     "country": "JP",
@@ -2241,7 +2490,8 @@
     "population": 1198021
   },
   {
-    "id": 3825,
+    "id": 2399697,
+    "wikiId": 3825,
     "name": "Libreville",
     "localName": "Libreville",
     "country": "GA",
@@ -2250,7 +2500,8 @@
     "population": 899000
   },
   {
-    "id": 3739,
+    "id": 2374775,
+    "wikiId": 3739,
     "name": "Bissau",
     "localName": "Bissau",
     "country": "GW",
@@ -2259,7 +2510,8 @@
     "population": 492004
   },
   {
-    "id": 34692,
+    "id": 3489854,
+    "wikiId": 34692,
     "name": "Kingston",
     "localName": "Kingston",
     "country": "JM",
@@ -2268,7 +2520,8 @@
     "population": 937700
   },
   {
-    "id": 3688,
+    "id": 2377450,
+    "wikiId": 3688,
     "name": "Nouakchott",
     "localName": "نواكشوط",
     "country": "MR",
@@ -2277,7 +2530,8 @@
     "population": 1446761
   },
   {
-    "id": 3238,
+    "id": 3600949,
+    "wikiId": 3238,
     "name": "Tegucigalpa",
     "localName": "Tegucigalpa",
     "country": "HN",
@@ -2286,7 +2540,8 @@
     "population": 1055729
   },
   {
-    "id": 24879,
+    "id": 2944388,
+    "wikiId": 24879,
     "name": "Bremen",
     "localName": "Bremen",
     "country": "DE",
@@ -2295,7 +2550,8 @@
     "population": 577026
   },
   {
-    "id": 914,
+    "id": 472757,
+    "wikiId": 914,
     "name": "Volgograd",
     "localName": "Волгоград",
     "country": "RU",
@@ -2304,7 +2560,8 @@
     "population": 1012219
   },
   {
-    "id": 16520,
+    "id": 1838524,
+    "wikiId": 16520,
     "name": "Busan",
     "localName": "부산",
     "country": "KR",
@@ -2313,7 +2570,8 @@
     "population": 3453198
   },
   {
-    "id": 1960,
+    "id": 160263,
+    "wikiId": 1960,
     "name": "Dar es Salaam",
     "localName": "Dar es Salaam",
     "country": "TZ",
@@ -2322,7 +2580,8 @@
     "population": 4715000
   },
   {
-    "id": 3832,
+    "id": 2389853,
+    "wikiId": 3832,
     "name": "Bangui",
     "localName": "Bangui",
     "country": "CF",
@@ -2331,7 +2590,8 @@
     "population": 889231
   },
   {
-    "id": 16567,
+    "id": 4509177,
+    "wikiId": 16567,
     "name": "Columbus",
     "localName": "Columbus",
     "country": "US",
@@ -2340,7 +2600,8 @@
     "population": 905748
   },
   {
-    "id": 34261,
+    "id": 3718426,
+    "wikiId": 34261,
     "name": "Port-au-Prince",
     "localName": "Pòtoprens",
     "country": "HT",
@@ -2349,7 +2610,8 @@
     "population": 987310
   },
   {
-    "id": 959,
+    "id": 2013348,
+    "wikiId": 959,
     "name": "Vladivostok",
     "localName": "Владивосток",
     "country": "RU",
@@ -2358,7 +2620,8 @@
     "population": 591628
   },
   {
-    "id": 3274,
+    "id": 3617763,
+    "wikiId": 3274,
     "name": "Managua",
     "localName": "Managua",
     "country": "NI",
@@ -2367,7 +2630,8 @@
     "population": 937489
   },
   {
-    "id": 975,
+    "id": 4726206,
+    "wikiId": 975,
     "name": "San Antonio",
     "localName": "San Antonio",
     "country": "US",
@@ -2376,7 +2640,8 @@
     "population": 1434625
   },
   {
-    "id": 3876,
+    "id": 927967,
+    "wikiId": 3876,
     "name": "Lilongwe",
     "localName": "Lilongwe",
     "country": "MW",
@@ -2385,7 +2650,8 @@
     "population": 989318
   },
   {
-    "id": 37400,
+    "id": 6611854,
+    "wikiId": 37400,
     "name": "Naypyidaw",
     "localName": "နေပြည်တော်",
     "country": "MM",
@@ -2394,7 +2660,8 @@
     "population": 1160242
   },
   {
-    "id": 3780,
+    "id": 2409306,
+    "wikiId": 3780,
     "name": "Freetown",
     "localName": "Freetown",
     "country": "SL",
@@ -2403,7 +2670,8 @@
     "population": 951000
   },
   {
-    "id": 41183,
+    "id": 170063,
+    "wikiId": 41183,
     "name": "Aleppo",
     "localName": "حلب",
     "country": "SY",
@@ -2412,7 +2680,8 @@
     "population": 2003671
   },
   {
-    "id": 42956,
+    "id": 2037013,
+    "wikiId": 42956,
     "name": "Harbin",
     "localName": "哈尔滨",
     "country": "CN",
@@ -2421,7 +2690,8 @@
     "population": 10009854
   },
   {
-    "id": 1555,
+    "id": 3598132,
+    "wikiId": 1555,
     "name": "Guatemala City",
     "localName": "Guate",
     "country": "GT",
@@ -2430,7 +2700,8 @@
     "population": 994938
   },
   {
-    "id": 1491,
+    "id": 3911925,
+    "wikiId": 1491,
     "name": "La Paz",
     "localName": "La Paz",
     "country": "BO",
@@ -2439,7 +2710,8 @@
     "population": 755732
   },
   {
-    "id": 25287,
+    "id": 2711537,
+    "wikiId": 25287,
     "name": "Gothenburg",
     "localName": "Göteborg",
     "country": "SE",
@@ -2448,7 +2720,8 @@
     "population": 674529
   },
   {
-    "id": 1799,
+    "id": 3081368,
+    "wikiId": 1799,
     "name": "Wrocław",
     "localName": "Wrocław",
     "country": "PL",
@@ -2457,7 +2730,8 @@
     "population": 673531
   },
   {
-    "id": 34001,
+    "id": 2982681,
+    "wikiId": 34001,
     "name": "Roubaix",
     "localName": "Roubaix",
     "country": "FR",
@@ -2466,7 +2740,8 @@
     "population": 98286
   },
   {
-    "id": 12892,
+    "id": 2803138,
+    "wikiId": 12892,
     "name": "Antwerp",
     "localName": "Antwerpen",
     "country": "BE",
@@ -2475,7 +2750,8 @@
     "population": 529247
   },
   {
-    "id": 66485,
+    "id": 1269515,
+    "wikiId": 66485,
     "name": "Jaipur",
     "localName": "जयपुर",
     "country": "IN",
@@ -2484,7 +2760,8 @@
     "population": 3073350
   },
   {
-    "id": 3882,
+    "id": 290340,
+    "wikiId": 3882,
     "name": "Manama",
     "localName": "المنامة",
     "country": "BH",
@@ -2493,7 +2770,8 @@
     "population": 297502
   },
   {
-    "id": 4970,
+    "id": 1808926,
+    "wikiId": 4970,
     "name": "Hangzhou",
     "localName": "杭州",
     "country": "CN",
@@ -2502,7 +2780,8 @@
     "population": 11936010
   },
   {
-    "id": 887,
+    "id": 1486209,
+    "wikiId": 887,
     "name": "Yekaterinburg",
     "localName": "Екатеринбург",
     "country": "RU",
@@ -2511,7 +2790,8 @@
     "population": 1468833
   },
   {
-    "id": 16553,
+    "id": 5392171,
+    "wikiId": 16553,
     "name": "San Jose",
     "localName": "San Jose",
     "country": "US",
@@ -2520,7 +2800,8 @@
     "population": 1013240
   },
   {
-    "id": 5092,
+    "id": 4347778,
+    "wikiId": 5092,
     "name": "Baltimore",
     "localName": "Baltimore",
     "country": "US",
@@ -2529,7 +2810,8 @@
     "population": 585708
   },
   {
-    "id": 376749,
+    "id": 1205733,
+    "wikiId": 376749,
     "name": "Chittagong",
     "localName": "চট্টগ্রাম",
     "country": "BD",
@@ -2538,7 +2820,8 @@
     "population": 3230507
   },
   {
-    "id": 40840,
+    "id": 634963,
+    "wikiId": 40840,
     "name": "Tampere",
     "localName": "Tampere",
     "country": "FI",
@@ -2547,7 +2830,8 @@
     "population": 255333
   },
   {
-    "id": 3854,
+    "id": 425378,
+    "wikiId": 3854,
     "name": "Bujumbura",
     "localName": "Bujumbura",
     "country": "BI",
@@ -2556,7 +2840,8 @@
     "population": 658859
   },
   {
-    "id": 586,
+    "id": 2946447,
+    "wikiId": 586,
     "name": "Bonn",
     "localName": "Bonn",
     "country": "DE",
@@ -2565,7 +2850,8 @@
     "population": 335789
   },
   {
-    "id": 19491,
+    "id": 1572151,
+    "wikiId": 19491,
     "name": "Nha Trang",
     "localName": "Nha Trang",
     "country": "VN",
@@ -2574,7 +2860,8 @@
     "population": 392279
   },
   {
-    "id": 23197,
+    "id": 4644585,
+    "wikiId": 23197,
     "name": "Nashville",
     "localName": "Nashville",
     "country": "US",
@@ -2583,7 +2870,8 @@
     "population": 689447
   },
   {
-    "id": 10690,
+    "id": 2653822,
+    "wikiId": 10690,
     "name": "Cardiff",
     "localName": "Cardiff",
     "country": "GB",
@@ -2592,7 +2880,8 @@
     "population": 383536
   },
   {
-    "id": 34863,
+    "id": 4544349,
+    "wikiId": 34863,
     "name": "Oklahoma City",
     "localName": "Oklahoma City",
     "country": "US",
@@ -2601,7 +2890,8 @@
     "population": 681054
   },
   {
-    "id": 1891,
+    "id": 3181928,
+    "wikiId": 1891,
     "name": "Bologna",
     "localName": "Bologna",
     "country": "IT",
@@ -2610,7 +2900,8 @@
     "population": 387971
   },
   {
-    "id": 1842,
+    "id": 2960316,
+    "wikiId": 1842,
     "name": "Luxembourg",
     "localName": "Lëtzebuerg",
     "country": "LU",
@@ -2619,7 +2910,8 @@
     "population": 137696
   },
   {
-    "id": 10686,
+    "id": 2655984,
+    "wikiId": 10686,
     "name": "Belfast",
     "localName": "Belfast",
     "country": "GB",
@@ -2628,7 +2920,8 @@
     "population": 345006
   },
   {
-    "id": 25282,
+    "id": 1583992,
+    "wikiId": 25282,
     "name": "Da Nang",
     "localName": "Đà Nẵng",
     "country": "VN",
@@ -2637,7 +2930,8 @@
     "population": 2819900
   },
   {
-    "id": 1829,
+    "id": 554234,
+    "wikiId": 1829,
     "name": "Kaliningrad",
     "localName": "Калининград",
     "country": "RU",
@@ -2646,7 +2940,8 @@
     "population": 488690
   },
   {
-    "id": 36312,
+    "id": 5913490,
+    "wikiId": 36312,
     "name": "Calgary",
     "localName": "Calgary",
     "country": "CA",
@@ -2655,7 +2950,8 @@
     "population": 1306784
   },
   {
-    "id": 2090,
+    "id": 2861650,
+    "wikiId": 2090,
     "name": "Nuremberg",
     "localName": "Nürnberg",
     "country": "DE",
@@ -2664,7 +2960,8 @@
     "population": 526091
   },
   {
-    "id": 1295,
+    "id": 2935517,
+    "wikiId": 1295,
     "name": "Dortmund",
     "localName": "Dortmund",
     "country": "DE",
@@ -2673,7 +2970,8 @@
     "population": 595471
   },
   {
-    "id": 588,
+    "id": 3096472,
+    "wikiId": 588,
     "name": "Katowice",
     "localName": "Katowice",
     "country": "PL",
@@ -2682,7 +2980,8 @@
     "population": 278090
   },
   {
-    "id": 891,
+    "id": 520555,
+    "wikiId": 891,
     "name": "Nizhny Novgorod",
     "localName": "Нижний Новгород",
     "country": "RU",
@@ -2691,7 +2990,8 @@
     "population": 1198245
   },
   {
-    "id": 83285,
+    "id": 3185728,
+    "wikiId": 83285,
     "name": "Durrës",
     "localName": "Durrësi",
     "country": "AL",
@@ -2700,7 +3000,8 @@
     "population": 101728
   },
   {
-    "id": 1721,
+    "id": 2809346,
+    "wikiId": 1721,
     "name": "Wiesbaden",
     "localName": "Wiesbaden",
     "country": "DE",
@@ -2709,7 +3010,8 @@
     "population": 285522
   },
   {
-    "id": 35381,
+    "id": 1248991,
+    "wikiId": 35381,
     "name": "Colombo",
     "localName": "කොළඹ",
     "country": "LK",
@@ -2718,7 +3020,8 @@
     "population": 647557
   },
   {
-    "id": 3919,
+    "id": 933773,
+    "wikiId": 3919,
     "name": "Gaborone",
     "localName": "Gaborone",
     "country": "BW",
@@ -2727,7 +3030,8 @@
     "population": 235884
   },
   {
-    "id": 43070,
+    "id": 709717,
+    "wikiId": 43070,
     "name": "Donetsk",
     "localName": "Донецьк",
     "country": "UA",
@@ -2736,7 +3040,8 @@
     "population": 901645
   },
   {
-    "id": 42053,
+    "id": 418863,
+    "wikiId": 42053,
     "name": "Isfahan",
     "localName": "اصفهان",
     "country": "IR",
@@ -2745,7 +3050,8 @@
     "population": 1961260
   },
   {
-    "id": 36947,
+    "id": 3450554,
+    "wikiId": 36947,
     "name": "Salvador",
     "localName": "Salvador",
     "country": "BR",
@@ -2754,7 +3060,8 @@
     "population": 2417678
   },
   {
-    "id": 40738,
+    "id": 750269,
+    "wikiId": 40738,
     "name": "Bursa",
     "localName": "Bursa",
     "country": "TR",
@@ -2763,7 +3070,8 @@
     "population": 2901396
   },
   {
-    "id": 5332,
+    "id": 498677,
+    "wikiId": 5332,
     "name": "Saratov",
     "localName": "Саратов",
     "country": "RU",
@@ -2772,7 +3080,8 @@
     "population": 838042
   },
   {
-    "id": 42800,
+    "id": 3470127,
+    "wikiId": 42800,
     "name": "Belo Horizonte",
     "localName": "Belo Horizonte",
     "country": "BR",
@@ -2781,7 +3090,8 @@
     "population": 2315560
   },
   {
-    "id": 5831,
+    "id": 2513947,
+    "wikiId": 5831,
     "name": "Melilla",
     "localName": "Melilla",
     "country": "ES",
@@ -2790,7 +3100,8 @@
     "population": 86780
   },
   {
-    "id": 1538,
+    "id": 1259229,
+    "wikiId": 1538,
     "name": "Pune",
     "localName": "पुणे",
     "country": "IN",
@@ -2799,7 +3110,8 @@
     "population": 6200000
   },
   {
-    "id": 17151,
+    "id": 734077,
+    "wikiId": 17151,
     "name": "Thessaloniki",
     "localName": "Θεσσαλονίκη",
     "country": "GR",
@@ -2808,7 +3120,8 @@
     "population": 309617
   },
   {
-    "id": 6487,
+    "id": 323777,
+    "wikiId": 6487,
     "name": "Antalya",
     "localName": "Antalya",
     "country": "TR",
@@ -2817,7 +3130,8 @@
     "population": 2426356
   },
   {
-    "id": 3768,
+    "id": 2279755,
+    "wikiId": 3768,
     "name": "Yamoussoukro",
     "localName": "Yamoussoukro",
     "country": "CI",
@@ -2826,7 +3140,8 @@
     "population": 340234
   },
   {
-    "id": 3001,
+    "id": 3383330,
+    "wikiId": 3001,
     "name": "Paramaribo",
     "localName": "Paramaribo",
     "country": "SR",
@@ -2835,7 +3150,8 @@
     "population": 223757
   },
   {
-    "id": 3604,
+    "id": 223817,
+    "wikiId": 3604,
     "name": "Djibouti",
     "localName": "جيبوتي",
     "country": "DJ",
@@ -2844,7 +3160,8 @@
     "population": 603900
   },
   {
-    "id": 648,
+    "id": 2998324,
+    "wikiId": 648,
     "name": "Lille",
     "localName": "Lille",
     "country": "FR",
@@ -2853,7 +3170,8 @@
     "population": 238246
   },
   {
-    "id": 908,
+    "id": 501175,
+    "wikiId": 908,
     "name": "Rostov-on-Don",
     "localName": "Ростов",
     "country": "RU",
@@ -2862,7 +3180,8 @@
     "population": 1143123
   },
   {
-    "id": 3799,
+    "id": 2392087,
+    "wikiId": 3799,
     "name": "Porto-Novo",
     "localName": "Porto Novo",
     "country": "BJ",
@@ -2871,7 +3190,8 @@
     "population": 234168
   },
   {
-    "id": 3818,
+    "id": 2309527,
+    "wikiId": 3818,
     "name": "Malabo",
     "localName": "Malabo",
     "country": "GQ",
@@ -2880,7 +3200,8 @@
     "population": 297000
   },
   {
-    "id": 2145,
+    "id": 6325494,
+    "wikiId": 2145,
     "name": "Quebec City",
     "localName": "Québec",
     "country": "CA",
@@ -2889,7 +3210,8 @@
     "population": 574482
   },
   {
-    "id": 48256,
+    "id": 709930,
+    "wikiId": 48256,
     "name": "Dnipro",
     "localName": "Дніпро",
     "country": "UA",
@@ -2898,7 +3220,8 @@
     "population": 968502
   },
   {
-    "id": 9270,
+    "id": 1252416,
+    "wikiId": 9270,
     "name": "Thimphu",
     "localName": "ཐིམ་ཕུ",
     "country": "BT",
@@ -2907,7 +3230,8 @@
     "population": 114551
   },
   {
-    "id": 42941,
+    "id": 1279259,
+    "wikiId": 42941,
     "name": "Agra",
     "localName": "आगरा",
     "country": "IN",
@@ -2916,7 +3240,8 @@
     "population": 1585705
   },
   {
-    "id": 5753,
+    "id": 1216265,
+    "wikiId": 5753,
     "name": "Samarkand",
     "localName": "Samarqand",
     "country": "UZ",
@@ -2925,7 +3250,8 @@
     "population": 546303
   },
   {
-    "id": 23337,
+    "id": 5780993,
+    "wikiId": 23337,
     "name": "Salt Lake City",
     "localName": "Salt Lake City",
     "country": "US",
@@ -2934,7 +3260,8 @@
     "population": 199723
   },
   {
-    "id": 3866,
+    "id": 160196,
+    "wikiId": 3866,
     "name": "Dodoma",
     "localName": "Dodoma",
     "country": "TZ",
@@ -2943,7 +3270,8 @@
     "population": 213636
   },
   {
-    "id": 1947,
+    "id": 373303,
+    "wikiId": 1947,
     "name": "Juba",
     "localName": "Juba",
     "country": "SS",
@@ -2952,7 +3280,8 @@
     "population": 500088
   },
   {
-    "id": 36526,
+    "id": 2088122,
+    "wikiId": 36526,
     "name": "Port Moresby",
     "localName": "Port Moresby",
     "country": "PG",
@@ -2961,7 +3290,8 @@
     "population": 317374
   },
   {
-    "id": 9310,
+    "id": 1645457,
+    "wikiId": 9310,
     "name": "Dili",
     "localName": "Dili",
     "country": "TL",
@@ -2970,7 +3300,8 @@
     "population": 222323
   },
   {
-    "id": 2907,
+    "id": 3903987,
+    "wikiId": 2907,
     "name": "Sucre",
     "localName": "Sucre",
     "country": "BO",
@@ -2979,7 +3310,8 @@
     "population": 360544
   },
   {
-    "id": 12191,
+    "id": 2990969,
+    "wikiId": 12191,
     "name": "Nantes",
     "localName": "Nantes",
     "country": "FR",
@@ -2988,7 +3320,8 @@
     "population": 327734
   },
   {
-    "id": 1863,
+    "id": 3041563,
+    "wikiId": 1863,
     "name": "Andorra la Vella",
     "localName": "Andorra la Vella",
     "country": "AD",
@@ -2997,7 +3330,8 @@
     "population": 24042
   },
   {
-    "id": 3909,
+    "id": 932505,
+    "wikiId": 3909,
     "name": "Maseru",
     "localName": "Maseru",
     "country": "LS",
@@ -3006,7 +3340,8 @@
     "population": 343541
   },
   {
-    "id": 25270,
+    "id": 786714,
+    "wikiId": 25270,
     "name": "Pristina",
     "localName": "Приштина",
     "country": "RS",
@@ -3015,7 +3350,8 @@
     "population": 227466
   },
   {
-    "id": 13298,
+    "id": 2778067,
+    "wikiId": 13298,
     "name": "Graz",
     "localName": "Graz",
     "country": "AT",
@@ -3024,7 +3360,8 @@
     "population": 292630
   },
   {
-    "id": 7525,
+    "id": 694423,
+    "wikiId": 7525,
     "name": "Sevastopol",
     "localName": "Севастополь",
     "country": "RU",
@@ -3033,7 +3370,8 @@
     "population": 485386
   },
   {
-    "id": 34713,
+    "id": 2766824,
+    "wikiId": 34713,
     "name": "Salzburg",
     "localName": "Salzburg",
     "country": "AT",
@@ -3042,7 +3380,8 @@
     "population": 155021
   },
   {
-    "id": 894,
+    "id": 499099,
+    "wikiId": 894,
     "name": "Samara",
     "localName": "Самара",
     "country": "RU",
@@ -3051,7 +3390,8 @@
     "population": 1154223
   },
   {
-    "id": 3070,
+    "id": 3621849,
+    "wikiId": 3070,
     "name": "San José",
     "localName": "San José",
     "country": "CR",
@@ -3060,7 +3400,8 @@
     "population": 335007
   },
   {
-    "id": 2096,
+    "id": 5946768,
+    "wikiId": 2096,
     "name": "Edmonton",
     "localName": "Edmonton",
     "country": "CA",
@@ -3069,7 +3410,8 @@
     "population": 1010899
   },
   {
-    "id": 101625,
+    "id": 2542997,
+    "wikiId": 101625,
     "name": "Marrakech",
     "localName": "مراكش",
     "country": "MA",
@@ -3078,7 +3420,8 @@
     "population": 1002697
   },
   {
-    "id": 898,
+    "id": 1496153,
+    "wikiId": 898,
     "name": "Omsk",
     "localName": "Омск",
     "country": "RU",
@@ -3087,7 +3430,8 @@
     "population": 1101367
   },
   {
-    "id": 11720,
+    "id": 2034937,
+    "wikiId": 11720,
     "name": "Shenyang",
     "localName": "沈阳",
     "country": "CN",
@@ -3096,7 +3440,8 @@
     "population": 9070093
   },
   {
-    "id": 40236,
+    "id": 3663517,
+    "wikiId": 40236,
     "name": "Manaus",
     "localName": "Manaus",
     "country": "BR",
@@ -3105,7 +3450,8 @@
     "population": 2303732
   },
   {
-    "id": 6106,
+    "id": 5746545,
+    "wikiId": 6106,
     "name": "Portland",
     "localName": "Portland",
     "country": "US",
@@ -3114,7 +3460,8 @@
     "population": 652503
   },
   {
-    "id": 16568,
+    "id": 4160021,
+    "wikiId": 16568,
     "name": "Jacksonville",
     "localName": "Jacksonville",
     "country": "US",
@@ -3123,7 +3470,8 @@
     "population": 949611
   },
   {
-    "id": 2211,
+    "id": 2692969,
+    "wikiId": 2211,
     "name": "Malmö",
     "localName": "Malmö",
     "country": "SE",
@@ -3132,7 +3480,8 @@
     "population": 339316
   },
   {
-    "id": 14960,
+    "id": 3078610,
+    "wikiId": 14960,
     "name": "Brno",
     "localName": "Brno",
     "country": "CZ",
@@ -3141,7 +3490,8 @@
     "population": 402739
   },
   {
-    "id": 3110,
+    "id": 3583361,
+    "wikiId": 3110,
     "name": "San Salvador",
     "localName": "San Salvador",
     "country": "SV",
@@ -3150,7 +3500,8 @@
     "population": 330543
   },
   {
-    "id": 1342,
+    "id": 5206379,
+    "wikiId": 1342,
     "name": "Pittsburgh",
     "localName": "Pittsburgh",
     "country": "US",
@@ -3159,7 +3510,8 @@
     "population": 302971
   },
   {
-    "id": 3751,
+    "id": 3374333,
+    "wikiId": 3751,
     "name": "Praia",
     "localName": "Cidade da Praia",
     "country": "CV",
@@ -3168,7 +3520,8 @@
     "population": 159050
   },
   {
-    "id": 48320,
+    "id": 1859171,
+    "wikiId": 48320,
     "name": "Kobe",
     "localName": "神戸市",
     "country": "JP",
@@ -3177,7 +3530,8 @@
     "population": 1521707
   },
   {
-    "id": 37836,
+    "id": 5263045,
+    "wikiId": 37836,
     "name": "Milwaukee",
     "localName": "Milwaukee",
     "country": "US",
@@ -3186,7 +3540,8 @@
     "population": 577222
   },
   {
-    "id": 23154,
+    "id": 2654675,
+    "wikiId": 23154,
     "name": "Bristol",
     "localName": "Bristol",
     "country": "GB",
@@ -3195,7 +3550,8 @@
     "population": 472465
   },
   {
-    "id": 36091,
+    "id": 5037649,
+    "wikiId": 36091,
     "name": "Minneapolis",
     "localName": "Minneapolis",
     "country": "US",
@@ -3204,7 +3560,8 @@
     "population": 429954
   },
   {
-    "id": 393,
+    "id": 3083829,
+    "wikiId": 393,
     "name": "Szczecin",
     "localName": "Szczecin",
     "country": "PL",
@@ -3213,7 +3570,8 @@
     "population": 387700
   },
   {
-    "id": 79980,
+    "id": 1253405,
+    "wikiId": 79980,
     "name": "Varanasi",
     "localName": "वाराणसी",
     "country": "IN",
@@ -3222,7 +3580,8 @@
     "population": 1198491
   },
   {
-    "id": 21194,
+    "id": 1562414,
+    "wikiId": 21194,
     "name": "Vũng Tàu",
     "localName": "Vũng Tàu",
     "country": "VN",
@@ -3231,7 +3590,8 @@
     "population": 357124
   },
   {
-    "id": 268,
+    "id": 3088171,
+    "wikiId": 268,
     "name": "Poznań",
     "localName": "Poznań",
     "country": "PL",
@@ -3240,7 +3600,8 @@
     "population": 546859
   },
   {
-    "id": 3519,
+    "id": 3182351,
+    "wikiId": 3519,
     "name": "Bari",
     "localName": "Bari",
     "country": "IT",
@@ -3249,7 +3610,8 @@
     "population": 315473
   },
   {
-    "id": 5869,
+    "id": 1280737,
+    "wikiId": 5869,
     "name": "Lhasa",
     "localName": "ལྷ་ས་",
     "country": "CN",
@@ -3258,7 +3620,8 @@
     "population": 867891
   },
   {
-    "id": 43463,
+    "id": 3399415,
+    "wikiId": 43463,
     "name": "Fortaleza",
     "localName": "Fortaleza",
     "country": "BR",
@@ -3267,7 +3630,8 @@
     "population": 2578483
   },
   {
-    "id": 16563,
+    "id": 4641239,
+    "wikiId": 16563,
     "name": "Memphis",
     "localName": "Memphis",
     "country": "US",
@@ -3276,7 +3640,8 @@
     "population": 633104
   },
   {
-    "id": 915,
+    "id": 511196,
+    "wikiId": 915,
     "name": "Perm",
     "localName": "Пермь",
     "country": "RU",
@@ -3285,7 +3650,8 @@
     "population": 1027518
   },
   {
-    "id": 16959,
+    "id": 1529102,
+    "wikiId": 16959,
     "name": "Ürümqi",
     "localName": "ئۈرۈمچى",
     "country": "CN",
@@ -3294,7 +3660,8 @@
     "population": 4054369
   },
   {
-    "id": 1720,
+    "id": 2874225,
+    "wikiId": 1720,
     "name": "Mainz",
     "localName": "Mainz",
     "country": "DE",
@@ -3303,7 +3670,8 @@
     "population": 222889
   },
   {
-    "id": 47916,
+    "id": 1264733,
+    "wikiId": 47916,
     "name": "Lucknow",
     "localName": "लखनऊ",
     "country": "IN",
@@ -3312,7 +3680,8 @@
     "population": 3382000
   },
   {
-    "id": 6441,
+    "id": 2992166,
+    "wikiId": 6441,
     "name": "Montpellier",
     "localName": "Montpellier",
     "country": "FR",
@@ -3321,7 +3690,8 @@
     "population": 310240
   },
   {
-    "id": 1711,
+    "id": 2852458,
+    "wikiId": 1711,
     "name": "Potsdam",
     "localName": "Potsdam",
     "country": "DE",
@@ -3330,7 +3700,8 @@
     "population": 187119
   },
   {
-    "id": 9347,
+    "id": 1282027,
+    "wikiId": 9347,
     "name": "Malé",
     "localName": "މާލެ",
     "country": "MV",
@@ -3339,7 +3710,8 @@
     "population": 133019
   },
   {
-    "id": 38545,
+    "id": 325363,
+    "wikiId": 38545,
     "name": "Adana",
     "localName": "Adana",
     "country": "TR",
@@ -3348,7 +3720,8 @@
     "population": 1765981
   },
   {
-    "id": 26793,
+    "id": 3161732,
+    "wikiId": 26793,
     "name": "Bergen",
     "localName": "Bergen",
     "country": "NO",
@@ -3357,7 +3730,8 @@
     "population": 291189
   },
   {
-    "id": 3929,
+    "id": 934154,
+    "wikiId": 3929,
     "name": "Port Louis",
     "localName": "Port Louis",
     "country": "MU",
@@ -3366,7 +3740,8 @@
     "population": 149194
   },
   {
-    "id": 580,
+    "id": 3093133,
+    "wikiId": 580,
     "name": "Łódź",
     "localName": "Łódź",
     "country": "PL",
@@ -3375,7 +3750,8 @@
     "population": 648711
   },
   {
-    "id": 48344,
+    "id": 3390760,
+    "wikiId": 48344,
     "name": "Recife",
     "localName": "Recife",
     "country": "BR",
@@ -3384,7 +3760,8 @@
     "population": 1488920
   },
   {
-    "id": 34804,
+    "id": 5454711,
+    "wikiId": 34804,
     "name": "Albuquerque",
     "localName": "Albuquerque",
     "country": "US",
@@ -3393,7 +3770,8 @@
     "population": 564559
   },
   {
-    "id": 11462,
+    "id": 1625822,
+    "wikiId": 11462,
     "name": "Surabaya",
     "localName": "Kota Surabaya",
     "country": "ID",
@@ -3402,7 +3780,8 @@
     "population": 3009286
   },
   {
-    "id": 1296,
+    "id": 2797656,
+    "wikiId": 1296,
     "name": "Ghent",
     "localName": "Gent",
     "country": "BE",
@@ -3411,7 +3790,8 @@
     "population": 272657
   },
   {
-    "id": 6022566,
+    "id": 3879476,
+    "wikiId": 6022566,
     "name": "Monte Águila",
     "localName": "Monte Águila",
     "country": "CL",
@@ -3420,7 +3800,8 @@
     "population": 6574
   },
   {
-    "id": 38511,
+    "id": 633679,
+    "wikiId": 38511,
     "name": "Turku",
     "localName": "Turku",
     "country": "FI",
@@ -3429,7 +3810,8 @@
     "population": 209633
   },
   {
-    "id": 26600,
+    "id": 1863967,
+    "wikiId": 26600,
     "name": "Fukuoka",
     "localName": "福岡市",
     "country": "JP",
@@ -3438,7 +3820,8 @@
     "population": 1603043
   },
   {
-    "id": 78,
+    "id": 2661604,
+    "wikiId": 78,
     "name": "Basel",
     "localName": "Basel",
     "country": "CH",
@@ -3447,7 +3830,8 @@
     "population": 176329
   },
   {
-    "id": 30974,
+    "id": 2982652,
+    "wikiId": 30974,
     "name": "Rouen",
     "localName": "Rouen",
     "country": "FR",
@@ -3456,7 +3840,8 @@
     "population": 117662
   },
   {
-    "id": 39121,
+    "id": 2644688,
+    "wikiId": 39121,
     "name": "Leeds",
     "localName": "Leeds",
     "country": "GB",
@@ -3465,7 +3850,8 @@
     "population": 536280
   },
   {
-    "id": 4115712,
+    "id": 598316,
+    "wikiId": 4115712,
     "name": "Kaunas",
     "localName": "Kaunas",
     "country": "LT",
@@ -3474,7 +3860,8 @@
     "population": 305120
   },
   {
-    "id": 20934,
+    "id": 1843564,
+    "wikiId": 20934,
     "name": "Incheon",
     "localName": "인천",
     "country": "KR",
@@ -3483,7 +3870,8 @@
     "population": 3049315
   },
   {
-    "id": 906,
+    "id": 1508291,
+    "wikiId": 906,
     "name": "Chelyabinsk",
     "localName": "Челябинск",
     "country": "RU",
@@ -3492,7 +3880,8 @@
     "population": 1176770
   },
   {
-    "id": 40269,
+    "id": 3452925,
+    "wikiId": 40269,
     "name": "Porto Alegre",
     "localName": "Porto Alegre",
     "country": "BR",
@@ -3501,7 +3890,8 @@
     "population": 1388794
   },
   {
-    "id": 5468,
+    "id": 1007311,
+    "wikiId": 5468,
     "name": "Durban",
     "localName": "ITheku",
     "country": "ZA",
@@ -3510,7 +3900,8 @@
     "population": 595061
   },
   {
-    "id": 10717,
+    "id": 3378644,
+    "wikiId": 10717,
     "name": "Georgetown",
     "localName": "Georgetown",
     "country": "GY",
@@ -3519,7 +3910,8 @@
     "population": 235017
   },
   {
-    "id": 2066,
+    "id": 2928810,
+    "wikiId": 2066,
     "name": "Essen",
     "localName": "Essen",
     "country": "DE",
@@ -3528,7 +3920,8 @@
     "population": 586608
   },
   {
-    "id": 5823,
+    "id": 6362987,
+    "wikiId": 5823,
     "name": "Ceuta",
     "localName": "Ceuta",
     "country": "ES",
@@ -3537,7 +3930,8 @@
     "population": 83595
   },
   {
-    "id": 1017,
+    "id": 3247449,
+    "wikiId": 1017,
     "name": "Aachen",
     "localName": "Aachen",
     "country": "DE",
@@ -3546,7 +3940,8 @@
     "population": 252769
   },
   {
-    "id": 34217,
+    "id": 2640729,
+    "wikiId": 34217,
     "name": "Oxford",
     "localName": "Oxford",
     "country": "GB",
@@ -3555,7 +3950,8 @@
     "population": 147500
   },
   {
-    "id": 33405,
+    "id": 4119403,
+    "wikiId": 33405,
     "name": "Little Rock",
     "localName": "Little Rock",
     "country": "US",
@@ -3564,7 +3960,8 @@
     "population": 202591
   },
   {
-    "id": 16558,
+    "id": 4691930,
+    "wikiId": 16558,
     "name": "Fort Worth",
     "localName": "Fort Worth",
     "country": "US",
@@ -3573,7 +3970,8 @@
     "population": 918915
   },
   {
-    "id": 29364,
+    "id": 4076784,
+    "wikiId": 29364,
     "name": "Montgomery",
     "localName": "Montgomery",
     "country": "US",
@@ -3582,7 +3980,8 @@
     "population": 200603
   },
   {
-    "id": 37320,
+    "id": 5150529,
+    "wikiId": 37320,
     "name": "Cleveland",
     "localName": "Cleveland",
     "country": "US",
@@ -3591,7 +3990,8 @@
     "population": 372624
   },
   {
-    "id": 1729,
+    "id": 2929670,
+    "wikiId": 1729,
     "name": "Erfurt",
     "localName": "Erfurt",
     "country": "DE",
@@ -3600,7 +4000,8 @@
     "population": 215199
   },
   {
-    "id": 1707,
+    "id": 2891122,
+    "wikiId": 1707,
     "name": "Kiel",
     "localName": "Kiel",
     "country": "DE",
@@ -3609,16 +4010,8 @@
     "population": 248873
   },
   {
-    "id": 1209,
-    "name": "Bremen",
-    "localName": "Bremen",
-    "country": "DE",
-    "lat": 53.133333333,
-    "lon": 8.733333333,
-    "population": 693204
-  },
-  {
-    "id": 37701,
+    "id": 1018725,
+    "wikiId": 37701,
     "name": "Bloemfontein",
     "localName": "IBloemfontein",
     "country": "ZA",
@@ -3627,7 +4020,8 @@
     "population": 256185
   },
   {
-    "id": 182852,
+    "id": 1804651,
+    "wikiId": 182852,
     "name": "Kunming",
     "localName": "昆明",
     "country": "CN",
@@ -3636,7 +4030,8 @@
     "population": 8460088
   },
   {
-    "id": 13375,
+    "id": 3170647,
+    "wikiId": 13375,
     "name": "Pisa",
     "localName": "Pisa",
     "country": "IT",
@@ -3645,7 +4040,8 @@
     "population": 88737
   },
   {
-    "id": 41087,
+    "id": 4487042,
+    "wikiId": 41087,
     "name": "Raleigh",
     "localName": "Raleigh",
     "country": "US",
@@ -3654,7 +4050,8 @@
     "population": 467665
   },
   {
-    "id": 1733,
+    "id": 2874545,
+    "wikiId": 1733,
     "name": "Magdeburg",
     "localName": "Magdeburg",
     "country": "DE",
@@ -3663,7 +4060,8 @@
     "population": 240114
   },
   {
-    "id": 196163,
+    "id": 3093158,
+    "wikiId": 196163,
     "name": "Łobez",
     "localName": "Łobez",
     "country": "PL",
@@ -3672,7 +4070,8 @@
     "population": 9792
   },
   {
-    "id": 81788,
+    "id": 360995,
+    "wikiId": 81788,
     "name": "Giza",
     "localName": "الجيزة",
     "country": "EG",
@@ -3681,7 +4080,8 @@
     "population": 4458135
   },
   {
-    "id": 126148,
+    "id": 2530335,
+    "wikiId": 126148,
     "name": "Tangier",
     "localName": "طنجة",
     "country": "MA",
@@ -3690,7 +4090,8 @@
     "population": 1275428
   },
   {
-    "id": 2028,
+    "id": 3164527,
+    "wikiId": 2028,
     "name": "Verona",
     "localName": "Verona",
     "country": "IT",
@@ -3699,7 +4100,8 @@
     "population": 255588
   },
   {
-    "id": 39709,
+    "id": 4853828,
+    "wikiId": 39709,
     "name": "Des Moines",
     "localName": "Des Moines",
     "country": "US",
@@ -3708,7 +4110,8 @@
     "population": 214133
   },
   {
-    "id": 9279,
+    "id": 1820906,
+    "wikiId": 9279,
     "name": "Bandar Seri Begawan",
     "localName": "Bandar Seri Begawan",
     "country": "BN",
@@ -3717,7 +4120,8 @@
     "population": 50000
   },
   {
-    "id": 170322,
+    "id": 1797929,
+    "wikiId": 170322,
     "name": "Qingdao",
     "localName": "青岛",
     "country": "CN",
@@ -3726,7 +4130,8 @@
     "population": 10071722
   },
   {
-    "id": 41329,
+    "id": 2772400,
+    "wikiId": 41329,
     "name": "Linz",
     "localName": "Linz",
     "country": "AT",
@@ -3735,7 +4140,8 @@
     "population": 211944
   },
   {
-    "id": 2467,
+    "id": 3571824,
+    "wikiId": 2467,
     "name": "Nassau",
     "localName": "Nassau",
     "country": "BS",
@@ -3744,7 +4150,8 @@
     "population": 227940
   },
   {
-    "id": 16565,
+    "id": 4460243,
+    "wikiId": 16565,
     "name": "Charlotte",
     "localName": "Charlotte",
     "country": "US",
@@ -3753,7 +4160,8 @@
     "population": 874579
   },
   {
-    "id": 39450,
+    "id": 5879400,
+    "wikiId": 39450,
     "name": "Anchorage",
     "localName": "Anchorage",
     "country": "US",
@@ -3762,7 +4170,8 @@
     "population": 291247
   },
   {
-    "id": 1735,
+    "id": 2775220,
+    "wikiId": 1735,
     "name": "Innsbruck",
     "localName": "Innsbruck",
     "country": "AT",
@@ -3771,7 +4180,8 @@
     "population": 132499
   },
   {
-    "id": 1903,
+    "id": 2525068,
+    "wikiId": 1903,
     "name": "Catania",
     "localName": "Catania",
     "country": "IT",
@@ -3780,7 +4190,8 @@
     "population": 311584
   },
   {
-    "id": 35775,
+    "id": 5586437,
+    "wikiId": 35775,
     "name": "Boise",
     "localName": "Boise",
     "country": "US",
@@ -3789,7 +4200,8 @@
     "population": 235684
   },
   {
-    "id": 162442,
+    "id": 1278994,
+    "wikiId": 162442,
     "name": "Prayagraj",
     "localName": "प्रयागराज",
     "country": "IN",
@@ -3798,7 +4210,8 @@
     "population": 5954391
   },
   {
-    "id": 2135,
+    "id": 6183235,
+    "wikiId": 2135,
     "name": "Winnipeg",
     "localName": "Winnipeg",
     "country": "CA",
@@ -3807,7 +4220,8 @@
     "population": 749607
   },
   {
-    "id": 5776,
+    "id": 284315,
+    "wikiId": 5776,
     "name": "Bethlehem",
     "localName": "بيت لحم",
     "country": "PS",
@@ -3816,7 +4230,8 @@
     "population": 36000
   },
   {
-    "id": 38022,
+    "id": 4407066,
+    "wikiId": 38022,
     "name": "St. Louis",
     "localName": "St Louis",
     "country": "US",
@@ -3825,7 +4240,8 @@
     "population": 301578
   },
   {
-    "id": 2966,
+    "id": 2907911,
+    "wikiId": 2966,
     "name": "Heidelberg",
     "localName": "Heidelberg",
     "country": "DE",
@@ -3834,7 +4250,8 @@
     "population": 162960
   },
   {
-    "id": 80985,
+    "id": 2548885,
+    "wikiId": 80985,
     "name": "Fez",
     "localName": "فاس",
     "country": "MA",
@@ -3843,7 +4260,8 @@
     "population": 1167842
   },
   {
-    "id": 37043,
+    "id": 4174715,
+    "wikiId": 37043,
     "name": "Tallahassee",
     "localName": "Tallahassee",
     "country": "US",
@@ -3852,7 +4270,8 @@
     "population": 196169
   },
   {
-    "id": 6576,
+    "id": 2023469,
+    "wikiId": 6576,
     "name": "Irkutsk",
     "localName": "Иркутск",
     "country": "RU",
@@ -3861,7 +4280,8 @@
     "population": 605708
   },
   {
-    "id": 350,
+    "id": 2653941,
+    "wikiId": 350,
     "name": "Cambridge",
     "localName": "Cambridge",
     "country": "GB",
@@ -3870,7 +4290,8 @@
     "population": 123867
   },
   {
-    "id": 13666,
+    "id": 2524170,
+    "wikiId": 13666,
     "name": "Messina",
     "localName": "Messina",
     "country": "IT",
@@ -3879,7 +4300,8 @@
     "population": 218786
   },
   {
-    "id": 28848,
+    "id": 5045360,
+    "wikiId": 28848,
     "name": "Saint Paul",
     "localName": "Saint Paul",
     "country": "US",
@@ -3888,7 +4310,8 @@
     "population": 311527
   },
   {
-    "id": 43196,
+    "id": 4508722,
+    "wikiId": 43196,
     "name": "Cincinnati",
     "localName": "Cincinnati",
     "country": "US",
@@ -3897,7 +4320,8 @@
     "population": 309317
   },
   {
-    "id": 93338,
+    "id": 314830,
+    "wikiId": 93338,
     "name": "Gaziantep",
     "localName": "Gaziantep",
     "country": "TR",
@@ -3906,7 +4330,8 @@
     "population": 1680723
   },
   {
-    "id": 647,
+    "id": 2983990,
+    "wikiId": 647,
     "name": "Rennes",
     "localName": "Rennes",
     "country": "FR",
@@ -3915,7 +4340,8 @@
     "population": 230890
   },
   {
-    "id": 80989,
+    "id": 1275841,
+    "wikiId": 80989,
     "name": "Bhopal",
     "localName": "भोपाल",
     "country": "IN",
@@ -3924,7 +4350,8 @@
     "population": 1798218
   },
   {
-    "id": 83317,
+    "id": 99072,
+    "wikiId": 83317,
     "name": "Mosul",
     "localName": "الموصل",
     "country": "IQ",
@@ -3933,7 +4360,8 @@
     "population": 1792000
   },
   {
-    "id": 92161,
+    "id": 2038180,
+    "wikiId": 92161,
     "name": "Changchun",
     "localName": "长春",
     "country": "CN",
@@ -3942,7 +4370,8 @@
     "population": 9066906
   },
   {
-    "id": 36433,
+    "id": 2735943,
+    "wikiId": 36433,
     "name": "Porto",
     "localName": "Porto",
     "country": "PT",
@@ -3951,7 +4380,8 @@
     "population": 231800
   },
   {
-    "id": 17042,
+    "id": 5378538,
+    "wikiId": 17042,
     "name": "Oakland",
     "localName": "Oakland",
     "country": "US",
@@ -3960,7 +4390,8 @@
     "population": 440646
   },
   {
-    "id": 1289,
+    "id": 3014728,
+    "wikiId": 1289,
     "name": "Grenoble",
     "localName": "Grenoble",
     "country": "FR",
@@ -3969,7 +4400,8 @@
     "population": 156140
   },
   {
-    "id": 43509,
+    "id": 3657509,
+    "wikiId": 43509,
     "name": "Guayaquil",
     "localName": "Guayaquil",
     "country": "EC",
@@ -3978,7 +4410,8 @@
     "population": 2650288
   },
   {
-    "id": 4629,
+    "id": 1255364,
+    "wikiId": 4629,
     "name": "Surat",
     "localName": "સુરત",
     "country": "IN",
@@ -3987,7 +4420,8 @@
     "population": 5935000
   },
   {
-    "id": 157835,
+    "id": 687700,
+    "wikiId": 157835,
     "name": "Zaporizhzhia",
     "localName": "Запоріжжя",
     "country": "UA",
@@ -3996,7 +4430,8 @@
     "population": 710052
   },
   {
-    "id": 3927,
+    "id": 580497,
+    "wikiId": 3927,
     "name": "Astrakhan",
     "localName": "Астрахань",
     "country": "RU",
@@ -4005,7 +4440,8 @@
     "population": 465990
   },
   {
-    "id": 919,
+    "id": 1502026,
+    "wikiId": 919,
     "name": "Krasnoyarsk",
     "localName": "Красноярск",
     "country": "RU",
@@ -4014,7 +4450,8 @@
     "population": 1092851
   },
   {
-    "id": 79857,
+    "id": 306571,
+    "wikiId": 79857,
     "name": "Konya",
     "localName": "Konya",
     "country": "TR",
@@ -4023,7 +4460,8 @@
     "population": 2232374
   },
   {
-    "id": 51103,
+    "id": 3687925,
+    "wikiId": 51103,
     "name": "Cali",
     "localName": "Santiago de Cali",
     "country": "CO",
@@ -4032,7 +4470,8 @@
     "population": 2471474
   },
   {
-    "id": 37133,
+    "id": 701822,
+    "wikiId": 37133,
     "name": "Mariupol",
     "localName": "Маріуполь",
     "country": "UA",
@@ -4041,7 +4480,8 @@
     "population": 250000
   },
   {
-    "id": 3726,
+    "id": 2413876,
+    "wikiId": 3726,
     "name": "Banjul",
     "localName": "Banjul",
     "country": "GM",
@@ -4050,7 +4490,8 @@
     "population": 31356
   },
   {
-    "id": 174091,
+    "id": 1815577,
+    "wikiId": 174091,
     "name": "Changsha",
     "localName": "长沙",
     "country": "CN",
@@ -4059,7 +4500,8 @@
     "population": 10047914
   },
   {
-    "id": 41621,
+    "id": 294801,
+    "wikiId": 41621,
     "name": "Haifa",
     "localName": "חיפה",
     "country": "IL",
@@ -4068,7 +4510,8 @@
     "population": 282831
   },
   {
-    "id": 49233,
+    "id": 4167147,
+    "wikiId": 49233,
     "name": "Orlando",
     "localName": "Orlando",
     "country": "US",
@@ -4077,7 +4520,8 @@
     "population": 334854
   },
   {
-    "id": 124739,
+    "id": 3981609,
+    "wikiId": 124739,
     "name": "Tijuana",
     "localName": "Tijuana",
     "country": "MX",
@@ -4086,7 +4530,8 @@
     "population": 1964788
   },
   {
-    "id": 10389,
+    "id": 1650357,
+    "wikiId": 10389,
     "name": "Bandung",
     "localName": "Bandung",
     "country": "ID",
@@ -4095,7 +4540,8 @@
     "population": 2875673
   },
   {
-    "id": 807,
+    "id": 2659994,
+    "wikiId": 807,
     "name": "Lausanne",
     "localName": "Lausanne",
     "country": "CH",
@@ -4104,7 +4550,8 @@
     "population": 144873
   },
   {
-    "id": 47492,
+    "id": 281133,
+    "wikiId": 47492,
     "name": "Gaza City",
     "localName": "غزة",
     "country": "PS",
@@ -4113,7 +4560,8 @@
     "population": 590481
   },
   {
-    "id": 81033,
+    "id": 3995465,
+    "wikiId": 81033,
     "name": "Monterrey",
     "localName": "Monterrey",
     "country": "MX",
@@ -4122,7 +4570,8 @@
     "population": 1142952
   },
   {
-    "id": 1040,
+    "id": 2892794,
+    "wikiId": 1040,
     "name": "Karlsruhe",
     "localName": "Karlsruhe",
     "country": "DE",
@@ -4131,7 +4580,8 @@
     "population": 309964
   },
   {
-    "id": 36168,
+    "id": 3374036,
+    "wikiId": 36168,
     "name": "Bridgetown",
     "localName": "Bridgetown",
     "country": "BB",
@@ -4140,7 +4590,8 @@
     "population": 98511
   },
   {
-    "id": 2100,
+    "id": 2934691,
+    "wikiId": 2100,
     "name": "Duisburg",
     "localName": "Duisburg",
     "country": "DE",
@@ -4149,7 +4600,8 @@
     "population": 503707
   },
   {
-    "id": 25286,
+    "id": 2666199,
+    "wikiId": 25286,
     "name": "Uppsala",
     "localName": "Uppsala",
     "country": "SE",
@@ -4158,7 +4610,8 @@
     "population": 174982
   },
   {
-    "id": 28218,
+    "id": 4315588,
+    "wikiId": 28218,
     "name": "Baton Rouge",
     "localName": "Baton Rouge",
     "country": "US",
@@ -4167,7 +4620,8 @@
     "population": 227470
   },
   {
-    "id": 170247,
+    "id": 1805753,
+    "wikiId": 170247,
     "name": "Jinan",
     "localName": "济南",
     "country": "CN",
@@ -4176,7 +4630,8 @@
     "population": 9202432
   },
   {
-    "id": 46747,
+    "id": 2111149,
+    "wikiId": 46747,
     "name": "Sendai",
     "localName": "仙台",
     "country": "JP",
@@ -4185,7 +4640,8 @@
     "population": 1061177
   },
   {
-    "id": 43199,
+    "id": 5074472,
+    "wikiId": 43199,
     "name": "Omaha",
     "localName": "Omaha",
     "country": "US",
@@ -4194,7 +4650,8 @@
     "population": 486051
   },
   {
-    "id": 45301,
+    "id": 738648,
+    "wikiId": 45301,
     "name": "Trabzon",
     "localName": "Trabzon",
     "country": "TR",
@@ -4203,7 +4660,8 @@
     "population": 824352
   },
   {
-    "id": 2843,
+    "id": 2875601,
+    "wikiId": 2843,
     "name": "Lübeck",
     "localName": "Lübeck",
     "country": "DE",
@@ -4212,7 +4670,8 @@
     "population": 219044
   },
   {
-    "id": 66568,
+    "id": 1267995,
+    "wikiId": 66568,
     "name": "Kanpur",
     "localName": "कानपुर",
     "country": "IN",
@@ -4221,7 +4680,8 @@
     "population": 4581268
   },
   {
-    "id": 68481,
+    "id": 1810821,
+    "wikiId": 68481,
     "name": "Fuzhou",
     "localName": "福州",
     "country": "CN",
@@ -4230,7 +4690,8 @@
     "population": 8291268
   },
   {
-    "id": 48338,
+    "id": 308464,
+    "wikiId": 48338,
     "name": "Kayseri",
     "localName": "Kayseri",
     "country": "TR",
@@ -4239,7 +4700,8 @@
     "population": 1389680
   },
   {
-    "id": 33486,
+    "id": 4835797,
+    "wikiId": 33486,
     "name": "Hartford",
     "localName": "Hartford",
     "country": "US",
@@ -4248,7 +4710,8 @@
     "population": 121054
   },
   {
-    "id": 225641,
+    "id": 186301,
+    "wikiId": 225641,
     "name": "Mombasa",
     "localName": "Mombasa",
     "country": "KE",
@@ -4257,7 +4720,8 @@
     "population": 1208333
   },
   {
-    "id": 16562,
+    "id": 5520993,
+    "wikiId": 16562,
     "name": "El Paso",
     "localName": "El Paso",
     "country": "US",
@@ -4266,7 +4730,8 @@
     "population": 678815
   },
   {
-    "id": 43433,
+    "id": 1274746,
+    "wikiId": 43433,
     "name": "Chandigarh",
     "localName": "ਚੰਡੀਗੜ੍ਹ",
     "country": "IN",
@@ -4275,7 +4740,8 @@
     "population": 1055450
   },
   {
-    "id": 42622,
+    "id": 1886760,
+    "wikiId": 42622,
     "name": "Suzhou",
     "localName": "苏州",
     "country": "CN",
@@ -4284,7 +4750,8 @@
     "population": 12748262
   },
   {
-    "id": 3426,
+    "id": 472045,
+    "wikiId": 3426,
     "name": "Voronezh",
     "localName": "Воронеж",
     "country": "RU",
@@ -4293,7 +4760,8 @@
     "population": 1041722
   },
   {
-    "id": 546,
+    "id": 3165185,
+    "wikiId": 546,
     "name": "Trieste",
     "localName": "Trieste",
     "country": "IT",
@@ -4302,7 +4770,8 @@
     "population": 198417
   },
   {
-    "id": 80484,
+    "id": 1260086,
+    "wikiId": 80484,
     "name": "Patna",
     "localName": "पटना",
     "country": "IN",
@@ -4311,7 +4780,8 @@
     "population": 1684222
   },
   {
-    "id": 79990,
+    "id": 2192362,
+    "wikiId": 79990,
     "name": "Christchurch",
     "localName": "Christchurch",
     "country": "NZ",
@@ -4320,7 +4790,8 @@
     "population": 383200
   },
   {
-    "id": 134279,
+    "id": 702658,
+    "wikiId": 134279,
     "name": "Luhansk",
     "localName": "Луганськ",
     "country": "UA",
@@ -4329,7 +4800,8 @@
     "population": 417990
   },
   {
-    "id": 74881,
+    "id": 1814087,
+    "wikiId": 74881,
     "name": "Dalian",
     "localName": "大连",
     "country": "CN",
@@ -4338,7 +4810,8 @@
     "population": 7450785
   },
   {
-    "id": 43421,
+    "id": 4781708,
+    "wikiId": 43421,
     "name": "Richmond",
     "localName": "Richmond",
     "country": "US",
@@ -4347,7 +4820,8 @@
     "population": 226610
   },
   {
-    "id": 617,
+    "id": 3171728,
+    "wikiId": 617,
     "name": "Padua",
     "localName": "Padova",
     "country": "IT",
@@ -4356,7 +4830,8 @@
     "population": 206496
   },
   {
-    "id": 18575,
+    "id": 5318313,
+    "wikiId": 18575,
     "name": "Tucson",
     "localName": "Tucson",
     "country": "US",
@@ -4365,7 +4840,8 @@
     "population": 542629
   },
   {
-    "id": 2119,
+    "id": 2873891,
+    "wikiId": 2119,
     "name": "Mannheim",
     "localName": "Mannheim",
     "country": "DE",
@@ -4374,7 +4850,8 @@
     "population": 316877
   },
   {
-    "id": 49255,
+    "id": 4174757,
+    "wikiId": 49255,
     "name": "Tampa",
     "localName": "Tampa",
     "country": "US",
@@ -4383,7 +4860,8 @@
     "population": 384959
   },
   {
-    "id": 18383,
+    "id": 5224151,
+    "wikiId": 18383,
     "name": "Providence",
     "localName": "Providence",
     "country": "US",
@@ -4392,7 +4870,8 @@
     "population": 190934
   },
   {
-    "id": 4454,
+    "id": 2022890,
+    "wikiId": 4454,
     "name": "Khabarovsk",
     "localName": "Хабаровск",
     "country": "RU",
@@ -4401,7 +4880,8 @@
     "population": 615600
   },
   {
-    "id": 3901,
+    "id": 921772,
+    "wikiId": 3901,
     "name": "Moroni",
     "localName": "موروني",
     "country": "KM",
@@ -4410,7 +4890,8 @@
     "population": 85400
   },
   {
-    "id": 1724,
+    "id": 2842647,
+    "wikiId": 1724,
     "name": "Saarbrücken",
     "localName": "Saarbrücken",
     "country": "DE",
@@ -4419,7 +4900,8 @@
     "population": 183509
   },
   {
-    "id": 28260,
+    "id": 5072006,
+    "wikiId": 28260,
     "name": "Lincoln",
     "localName": "Lincoln",
     "country": "US",
@@ -4428,7 +4910,8 @@
     "population": 291082
   },
   {
-    "id": 1844,
+    "id": 3042030,
+    "wikiId": 1844,
     "name": "Vaduz",
     "localName": "Vaduz",
     "country": "LI",
@@ -4437,7 +4920,8 @@
     "population": 5668
   },
   {
-    "id": 42448,
+    "id": 2638077,
+    "wikiId": 42448,
     "name": "Sheffield",
     "localName": "Sheffield",
     "country": "GB",
@@ -4446,7 +4930,8 @@
     "population": 518090
   },
   {
-    "id": 43788,
+    "id": 5261457,
+    "wikiId": 43788,
     "name": "Madison",
     "localName": "Madison",
     "country": "US",
@@ -4455,7 +4940,8 @@
     "population": 269840
   },
   {
-    "id": 5196,
+    "id": 558418,
+    "wikiId": 5196,
     "name": "Grozny",
     "localName": "Грозный",
     "country": "RU",
@@ -4464,7 +4950,8 @@
     "population": 291687
   },
   {
-    "id": 40191,
+    "id": 2163355,
+    "wikiId": 40191,
     "name": "Hobart",
     "localName": "Hobart",
     "country": "AU",
@@ -4473,7 +4960,8 @@
     "population": 197451
   },
   {
-    "id": 3904,
+    "id": 934985,
+    "wikiId": 3904,
     "name": "Mbabane",
     "localName": "Mbabane",
     "country": "SZ",
@@ -4482,7 +4970,8 @@
     "population": 76218
   },
   {
-    "id": 2337,
+    "id": 491687,
+    "wikiId": 2337,
     "name": "Smolensk",
     "localName": "Смоленск",
     "country": "RU",
@@ -4491,7 +4980,8 @@
     "population": 310460
   },
   {
-    "id": 5764,
+    "id": 1217662,
+    "wikiId": 5764,
     "name": "Bukhara",
     "localName": "Buxoro",
     "country": "UZ",
@@ -4500,7 +4990,8 @@
     "population": 280187
   },
   {
-    "id": 41819,
+    "id": 4393217,
+    "wikiId": 41819,
     "name": "Kansas City",
     "localName": "Kansas City",
     "country": "US",
@@ -4509,7 +5000,8 @@
     "population": 508090
   },
   {
-    "id": 2423,
+    "id": 468902,
+    "wikiId": 2423,
     "name": "Yaroslavl",
     "localName": "Ярославль",
     "country": "RU",
@@ -4518,7 +5010,8 @@
     "population": 563717
   },
   {
-    "id": 28198,
+    "id": 4431410,
+    "wikiId": 28198,
     "name": "Jackson",
     "localName": "Jackson",
     "country": "US",
@@ -4527,7 +5020,8 @@
     "population": 153701
   },
   {
-    "id": 2742,
+    "id": 2867543,
+    "wikiId": 2742,
     "name": "Münster",
     "localName": "Münster",
     "country": "DE",
@@ -4536,7 +5030,8 @@
     "population": 322904
   },
   {
-    "id": 25319,
+    "id": 2624652,
+    "wikiId": 25319,
     "name": "Aarhus",
     "localName": "Aarhus",
     "country": "DK",
@@ -4545,7 +5040,8 @@
     "population": 290598
   },
   {
-    "id": 43301,
+    "id": 5350937,
+    "wikiId": 43301,
     "name": "Fresno",
     "localName": "Fresno",
     "country": "US",
@@ -4554,7 +5050,8 @@
     "population": 542107
   },
   {
-    "id": 28515,
+    "id": 4250542,
+    "wikiId": 28515,
     "name": "Springfield",
     "localName": "Springfield",
     "country": "US",
@@ -4563,7 +5060,8 @@
     "population": 114394
   },
   {
-    "id": 7003,
+    "id": 3021372,
+    "wikiId": 7003,
     "name": "Dijon",
     "localName": "Dijon",
     "country": "FR",
@@ -4572,7 +5070,8 @@
     "population": 161830
   },
   {
-    "id": 5168,
+    "id": 532096,
+    "wikiId": 5168,
     "name": "Makhachkala",
     "localName": "Махачкала",
     "country": "RU",
@@ -4581,7 +5080,8 @@
     "population": 662660
   },
   {
-    "id": 52535,
+    "id": 3838583,
+    "wikiId": 52535,
     "name": "Rosario",
     "localName": "Rosario",
     "country": "AR",
@@ -4590,7 +5090,8 @@
     "population": 1193605
   },
   {
-    "id": 657461,
+    "id": 3687238,
+    "wikiId": 657461,
     "name": "Cartagena",
     "localName": "Cartagena de Indias",
     "country": "CO",
@@ -4599,7 +5100,8 @@
     "population": 914552
   },
   {
-    "id": 48403,
+    "id": 1278710,
+    "wikiId": 48403,
     "name": "Amritsar",
     "localName": "ਅੰਮ੍ਰਿਤਸਰ",
     "country": "IN",
@@ -4608,7 +5110,8 @@
     "population": 1159227
   },
   {
-    "id": 19566,
+    "id": 693805,
+    "wikiId": 19566,
     "name": "Simferopol",
     "localName": "Сімферополь",
     "country": "RU",
@@ -4617,7 +5120,8 @@
     "population": 335009
   },
   {
-    "id": 20927,
+    "id": 1835329,
+    "wikiId": 20927,
     "name": "Daegu",
     "localName": "대구",
     "country": "KR",
@@ -4626,7 +5130,8 @@
     "population": 2444412
   },
   {
-    "id": 38807,
+    "id": 2198148,
+    "wikiId": 38807,
     "name": "Suva",
     "localName": "Suva",
     "country": "FJ",
@@ -4635,7 +5140,8 @@
     "population": 88271
   },
   {
-    "id": 23800,
+    "id": 2562305,
+    "wikiId": 23800,
     "name": "Valletta",
     "localName": "Valletta",
     "country": "MT",
@@ -4644,7 +5150,8 @@
     "population": 6444
   },
   {
-    "id": 6610,
+    "id": 2013159,
+    "wikiId": 6610,
     "name": "Yakutsk",
     "localName": "Якутск",
     "country": "RU",
@@ -4653,7 +5160,8 @@
     "population": 311760
   },
   {
-    "id": 37333,
+    "id": 765876,
+    "wikiId": 37333,
     "name": "Lublin",
     "localName": "Lublin",
     "country": "PL",
@@ -4662,7 +5170,8 @@
     "population": 334681
   },
   {
-    "id": 41057,
+    "id": 4280539,
+    "wikiId": 41057,
     "name": "Topeka",
     "localName": "Topeka",
     "country": "US",
@@ -4671,7 +5180,8 @@
     "population": 126587
   },
   {
-    "id": 2833,
+    "id": 2925177,
+    "wikiId": 2833,
     "name": "Freiburg im Breisgau",
     "localName": "Freiburg",
     "country": "DE",
@@ -4680,7 +5190,8 @@
     "population": 237244
   },
   {
-    "id": 38555,
+    "id": 5490263,
+    "wikiId": 38555,
     "name": "Santa Fe",
     "localName": "Santa Fe",
     "country": "US",
@@ -4689,7 +5200,8 @@
     "population": 87505
   },
   {
-    "id": 5972,
+    "id": 1214520,
+    "wikiId": 5972,
     "name": "Medan",
     "localName": "Kota Medan",
     "country": "ID",
@@ -4698,7 +5210,8 @@
     "population": 2109330
   },
   {
-    "id": 29445,
+    "id": 5554072,
+    "wikiId": 29445,
     "name": "Juneau",
     "localName": "Juneau",
     "country": "US",
@@ -4707,7 +5220,8 @@
     "population": 32255
   },
   {
-    "id": 42462,
+    "id": 2633352,
+    "wikiId": 42462,
     "name": "York",
     "localName": "York",
     "country": "GB",
@@ -4716,7 +5230,8 @@
     "population": 208400
   },
   {
-    "id": 3932,
+    "id": 2410763,
+    "wikiId": 3932,
     "name": "São Tomé",
     "localName": "São Tomé",
     "country": "ST",
@@ -4725,7 +5240,8 @@
     "population": 65468
   },
   {
-    "id": 36405,
+    "id": 2657832,
+    "wikiId": 36405,
     "name": "Aberdeen",
     "localName": "Aberdeen",
     "country": "GB",
@@ -4734,7 +5250,8 @@
     "population": 200680
   },
   {
-    "id": 12829733,
+    "id": 3405870,
+    "wikiId": 12829733,
     "name": "Belém",
     "localName": "Belém",
     "country": "BR",
@@ -4743,7 +5260,8 @@
     "population": 1303403
   },
   {
-    "id": 3992,
+    "id": 2792413,
+    "wikiId": 3992,
     "name": "Liège",
     "localName": "Liège",
     "country": "BE",
@@ -4752,7 +5270,8 @@
     "population": 195278
   },
   {
-    "id": 100188,
+    "id": 681290,
+    "wikiId": 100188,
     "name": "Cluj-Napoca",
     "localName": "Cluj-Napoca",
     "country": "RO",
@@ -4761,7 +5280,8 @@
     "population": 286598
   },
   {
-    "id": 8826,
+    "id": 2512989,
+    "wikiId": 8826,
     "name": "Palma",
     "localName": "Palma",
     "country": "ES",
@@ -4770,7 +5290,8 @@
     "population": 434786
   },
   {
-    "id": 3612,
+    "id": 3899539,
+    "wikiId": 3612,
     "name": "Antofagasta",
     "localName": "Antofagasta",
     "country": "CL",
@@ -4779,7 +5300,8 @@
     "population": 348517
   },
   {
-    "id": 185684,
+    "id": 1808722,
+    "wikiId": 185684,
     "name": "Hefei",
     "localName": "合肥",
     "country": "CN",
@@ -4788,7 +5310,8 @@
     "population": 9369881
   },
   {
-    "id": 11568,
+    "id": 2073124,
+    "wikiId": 11568,
     "name": "Darwin",
     "localName": "Darwin",
     "country": "AU",
@@ -4797,7 +5320,8 @@
     "population": 139902
   },
   {
-    "id": 2749,
+    "id": 2954172,
+    "wikiId": 2749,
     "name": "Augsburg",
     "localName": "Augsburg",
     "country": "DE",
@@ -4806,7 +5330,8 @@
     "population": 303150
   },
   {
-    "id": 2235,
+    "id": 519336,
+    "wikiId": 2235,
     "name": "Veliky Novgorod",
     "localName": "Великий Новгород",
     "country": "RU",
@@ -4815,7 +5340,8 @@
     "population": 222669
   },
   {
-    "id": 131818,
+    "id": 2485926,
+    "wikiId": 131818,
     "name": "Oran",
     "localName": "وهران",
     "country": "DZ",
@@ -4824,7 +5350,8 @@
     "population": 803329
   },
   {
-    "id": 1113311,
+    "id": 1168197,
+    "wikiId": 1113311,
     "name": "Peshawar",
     "localName": "پشاور",
     "country": "PK",
@@ -4833,7 +5360,8 @@
     "population": 1970042
   },
   {
-    "id": 24861,
+    "id": 5106834,
+    "wikiId": 24861,
     "name": "Albany",
     "localName": "Albany",
     "country": "US",
@@ -4842,7 +5370,8 @@
     "population": 99224
   },
   {
-    "id": 181557,
+    "id": 1673820,
+    "wikiId": 181557,
     "name": "Kaohsiung",
     "localName": "高雄",
     "country": "TW",
@@ -4851,7 +5380,8 @@
     "population": 2733964
   },
   {
-    "id": 25804,
+    "id": 3133880,
+    "wikiId": 25804,
     "name": "Trondheim",
     "localName": "Trondheim",
     "country": "NO",
@@ -4860,7 +5390,8 @@
     "population": 198777
   },
   {
-    "id": 164234,
+    "id": 1859642,
+    "wikiId": 164234,
     "name": "Kawasaki",
     "localName": "川崎",
     "country": "JP",
@@ -4869,7 +5400,8 @@
     "population": 1539522
   },
   {
-    "id": 6506,
+    "id": 726050,
+    "wikiId": 6506,
     "name": "Varna",
     "localName": "Варна",
     "country": "BG",
@@ -4878,7 +5410,8 @@
     "population": 322683
   },
   {
-    "id": 41262,
+    "id": 2641170,
+    "wikiId": 41262,
     "name": "Nottingham",
     "localName": "Nottingham",
     "country": "GB",
@@ -4887,7 +5420,8 @@
     "population": 289301
   },
   {
-    "id": 131694,
+    "id": 415189,
+    "wikiId": 131694,
     "name": "Aden",
     "localName": "عدن",
     "country": "YE",
@@ -4896,7 +5430,8 @@
     "population": 1154410
   },
   {
-    "id": 776965,
+    "id": 598098,
+    "wikiId": 776965,
     "name": "Klaipėda",
     "localName": "Klaipėda",
     "country": "LT",
@@ -4905,7 +5440,8 @@
     "population": 158420
   },
   {
-    "id": 628,
+    "id": 3182164,
+    "wikiId": 628,
     "name": "Bergamo",
     "localName": "Bergamo",
     "country": "IT",
@@ -4914,7 +5450,8 @@
     "population": 119534
   },
   {
-    "id": 43595,
+    "id": 2394819,
+    "wikiId": 43595,
     "name": "Cotonou",
     "localName": "Cotonou",
     "country": "BJ",
@@ -4923,7 +5460,8 @@
     "population": 780000
   },
   {
-    "id": 37776,
+    "id": 3033123,
+    "wikiId": 37776,
     "name": "Besançon",
     "localName": "Besançon",
     "country": "FR",
@@ -4932,7 +5470,8 @@
     "population": 118489
   },
   {
-    "id": 49258,
+    "id": 5417598,
+    "wikiId": 49258,
     "name": "Colorado Springs",
     "localName": "Colorado Springs",
     "country": "US",
@@ -4941,7 +5480,8 @@
     "population": 478961
   },
   {
-    "id": 40435,
+    "id": 5110629,
+    "wikiId": 40435,
     "name": "Buffalo",
     "localName": "Buffalo",
     "country": "US",
@@ -4950,7 +5490,8 @@
     "population": 278349
   },
   {
-    "id": 5684,
+    "id": 99347,
+    "wikiId": 5684,
     "name": "Babylon",
     "localName": "الحلة",
     "country": "IQ",
@@ -4959,7 +5500,8 @@
     "population": 150000
   },
   {
-    "id": 38453,
+    "id": 4575352,
+    "wikiId": 38453,
     "name": "Columbia",
     "localName": "Columbia",
     "country": "US",
@@ -4968,7 +5510,8 @@
     "population": 136632
   },
   {
-    "id": 459,
+    "id": 728193,
+    "wikiId": 459,
     "name": "Plovdiv",
     "localName": "Пловдив",
     "country": "BG",
@@ -4977,7 +5520,8 @@
     "population": 333994
   },
   {
-    "id": 132830,
+    "id": 2232593,
+    "wikiId": 132830,
     "name": "Douala",
     "localName": "Douala",
     "country": "CM",
@@ -4986,7 +5530,8 @@
     "population": 2768436
   },
   {
-    "id": 2814,
+    "id": 2911522,
+    "wikiId": 2814,
     "name": "Halle (Saale)",
     "localName": "Halle",
     "country": "DE",
@@ -4995,7 +5540,8 @@
     "population": 242172
   },
   {
-    "id": 3437,
+    "id": 3171180,
+    "wikiId": 3437,
     "name": "Perugia",
     "localName": "Perugia",
     "country": "IT",
@@ -5004,7 +5550,8 @@
     "population": 161748
   },
   {
-    "id": 159610,
+    "id": 3183719,
+    "wikiId": 159610,
     "name": "Vlorë",
     "localName": "Vlorë",
     "country": "AL",
@@ -5013,7 +5560,8 @@
     "population": 66320
   },
   {
-    "id": 44210,
+    "id": 3860259,
+    "wikiId": 44210,
     "name": "Córdoba",
     "localName": "Córdoba",
     "country": "AR",
@@ -5022,7 +5570,8 @@
     "population": 1505250
   },
   {
-    "id": 13364,
+    "id": 3169561,
+    "wikiId": 13364,
     "name": "Ravenna",
     "localName": "Ravenna",
     "country": "IT",
@@ -5031,7 +5580,8 @@
     "population": 155751
   },
   {
-    "id": 13498,
+    "id": 3165926,
+    "wikiId": 13498,
     "name": "Taranto",
     "localName": "Taranto",
     "country": "IT",
@@ -5040,7 +5590,8 @@
     "population": 188098
   },
   {
-    "id": 976,
+    "id": 1489425,
+    "wikiId": 976,
     "name": "Tomsk",
     "localName": "Томск",
     "country": "RU",
@@ -5049,7 +5600,8 @@
     "population": 544566
   },
   {
-    "id": 13972,
+    "id": 588335,
+    "wikiId": 13972,
     "name": "Tartu",
     "localName": "Tartu",
     "country": "EE",
@@ -5058,7 +5610,8 @@
     "population": 97759
   },
   {
-    "id": 58401,
+    "id": 1795270,
+    "wikiId": 58401,
     "name": "Shijiazhuang",
     "localName": "石家庄",
     "country": "CN",
@@ -5067,7 +5620,8 @@
     "population": 10640458
   },
   {
-    "id": 2795,
+    "id": 2940132,
+    "wikiId": 2795,
     "name": "Chemnitz",
     "localName": "Chemnitz",
     "country": "DE",
@@ -5076,7 +5630,8 @@
     "population": 250681
   },
   {
-    "id": 2112,
+    "id": 2949186,
+    "wikiId": 2112,
     "name": "Bielefeld",
     "localName": "Bielefeld",
     "country": "DE",
@@ -5085,7 +5640,8 @@
     "population": 338410
   },
   {
-    "id": 171943,
+    "id": 1800163,
+    "wikiId": 171943,
     "name": "Nanchang",
     "localName": "南昌",
     "country": "CN",
@@ -5094,7 +5650,8 @@
     "population": 6255007
   },
   {
-    "id": 39178,
+    "id": 3573890,
+    "wikiId": 39178,
     "name": "Port of Spain",
     "localName": "Port of Spain",
     "country": "TT",
@@ -5103,7 +5660,8 @@
     "population": 49031
   },
   {
-    "id": 2683,
+    "id": 3171457,
+    "wikiId": 2683,
     "name": "Parma",
     "localName": "Parma",
     "country": "IT",
@@ -5112,7 +5670,8 @@
     "population": 196764
   },
   {
-    "id": 183584,
+    "id": 1804430,
+    "wikiId": 183584,
     "name": "Lanzhou",
     "localName": "兰州",
     "country": "CN",
@@ -5121,7 +5680,8 @@
     "population": 4359446
   },
   {
-    "id": 430776,
+    "id": 294098,
+    "wikiId": 430776,
     "name": "Nazareth",
     "localName": "נצרת",
     "country": "IL",
@@ -5130,7 +5690,8 @@
     "population": 83400
   },
   {
-    "id": 156732,
+    "id": 706448,
+    "wikiId": 156732,
     "name": "Kherson",
     "localName": "Херсон",
     "country": "UA",
@@ -5139,7 +5700,8 @@
     "population": 279131
   },
   {
-    "id": 131301,
+    "id": 169577,
+    "wikiId": 131301,
     "name": "Homs",
     "localName": "حمص",
     "country": "SY",
@@ -5148,7 +5710,8 @@
     "population": 775404
   },
   {
-    "id": 79880,
+    "id": 721472,
+    "wikiId": 79880,
     "name": "Debrecen",
     "localName": "Debrecen",
     "country": "HU",
@@ -5157,7 +5720,8 @@
     "population": 202130
   },
   {
-    "id": 3138,
+    "id": 2821164,
+    "wikiId": 3138,
     "name": "Trier",
     "localName": "Trier",
     "country": "DE",
@@ -5166,7 +5730,8 @@
     "population": 112737
   },
   {
-    "id": 1425428,
+    "id": 2641673,
+    "wikiId": 1425428,
     "name": "Newcastle upon Tyne",
     "localName": "Newcastle upon Tyne",
     "country": "GB",
@@ -5175,7 +5740,8 @@
     "population": 300196
   },
   {
-    "id": 41876,
+    "id": 2984114,
+    "wikiId": 41876,
     "name": "Reims",
     "localName": "Reims",
     "country": "FR",
@@ -5184,7 +5750,8 @@
     "population": 177674
   },
   {
-    "id": 40811,
+    "id": 611847,
+    "wikiId": 40811,
     "name": "Sokhumi",
     "localName": "სოხუმი",
     "country": "GE",
@@ -5193,7 +5760,8 @@
     "population": 64441
   },
   {
-    "id": 3012,
+    "id": 2820256,
+    "wikiId": 3012,
     "name": "Ulm",
     "localName": "Ulm",
     "country": "DE",
@@ -5202,7 +5770,8 @@
     "population": 129942
   },
   {
-    "id": 45604,
+    "id": 1138336,
+    "wikiId": 45604,
     "name": "Kandahar",
     "localName": "قندهار",
     "country": "AF",
@@ -5211,7 +5780,8 @@
     "population": 614254
   },
   {
-    "id": 5627,
+    "id": 479123,
+    "wikiId": 5627,
     "name": "Ulyanovsk",
     "localName": "Ульяновск",
     "country": "RU",
@@ -5220,7 +5790,8 @@
     "population": 612516
   },
   {
-    "id": 5582862,
+    "id": 3941584,
+    "wikiId": 5582862,
     "name": "Cusco",
     "localName": "Cuzco",
     "country": "PE",
@@ -5229,7 +5800,8 @@
     "population": 428450
   },
   {
-    "id": 41211,
+    "id": 4568127,
+    "wikiId": 41211,
     "name": "San Juan",
     "localName": "San Juan",
     "country": "US",
@@ -5238,7 +5810,8 @@
     "population": 342259
   },
   {
-    "id": 3940,
+    "id": 241131,
+    "wikiId": 3940,
     "name": "Victoria",
     "localName": "Victoria",
     "country": "SC",
@@ -5247,7 +5820,8 @@
     "population": 24701
   },
   {
-    "id": 81398,
+    "id": 3533462,
+    "wikiId": 81398,
     "name": "Acapulco de Juárez",
     "localName": "Acapulco",
     "country": "MX",
@@ -5256,7 +5830,8 @@
     "population": 673478
   },
   {
-    "id": 36260,
+    "id": 4035413,
+    "wikiId": 36260,
     "name": "Apia",
     "localName": "Apia",
     "country": "WS",
@@ -5265,7 +5840,8 @@
     "population": 37708
   },
   {
-    "id": 16739,
+    "id": 5367929,
+    "wikiId": 16739,
     "name": "Long Beach",
     "localName": "Long Beach",
     "country": "US",
@@ -5274,7 +5850,8 @@
     "population": 466742
   },
   {
-    "id": 6221,
+    "id": 3181554,
+    "wikiId": 6221,
     "name": "Brescia",
     "localName": "Brescia",
     "country": "IT",
@@ -5283,7 +5860,8 @@
     "population": 196446
   },
   {
-    "id": 2861,
+    "id": 2844588,
+    "wikiId": 2861,
     "name": "Rostock",
     "localName": "Rostock",
     "country": "DE",
@@ -5292,7 +5870,8 @@
     "population": 210795
   },
   {
-    "id": 2107,
+    "id": 2805753,
+    "wikiId": 2107,
     "name": "Wuppertal",
     "localName": "Wuppertal",
     "country": "DE",
@@ -5301,7 +5880,8 @@
     "population": 358938
   },
   {
-    "id": 39984,
+    "id": 3028808,
+    "wikiId": 39984,
     "name": "Cannes",
     "localName": "Cannes",
     "country": "FR",
@@ -5310,7 +5890,8 @@
     "population": 74350
   },
   {
-    "id": 1513,
+    "id": 1262180,
+    "wikiId": 1513,
     "name": "Nagpur",
     "localName": "नागपूर",
     "country": "IN",
@@ -5319,7 +5900,8 @@
     "population": 2405665
   },
   {
-    "id": 162279,
+    "id": 650224,
+    "wikiId": 162279,
     "name": "Kuopio",
     "localName": "Kuopio",
     "country": "FI",
@@ -5328,7 +5910,8 @@
     "population": 126572
   },
   {
-    "id": 25395,
+    "id": 5101798,
+    "wikiId": 25395,
     "name": "Newark",
     "localName": "Newark",
     "country": "US",
@@ -5337,7 +5920,8 @@
     "population": 311549
   },
   {
-    "id": 42810,
+    "id": 3003796,
+    "wikiId": 42810,
     "name": "Le Havre",
     "localName": "Le Havre",
     "country": "FR",
@@ -5346,7 +5930,8 @@
     "population": 166687
   },
   {
-    "id": 48195,
+    "id": 99532,
+    "wikiId": 48195,
     "name": "Basra",
     "localName": "البصرة",
     "country": "IQ",
@@ -5355,7 +5940,8 @@
     "population": 1326564
   },
   {
-    "id": 23551,
+    "id": 3632308,
+    "wikiId": 23551,
     "name": "Mérida",
     "localName": "Mérida",
     "country": "VE",
@@ -5364,7 +5950,8 @@
     "population": 248192
   },
   {
-    "id": 80561,
+    "id": 323779,
+    "wikiId": 80561,
     "name": "Antakya",
     "localName": "Antakya",
     "country": "TR",
@@ -5373,7 +5960,8 @@
     "population": 377793
   },
   {
-    "id": 79848,
+    "id": 2637487,
+    "wikiId": 79848,
     "name": "Southampton",
     "localName": "Southampton",
     "country": "GB",
@@ -5382,7 +5970,8 @@
     "population": 271173
   },
   {
-    "id": 5815,
+    "id": 1488754,
+    "wikiId": 5815,
     "name": "Tyumen",
     "localName": "Тюмень",
     "country": "RU",
@@ -5391,7 +5980,8 @@
     "population": 872077
   },
   {
-    "id": 83065,
+    "id": 2644668,
+    "wikiId": 83065,
     "name": "Leicester",
     "localName": "Leicester",
     "country": "GB",
@@ -5400,7 +5990,8 @@
     "population": 368600
   },
   {
-    "id": 38380,
+    "id": 3037656,
+    "wikiId": 38380,
     "name": "Angers",
     "localName": "Angers",
     "country": "FR",
@@ -5409,7 +6000,8 @@
     "population": 159022
   },
   {
-    "id": 2865,
+    "id": 2892518,
+    "wikiId": 2865,
     "name": "Kassel",
     "localName": "Kassel",
     "country": "DE",
@@ -5418,7 +6010,8 @@
     "population": 204687
   },
   {
-    "id": 2773,
+    "id": 2945024,
+    "wikiId": 2773,
     "name": "Brunswick",
     "localName": "Braunschweig",
     "country": "DE",
@@ -5427,7 +6020,8 @@
     "population": 252066
   },
   {
-    "id": 179608,
+    "id": 1799869,
+    "wikiId": 179608,
     "name": "Nanning",
     "localName": "南宁",
     "country": "CN",
@@ -5436,7 +6030,8 @@
     "population": 8741584
   },
   {
-    "id": 28237,
+    "id": 4998830,
+    "wikiId": 28237,
     "name": "Lansing",
     "localName": "Lansing",
     "country": "US",
@@ -5445,7 +6040,8 @@
     "population": 112644
   },
   {
-    "id": 2973,
+    "id": 2938913,
+    "wikiId": 2973,
     "name": "Darmstadt",
     "localName": "Darmstadt",
     "country": "DE",
@@ -5454,7 +6050,8 @@
     "population": 164792
   },
   {
-    "id": 173985,
+    "id": 1179400,
+    "wikiId": 173985,
     "name": "Faisalabad",
     "localName": "فیصل آباد",
     "country": "PK",
@@ -5463,7 +6060,8 @@
     "population": 3203846
   },
   {
-    "id": 226,
+    "id": 3421319,
+    "wikiId": 226,
     "name": "Nuuk",
     "localName": "Nuuk",
     "country": "GL",
@@ -5472,7 +6070,8 @@
     "population": 18326
   },
   {
-    "id": 43668,
+    "id": 4299276,
+    "wikiId": 43668,
     "name": "Louisville",
     "localName": "Louisville",
     "country": "US",
@@ -5481,7 +6080,8 @@
     "population": 246161
   },
   {
-    "id": 134635,
+    "id": 6940394,
+    "wikiId": 134635,
     "name": "Saitama",
     "localName": "さいたま",
     "country": "JP",
@@ -5490,7 +6090,8 @@
     "population": 1325843
   },
   {
-    "id": 3043,
+    "id": 3582672,
+    "wikiId": 3043,
     "name": "Belmopan",
     "localName": "Belmopan",
     "country": "BZ",
@@ -5499,7 +6100,8 @@
     "population": 20754
   },
   {
-    "id": 42168,
+    "id": 3024635,
+    "wikiId": 42168,
     "name": "Clermont-Ferrand",
     "localName": "Clermont-Ferrand",
     "country": "FR",
@@ -5508,7 +6110,8 @@
     "population": 146351
   },
   {
-    "id": 3033,
+    "id": 2918632,
+    "wikiId": 3033,
     "name": "Göttingen",
     "localName": "Göttingen",
     "country": "DE",
@@ -5517,7 +6120,8 @@
     "population": 120261
   },
   {
-    "id": 1800,
+    "id": 1273874,
+    "wikiId": 1800,
     "name": "Kochi",
     "localName": "കൊച്ചി",
     "country": "IN",
@@ -5526,7 +6130,8 @@
     "population": 677381
   },
   {
-    "id": 1475,
+    "id": 1692192,
+    "wikiId": 1475,
     "name": "Quezon City",
     "localName": "Quezon City",
     "country": "PH",
@@ -5535,7 +6140,8 @@
     "population": 3084270
   },
   {
-    "id": 42716,
+    "id": 2980291,
+    "wikiId": 42716,
     "name": "Saint-Étienne",
     "localName": "St Étienne",
     "country": "FR",
@@ -5544,7 +6150,8 @@
     "population": 173136
   },
   {
-    "id": 37066,
+    "id": 5688025,
+    "wikiId": 37066,
     "name": "Bismarck",
     "localName": "Bismarck",
     "country": "US",
@@ -5553,7 +6160,8 @@
     "population": 73622
   },
   {
-    "id": 43453,
+    "id": 3068160,
+    "wikiId": 43453,
     "name": "Plzeň",
     "localName": "Plzeň",
     "country": "CZ",
@@ -5562,7 +6170,8 @@
     "population": 187928
   },
   {
-    "id": 25475,
+    "id": 615532,
+    "wikiId": 25475,
     "name": "Batumi",
     "localName": "ბათუმი",
     "country": "GE",
@@ -5571,7 +6180,8 @@
     "population": 169095
   },
   {
-    "id": 49266,
+    "id": 4281730,
+    "wikiId": 49266,
     "name": "Wichita",
     "localName": "Wichita",
     "country": "US",
@@ -5580,7 +6190,8 @@
     "population": 397532
   },
   {
-    "id": 93230,
+    "id": 1166993,
+    "wikiId": 93230,
     "name": "Rawalpindi",
     "localName": "راولپنڈی",
     "country": "PK",
@@ -5589,7 +6200,8 @@
     "population": 2098231
   },
   {
-    "id": 40921,
+    "id": 2108502,
+    "wikiId": 40921,
     "name": "Honiara",
     "localName": "Honiara",
     "country": "SB",
@@ -5598,7 +6210,8 @@
     "population": 84520
   },
   {
-    "id": 72778,
+    "id": 1793511,
+    "wikiId": 72778,
     "name": "Taiyuan",
     "localName": "太原",
     "country": "CN",
@@ -5607,7 +6220,8 @@
     "population": 5304061
   },
   {
-    "id": 47048,
+    "id": 643492,
+    "wikiId": 47048,
     "name": "Oulu",
     "localName": "Oulu",
     "country": "FI",
@@ -5616,7 +6230,8 @@
     "population": 217469
   },
   {
-    "id": 43919,
+    "id": 5750162,
+    "wikiId": 43919,
     "name": "Salem",
     "localName": "Salem",
     "country": "US",
@@ -5625,7 +6240,8 @@
     "population": 175535
   },
   {
-    "id": 83387,
+    "id": 316541,
+    "wikiId": 83387,
     "name": "Diyarbakır",
     "localName": "Diyarbakır",
     "country": "TR",
@@ -5634,7 +6250,8 @@
     "population": 1732396
   },
   {
-    "id": 37806,
+    "id": 2135171,
+    "wikiId": 37806,
     "name": "Port Vila",
     "localName": "Port Vila",
     "country": "VU",
@@ -5643,7 +6260,8 @@
     "population": 49034
   },
   {
-    "id": 66616,
+    "id": 1269743,
+    "wikiId": 66616,
     "name": "Indore",
     "localName": "इन्दौर",
     "country": "IN",
@@ -5652,7 +6270,8 @@
     "population": 1994397
   },
   {
-    "id": 133118,
+    "id": 298333,
+    "wikiId": 133118,
     "name": "Şanlıurfa",
     "localName": "Şanlıurfa",
     "country": "TR",
@@ -5661,7 +6280,8 @@
     "population": 1985753
   },
   {
-    "id": 6761,
+    "id": 3174659,
+    "wikiId": 6761,
     "name": "Livorno",
     "localName": "Livorno",
     "country": "IT",
@@ -5670,7 +6290,8 @@
     "population": 152914
   },
   {
-    "id": 8385,
+    "id": 3068799,
+    "wikiId": 8385,
     "name": "Ostrava",
     "localName": "Ostrava",
     "country": "CZ",
@@ -5679,7 +6300,8 @@
     "population": 283187
   },
   {
-    "id": 22690,
+    "id": 2994160,
+    "wikiId": 22690,
     "name": "Metz",
     "localName": "Metz",
     "country": "FR",
@@ -5688,7 +6310,8 @@
     "population": 122572
   },
   {
-    "id": 49247,
+    "id": 5323810,
+    "wikiId": 49247,
     "name": "Anaheim",
     "localName": "Anaheim",
     "country": "US",
@@ -5697,7 +6320,8 @@
     "population": 346824
   },
   {
-    "id": 79867,
+    "id": 4049979,
+    "wikiId": 79867,
     "name": "Birmingham",
     "localName": "Birmingham",
     "country": "US",
@@ -5706,7 +6330,8 @@
     "population": 200733
   },
   {
-    "id": 44160,
+    "id": 2972328,
+    "wikiId": 44160,
     "name": "Toulon",
     "localName": "Toulon",
     "country": "FR",
@@ -5715,7 +6340,8 @@
     "population": 179116
   },
   {
-    "id": 25330,
+    "id": 5105496,
+    "wikiId": 25330,
     "name": "Trenton",
     "localName": "Trenton",
     "country": "US",
@@ -5724,7 +6350,8 @@
     "population": 90871
   },
   {
-    "id": 62823,
+    "id": 3689147,
+    "wikiId": 62823,
     "name": "Barranquilla",
     "localName": "Barranquilla",
     "country": "CO",
@@ -5733,16 +6360,18 @@
     "population": 1326588
   },
   {
-    "id": 41963,
+    "id": 1238992,
+    "wikiId": 41963,
     "name": "Sri Jayawardenepura Kotte",
-    "localName": "කොළඹ",
+    "localName": "ශ්‍රී ජයවර්ධනපුර කෝට්ටේ",
     "country": "LK",
     "lat": 6.9,
     "lon": 79.916388888,
     "population": 115826
   },
   {
-    "id": 44989,
+    "id": 4553433,
+    "wikiId": 44989,
     "name": "Tulsa",
     "localName": "Tulsa",
     "country": "US",
@@ -5751,7 +6380,8 @@
     "population": 413066
   },
   {
-    "id": 192271,
+    "id": 1809461,
+    "wikiId": 192271,
     "name": "Guiyang",
     "localName": "贵阳",
     "country": "CN",
@@ -5760,7 +6390,8 @@
     "population": 5987018
   },
   {
-    "id": 157053,
+    "id": 710735,
+    "wikiId": 157053,
     "name": "Chernihiv",
     "localName": "Чернігів",
     "country": "UA",
@@ -5769,7 +6400,8 @@
     "population": 286899
   },
   {
-    "id": 167715,
+    "id": 1254163,
+    "wikiId": 167715,
     "name": "Thiruvananthapuram",
     "localName": "തിരുവനന്തപുരം",
     "country": "IN",
@@ -5778,7 +6410,8 @@
     "population": 743691
   },
   {
-    "id": 39042,
+    "id": 5821086,
+    "wikiId": 39042,
     "name": "Cheyenne",
     "localName": "Cheyenne",
     "country": "US",
@@ -5787,7 +6420,8 @@
     "population": 65132
   },
   {
-    "id": 279,
+    "id": 3173331,
+    "wikiId": 279,
     "name": "Modena",
     "localName": "Modena",
     "country": "IT",
@@ -5796,7 +6430,8 @@
     "population": 184153
   },
   {
-    "id": 25280,
+    "id": 5192726,
+    "wikiId": 25280,
     "name": "Harrisburg",
     "localName": "Harrisburg",
     "country": "US",
@@ -5805,7 +6440,8 @@
     "population": 50099
   },
   {
-    "id": 83404,
+    "id": 665087,
+    "wikiId": 83404,
     "name": "Timișoara",
     "localName": "Timișoara",
     "country": "RO",
@@ -5814,7 +6450,8 @@
     "population": 250849
   },
   {
-    "id": 2978,
+    "id": 2849483,
+    "wikiId": 2978,
     "name": "Regensburg",
     "localName": "Regensburg",
     "country": "DE",
@@ -5823,7 +6460,8 @@
     "population": 159465
   },
   {
-    "id": 182059,
+    "id": 2298890,
+    "wikiId": 182059,
     "name": "Kumasi",
     "localName": "Kumasi",
     "country": "GH",
@@ -5832,7 +6470,8 @@
     "population": 3903480
   },
   {
-    "id": 8969,
+    "id": 3531673,
+    "wikiId": 8969,
     "name": "Cancun",
     "localName": "Cancún",
     "country": "MX",
@@ -5841,7 +6480,8 @@
     "population": 888797
   },
   {
-    "id": 2103,
+    "id": 2947416,
+    "wikiId": 2103,
     "name": "Bochum",
     "localName": "Bochum",
     "country": "DE",
@@ -5850,7 +6490,8 @@
     "population": 366385
   },
   {
-    "id": 11959,
+    "id": 2521978,
+    "wikiId": 11959,
     "name": "Alicante",
     "localName": "Alacant",
     "country": "ES",
@@ -5859,7 +6500,8 @@
     "population": 366221
   },
   {
-    "id": 42807,
+    "id": 2990363,
+    "wikiId": 42807,
     "name": "Nîmes",
     "localName": "Nîmes",
     "country": "FR",
@@ -5868,7 +6510,8 @@
     "population": 151839
   },
   {
-    "id": 132754,
+    "id": 95446,
+    "wikiId": 132754,
     "name": "Erbil",
     "localName": "أربيل",
     "country": "IQ",
@@ -5877,7 +6520,8 @@
     "population": 846000
   },
   {
-    "id": 2999,
+    "id": 2805615,
+    "wikiId": 2999,
     "name": "Würzburg",
     "localName": "Würzburg",
     "country": "DE",
@@ -5886,7 +6530,8 @@
     "population": 132215
   },
   {
-    "id": 1709,
+    "id": 2834282,
+    "wikiId": 1709,
     "name": "Schwerin",
     "localName": "Schwerin",
     "country": "DE",
@@ -5895,7 +6540,8 @@
     "population": 98733
   },
   {
-    "id": 45313,
+    "id": 1140026,
+    "wikiId": 45313,
     "name": "Herat",
     "localName": "هرات",
     "country": "AF",
@@ -5904,7 +6550,8 @@
     "population": 556205
   },
   {
-    "id": 3159,
+    "id": 538560,
+    "wikiId": 3159,
     "name": "Kursk",
     "localName": "Курск",
     "country": "RU",
@@ -5913,7 +6560,8 @@
     "population": 434696
   },
   {
-    "id": 6014,
+    "id": 1510853,
+    "wikiId": 6014,
     "name": "Barnaul",
     "localName": "Барнаул",
     "country": "RU",
@@ -5922,7 +6570,8 @@
     "population": 621598
   },
   {
-    "id": 12193,
+    "id": 3030300,
+    "wikiId": 12193,
     "name": "Brest",
     "localName": "Brest",
     "country": "FR",
@@ -5931,7 +6580,8 @@
     "population": 142346
   },
   {
-    "id": 5426,
+    "id": 554840,
+    "wikiId": 5426,
     "name": "Izhevsk",
     "localName": "Ижевск",
     "country": "RU",
@@ -5940,7 +6590,8 @@
     "population": 616297
   },
   {
-    "id": 8471,
+    "id": 2523630,
+    "wikiId": 8471,
     "name": "Reggio Calabria",
     "localName": "Reggio Calabria",
     "country": "IT",
@@ -5949,7 +6600,8 @@
     "population": 170951
   },
   {
-    "id": 40898,
+    "id": 2990999,
+    "wikiId": 40898,
     "name": "Nancy",
     "localName": "Nancy",
     "country": "FR",
@@ -5958,7 +6610,8 @@
     "population": 103671
   },
   {
-    "id": 159273,
+    "id": 3947322,
+    "wikiId": 159273,
     "name": "Arequipa",
     "localName": "Arequipa",
     "country": "PE",
@@ -5967,7 +6620,8 @@
     "population": 1008290
   },
   {
-    "id": 41252,
+    "id": 3102014,
+    "wikiId": 41252,
     "name": "Bydgoszcz",
     "localName": "Bydgoszcz",
     "country": "PL",
@@ -5976,7 +6630,8 @@
     "population": 324984
   },
   {
-    "id": 40881,
+    "id": 5501344,
+    "wikiId": 40881,
     "name": "Carson City",
     "localName": "Carson City",
     "country": "US",
@@ -5985,7 +6640,8 @@
     "population": 58639
   },
   {
-    "id": 41283,
+    "id": 1841811,
+    "wikiId": 41283,
     "name": "Gwangju",
     "localName": "광주",
     "country": "KR",
@@ -5994,7 +6650,8 @@
     "population": 1490092
   },
   {
-    "id": 2751,
+    "id": 3166548,
+    "wikiId": 2751,
     "name": "Siena",
     "localName": "Siena",
     "country": "IT",
@@ -6003,7 +6660,8 @@
     "population": 52812
   },
   {
-    "id": 12994,
+    "id": 2800931,
+    "wikiId": 12994,
     "name": "Bruges",
     "localName": "Brugge",
     "country": "BE",
@@ -6012,7 +6670,8 @@
     "population": 118509
   },
   {
-    "id": 40816,
+    "id": 88319,
+    "wikiId": 40816,
     "name": "Benghazi",
     "localName": "بنغازي",
     "country": "LY",
@@ -6021,7 +6680,8 @@
     "population": 631555
   },
   {
-    "id": 2684,
+    "id": 473247,
+    "wikiId": 2684,
     "name": "Vladimir",
     "localName": "Владимир",
     "country": "RU",
@@ -6030,7 +6690,8 @@
     "population": 341579
   },
   {
-    "id": 6526,
+    "id": 3181913,
+    "wikiId": 6526,
     "name": "Bolzano",
     "localName": "Bolzano",
     "country": "IT",
@@ -6039,7 +6700,8 @@
     "population": 106107
   },
   {
-    "id": 6548,
+    "id": 2989317,
+    "wikiId": 6548,
     "name": "Orléans",
     "localName": "Orléans",
     "country": "FR",
@@ -6048,7 +6710,8 @@
     "population": 116357
   },
   {
-    "id": 13670,
+    "id": 2523083,
+    "wikiId": 13670,
     "name": "Syracuse",
     "localName": "Siracusa",
     "country": "IT",
@@ -6057,7 +6720,8 @@
     "population": 115515
   },
   {
-    "id": 3955,
+    "id": 2812482,
+    "wikiId": 3955,
     "name": "Weimar",
     "localName": "Weimar",
     "country": "DE",
@@ -6066,7 +6730,8 @@
     "population": 65611
   },
   {
-    "id": 170525,
+    "id": 2561668,
+    "wikiId": 170525,
     "name": "Agadir",
     "localName": "أكادير",
     "country": "MA",
@@ -6075,7 +6740,8 @@
     "population": 538000
   },
   {
-    "id": 5337,
+    "id": 515003,
+    "wikiId": 5337,
     "name": "Orenburg",
     "localName": "Оренбург",
     "country": "RU",
@@ -6084,7 +6750,8 @@
     "population": 536515
   },
   {
-    "id": 2288,
+    "id": 480060,
+    "wikiId": 2288,
     "name": "Tver",
     "localName": "Тверь",
     "country": "RU",
@@ -6093,7 +6760,8 @@
     "population": 412806
   },
   {
-    "id": 25331,
+    "id": 2615876,
+    "wikiId": 25331,
     "name": "Odense",
     "localName": "Odense",
     "country": "DK",
@@ -6102,7 +6770,8 @@
     "population": 185480
   },
   {
-    "id": 13369,
+    "id": 3169361,
+    "wikiId": 13369,
     "name": "Rimini",
     "localName": "Rimini",
     "country": "IT",
@@ -6111,7 +6780,8 @@
     "population": 149211
   },
   {
-    "id": 2746,
+    "id": 500096,
+    "wikiId": 2746,
     "name": "Ryazan",
     "localName": "Рязань",
     "country": "RU",
@@ -6120,7 +6790,8 @@
     "population": 519315
   },
   {
-    "id": 8131,
+    "id": 1633070,
+    "wikiId": 8131,
     "name": "Palembang",
     "localName": "Kota Palembang",
     "country": "ID",
@@ -6129,7 +6800,8 @@
     "population": 1535952
   },
   {
-    "id": 3415,
+    "id": 3183089,
+    "wikiId": 3415,
     "name": "Ancona",
     "localName": "Ancona",
     "country": "IT",
@@ -6138,7 +6810,8 @@
     "population": 98356
   },
   {
-    "id": 36647,
+    "id": 2965140,
+    "wikiId": 36647,
     "name": "Cork",
     "localName": "Cork",
     "country": "IE",
@@ -6147,7 +6820,8 @@
     "population": 222333
   },
   {
-    "id": 1663,
+    "id": 3190261,
+    "wikiId": 1663,
     "name": "Split",
     "localName": "Split",
     "country": "HR",
@@ -6156,7 +6830,8 @@
     "population": 160577
   },
   {
-    "id": 171771,
+    "id": 1275817,
+    "wikiId": 171771,
     "name": "Bhubaneswar",
     "localName": "ଭୁବନେଶ୍ୱର",
     "country": "IN",
@@ -6165,7 +6840,8 @@
     "population": 837737
   },
   {
-    "id": 5470,
+    "id": 569696,
+    "wikiId": 5470,
     "name": "Cheboksary",
     "localName": "Чебоксары",
     "country": "RU",
@@ -6174,7 +6850,8 @@
     "population": 497061
   },
   {
-    "id": 4191,
+    "id": 2659811,
+    "wikiId": 4191,
     "name": "Lucerne",
     "localName": "Luzern",
     "country": "CH",
@@ -6183,7 +6860,8 @@
     "population": 86234
   },
   {
-    "id": 36399,
+    "id": 1580240,
+    "wikiId": 36399,
     "name": "Huế",
     "localName": "Huế",
     "country": "VN",
@@ -6192,7 +6870,8 @@
     "population": 1236393
   },
   {
-    "id": 2765,
+    "id": 2921466,
+    "wikiId": 2765,
     "name": "Gelsenkirchen",
     "localName": "Gelsenkirchen",
     "country": "DE",
@@ -6201,7 +6880,8 @@
     "population": 265885
   },
   {
-    "id": 59218,
+    "id": 1812545,
+    "wikiId": 59218,
     "name": "Dongguan",
     "localName": "东莞",
     "country": "CN",
@@ -6210,7 +6890,8 @@
     "population": 10466625
   },
   {
-    "id": 288,
+    "id": 2972191,
+    "wikiId": 288,
     "name": "Tours",
     "localName": "Tours",
     "country": "FR",
@@ -6219,7 +6900,8 @@
     "population": 139259
   },
   {
-    "id": 7568,
+    "id": 1621177,
+    "wikiId": 7568,
     "name": "Yogyakarta",
     "localName": "DI Yogyakarta",
     "country": "ID",
@@ -6228,7 +6910,8 @@
     "population": 422732
   },
   {
-    "id": 47837,
+    "id": 2462881,
+    "wikiId": 47837,
     "name": "Laayoune",
     "localName": "El Aaiún",
     "country": "MA",
@@ -6237,7 +6920,8 @@
     "population": 262791
   },
   {
-    "id": 55630,
+    "id": 3194360,
+    "wikiId": 55630,
     "name": "Novi Sad",
     "localName": "Нови Сад",
     "country": "RS",
@@ -6246,7 +6930,8 @@
     "population": 260438
   },
   {
-    "id": 40104,
+    "id": 3038334,
+    "wikiId": 40104,
     "name": "Ajaccio",
     "localName": "Ajaccio",
     "country": "FR",
@@ -6255,7 +6940,8 @@
     "population": 76320
   },
   {
-    "id": 761,
+    "id": 776069,
+    "wikiId": 761,
     "name": "Białystok",
     "localName": "Białystok",
     "country": "PL",
@@ -6264,7 +6950,8 @@
     "population": 290386
   },
   {
-    "id": 49259,
+    "id": 4791259,
+    "wikiId": 49259,
     "name": "Virginia Beach",
     "localName": "Virginia Beach",
     "country": "US",
@@ -6273,7 +6960,8 @@
     "population": 459470
   },
   {
-    "id": 28249,
+    "id": 5084868,
+    "wikiId": 28249,
     "name": "Concord",
     "localName": "Concord",
     "country": "US",
@@ -6282,7 +6970,8 @@
     "population": 43976
   },
   {
-    "id": 102217,
+    "id": 620127,
+    "wikiId": 102217,
     "name": "Vitebsk",
     "localName": "Віцебск",
     "country": "BY",
@@ -6291,7 +6980,8 @@
     "population": 357899
   },
   {
-    "id": 158119,
+    "id": 282239,
+    "wikiId": 158119,
     "name": "Ramallah",
     "localName": "رام الله",
     "country": "PS",
@@ -6300,7 +6990,8 @@
     "population": 43880
   },
   {
-    "id": 33518,
+    "id": 4142290,
+    "wikiId": 33518,
     "name": "Dover",
     "localName": "Dover",
     "country": "US",
@@ -6309,7 +7000,8 @@
     "population": 39403
   },
   {
-    "id": 43048,
+    "id": 400666,
+    "wikiId": 43048,
     "name": "Rhodes",
     "localName": "Ρόδος",
     "country": "GR",
@@ -6318,7 +7010,8 @@
     "population": 127613
   },
   {
-    "id": 147402,
+    "id": 3979770,
+    "wikiId": 147402,
     "name": "Zapopan",
     "localName": "Zapopan",
     "country": "MX",
@@ -6327,7 +7020,8 @@
     "population": 1257547
   },
   {
-    "id": 43382,
+    "id": 2640194,
+    "wikiId": 43382,
     "name": "Plymouth",
     "localName": "Plymouth",
     "country": "GB",
@@ -6336,7 +7030,8 @@
     "population": 267918
   },
   {
-    "id": 83189,
+    "id": 3462377,
+    "wikiId": 83189,
     "name": "Goiânia",
     "localName": "Goiânia",
     "country": "BR",
@@ -6345,7 +7040,8 @@
     "population": 1437366
   },
   {
-    "id": 79808,
+    "id": 680963,
+    "wikiId": 79808,
     "name": "Constanța",
     "localName": "Constanța",
     "country": "RO",
@@ -6354,7 +7050,8 @@
     "population": 263707
   },
   {
-    "id": 6397,
+    "id": 3035681,
+    "wikiId": 6397,
     "name": "Avignon",
     "localName": "Avignon",
     "country": "FR",
@@ -6363,7 +7060,8 @@
     "population": 92188
   },
   {
-    "id": 185518,
+    "id": 1311874,
+    "wikiId": 185518,
     "name": "Mandalay",
     "localName": "မန္တလေး",
     "country": "MM",
@@ -6372,7 +7070,8 @@
     "population": 1225546
   },
   {
-    "id": 41185,
+    "id": 3029241,
+    "wikiId": 41185,
     "name": "Caen",
     "localName": "Caen",
     "country": "FR",
@@ -6381,7 +7080,8 @@
     "population": 109400
   },
   {
-    "id": 187136,
+    "id": 1801792,
+    "wikiId": 187136,
     "name": "Luoyang",
     "localName": "洛阳",
     "country": "CN",
@@ -6390,7 +7090,8 @@
     "population": 7056699
   },
   {
-    "id": 114257,
+    "id": 783263,
+    "wikiId": 114257,
     "name": "Elbasan",
     "localName": "Elbasani",
     "country": "AL",
@@ -6399,7 +7100,8 @@
     "population": 66834
   },
   {
-    "id": 41547,
+    "id": 3579925,
+    "wikiId": 41547,
     "name": "St. George's",
     "localName": "St. George's",
     "country": "GD",
@@ -6408,7 +7110,8 @@
     "population": 33734
   },
   {
-    "id": 484706,
+    "id": 609655,
+    "wikiId": 484706,
     "name": "Karaganda",
     "localName": "Қарағанды",
     "country": "KZ",
@@ -6417,7 +7120,8 @@
     "population": 515632
   },
   {
-    "id": 25262,
+    "id": 1586443,
+    "wikiId": 25262,
     "name": "Cà Mau",
     "localName": "Cà Mau",
     "country": "VN",
@@ -6426,7 +7130,8 @@
     "population": 315270
   },
   {
-    "id": 72259,
+    "id": 2639996,
+    "wikiId": 72259,
     "name": "Portsmouth",
     "localName": "Portsmouth",
     "country": "GB",
@@ -6435,7 +7140,8 @@
     "population": 248440
   },
   {
-    "id": 81581,
+    "id": 715429,
+    "wikiId": 81581,
     "name": "Szeged",
     "localName": "Szeged",
     "country": "HU",
@@ -6444,7 +7150,8 @@
     "population": 157282
   },
   {
-    "id": 46852,
+    "id": 675810,
+    "wikiId": 46852,
     "name": "Iași",
     "localName": "Iași",
     "country": "RO",
@@ -6453,7 +7160,8 @@
     "population": 271692
   },
   {
-    "id": 200016,
+    "id": 1253102,
+    "wikiId": 200016,
     "name": "Visakhapatnam",
     "localName": "విశాఖపట్నం",
     "country": "IN",
@@ -6462,7 +7170,8 @@
     "population": 2035922
   },
   {
-    "id": 20921,
+    "id": 1835235,
+    "wikiId": 20921,
     "name": "Daejeon",
     "localName": "대전",
     "country": "KR",
@@ -6471,7 +7180,8 @@
     "population": 1475221
   },
   {
-    "id": 38733,
+    "id": 5656882,
+    "wikiId": 38733,
     "name": "Helena",
     "localName": "Helena",
     "country": "US",
@@ -6480,7 +7190,8 @@
     "population": 32091
   },
   {
-    "id": 28271,
+    "id": 4347242,
+    "wikiId": 28271,
     "name": "Annapolis",
     "localName": "Annapolis",
     "country": "US",
@@ -6489,7 +7200,8 @@
     "population": 40812
   },
   {
-    "id": 41604,
+    "id": 3037854,
+    "wikiId": 41604,
     "name": "Amiens",
     "localName": "Amiens",
     "country": "FR",
@@ -6498,7 +7210,8 @@
     "population": 136449
   },
   {
-    "id": 2214,
+    "id": 504341,
+    "wikiId": 2214,
     "name": "Pskov",
     "localName": "Псков",
     "country": "RU",
@@ -6507,7 +7220,8 @@
     "population": 185486
   },
   {
-    "id": 36262,
+    "id": 3576022,
+    "wikiId": 36262,
     "name": "St. John's",
     "localName": "St John's",
     "country": "AG",
@@ -6516,7 +7230,8 @@
     "population": 21394
   },
   {
-    "id": 47034,
+    "id": 660158,
+    "wikiId": 47034,
     "name": "Espoo",
     "localName": "Espoo",
     "country": "FI",
@@ -6525,7 +7240,8 @@
     "population": 325716
   },
   {
-    "id": 11909,
+    "id": 1253573,
+    "wikiId": 11909,
     "name": "Vadodara",
     "localName": "વડોદરા",
     "country": "IN",
@@ -6534,7 +7250,8 @@
     "population": 3100260
   },
   {
-    "id": 3323,
+    "id": 578072,
+    "wikiId": 3323,
     "name": "Belgorod",
     "localName": "Белгород",
     "country": "RU",
@@ -6543,7 +7260,8 @@
     "population": 321761
   },
   {
-    "id": 6225,
+    "id": 2652221,
+    "wikiId": 6225,
     "name": "Coventry",
     "localName": "Coventry",
     "country": "GB",
@@ -6552,7 +7270,8 @@
     "population": 362690
   },
   {
-    "id": 228405,
+    "id": 1264521,
+    "wikiId": 228405,
     "name": "Madurai",
     "localName": "மதுரை",
     "country": "IN",
@@ -6561,7 +7280,8 @@
     "population": 1561129
   },
   {
-    "id": 9427,
+    "id": 2449067,
+    "wikiId": 9427,
     "name": "Timbuktu",
     "localName": "Tombouctou",
     "country": "ML",
@@ -6570,7 +7290,8 @@
     "population": 35330
   },
   {
-    "id": 14634,
+    "id": 1622786,
+    "wikiId": 14634,
     "name": "Makassar",
     "localName": "Makassar",
     "country": "ID",
@@ -6579,7 +7300,8 @@
     "population": 1338663
   },
   {
-    "id": 189823,
+    "id": 1809078,
+    "wikiId": 189823,
     "name": "Haikou",
     "localName": "海口",
     "country": "CN",
@@ -6588,7 +7310,8 @@
     "population": 2873358
   },
   {
-    "id": 41753,
+    "id": 2774326,
+    "wikiId": 41753,
     "name": "Klagenfurt am Wörthersee",
     "localName": "Klagenfurt",
     "country": "AT",
@@ -6597,7 +7320,8 @@
     "population": 101403
   },
   {
-    "id": 1308,
+    "id": 3178229,
+    "wikiId": 1308,
     "name": "Como",
     "localName": "Como",
     "country": "IT",
@@ -6606,7 +7330,8 @@
     "population": 83184
   },
   {
-    "id": 44401,
+    "id": 3382160,
+    "wikiId": 44401,
     "name": "Cayenne",
     "localName": "Cayenne",
     "country": "FR",
@@ -6615,7 +7340,8 @@
     "population": 62675
   },
   {
-    "id": 6252,
+    "id": 3172629,
+    "wikiId": 6252,
     "name": "Monza",
     "localName": "Monza",
     "country": "IT",
@@ -6624,7 +7350,8 @@
     "population": 121799
   },
   {
-    "id": 42735,
+    "id": 5805687,
+    "wikiId": 42735,
     "name": "Olympia",
     "localName": "Olympia",
     "country": "US",
@@ -6633,7 +7360,8 @@
     "population": 55605
   },
   {
-    "id": 170688,
+    "id": 3904906,
+    "wikiId": 170688,
     "name": "Santa Cruz de la Sierra",
     "localName": "Santa Cruz",
     "country": "BO",
@@ -6642,7 +7370,8 @@
     "population": 3122605
   },
   {
-    "id": 13362,
+    "id": 3177090,
+    "wikiId": 13362,
     "name": "Ferrara",
     "localName": "Ferrara",
     "country": "IT",
@@ -6651,7 +7380,8 @@
     "population": 129340
   },
   {
-    "id": 25409,
+    "id": 724443,
+    "wikiId": 25409,
     "name": "Košice",
     "localName": "Košice",
     "country": "SK",
@@ -6660,7 +7390,8 @@
     "population": 222286
   },
   {
-    "id": 2770,
+    "id": 480562,
+    "wikiId": 2770,
     "name": "Tula",
     "localName": "Тула",
     "country": "RU",
@@ -6669,7 +7400,8 @@
     "population": 456813
   },
   {
-    "id": 3104,
+    "id": 2886946,
+    "wikiId": 3104,
     "name": "Koblenz",
     "localName": "Koblenz",
     "country": "DE",
@@ -6678,7 +7410,8 @@
     "population": 115298
   },
   {
-    "id": 170115,
+    "id": 1255634,
+    "wikiId": 170115,
     "name": "Srinagar",
     "localName": "سِری نَگَر",
     "country": "IN",
@@ -6687,7 +7420,8 @@
     "population": 1180570
   },
   {
-    "id": 11506,
+    "id": 1645528,
+    "wikiId": 11506,
     "name": "Denpasar",
     "localName": "Denpasar",
     "country": "ID",
@@ -6696,7 +7430,8 @@
     "population": 670210
   },
   {
-    "id": 131620,
+    "id": 3394023,
+    "wikiId": 131620,
     "name": "Natal",
     "localName": "Natal",
     "country": "BR",
@@ -6705,7 +7440,8 @@
     "population": 751300
   },
   {
-    "id": 171632,
+    "id": 3633009,
+    "wikiId": 171632,
     "name": "Maracaibo",
     "localName": "Maracaibo",
     "country": "VE",
@@ -6714,7 +7450,8 @@
     "population": 1551539
   },
   {
-    "id": 2132,
+    "id": 6174041,
+    "wikiId": 2132,
     "name": "Victoria",
     "localName": "Victoria",
     "country": "CA",
@@ -6723,7 +7460,8 @@
     "population": 91867
   },
   {
-    "id": 28603,
+    "id": 4292188,
+    "wikiId": 28603,
     "name": "Frankfort",
     "localName": "Frankfort",
     "country": "US",
@@ -6732,7 +7470,8 @@
     "population": 28602
   },
   {
-    "id": 5540,
+    "id": 511565,
+    "wikiId": 5540,
     "name": "Penza",
     "localName": "Пенза",
     "country": "RU",
@@ -6741,7 +7480,8 @@
     "population": 487978
   },
   {
-    "id": 157144,
+    "id": 689558,
+    "wikiId": 157144,
     "name": "Vinnytsia",
     "localName": "Вінниця",
     "country": "UA",
@@ -6750,7 +7490,8 @@
     "population": 369739
   },
   {
-    "id": 173270,
+    "id": 3514783,
+    "wikiId": 173270,
     "name": "Veracruz",
     "localName": "Veracruz",
     "country": "MX",
@@ -6759,7 +7500,8 @@
     "population": 8062579
   },
   {
-    "id": 13378,
+    "id": 3182884,
+    "wikiId": 13378,
     "name": "Arezzo",
     "localName": "Arezzo",
     "country": "IT",
@@ -6768,7 +7510,8 @@
     "population": 96260
   },
   {
-    "id": 41572,
+    "id": 700569,
+    "wikiId": 41572,
     "name": "Mykolaiv",
     "localName": "Миколаїв",
     "country": "UA",
@@ -6777,7 +7520,8 @@
     "population": 470011
   },
   {
-    "id": 156747,
+    "id": 696643,
+    "wikiId": 156747,
     "name": "Poltava",
     "localName": "Полтава",
     "country": "UA",
@@ -6786,7 +7530,8 @@
     "population": 283402
   },
   {
-    "id": 49256,
+    "id": 5325738,
+    "wikiId": 49256,
     "name": "Bakersfield",
     "localName": "Bakersfield",
     "country": "US",
@@ -6795,7 +7540,8 @@
     "population": 403455
   },
   {
-    "id": 134291,
+    "id": 304531,
+    "wikiId": 134291,
     "name": "Mersin",
     "localName": "İçel",
     "country": "TR",
@@ -6804,7 +7550,8 @@
     "population": 1040507
   },
   {
-    "id": 385,
+    "id": 3099424,
+    "wikiId": 385,
     "name": "Gdynia",
     "localName": "Gdynia",
     "country": "PL",
@@ -6813,7 +7560,8 @@
     "population": 245222
   },
   {
-    "id": 5343,
+    "id": 498698,
+    "wikiId": 5343,
     "name": "Saransk",
     "localName": "Саранск",
     "country": "RU",
@@ -6822,7 +7570,8 @@
     "population": 309349
   },
   {
-    "id": 182984,
+    "id": 2335204,
+    "wikiId": 182984,
     "name": "Kano",
     "localName": "Kano",
     "country": "NG",
@@ -6831,7 +7580,8 @@
     "population": 4348000
   },
   {
-    "id": 28180,
+    "id": 4392388,
+    "wikiId": 28180,
     "name": "Jefferson City",
     "localName": "Jefferson City",
     "country": "US",
@@ -6840,7 +7590,8 @@
     "population": 43228
   },
   {
-    "id": 6816,
+    "id": 2014407,
+    "wikiId": 6816,
     "name": "Ulan-Ude",
     "localName": "Улан-Удэ",
     "country": "RU",
@@ -6849,7 +7600,8 @@
     "population": 435067
   },
   {
-    "id": 72818,
+    "id": 1581298,
+    "wikiId": 72818,
     "name": "Haiphong",
     "localName": "Hải Phòng",
     "country": "VN",
@@ -6858,7 +7610,8 @@
     "population": 2124500
   },
   {
-    "id": 156713,
+    "id": 686967,
+    "wikiId": 156713,
     "name": "Zhytomyr",
     "localName": "Житомир",
     "country": "UA",
@@ -6867,7 +7620,8 @@
     "population": 261624
   },
   {
-    "id": 199605,
+    "id": 1271476,
+    "wikiId": 199605,
     "name": "Guwahati",
     "localName": "গুৱাহাটী",
     "country": "IN",
@@ -6876,7 +7630,8 @@
     "population": 1116267
   },
   {
-    "id": 1722,
+    "id": 3201047,
+    "wikiId": 1722,
     "name": "Dubrovnik",
     "localName": "Dubrovnik",
     "country": "HR",
@@ -6885,7 +7640,8 @@
     "population": 41562
   },
   {
-    "id": 79815,
+    "id": 2991214,
+    "wikiId": 79815,
     "name": "Mulhouse",
     "localName": "Mulhouse",
     "country": "FR",
@@ -6894,7 +7650,8 @@
     "population": 104978
   },
   {
-    "id": 157137,
+    "id": 703845,
+    "wikiId": 157137,
     "name": "Kryvyi Rih",
     "localName": "Кривий Ріг",
     "country": "UA",
@@ -6903,7 +7660,8 @@
     "population": 603904
   },
   {
-    "id": 13377,
+    "id": 3169921,
+    "wikiId": 13377,
     "name": "Prato",
     "localName": "Prato",
     "country": "IT",
@@ -6912,7 +7670,8 @@
     "population": 195736
   },
   {
-    "id": 29888,
+    "id": 359792,
+    "wikiId": 29888,
     "name": "Aswan",
     "localName": "أسوان",
     "country": "EG",
@@ -6921,7 +7680,8 @@
     "population": 401890
   },
   {
-    "id": 45779,
+    "id": 3046526,
+    "wikiId": 45779,
     "name": "Pécs",
     "localName": "Pécs",
     "country": "HU",
@@ -6930,7 +7690,8 @@
     "population": 139412
   },
   {
-    "id": 34412,
+    "id": 1811103,
+    "wikiId": 34412,
     "name": "Foshan",
     "localName": "佛山",
     "country": "CN",
@@ -6939,7 +7700,8 @@
     "population": 9498863
   },
   {
-    "id": 6454,
+    "id": 3029162,
+    "wikiId": 6454,
     "name": "Calais",
     "localName": "Calais",
     "country": "FR",
@@ -6948,7 +7710,8 @@
     "population": 67571
   },
   {
-    "id": 3150,
+    "id": 2895044,
+    "wikiId": 3150,
     "name": "Jena",
     "localName": "Jena",
     "country": "DE",
@@ -6957,7 +7720,8 @@
     "population": 110791
   },
   {
-    "id": 170366,
+    "id": 144448,
+    "wikiId": 170366,
     "name": "Ahvaz",
     "localName": "اهواز",
     "country": "IR",
@@ -6966,7 +7730,8 @@
     "population": 1184788
   },
   {
-    "id": 6616,
+    "id": 2986495,
+    "wikiId": 6616,
     "name": "Poitiers",
     "localName": "Poitiers",
     "country": "FR",
@@ -6975,7 +7740,8 @@
     "population": 89916
   },
   {
-    "id": 1341,
+    "id": 482283,
+    "wikiId": 1341,
     "name": "Tolyatti",
     "localName": "Тольятти",
     "country": "RU",
@@ -6984,7 +7750,8 @@
     "population": 662683
   },
   {
-    "id": 6537,
+    "id": 3164419,
+    "wikiId": 6537,
     "name": "Vicenza",
     "localName": "Vicenza",
     "country": "IT",
@@ -6993,7 +7760,8 @@
     "population": 109823
   },
   {
-    "id": 160450,
+    "id": 740264,
+    "wikiId": 160450,
     "name": "Samsun",
     "localName": "Samsun",
     "country": "TR",
@@ -7002,7 +7770,8 @@
     "population": 1368488
   },
   {
-    "id": 6730,
+    "id": 2987914,
+    "wikiId": 6730,
     "name": "Perpignan",
     "localName": "Perpignan",
     "country": "FR",
@@ -7011,7 +7780,8 @@
     "population": 121616
   },
   {
-    "id": 168866,
+    "id": 315202,
+    "wikiId": 168866,
     "name": "Eskişehir",
     "localName": "Eskişehir",
     "country": "TR",
@@ -7020,7 +7790,8 @@
     "population": 871187
   },
   {
-    "id": 157725,
+    "id": 710719,
+    "wikiId": 157725,
     "name": "Chernivtsi",
     "localName": "Чернівці",
     "country": "UA",
@@ -7029,7 +7800,8 @@
     "population": 265471
   },
   {
-    "id": 132572,
+    "id": 617239,
+    "wikiId": 132572,
     "name": "Tiraspol",
     "localName": "Tiraspol",
     "country": "MD",
@@ -7038,7 +7810,8 @@
     "population": 133807
   },
   {
-    "id": 1895,
+    "id": 509820,
+    "wikiId": 1895,
     "name": "Petrozavodsk",
     "localName": "Петрозаводск",
     "country": "RU",
@@ -7047,7 +7820,8 @@
     "population": 234577
   },
   {
-    "id": 47282,
+    "id": 1527534,
+    "wikiId": 47282,
     "name": "Osh",
     "localName": "Ош",
     "country": "KG",
@@ -7056,7 +7830,8 @@
     "population": 375400
   },
   {
-    "id": 170616,
+    "id": 2113015,
+    "wikiId": 170616,
     "name": "Chiba",
     "localName": "千葉市",
     "country": "JP",
@@ -7065,7 +7840,8 @@
     "population": 975014
   },
   {
-    "id": 83061,
+    "id": 298117,
+    "wikiId": 83061,
     "name": "Van",
     "localName": "Van",
     "country": "TR",
@@ -7074,7 +7850,8 @@
     "population": 1127612
   },
   {
-    "id": 69060,
+    "id": 1788852,
+    "wikiId": 69060,
     "name": "Xining",
     "localName": "西宁",
     "country": "CN",
@@ -7083,7 +7860,8 @@
     "population": 2467965
   },
   {
-    "id": 7024,
+    "id": 2659836,
+    "wikiId": 7024,
     "name": "Lugano",
     "localName": "Lugano",
     "country": "CH",
@@ -7092,7 +7870,8 @@
     "population": 63495
   },
   {
-    "id": 181376,
+    "id": 627904,
+    "wikiId": 181376,
     "name": "Horadnia",
     "localName": "Гродна",
     "country": "BY",
@@ -7101,7 +7880,8 @@
     "population": 364902
   },
   {
-    "id": 3806,
+    "id": 2820860,
+    "wikiId": 3806,
     "name": "Tübingen",
     "localName": "Tübingen",
     "country": "DE",
@@ -7110,7 +7890,8 @@
     "population": 93615
   },
   {
-    "id": 3004,
+    "id": 2895992,
+    "wikiId": 3004,
     "name": "Ingolstadt",
     "localName": "Ingolstadt",
     "country": "DE",
@@ -7119,7 +7900,8 @@
     "population": 142308
   },
   {
-    "id": 3014,
+    "id": 2806654,
+    "wikiId": 3014,
     "name": "Wolfsburg",
     "localName": "Wolfsburg",
     "country": "DE",
@@ -7128,7 +7910,8 @@
     "population": 127256
   },
   {
-    "id": 13329,
+    "id": 3171058,
+    "wikiId": 13329,
     "name": "Piacenza",
     "localName": "Piacenza",
     "country": "IT",
@@ -7137,7 +7920,8 @@
     "population": 102465
   },
   {
-    "id": 10086,
+    "id": 1262321,
+    "wikiId": 10086,
     "name": "Mysore",
     "localName": "ಮೈಸೂರು",
     "country": "IN",
@@ -7146,7 +7930,8 @@
     "population": 920550
   },
   {
-    "id": 140147,
+    "id": 629634,
+    "wikiId": 140147,
     "name": "Byerastsye",
     "localName": "Брэст",
     "country": "BY",
@@ -7155,7 +7940,8 @@
     "population": 347138
   },
   {
-    "id": 2758,
+    "id": 2869894,
+    "wikiId": 2758,
     "name": "Mönchengladbach",
     "localName": "Mönchengladbach",
     "country": "DE",
@@ -7164,7 +7950,8 @@
     "population": 268943
   },
   {
-    "id": 41699,
+    "id": 3576812,
+    "wikiId": 41699,
     "name": "Castries",
     "localName": "Castries",
     "country": "LC",
@@ -7173,7 +7960,8 @@
     "population": 20000
   },
   {
-    "id": 2790,
+    "id": 3165072,
+    "wikiId": 2790,
     "name": "Udine",
     "localName": "Udine",
     "country": "IT",
@@ -7182,7 +7970,8 @@
     "population": 97808
   },
   {
-    "id": 2678,
+    "id": 627907,
+    "wikiId": 2678,
     "name": "Gomel",
     "localName": "Гомель",
     "country": "BY",
@@ -7191,7 +7980,8 @@
     "population": 499853
   },
   {
-    "id": 372773,
+    "id": 1258980,
+    "wikiId": 372773,
     "name": "Raipur",
     "localName": "रायपुर",
     "country": "IN",
@@ -7200,7 +7990,8 @@
     "population": 1010087
   },
   {
-    "id": 165972,
+    "id": 4155966,
+    "wikiId": 165972,
     "name": "Fort Lauderdale",
     "localName": "Fort Lauderdale",
     "country": "US",
@@ -7209,7 +8000,8 @@
     "population": 182760
   },
   {
-    "id": 68744,
+    "id": 1790645,
+    "wikiId": 68744,
     "name": "Xiamen",
     "localName": "厦门",
     "country": "CN",
@@ -7218,7 +8010,8 @@
     "population": 5163970
   },
   {
-    "id": 41278,
+    "id": 1833747,
+    "wikiId": 41278,
     "name": "Ulsan",
     "localName": "울산",
     "country": "KR",
@@ -7227,7 +8020,8 @@
     "population": 1127553
   },
   {
-    "id": 2837,
+    "id": 553915,
+    "wikiId": 2837,
     "name": "Kaluga",
     "localName": "Калуга",
     "country": "RU",
@@ -7236,7 +8030,8 @@
     "population": 324989
   },
   {
-    "id": 1083,
+    "id": 3168673,
+    "wikiId": 1083,
     "name": "Salerno",
     "localName": "Salerno",
     "country": "IT",
@@ -7245,7 +8040,8 @@
     "population": 127186
   },
   {
-    "id": 49241,
+    "id": 4297983,
+    "wikiId": 49241,
     "name": "Lexington",
     "localName": "Lexington",
     "country": "US",
@@ -7254,7 +8050,8 @@
     "population": 322570
   },
   {
-    "id": 6066,
+    "id": 1503901,
+    "wikiId": 6066,
     "name": "Kemerovo",
     "localName": "Кемерово",
     "country": "RU",
@@ -7263,7 +8060,8 @@
     "population": 542928
   },
   {
-    "id": 102397,
+    "id": 717582,
+    "wikiId": 102397,
     "name": "Miskolc",
     "localName": "Miskolc",
     "country": "HU",
@@ -7272,7 +8070,8 @@
     "population": 141440
   },
   {
-    "id": 170454,
+    "id": 1279290,
+    "wikiId": 170454,
     "name": "Agartala",
     "localName": "আগরতলা",
     "country": "IN",
@@ -7281,7 +8080,8 @@
     "population": 522613
   },
   {
-    "id": 25410,
+    "id": 2624886,
+    "wikiId": 25410,
     "name": "Aalborg",
     "localName": "Aalborg",
     "country": "DK",
@@ -7290,16 +8090,18 @@
     "population": 121878
   },
   {
-    "id": 3042,
+    "id": 2857807,
+    "wikiId": 3042,
     "name": "Offenbach am Main",
-    "localName": "Frankfurt am Main",
+    "localName": "Offenbach am Main",
     "country": "DE",
     "lat": 50.1,
     "lon": 8.766666666,
     "population": 135490
   },
   {
-    "id": 13373,
+    "id": 3174530,
+    "wikiId": 13373,
     "name": "Lucca",
     "localName": "Lucca",
     "country": "IT",
@@ -7308,7 +8110,8 @@
     "population": 88798
   },
   {
-    "id": 5206,
+    "id": 487846,
+    "wikiId": 5206,
     "name": "Stavropol",
     "localName": "Ставрополь",
     "country": "RU",
@@ -7317,7 +8120,8 @@
     "population": 450680
   },
   {
-    "id": 6509,
+    "id": 732770,
+    "wikiId": 6509,
     "name": "Burgas",
     "localName": "Бургас",
     "country": "BG",
@@ -7326,7 +8130,8 @@
     "population": 189086
   },
   {
-    "id": 49145,
+    "id": 4839366,
+    "wikiId": 49145,
     "name": "New Haven",
     "localName": "New Haven",
     "country": "US",
@@ -7335,7 +8140,8 @@
     "population": 134023
   },
   {
-    "id": 122803,
+    "id": 315368,
+    "wikiId": 122803,
     "name": "Erzurum",
     "localName": "Erzurum",
     "country": "TR",
@@ -7344,7 +8150,8 @@
     "population": 767848
   },
   {
-    "id": 172415,
+    "id": 613607,
+    "wikiId": 172415,
     "name": "Kutaisi",
     "localName": "ქუთაისი",
     "country": "GE",
@@ -7353,7 +8160,8 @@
     "population": 147900
   },
   {
-    "id": 49261,
+    "id": 5304391,
+    "wikiId": 49261,
     "name": "Mesa",
     "localName": "Mesa",
     "country": "US",
@@ -7362,7 +8170,8 @@
     "population": 504258
   },
   {
-    "id": 52028,
+    "id": 1153671,
+    "wikiId": 52028,
     "name": "Chiang Mai",
     "localName": "เชียงใหม่",
     "country": "TH",
@@ -7371,7 +8180,8 @@
     "population": 1198000
   },
   {
-    "id": 170967,
+    "id": 317109,
+    "wikiId": 170967,
     "name": "Denizli",
     "localName": "Denizli",
     "country": "TR",
@@ -7380,7 +8190,8 @@
     "population": 1027782
   },
   {
-    "id": 13464,
+    "id": 3176885,
+    "wikiId": 13464,
     "name": "Foggia",
     "localName": "Foggia",
     "country": "IT",
@@ -7389,7 +8200,8 @@
     "population": 145348
   },
   {
-    "id": 45656,
+    "id": 2998286,
+    "wikiId": 45656,
     "name": "Limoges",
     "localName": "Limoges",
     "country": "FR",
@@ -7398,7 +8210,8 @@
     "population": 129937
   },
   {
-    "id": 131290,
+    "id": 586523,
+    "wikiId": 131290,
     "name": "Ganja",
     "localName": "Gəncə",
     "country": "AZ",
@@ -7407,7 +8220,8 @@
     "population": 331400
   },
   {
-    "id": 130514,
+    "id": 360502,
+    "wikiId": 130514,
     "name": "Luxor",
     "localName": "الأقصر",
     "country": "EG",
@@ -7416,7 +8230,8 @@
     "population": 202232
   },
   {
-    "id": 12919,
+    "id": 2113779,
+    "wikiId": 12919,
     "name": "Majuro",
     "localName": "Majuro",
     "country": "MH",
@@ -7425,7 +8240,8 @@
     "population": 30000
   },
   {
-    "id": 82128,
+    "id": 3870011,
+    "wikiId": 82128,
     "name": "Temuco",
     "localName": "Temuco",
     "country": "CL",
@@ -7434,7 +8250,8 @@
     "population": 282415
   },
   {
-    "id": 14467,
+    "id": 3884373,
+    "wikiId": 14467,
     "name": "La Serena",
     "localName": "La Serena",
     "country": "CL",
@@ -7443,7 +8260,8 @@
     "population": 195382
   },
   {
-    "id": 188806,
+    "id": 1859307,
+    "wikiId": 188806,
     "name": "Kitakyūshū",
     "localName": "北九州",
     "country": "JP",
@@ -7452,7 +8270,8 @@
     "population": 935084
   },
   {
-    "id": 13360,
+    "id": 3169522,
+    "wikiId": 13360,
     "name": "Reggio Emilia",
     "localName": "Reggio Emilia",
     "country": "IT",
@@ -7461,7 +8280,8 @@
     "population": 169545
   },
   {
-    "id": 174461,
+    "id": 1258526,
+    "wikiId": 174461,
     "name": "Ranchi",
     "localName": "राँची",
     "country": "IN",
@@ -7470,7 +8290,8 @@
     "population": 1073440
   },
   {
-    "id": 44564,
+    "id": 4801859,
+    "wikiId": 44564,
     "name": "Charleston",
     "localName": "Charleston",
     "country": "US",
@@ -7479,7 +8300,8 @@
     "population": 48864
   },
   {
-    "id": 17943,
+    "id": 4671240,
+    "wikiId": 17943,
     "name": "Arlington",
     "localName": "Arlington",
     "country": "US",
@@ -7488,7 +8310,8 @@
     "population": 394266
   },
   {
-    "id": 2916,
+    "id": 2856883,
+    "wikiId": 2916,
     "name": "Osnabrück",
     "localName": "Osnabrück",
     "country": "DE",
@@ -7497,7 +8320,8 @@
     "population": 166960
   },
   {
-    "id": 82174,
+    "id": 683844,
+    "wikiId": 82174,
     "name": "Brașov",
     "localName": "Brașov",
     "country": "RO",
@@ -7506,7 +8330,8 @@
     "population": 237589
   },
   {
-    "id": 170521,
+    "id": 1280849,
+    "wikiId": 170521,
     "name": "Kashgar",
     "localName": "قەشقەر",
     "country": "CN",
@@ -7515,7 +8340,8 @@
     "population": 782662
   },
   {
-    "id": 200019,
+    "id": 1268865,
+    "wikiId": 200019,
     "name": "Jodhpur",
     "localName": "जोधपुर",
     "country": "IN",
@@ -7524,7 +8350,8 @@
     "population": 1033918
   },
   {
-    "id": 3476,
+    "id": 3175121,
+    "wikiId": 3476,
     "name": "L'Aquila",
     "localName": "L'Aquila",
     "country": "IT",
@@ -7533,7 +8360,8 @@
     "population": 69558
   },
   {
-    "id": 22889,
+    "id": 2656173,
+    "wikiId": 22889,
     "name": "Bath",
     "localName": "Bath",
     "country": "GB",
@@ -7542,7 +8370,8 @@
     "population": 94092
   },
   {
-    "id": 2203,
+    "id": 3899361,
+    "wikiId": 2203,
     "name": "Arica",
     "localName": "Arica",
     "country": "CL",
@@ -7551,7 +8380,8 @@
     "population": 202131
   },
   {
-    "id": 128849,
+    "id": 1856215,
+    "wikiId": 128849,
     "name": "Nagano",
     "localName": "長野",
     "country": "JP",
@@ -7560,7 +8390,8 @@
     "population": 367184
   },
   {
-    "id": 5384,
+    "id": 548408,
+    "wikiId": 5384,
     "name": "Kirov",
     "localName": "Киров",
     "country": "RU",
@@ -7569,7 +8400,8 @@
     "population": 475871
   },
   {
-    "id": 26590,
+    "id": 4013708,
+    "wikiId": 26590,
     "name": "Ciudad Juárez",
     "localName": "Juárez",
     "country": "MX",
@@ -7578,7 +8410,8 @@
     "population": 1321004
   },
   {
-    "id": 23051,
+    "id": 2636432,
+    "wikiId": 23051,
     "name": "Swansea",
     "localName": "Swansea",
     "country": "GB",
@@ -7587,7 +8420,8 @@
     "population": 246700
   },
   {
-    "id": 125434,
+    "id": 964420,
+    "wikiId": 125434,
     "name": "Gqeberha",
     "localName": "Ibhayi",
     "country": "ZA",
@@ -7596,7 +8430,8 @@
     "population": 312392
   },
   {
-    "id": 13629,
+    "id": 3167096,
+    "wikiId": 13629,
     "name": "Sassari",
     "localName": "Sassari",
     "country": "IT",
@@ -7605,7 +8440,8 @@
     "population": 121021
   },
   {
-    "id": 154835,
+    "id": 625665,
+    "wikiId": 154835,
     "name": "Mahilyow",
     "localName": "Магілёў",
     "country": "BY",
@@ -7614,7 +8450,8 @@
     "population": 352891
   },
   {
-    "id": 83324,
+    "id": 667268,
+    "wikiId": 83324,
     "name": "Sibiu",
     "localName": "Sibiu",
     "country": "RO",
@@ -7623,7 +8460,8 @@
     "population": 134308
   },
   {
-    "id": 47465,
+    "id": 3038354,
+    "wikiId": 47465,
     "name": "Aix-en-Provence",
     "localName": "Aix-en-Provence",
     "country": "FR",
@@ -7632,7 +8470,8 @@
     "population": 149695
   },
   {
-    "id": 178663,
+    "id": 2542715,
+    "wikiId": 178663,
     "name": "Meknes",
     "localName": "مكناس",
     "country": "MA",
@@ -7641,7 +8480,8 @@
     "population": 601000
   },
   {
-    "id": 214173,
+    "id": 3691175,
+    "wikiId": 214173,
     "name": "Trujillo",
     "localName": "Trujillo",
     "country": "PE",
@@ -7650,7 +8490,8 @@
     "population": 919899
   },
   {
-    "id": 158467,
+    "id": 1270583,
+    "wikiId": 158467,
     "name": "Gwalior",
     "localName": "ग्वालियर",
     "country": "IN",
@@ -7659,7 +8500,8 @@
     "population": 1069276
   },
   {
-    "id": 535534,
+    "id": 2036892,
+    "wikiId": 535534,
     "name": "Hohhot",
     "localName": "ᠬᠥᠬᠡᠬᠣᠲᠠ",
     "country": "CN",
@@ -7668,7 +8510,8 @@
     "population": 3446100
   },
   {
-    "id": 2805,
+    "id": 2884509,
+    "wikiId": 2805,
     "name": "Krefeld",
     "localName": "Krefeld",
     "country": "DE",
@@ -7677,7 +8520,8 @@
     "population": 228550
   },
   {
-    "id": 133116,
+    "id": 5969782,
+    "wikiId": 133116,
     "name": "Hamilton",
     "localName": "Hamilton",
     "country": "CA",
@@ -7686,7 +8530,8 @@
     "population": 569353
   },
   {
-    "id": 485496,
+    "id": 1518980,
+    "wikiId": 485496,
     "name": "Shymkent",
     "localName": "Шымкент",
     "country": "KZ",
@@ -7695,7 +8540,8 @@
     "population": 1191877
   },
   {
-    "id": 11025,
+    "id": 1627896,
+    "wikiId": 11025,
     "name": "Semarang",
     "localName": "Kota Semarang",
     "country": "ID",
@@ -7704,7 +8550,8 @@
     "population": 1621384
   },
   {
-    "id": 1647,
+    "id": 3191648,
+    "wikiId": 1647,
     "name": "Rijeka",
     "localName": "Rijeka",
     "country": "HR",
@@ -7713,7 +8560,8 @@
     "population": 107964
   },
   {
-    "id": 169134,
+    "id": 1855612,
+    "wikiId": 169134,
     "name": "Nara",
     "localName": "奈良",
     "country": "JP",
@@ -7722,7 +8570,8 @@
     "population": 352377
   },
   {
-    "id": 2704,
+    "id": 3171168,
+    "wikiId": 2704,
     "name": "Pescara",
     "localName": "Pescara",
     "country": "IT",
@@ -7731,7 +8580,8 @@
     "population": 118657
   },
   {
-    "id": 49218,
+    "id": 5134086,
+    "wikiId": 49218,
     "name": "Rochester",
     "localName": "Rochester",
     "country": "US",
@@ -7740,7 +8590,8 @@
     "population": 211328
   },
   {
-    "id": 2838,
+    "id": 2860410,
+    "wikiId": 2838,
     "name": "Oberhausen",
     "localName": "Oberhausen",
     "country": "DE",
@@ -7749,7 +8600,8 @@
     "population": 211099
   },
   {
-    "id": 157055,
+    "id": 710791,
+    "wikiId": 157055,
     "name": "Cherkasy",
     "localName": "Черкаси",
     "country": "UA",
@@ -7758,7 +8610,8 @@
     "population": 269836
   },
   {
-    "id": 875,
+    "id": 1512236,
+    "wikiId": 875,
     "name": "Abakan",
     "localName": "Абакан",
     "country": "RU",
@@ -7767,7 +8620,8 @@
     "population": 184284
   },
   {
-    "id": 38834,
+    "id": 4032402,
+    "wikiId": 38834,
     "name": "Nukuʻalofa",
     "localName": "Nukuʻalofa",
     "country": "TO",
@@ -7776,7 +8630,8 @@
     "population": 23221
   },
   {
-    "id": 200235,
+    "id": 1261731,
+    "wikiId": 200235,
     "name": "Nashik",
     "localName": "नाशिक",
     "country": "IN",
@@ -7785,7 +8640,8 @@
     "population": 1486053
   },
   {
-    "id": 42780,
+    "id": 1799397,
+    "wikiId": 42780,
     "name": "Ningbo",
     "localName": "宁波",
     "country": "CN",
@@ -7794,7 +8650,8 @@
     "population": 9404283
   },
   {
-    "id": 134509,
+    "id": 358619,
+    "wikiId": 134509,
     "name": "Port Said",
     "localName": "بورسعيد",
     "country": "EG",
@@ -7803,7 +8660,8 @@
     "population": 791749
   },
   {
-    "id": 179691,
+    "id": 1855431,
+    "wikiId": 179691,
     "name": "Niigata",
     "localName": "新潟",
     "country": "JP",
@@ -7812,7 +8670,8 @@
     "population": 790646
   },
   {
-    "id": 132997,
+    "id": 3463237,
+    "wikiId": 132997,
     "name": "Florianópolis",
     "localName": "Florianópolis",
     "country": "BR",
@@ -7821,7 +8680,8 @@
     "population": 587486
   },
   {
-    "id": 13678,
+    "id": 2525764,
+    "wikiId": 13678,
     "name": "Agrigento",
     "localName": "Agrigento",
     "country": "IT",
@@ -7830,7 +8690,8 @@
     "population": 55512
   },
   {
-    "id": 82070,
+    "id": 267008,
+    "wikiId": 82070,
     "name": "Tyre",
     "localName": "صور",
     "country": "LB",
@@ -7839,7 +8700,8 @@
     "population": 160000
   },
   {
-    "id": 26339,
+    "id": 5099836,
+    "wikiId": 26339,
     "name": "Jersey City",
     "localName": "Jersey City",
     "country": "US",
@@ -7848,7 +8710,8 @@
     "population": 292449
   },
   {
-    "id": 43475,
+    "id": 2651347,
+    "wikiId": 43475,
     "name": "Derby",
     "localName": "Derby",
     "country": "GB",
@@ -7857,7 +8720,8 @@
     "population": 255394
   },
   {
-    "id": 156743,
+    "id": 691650,
+    "wikiId": 156743,
     "name": "Ternopil",
     "localName": "Тернопіль",
     "country": "UA",
@@ -7866,7 +8730,8 @@
     "population": 225238
   },
   {
-    "id": 47554,
+    "id": 3083271,
+    "wikiId": 47554,
     "name": "Toruń",
     "localName": "Toruń",
     "country": "PL",
@@ -7875,7 +8740,8 @@
     "population": 198273
   },
   {
-    "id": 47045,
+    "id": 935264,
+    "wikiId": 47045,
     "name": "Saint-Denis",
     "localName": "Saint-Denis",
     "country": "FR",
@@ -7884,7 +8750,8 @@
     "population": 155634
   },
   {
-    "id": 2801,
+    "id": 571476,
+    "wikiId": 2801,
     "name": "Bryansk",
     "localName": "Брянск",
     "country": "RU",
@@ -7893,7 +8760,8 @@
     "population": 372123
   },
   {
-    "id": 130191,
+    "id": 2641181,
+    "wikiId": 130191,
     "name": "Norwich",
     "localName": "Norwich",
     "country": "GB",
@@ -7902,7 +8770,8 @@
     "population": 195971
   },
   {
-    "id": 190897,
+    "id": 3185672,
+    "wikiId": 190897,
     "name": "Fier",
     "localName": "Fier",
     "country": "AL",
@@ -7911,7 +8780,8 @@
     "population": 52926
   },
   {
-    "id": 6231,
+    "id": 3177838,
+    "wikiId": 6231,
     "name": "Cremona",
     "localName": "Cremona",
     "country": "IT",
@@ -7920,7 +8790,8 @@
     "population": 70637
   },
   {
-    "id": 168225,
+    "id": 285066,
+    "wikiId": 168225,
     "name": "Hebron",
     "localName": "الخليل",
     "country": "PS",
@@ -7929,7 +8800,8 @@
     "population": 215452
   },
   {
-    "id": 49244,
+    "id": 5392900,
+    "wikiId": 49244,
     "name": "Santa Ana",
     "localName": "Santa Ana",
     "country": "US",
@@ -7938,7 +8810,8 @@
     "population": 310227
   },
   {
-    "id": 140075,
+    "id": 2165087,
+    "wikiId": 140075,
     "name": "Gold Coast",
     "localName": "Gold Coast",
     "country": "AU",
@@ -7947,7 +8820,8 @@
     "population": 607665
   },
   {
-    "id": 134494,
+    "id": 3052009,
+    "wikiId": 134494,
     "name": "Győr",
     "localName": "Győr",
     "country": "HU",
@@ -7956,7 +8830,8 @@
     "population": 129373
   },
   {
-    "id": 134121,
+    "id": 2790471,
+    "wikiId": 134121,
     "name": "Namur",
     "localName": "Namur",
     "country": "BE",
@@ -7965,7 +8840,8 @@
     "population": 115330
   },
   {
-    "id": 199909,
+    "id": 94824,
+    "wikiId": 199909,
     "name": "Karbala",
     "localName": "كربلاء",
     "country": "IQ",
@@ -7974,7 +8850,8 @@
     "population": 690100
   },
   {
-    "id": 40747,
+    "id": 5767918,
+    "wikiId": 40747,
     "name": "Pierre",
     "localName": "Pierre",
     "country": "US",
@@ -7983,7 +8860,8 @@
     "population": 14091
   },
   {
-    "id": 170244,
+    "id": 3186084,
+    "wikiId": 170244,
     "name": "Berat",
     "localName": "Berati",
     "country": "AL",
@@ -7992,7 +8870,8 @@
     "population": 40665
   },
   {
-    "id": 103717,
+    "id": 638936,
+    "wikiId": 103717,
     "name": "Rovaniemi",
     "localName": "Rovaniemi",
     "country": "FI",
@@ -8001,7 +8880,8 @@
     "population": 65329
   },
   {
-    "id": 3752,
+    "id": 528293,
+    "wikiId": 3752,
     "name": "Maykop",
     "localName": "Майкоп",
     "country": "RU",
@@ -8010,7 +8890,8 @@
     "population": 137899
   },
   {
-    "id": 598,
+    "id": 759734,
+    "wikiId": 598,
     "name": "Rzeszów",
     "localName": "Rzeszów",
     "country": "PL",
@@ -8019,7 +8900,8 @@
     "population": 195871
   },
   {
-    "id": 81882,
+    "id": 3449433,
+    "wikiId": 81882,
     "name": "Santos",
     "localName": "Santos",
     "country": "BR",
@@ -8028,7 +8910,8 @@
     "population": 418608
   },
   {
-    "id": 36214,
+    "id": 3874960,
+    "wikiId": 36214,
     "name": "Puerto Montt",
     "localName": "Puerto Montt",
     "country": "CL",
@@ -8037,7 +8920,8 @@
     "population": 169736
   },
   {
-    "id": 199889,
+    "id": 1858421,
+    "wikiId": 199889,
     "name": "Kumamoto",
     "localName": "熊本",
     "country": "JP",
@@ -8046,7 +8930,8 @@
     "population": 738385
   },
   {
-    "id": 8621,
+    "id": 3165771,
+    "wikiId": 8621,
     "name": "Terni",
     "localName": "Terni",
     "country": "IT",
@@ -8055,7 +8940,8 @@
     "population": 106370
   },
   {
-    "id": 200123,
+    "id": 1264728,
+    "wikiId": 200123,
     "name": "Ludhiana",
     "localName": "ਲੁਧਿਆਣਾ",
     "country": "IN",
@@ -8064,7 +8950,8 @@
     "population": 1618879
   },
   {
-    "id": 36281,
+    "id": 3575635,
+    "wikiId": 36281,
     "name": "Roseau",
     "localName": "Roseau",
     "country": "DM",
@@ -8073,7 +8960,8 @@
     "population": 16571
   },
   {
-    "id": 3883,
+    "id": 2525059,
+    "wikiId": 3883,
     "name": "Catanzaro",
     "localName": "Catanzaro",
     "country": "IT",
@@ -8082,7 +8970,8 @@
     "population": 84670
   },
   {
-    "id": 173310,
+    "id": 94787,
+    "wikiId": 173310,
     "name": "Kirkuk",
     "localName": "كركوك",
     "country": "IQ",
@@ -8091,7 +8980,8 @@
     "population": 975000
   },
   {
-    "id": 216075,
+    "id": 1586203,
+    "wikiId": 216075,
     "name": "Cần Thơ",
     "localName": "Cần Thơ",
     "country": "VN",
@@ -8100,7 +8990,8 @@
     "population": 3207000
   },
   {
-    "id": 134514,
+    "id": 359796,
+    "wikiId": 134514,
     "name": "Suez",
     "localName": "سويس",
     "country": "EG",
@@ -8109,7 +9000,8 @@
     "population": 716458
   },
   {
-    "id": 715,
+    "id": 2907669,
+    "wikiId": 715,
     "name": "Heilbronn",
     "localName": "Heilbronn",
     "country": "DE",
@@ -8118,7 +9010,8 @@
     "population": 130093
   },
   {
-    "id": 9885,
+    "id": 1273865,
+    "wikiId": 9885,
     "name": "Coimbatore",
     "localName": "கோயம்புத்தூர்",
     "country": "IN",
@@ -8127,7 +9020,8 @@
     "population": 959823
   },
   {
-    "id": 1473,
+    "id": 1715348,
+    "wikiId": 1473,
     "name": "Davao City",
     "localName": "Lungsod ng Dabaw",
     "country": "PH",
@@ -8136,7 +9030,8 @@
     "population": 1848947
   },
   {
-    "id": 25732,
+    "id": 2686657,
+    "wikiId": 25732,
     "name": "Örebro",
     "localName": "Örebro",
     "country": "SE",
@@ -8145,7 +9040,8 @@
     "population": 128658
   },
   {
-    "id": 93358,
+    "id": 671768,
+    "wikiId": 93358,
     "name": "Oradea",
     "localName": "Oradea",
     "country": "RO",
@@ -8154,7 +9050,8 @@
     "population": 183105
   },
   {
-    "id": 1010,
+    "id": 3195506,
+    "wikiId": 1010,
     "name": "Maribor",
     "localName": "Maribor",
     "country": "SI",
@@ -8163,7 +9060,8 @@
     "population": 114301
   },
   {
-    "id": 49225,
+    "id": 5511077,
+    "wikiId": 49225,
     "name": "Reno",
     "localName": "Reno",
     "country": "US",
@@ -8172,7 +9070,8 @@
     "population": 264165
   },
   {
-    "id": 6046,
+    "id": 3172189,
+    "wikiId": 6046,
     "name": "Novara",
     "localName": "Novara",
     "country": "IT",
@@ -8181,7 +9080,8 @@
     "population": 101257
   },
   {
-    "id": 231318,
+    "id": 1732752,
+    "wikiId": 231318,
     "name": "Johor Bahru",
     "localName": "Johor Bahru",
     "country": "MY",
@@ -8190,7 +9090,8 @@
     "population": 797882
   },
   {
-    "id": 2971,
+    "id": 2855745,
+    "wikiId": 2971,
     "name": "Paderborn",
     "localName": "Paderborn",
     "country": "DE",
@@ -8199,7 +9100,8 @@
     "population": 155749
   },
   {
-    "id": 51599,
+    "id": 3874787,
+    "wikiId": 51599,
     "name": "Punta Arenas",
     "localName": "Punta Arenas",
     "country": "CL",
@@ -8208,7 +9110,8 @@
     "population": 123403
   },
   {
-    "id": 2938,
+    "id": 2878234,
+    "wikiId": 2938,
     "name": "Leverkusen",
     "localName": "Leverkusen",
     "country": "DE",
@@ -8217,7 +9120,8 @@
     "population": 175300
   },
   {
-    "id": 199528,
+    "id": 1273313,
+    "wikiId": 199528,
     "name": "Dehradun",
     "localName": "देहरादून",
     "country": "IN",
@@ -8226,7 +9130,8 @@
     "population": 578420
   },
   {
-    "id": 171639,
+    "id": 295629,
+    "wikiId": 171639,
     "name": "Ashdod",
     "localName": "אשדוד",
     "country": "IL",
@@ -8235,7 +9140,8 @@
     "population": 220174
   },
   {
-    "id": 199797,
+    "id": 5812944,
+    "wikiId": 199797,
     "name": "Tacoma",
     "localName": "Tacoma",
     "country": "US",
@@ -8244,7 +9150,8 @@
     "population": 219346
   },
   {
-    "id": 28441,
+    "id": 3388368,
+    "wikiId": 28441,
     "name": "São Luís",
     "localName": "São Luís",
     "country": "BR",
@@ -8253,7 +9160,8 @@
     "population": 1037775
   },
   {
-    "id": 127623,
+    "id": 632453,
+    "wikiId": 127623,
     "name": "Vantaa",
     "localName": "Vantaa",
     "country": "FI",
@@ -8262,7 +9170,8 @@
     "population": 248199
   },
   {
-    "id": 189633,
+    "id": 1809498,
+    "wikiId": 189633,
     "name": "Guilin",
     "localName": "桂林",
     "country": "CN",
@@ -8271,7 +9180,8 @@
     "population": 5085500
   },
   {
-    "id": 13386,
+    "id": 3174953,
+    "wikiId": 13386,
     "name": "Lecce",
     "localName": "Lecce",
     "country": "IT",
@@ -8280,7 +9190,8 @@
     "population": 94783
   },
   {
-    "id": 49111,
+    "id": 4931972,
+    "wikiId": 49111,
     "name": "Cambridge",
     "localName": "Cambridge",
     "country": "US",
@@ -8289,7 +9200,8 @@
     "population": 118403
   },
   {
-    "id": 49174,
+    "id": 5282804,
+    "wikiId": 49174,
     "name": "Bridgeport",
     "localName": "Bridgeport",
     "country": "US",
@@ -8298,7 +9210,8 @@
     "population": 148654
   },
   {
-    "id": 170513,
+    "id": 484907,
+    "wikiId": 170513,
     "name": "Taganrog",
     "localName": "Таганрог",
     "country": "RU",
@@ -8307,7 +9220,8 @@
     "population": 240055
   },
   {
-    "id": 130469,
+    "id": 1133616,
+    "wikiId": 130469,
     "name": "Mazar-i-Sharif",
     "localName": "مزار شریف",
     "country": "AF",
@@ -8316,7 +9230,8 @@
     "population": 469247
   },
   {
-    "id": 156726,
+    "id": 707471,
+    "wikiId": 156726,
     "name": "Ivano-Frankivsk",
     "localName": "Івано-Франківськ",
     "country": "UA",
@@ -8325,7 +9240,8 @@
     "population": 238196
   },
   {
-    "id": 129352,
+    "id": 146970,
+    "wikiId": 129352,
     "name": "Khankendi",
     "localName": "Xankəndi",
     "country": "AZ",
@@ -8334,7 +9250,8 @@
     "population": 49848
   },
   {
-    "id": 182394,
+    "id": 111822,
+    "wikiId": 182394,
     "name": "Yazd",
     "localName": "یزد",
     "country": "IR",
@@ -8343,7 +9260,8 @@
     "population": 529673
   },
   {
-    "id": 13410,
+    "id": 3175058,
+    "wikiId": 13410,
     "name": "Latina",
     "localName": "Latina",
     "country": "IT",
@@ -8352,7 +9270,8 @@
     "population": 127564
   },
   {
-    "id": 15674,
+    "id": 1860827,
+    "wikiId": 15674,
     "name": "Kagoshima",
     "localName": "鹿児島",
     "country": "JP",
@@ -8361,7 +9280,8 @@
     "population": 593754
   },
   {
-    "id": 49236,
+    "id": 4171563,
+    "wikiId": 49236,
     "name": "St. Petersburg",
     "localName": "St. Petersburg",
     "country": "US",
@@ -8370,7 +9290,8 @@
     "population": 258308
   },
   {
-    "id": 174691,
+    "id": 1851717,
+    "wikiId": 174691,
     "name": "Shizuoka",
     "localName": "静岡市",
     "country": "JP",
@@ -8379,7 +9300,8 @@
     "population": 685589
   },
   {
-    "id": 485176,
+    "id": 5381396,
+    "wikiId": 485176,
     "name": "Pasadena",
     "localName": "Pasadena",
     "country": "US",
@@ -8388,16 +9310,18 @@
     "population": 138699
   },
   {
-    "id": 2910,
+    "id": 2875376,
+    "wikiId": 2910,
     "name": "Ludwigshafen",
-    "localName": "Mannheim",
+    "localName": "Ludwigshafen am Rhein",
     "country": "DE",
     "lat": 49.481111111,
     "lon": 8.435277777,
     "population": 176110
   },
   {
-    "id": 2167,
+    "id": 2693678,
+    "wikiId": 2167,
     "name": "Lund",
     "localName": "Lund",
     "country": "SE",
@@ -8406,7 +9330,8 @@
     "population": 98308
   },
   {
-    "id": 173121,
+    "id": 3991164,
+    "wikiId": 173121,
     "name": "Santiago de Querétaro",
     "localName": "Santiago de Querétaro",
     "country": "MX",
@@ -8415,7 +9340,8 @@
     "population": 794789
   },
   {
-    "id": 59100,
+    "id": 1795940,
+    "wikiId": 59100,
     "name": "Shantou",
     "localName": "汕头",
     "country": "CN",
@@ -8424,7 +9350,8 @@
     "population": 5502031
   },
   {
-    "id": 133123,
+    "id": 255683,
+    "wikiId": 133123,
     "name": "Patras",
     "localName": "Πάτρα",
     "country": "GR",
@@ -8433,7 +9360,8 @@
     "population": 173600
   },
   {
-    "id": 289693,
+    "id": 292672,
+    "wikiId": 289693,
     "name": "Sharjah",
     "localName": "الشارقة",
     "country": "AE",
@@ -8442,7 +9370,8 @@
     "population": 1247749
   },
   {
-    "id": 158292,
+    "id": 705812,
+    "wikiId": 158292,
     "name": "Kropyvnytskyi",
     "localName": "Кропивницький",
     "country": "UA",
@@ -8451,7 +9380,8 @@
     "population": 219676
   },
   {
-    "id": 41474,
+    "id": 3577887,
+    "wikiId": 41474,
     "name": "Kingstown",
     "localName": "Kingstown",
     "country": "VC",
@@ -8460,7 +9390,8 @@
     "population": 24518
   },
   {
-    "id": 156739,
+    "id": 695594,
+    "wikiId": 156739,
     "name": "Rivne",
     "localName": "Рівне",
     "country": "UA",
@@ -8469,7 +9400,8 @@
     "population": 245289
   },
   {
-    "id": 3126,
+    "id": 2929567,
+    "wikiId": 3126,
     "name": "Erlangen",
     "localName": "Erlangen",
     "country": "DE",
@@ -8478,7 +9410,8 @@
     "population": 117806
   },
   {
-    "id": 49242,
+    "id": 4683416,
+    "wikiId": 49242,
     "name": "Corpus Christi",
     "localName": "Corpus Christi",
     "country": "US",
@@ -8487,7 +9420,8 @@
     "population": 317863
   },
   {
-    "id": 47164,
+    "id": 5393212,
+    "wikiId": 47164,
     "name": "Santa Monica",
     "localName": "Santa Monica",
     "country": "US",
@@ -8496,7 +9430,8 @@
     "population": 93076
   },
   {
-    "id": 1476,
+    "id": 3003603,
+    "wikiId": 1476,
     "name": "Le Mans",
     "localName": "Le Mans",
     "country": "FR",
@@ -8505,7 +9440,8 @@
     "population": 146249
   },
   {
-    "id": 211243,
+    "id": 1786657,
+    "wikiId": 211243,
     "name": "Yinchuan",
     "localName": "银川",
     "country": "CN",
@@ -8514,7 +9450,8 @@
     "population": 2859074
   },
   {
-    "id": 156711,
+    "id": 690548,
+    "wikiId": 156711,
     "name": "Uzhhorod",
     "localName": "Ужгород",
     "country": "UA",
@@ -8523,7 +9460,8 @@
     "population": 115449
   },
   {
-    "id": 160544,
+    "id": 261745,
+    "wikiId": 160544,
     "name": "Heraklion",
     "localName": "Ηράκλειο",
     "country": "GR",
@@ -8532,7 +9470,8 @@
     "population": 145440
   },
   {
-    "id": 41843,
+    "id": 295530,
+    "wikiId": 41843,
     "name": "Beersheba",
     "localName": "באר שבע",
     "country": "IL",
@@ -8541,7 +9480,8 @@
     "population": 209000
   },
   {
-    "id": 199440,
+    "id": 3996069,
+    "wikiId": 199440,
     "name": "Mexicali",
     "localName": "Mexicali",
     "country": "MX",
@@ -8550,7 +9490,8 @@
     "population": 854186
   },
   {
-    "id": 129259,
+    "id": 787657,
+    "wikiId": 129259,
     "name": "Niš",
     "localName": "Ниш",
     "country": "RS",
@@ -8559,7 +9500,8 @@
     "population": 183164
   },
   {
-    "id": 187346,
+    "id": 2501152,
+    "wikiId": 187346,
     "name": "Constantine",
     "localName": "قسنطينة",
     "country": "DZ",
@@ -8568,7 +9510,8 @@
     "population": 465138
   },
   {
-    "id": 168193,
+    "id": 98860,
+    "wikiId": 168193,
     "name": "Najaf",
     "localName": "النجف",
     "country": "IQ",
@@ -8577,7 +9520,8 @@
     "population": 724700
   },
   {
-    "id": 42651,
+    "id": 1790923,
+    "wikiId": 42651,
     "name": "Wuxi",
     "localName": "无锡",
     "country": "CN",
@@ -8586,7 +9530,8 @@
     "population": 7462135
   },
   {
-    "id": 156752,
+    "id": 692194,
+    "wikiId": 156752,
     "name": "Sumy",
     "localName": "Суми",
     "country": "UA",
@@ -8595,7 +9540,8 @@
     "population": 265758
   },
   {
-    "id": 25315,
+    "id": 1571058,
+    "wikiId": 25315,
     "name": "Phan Thiết",
     "localName": "Phan Thiết",
     "country": "VN",
@@ -8604,7 +9550,8 @@
     "population": 205333
   },
   {
-    "id": 102158,
+    "id": 590031,
+    "wikiId": 102158,
     "name": "Narva",
     "localName": "Narva",
     "country": "EE",
@@ -8613,7 +9560,8 @@
     "population": 53360
   },
   {
-    "id": 49268,
+    "id": 4920423,
+    "wikiId": 49268,
     "name": "Fort Wayne",
     "localName": "Fort Wayne",
     "country": "US",
@@ -8622,7 +9570,8 @@
     "population": 263886
   },
   {
-    "id": 33962,
+    "id": 3167777,
+    "wikiId": 33962,
     "name": "Sanremo",
     "localName": "Sanremo",
     "country": "IT",
@@ -8631,7 +9580,8 @@
     "population": 52787
   },
   {
-    "id": 82185,
+    "id": 3006787,
+    "wikiId": 82185,
     "name": "La Rochelle",
     "localName": "La Rochelle",
     "country": "FR",
@@ -8640,7 +9590,8 @@
     "population": 79851
   },
   {
-    "id": 116341,
+    "id": 782756,
+    "wikiId": 116341,
     "name": "Korçë",
     "localName": "Korçë",
     "country": "AL",
@@ -8649,7 +9600,8 @@
     "population": 43254
   },
   {
-    "id": 3543,
+    "id": 3170027,
+    "wikiId": 3543,
     "name": "Potenza",
     "localName": "Potenza",
     "country": "IT",
@@ -8658,7 +9610,8 @@
     "population": 64406
   },
   {
-    "id": 200237,
+    "id": 1263214,
+    "wikiId": 200237,
     "name": "Meerut",
     "localName": "मेरठ",
     "country": "IN",
@@ -8667,7 +9620,8 @@
     "population": 1571434
   },
   {
-    "id": 173545,
+    "id": 170017,
+    "wikiId": 173545,
     "name": "Hama",
     "localName": "حماة",
     "country": "SY",
@@ -8676,7 +9630,8 @@
     "population": 696863
   },
   {
-    "id": 53139,
+    "id": 2025339,
+    "wikiId": 53139,
     "name": "Chita",
     "localName": "Чита",
     "country": "RU",
@@ -8685,7 +9640,8 @@
     "population": 337063
   },
   {
-    "id": 170762,
+    "id": 3465038,
+    "wikiId": 170762,
     "name": "Cuiabá",
     "localName": "Cuiabá",
     "country": "BR",
@@ -8694,7 +9650,8 @@
     "population": 691875
   },
   {
-    "id": 6285,
+    "id": 3164699,
+    "wikiId": 6285,
     "name": "Varese",
     "localName": "Varese",
     "country": "IT",
@@ -8703,7 +9660,8 @@
     "population": 78409
   },
   {
-    "id": 3544,
+    "id": 484646,
+    "wikiId": 3544,
     "name": "Tambov",
     "localName": "Тамбов",
     "country": "RU",
@@ -8712,7 +9670,8 @@
     "population": 254940
   },
   {
-    "id": 9125,
+    "id": 2657970,
+    "wikiId": 9125,
     "name": "Winterthur",
     "localName": "Winterthur",
     "country": "CH",
@@ -8721,7 +9680,8 @@
     "population": 120376
   },
   {
-    "id": 131491,
+    "id": 2654710,
+    "wikiId": 131491,
     "name": "Brighton",
     "localName": "Brighton",
     "country": "GB",
@@ -8730,7 +9690,8 @@
     "population": 134293
   },
   {
-    "id": 5475,
+    "id": 3165201,
+    "wikiId": 5475,
     "name": "Treviso",
     "localName": "Treviso",
     "country": "IT",
@@ -8739,7 +9700,8 @@
     "population": 84607
   },
   {
-    "id": 81621,
+    "id": 3570675,
+    "wikiId": 81621,
     "name": "Fort-de-France",
     "localName": "Fort-de-France",
     "country": "FR",
@@ -8748,7 +9710,8 @@
     "population": 75506
   },
   {
-    "id": 7550,
+    "id": 702569,
+    "wikiId": 7550,
     "name": "Lutsk",
     "localName": "Луцьк",
     "country": "UA",
@@ -8757,7 +9720,8 @@
     "population": 215986
   },
   {
-    "id": 245023,
+    "id": 1668399,
+    "wikiId": 245023,
     "name": "Taichung",
     "localName": "臺中",
     "country": "TW",
@@ -8766,7 +9730,8 @@
     "population": 3033885
   },
   {
-    "id": 25413,
+    "id": 2694762,
+    "wikiId": 25413,
     "name": "Linköping",
     "localName": "Linköping",
     "country": "SE",
@@ -8775,7 +9740,8 @@
     "population": 116851
   },
   {
-    "id": 3977,
+    "id": 563514,
+    "wikiId": 3977,
     "name": "Elista",
     "localName": "Элиста",
     "country": "RU",
@@ -8784,7 +9750,8 @@
     "population": 104082
   },
   {
-    "id": 20714,
+    "id": 1835553,
+    "wikiId": 20714,
     "name": "Suwon",
     "localName": "수원",
     "country": "KR",
@@ -8793,7 +9760,8 @@
     "population": 1234300
   },
   {
-    "id": 79875,
+    "id": 4076598,
+    "wikiId": 79875,
     "name": "Mobile",
     "localName": "Mobile",
     "country": "US",
@@ -8802,7 +9770,8 @@
     "population": 187041
   },
   {
-    "id": 156717,
+    "id": 706369,
+    "wikiId": 156717,
     "name": "Khmelnytskyi",
     "localName": "Хмельницький",
     "country": "UA",
@@ -8811,7 +9780,8 @@
     "population": 274452
   },
   {
-    "id": 3046,
+    "id": 2853969,
+    "wikiId": 3046,
     "name": "Pforzheim",
     "localName": "Pforzheim",
     "country": "DE",
@@ -8820,7 +9790,8 @@
     "population": 128992
   },
   {
-    "id": 131416,
+    "id": 566532,
+    "wikiId": 131416,
     "name": "Derbent",
     "localName": "Дербент",
     "country": "RU",
@@ -8829,7 +9800,8 @@
     "population": 127084
   },
   {
-    "id": 168057,
+    "id": 680332,
+    "wikiId": 168057,
     "name": "Craiova",
     "localName": "Craiova",
     "country": "RO",
@@ -8838,7 +9810,8 @@
     "population": 234140
   },
   {
-    "id": 3214,
+    "id": 2939811,
+    "wikiId": 3214,
     "name": "Cottbus",
     "localName": "Cottbus",
     "country": "DE",
@@ -8847,7 +9820,8 @@
     "population": 100010
   },
   {
-    "id": 200713,
+    "id": 1278149,
+    "wikiId": 200713,
     "name": "Aurangabad",
     "localName": "औरंगाबाद",
     "country": "IN",
@@ -8856,7 +9830,8 @@
     "population": 1175116
   },
   {
-    "id": 191130,
+    "id": 1860243,
+    "wikiId": 191130,
     "name": "Kanazawa",
     "localName": "金沢",
     "country": "JP",
@@ -8865,7 +9840,8 @@
     "population": 462479
   },
   {
-    "id": 159288,
+    "id": 5392952,
+    "wikiId": 159288,
     "name": "Santa Barbara",
     "localName": "Santa Barbara",
     "country": "US",
@@ -8874,7 +9850,8 @@
     "population": 88665
   },
   {
-    "id": 484678,
+    "id": 5327684,
+    "wikiId": 484678,
     "name": "Berkeley",
     "localName": "Berkeley",
     "country": "US",
@@ -8883,7 +9860,8 @@
     "population": 124321
   },
   {
-    "id": 15760,
+    "id": 518255,
+    "wikiId": 15760,
     "name": "Novorossiysk",
     "localName": "Новороссийск",
     "country": "RU",
@@ -8892,7 +9870,8 @@
     "population": 261973
   },
   {
-    "id": 4100,
+    "id": 2953504,
+    "wikiId": 4100,
     "name": "Baden-Baden",
     "localName": "Baden-Baden",
     "country": "DE",
@@ -8901,7 +9880,8 @@
     "population": 57420
   },
   {
-    "id": 200030,
+    "id": 173576,
+    "wikiId": 200030,
     "name": "Latakia",
     "localName": "لاذقية",
     "country": "SY",
@@ -8910,7 +9890,8 @@
     "population": 709000
   },
   {
-    "id": 1467,
+    "id": 1717512,
+    "wikiId": 1467,
     "name": "Cebu City",
     "localName": "Cebu City",
     "country": "PH",
@@ -8919,7 +9900,8 @@
     "population": 965332
   },
   {
-    "id": 168929,
+    "id": 3467747,
+    "wikiId": 168929,
     "name": "Campo Grande",
     "localName": "Campo Grande",
     "country": "BR",
@@ -8928,7 +9910,8 @@
     "population": 962883
   },
   {
-    "id": 126898,
+    "id": 3037456,
+    "wikiId": 126898,
     "name": "Antibes",
     "localName": "Antibes",
     "country": "FR",
