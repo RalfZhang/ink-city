@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/RalfZhang/ink-city/compare/v0.6.0...v0.7.0) (2026-07-26)
+
+
+### Features
+
+* bypass cache & CDN ([a9733f1](https://github.com/RalfZhang/ink-city/commit/a9733f148edc1f449002c913bc80cb92af89d325))
+* Clean cache in Dev Mode ([5f8660f](https://github.com/RalfZhang/ink-city/commit/5f8660f524e5eb6b4094e9500cb1af2654f60e13)), closes [#35](https://github.com/RalfZhang/ink-city/issues/35)
+* More Languages ([8affff3](https://github.com/RalfZhang/ink-city/commit/8affff30ed539d3fa3d02af4be530d4b46fbf5d9)), closes [#19](https://github.com/RalfZhang/ink-city/issues/19)
+* Proxy ([d6d24f5](https://github.com/RalfZhang/ink-city/commit/d6d24f56e981975aaa0ee09ec95ac95390c4eed1)), closes [#20](https://github.com/RalfZhang/ink-city/issues/20)
+* Render Cable car / ropeway ([334d525](https://github.com/RalfZhang/ink-city/commit/334d525eb7db87318cb398d520309349e5bbcc6d)), closes [#33](https://github.com/RalfZhang/ink-city/issues/33)
+* Render Railway ([22fee77](https://github.com/RalfZhang/ink-city/commit/22fee770d466f7625cec6aa31f7df05b158b3303)), closes [#32](https://github.com/RalfZhang/ink-city/issues/32)
+
 ## [0.6.0](https://github.com/RalfZhang/ink-city/compare/v0.5.3...v0.6.0) (2026-07-25)
 
 
