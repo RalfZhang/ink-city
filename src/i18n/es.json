@@ -33,6 +33,8 @@
     "updateUnavailable": "Servidor de actualizaciones no disponible, inténtalo más tarde",
     "languageLabel": "Idioma",
     "languageAuto": "Automático",
+    "proxyLabel": "Proxy",
+    "proxyDesc": "Enruta las solicitudes de datos del mapa a través de un proxy, para redes donde OpenStreetMap no es accesible directamente. Admite URL http:// y socks5://.",
     "hideWindow": "Ocultar ventana",
     "quit": "Salir"
   },
@@ -68,6 +70,10 @@
     "intro": "Estas funciones son experimentales, pueden tener errores y no se garantiza que funcionen.",
     "showAirports": "Mostrar aeropuertos",
     "airportsHint": "Las pistas y calles de rodaje se dibujan con el color de las líneas.",
+    "showRailways": "Mostrar ferrocarriles",
+    "railwaysHint": "Las líneas de ferrocarril en superficie se dibujan como una línea discontinua con el color de las líneas.",
+    "showAerialways": "Mostrar teleféricos",
+    "aerialwaysHint": "Los teleféricos y funiculares se dibujan como una línea punteada con el color de las líneas.",
     "showWater": "Mostrar masas de agua",
     "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas",
     "save": "Guardar"
@@ -89,7 +95,15 @@
   "devMode": {
     "advancePreviewTitle": "Vista previa anticipada",
     "advancePreviewDesc": "Muestra la vista previa del mapa de una ciudad para un día próximo en la rotación, sin cambiar el fondo de pantalla de hoy.",
-    "loading": "Generando vista previa…"
+    "loading": "Generando vista previa…",
+    "cleanCacheTitle": "Limpiar caché",
+    "cleanCacheDesc": "Elimina los datos de mapas descargados y los fondos de pantalla generados. Se vuelven a descargar y generar en la próxima actualización.",
+    "cleanCacheButton": "Limpiar",
+    "cleaning": "Limpiando…",
+    "cleanCacheResult": "{{files}} archivos eliminados · {{size}} liberados",
+    "cleanCacheEmpty": "La caché ya está vacía",
+    "bypassCacheTitle": "Omitir caché y CDN",
+    "bypassCacheDesc": "Obtiene los datos del mapa en directo desde la API de Overpass, omitiendo la CDN y sobrescribiendo la caché local con ellos. Úsalo al probar cambios en los datos del mapa. Se desactiva al reiniciar."
   },
   "common": {
     "loading": "cargando…"

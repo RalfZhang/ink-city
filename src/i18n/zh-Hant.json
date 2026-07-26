@@ -33,6 +33,8 @@
     "updateUnavailable": "暫時無法連線更新伺服器，請稍後再試",
     "languageLabel": "語言",
     "languageAuto": "跟隨系統",
+    "proxyLabel": "代理",
+    "proxyDesc": "透過代理連線地圖資料伺服器，適用於無法直連 OpenStreetMap 的網路。支援 http:// 與 socks5:// 位址。",
     "hideWindow": "隱藏視窗",
     "quit": "結束"
   },
@@ -68,6 +70,10 @@
     "intro": "實驗性功能，可能存在 bug，不保證可用。",
     "showAirports": "顯示機場",
     "airportsHint": "機場跑道與滑行道以線條色繪製。",
+    "showRailways": "顯示鐵路",
+    "railwaysHint": "地面鐵路線以線條色的虛線繪製。",
+    "showAerialways": "顯示纜車索道",
+    "aerialwaysHint": "纜車與索道以線條色的點線繪製。",
     "showWater": "顯示水體",
     "waterHint": "河流、湖泊與海洋以線條色淡染",
     "save": "儲存"
@@ -89,7 +95,15 @@
   "devMode": {
     "advancePreviewTitle": "提前預覽",
     "advancePreviewDesc": "預覽輪替中未來某一天將顯示的城市地圖，不會更改今天的桌布。",
-    "loading": "正在渲染預覽…"
+    "loading": "正在渲染預覽…",
+    "cleanCacheTitle": "清理快取",
+    "cleanCacheDesc": "刪除已下載的地圖資料和已渲染的桌布，下次更新時會重新取得並渲染。",
+    "cleanCacheButton": "清理",
+    "cleaning": "清理中…",
+    "cleanCacheResult": "已清理 {{files}} 個檔案 · 釋放 {{size}}",
+    "cleanCacheEmpty": "快取已為空",
+    "bypassCacheTitle": "略過快取和 CDN",
+    "bypassCacheDesc": "略過 CDN，直接透過 Overpass API 即時取得地圖資料並覆寫本機快取。除錯地圖資料改動時使用。重新啟動後自動關閉。"
   },
   "common": {
     "loading": "載入中…"

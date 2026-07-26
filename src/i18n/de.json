@@ -33,6 +33,8 @@
     "updateUnavailable": "Update-Server nicht erreichbar, bitte später erneut versuchen",
     "languageLabel": "Sprache",
     "languageAuto": "Automatisch",
+    "proxyLabel": "Proxy",
+    "proxyDesc": "Leitet Kartendatenanfragen über einen Proxy, für Netzwerke, in denen OpenStreetMap nicht direkt erreichbar ist. Unterstützt http://- und socks5://-URLs.",
     "hideWindow": "Fenster ausblenden",
     "quit": "Beenden"
   },
@@ -68,6 +70,10 @@
     "intro": "Diese Funktionen sind experimentell, können fehlerhaft sein und funktionieren möglicherweise nicht zuverlässig.",
     "showAirports": "Flughäfen anzeigen",
     "airportsHint": "Start- und Rollbahnen werden in der Linienfarbe dargestellt.",
+    "showRailways": "Eisenbahnen anzeigen",
+    "railwaysHint": "Oberirdische Bahnlinien werden als gestrichelte Linie in der Linienfarbe dargestellt.",
+    "showAerialways": "Seilbahnen anzeigen",
+    "aerialwaysHint": "Seil- und Drahtseilbahnen werden als gepunktete Linie in der Linienfarbe dargestellt.",
     "showWater": "Gewässer anzeigen",
     "waterHint": "Flüsse, Seen und Meere werden in der Linienfarbe eingefärbt",
     "save": "Speichern"
@@ -89,7 +95,15 @@
   "devMode": {
     "advancePreviewTitle": "Vorausschau",
     "advancePreviewDesc": "Zeigt die Kartenvorschau für einen kommenden Tag in der Rotation, ohne das heutige Hintergrundbild zu ändern.",
-    "loading": "Vorschau wird gerendert…"
+    "loading": "Vorschau wird gerendert…",
+    "cleanCacheTitle": "Cache leeren",
+    "cleanCacheDesc": "Löscht heruntergeladene Kartendaten und gerenderte Hintergrundbilder. Sie werden beim nächsten Update neu abgerufen und gerendert.",
+    "cleanCacheButton": "Leeren",
+    "cleaning": "Wird geleert…",
+    "cleanCacheResult": "{{files}} Dateien entfernt · {{size}} freigegeben",
+    "cleanCacheEmpty": "Cache ist bereits leer",
+    "bypassCacheTitle": "Cache & CDN umgehen",
+    "bypassCacheDesc": "Ruft Kartendaten live über die Overpass-API ab, umgeht das CDN und überschreibt damit den lokalen Cache. Nützlich beim Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt."
   },
   "common": {
     "loading": "Wird geladen…"
