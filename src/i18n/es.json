@@ -84,7 +84,9 @@
     "aerialwaysHint": "Los teleféricos y funiculares se dibujan como una línea punteada con el color de las líneas.",
     "showWater": "Mostrar masas de agua",
     "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas.",
-    "save": "Guardar"
+    "save": "Guardar",
+    "mondrian": "Estilo Mondrian",
+    "mondrianHint": "Dibuja el mapa como una composición de Mondrian: calles negras sobre blanco y algunas manzanas rellenas con colores primarios. Sustituye los colores del tema; las capas de arriba siguen aplicándose."
   },
   "about": {
     "p1": "InkCity cambia el fondo de escritorio cada día por el mapa de carreteras de una ciudad distinta.",

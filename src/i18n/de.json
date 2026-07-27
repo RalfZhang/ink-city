@@ -84,7 +84,9 @@
     "aerialwaysHint": "Seil- und Drahtseilbahnen werden als gepunktete Linie in der Linienfarbe dargestellt.",
     "showWater": "Gewässer anzeigen",
     "waterHint": "Flüsse, Seen und Meere werden in der Linienfarbe eingefärbt.",
-    "save": "Speichern"
+    "save": "Speichern",
+    "mondrian": "Mondrian-Stil",
+    "mondrianHint": "Zeichnet die Karte als Mondrian-Komposition: schwarze Straßen auf Weiß, einige Blöcke in Grundfarben gefüllt. Ersetzt die Themenfarben; die Ebenen oben gelten weiterhin."
   },
   "about": {
     "p1": "InkCity stellt jeden Tag die Straßenkarte einer anderen Stadt als Hintergrundbild ein.",

@@ -84,7 +84,9 @@
     "aerialwaysHint": "Les téléphériques et remontées mécaniques sont tracés en pointillés dans la couleur des lignes.",
     "showWater": "Afficher les plans d'eau",
     "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes.",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "mondrian": "Style Mondrian",
+    "mondrianHint": "Dessine la carte comme une composition de Mondrian : rues noires sur blanc, quelques îlots remplis de couleurs primaires. Remplace les couleurs du thème ; les couches ci-dessus s'appliquent toujours."
   },
   "about": {
     "p1": "InkCity remplace chaque jour votre fond d'écran par la carte routière d'une ville différente.",

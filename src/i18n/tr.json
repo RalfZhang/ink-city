@@ -84,7 +84,9 @@
     "aerialwaysHint": "Teleferikler ve halatlı hatlar çizgi renginde noktalı çizgi olarak çizilir.",
     "showWater": "Su kütlelerini göster",
     "waterHint": "Nehirler, göller ve denizler çizgi rengiyle tonlanır.",
-    "save": "Kaydet"
+    "save": "Kaydet",
+    "mondrian": "Mondrian tarzı",
+    "mondrianHint": "Haritayı bir Mondrian kompozisyonu gibi çizer: beyaz üzerine siyah yollar, bazı adalar ana renklerle doldurulur. Tema renklerinin yerine geçer; yukarıdaki katmanlar geçerli kalır."
   },
   "about": {
     "p1": "InkCity her gün masaüstü duvar kağıdınızı farklı bir şehrin yol haritasıyla ayarlar.",

@@ -1,9 +1,9 @@
 // Shared primitives live in the portable core; re-export them so existing
 // `../types` imports keep working. `Status` is desktop-specific (it mirrors the
 // Rust `get_status` command output), so it stays here.
-export type { City, ColorPair, StylePreset, ThemeMode } from "./core";
+export type { City, ColorPair, StylePreset, StyleVariant, ThemeMode } from "./core";
 
-import type { City, ColorPair, StylePreset, ThemeMode } from "./core";
+import type { City, ColorPair, StylePreset, StyleVariant, ThemeMode } from "./core";
 
 export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 
@@ -33,6 +33,8 @@ export type Status = {
   showAirports: boolean;
   showRailways: boolean;
   showAerialways: boolean;
+  /** Which visual language the map is drawn in (issue #18). */
+  variant: StyleVariant;
   /** Whether the hidden Dev Mode tab is unlocked. Persisted across restarts. */
   devMode: boolean;
   /** Dev-only: bypass the local cache and CDN, fetch OSM live from Overpass. In-memory only (off on launch). */

@@ -13,8 +13,8 @@ index = (days_since_2023-03-03 * 379) % N
 ```
 src/core/          Portable, dependency-free logic (city pick, bbox math,
                    Overpass fetch, water/coastline assembly, canvas
-                   rendering) shared by the desktop renderer, osm-cli, and a
-                   future website.
+                   rendering incl. the Mondrian variant) shared by the desktop
+                   renderer, osm-cli, and a future website.
 src/                React + TypeScript settings UI (Vite).
 src/renderer/       Hidden WebView that draws the map to a canvas → PNG.
 src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting,
@@ -26,6 +26,8 @@ scripts/            build-cities (GeoNames → cities.json) and osm-cli (the
 ```
 
 **Data flow:** scheduler picks today's city → computes a screen-sized bbox → fetches road + water data (local cache → jsDelivr CDN → the `osm-cli` sidecar, run live) → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). OSM and PNG artifacts are cached for 7 days so re-rendering after a theme change needs no network.
+
+**Map variants:** `Style.variant` picks the visual language the same geometry is drawn in — `ink` (the default map, in the theme's colors) or `mondrian` (issue #18). The Mondrian variant is not a separate pipeline: `core/render.ts` runs the one compositing order with the palette forced to its paper/ink pair and one extra step that fills a deterministic subset of the enclosed city blocks (`core/mondrian.ts`) just before the roads are stroked over them. Which blocks exist is derived from the road classes the active preset actually strokes, so a color plane always has its black borders.
 
 **CDN pre-cache:** a daily GitHub Action runs `osm-cli precache`, which fetches the upcoming cities' road + water data, slims it, and force-pushes it to the `data` branch, which [jsDelivr](https://www.jsdelivr.com/) serves as a CDN. This keeps the app fast and reachable on networks where Overpass is slow or blocked (notably mainland China). The desktop app's live fallback (`osm-cli fetch`, run as a bundled sidecar) shares the exact same TypeScript implementation, so a CDN miss never produces data poorer than the CDN's — see `src/core/fetch-city.ts`.
 

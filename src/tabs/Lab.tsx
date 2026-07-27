@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import SettingRow from "@/components/SettingRow";
-import type { Status } from "../types";
+import type { Status, StyleVariant } from "../types";
 
 type Props = {
   status: Status;
@@ -28,6 +28,7 @@ export default function Lab({ status, busy, onError }: Props) {
   const [showWater, setShowWater] = useState<boolean>(status.showWater);
   const [showRailways, setShowRailways] = useState<boolean>(status.showRailways);
   const [showAerialways, setShowAerialways] = useState<boolean>(status.showAerialways);
+  const [variant, setVariant] = useState<StyleVariant>(status.variant);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
@@ -59,17 +60,15 @@ export default function Lab({ status, busy, onError }: Props) {
     showAirports !== status.showAirports ||
     showWater !== status.showWater ||
     showRailways !== status.showRailways ||
-    showAerialways !== status.showAerialways;
+    showAerialways !== status.showAerialways ||
+    variant !== status.variant;
 
   const save = async () => {
     setSaving(true);
     sawBusy.current = false;
     try {
       const result = await invoke<{ regenStarted: boolean }>("apply_lab_settings", {
-        showAirports,
-        showWater,
-        showRailways,
-        showAerialways,
+        settings: { showAirports, showWater, showRailways, showAerialways, variant },
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -117,6 +116,20 @@ export default function Lab({ status, busy, onError }: Props) {
           label={t("lab.showWater")}
           description={t("lab.waterHint")}
           control={<Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />}
+        />
+
+        <Separator />
+
+        <SettingRow
+          label={t("lab.mondrian")}
+          description={t("lab.mondrianHint")}
+          control={
+            <Switch
+              checked={variant === "mondrian"}
+              onCheckedChange={(on) => setVariant(on ? "mondrian" : "ink")}
+              disabled={saving}
+            />
+          }
         />
       </CardContent>
 

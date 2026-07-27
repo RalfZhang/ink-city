@@ -84,7 +84,9 @@
     "aerialwaysHint": "Funivie e teleferiche sono disegnate come linea punteggiata con il colore delle linee.",
     "showWater": "Mostra specchi d'acqua",
     "waterHint": "Fiumi, laghi e mari sono colorati con il colore delle linee.",
-    "save": "Salva"
+    "save": "Salva",
+    "mondrian": "Stile Mondrian",
+    "mondrianHint": "Disegna la mappa come una composizione di Mondrian: strade nere su bianco, con alcuni blocchi riempiti di colori primari. Sostituisce i colori del tema; i livelli sopra restano validi."
   },
   "about": {
     "p1": "InkCity imposta ogni giorno lo sfondo del desktop con la mappa stradale di una città diversa.",

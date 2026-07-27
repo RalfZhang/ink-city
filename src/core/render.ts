@@ -2,6 +2,7 @@ import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
 import type { LayerId } from "./osm/layers";
 import { project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA, RAILWAY_ALPHA } from "./constants";
+import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./mondrian";
 
 // Pure canvas-drawing logic, decoupled from any IO. Takes a 2D context so it
 // works with a DOM canvas (desktop renderer + website) and with a headless
@@ -402,16 +403,17 @@ const OVER_ROADS: LayerDraw[] = [
 ];
 
 /**
- * Per-layer counts of features drawn, for logging. `roads` (always present) plus
- * one entry per optional {@link LayerId}; a disabled or absent layer reports 0.
+ * Per-feature counts drawn, for logging. `roads` (always present), one entry per
+ * optional {@link LayerId} (a disabled or absent layer reports 0), plus `blocks`
+ * — the Mondrian color planes, 0 in the `ink` variant.
  */
-export type SceneCounts = { roads: number } & Record<LayerId, number>;
+export type SceneCounts = { roads: number; blocks: number } & Record<LayerId, number>;
 
 /**
  * Compose the full wallpaper onto `ctx` and return the per-layer feature counts
  * (for logging). This is the single source of truth for layer compositing order:
  *
- *   background ▸ water ▸ ROADS ▸ railways ▸ aerialways ▸ airports
+ *   background ▸ water ▸ [Mondrian blocks] ▸ ROADS ▸ railways ▸ aerialways ▸ airports
  *
  * Roads are the always-present anchor and split the optional layers into those
  * drawn under vs. over them. The over-road layers sit on top on purpose:
@@ -422,18 +424,45 @@ export type SceneCounts = { roads: number } & Record<LayerId, number>;
  * instead of being chopped up by the roads underneath. Each optional layer
  * self-gates on its Style toggle + data presence, so a disabled or absent layer
  * is a no-op.
+ *
+ * The `mondrian` variant (issue #18) is this same pipeline with two
+ * substitutions, not a second pipeline: the palette is forced to the Mondrian
+ * paper/ink pair — so every optional layer's tint derives from it exactly as the
+ * `ink` variant's derives from the theme — and one extra step paints De Stijl
+ * color planes into the enclosed city blocks just before the roads are stroked
+ * over them (the strokes mask the block boundaries, which is what makes the
+ * fills read as planes between the streets). Layer *selection* is untouched:
+ * every optional layer still self-gates on its own toggle.
  */
 export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCounts {
-  const { width, height, style } = req;
+  const mondrian = req.style.variant === "mondrian";
+  const r: DrawReq = mondrian
+    ? {
+        ...req,
+        style: {
+          ...req.style,
+          background: MONDRIAN_BACKGROUND,
+          foreground: MONDRIAN_FOREGROUND,
+        },
+      }
+    : req;
+  const { width, height, style } = r;
 
   ctx.fillStyle = style.background;
   ctx.fillRect(0, 0, width, height);
 
   // Keys ordered to mirror the compositing pipeline (bottom → top) so the log
   // reads in the same order things are painted.
-  const counts: SceneCounts = { water: 0, roads: 0, railways: 0, aerialways: 0, airports: 0 };
-  for (const { id, draw } of UNDER_ROADS) counts[id] = draw(ctx, req);
-  counts.roads = drawRoads(ctx, req);
-  for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, req);
+  const counts: SceneCounts = {
+    water: 0, blocks: 0, roads: 0, railways: 0, aerialways: 0, airports: 0,
+  };
+  for (const { id, draw } of UNDER_ROADS) counts[id] = draw(ctx, r);
+  // The block-bounding road set has to match what `drawRoads` actually strokes
+  // below, so it's derived from the same width table rather than a second list.
+  if (mondrian) {
+    counts.blocks = fillMondrianBlocks(ctx, r, (hw) => widthFor(hw, style.preset, 1) !== null);
+  }
+  counts.roads = drawRoads(ctx, r);
+  for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, r);
   return counts;
 }

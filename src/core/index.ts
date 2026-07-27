@@ -18,3 +18,7 @@ export * from "./osm/layers";
 // above) plus the renderers (from ./render, exported below).
 export * from "./render";
 export * from "./constants";
+// NOTE: ./mondrian (the De Stijl variant's block extraction + fills, issue #18)
+// is deliberately not re-exported either — it has no standalone consumer, it is
+// reached only through `drawScene`'s `variant`. It is still a *required* file for
+// anyone vendoring this directory: ./render imports it directly.

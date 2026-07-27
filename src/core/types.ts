@@ -17,6 +17,15 @@ export type Bbox = { south: number; west: number; north: number; east: number };
 export type ThemeMode = "light" | "dark" | "system";
 export type StylePreset = "minimal" | "standard" | "bold";
 
+/**
+ * Which visual language the map is drawn in — one dimension, not a set of
+ * independent flags, so exactly one variant is ever in effect:
+ *   • `ink`      — the default ink-on-paper map, drawn in the theme's colors.
+ *   • `mondrian` — a De Stijl repaint of the same real street grid (issue #18,
+ *                  see core/mondrian.ts).
+ */
+export type StyleVariant = "ink" | "mondrian";
+
 export type ColorPair = {
   background: string;
   foreground: string;
@@ -35,6 +44,13 @@ export type Style = {
   showRailways?: boolean;
   /** Whether to draw the aerialway (cable car / ropeway) layer. Absent ⇒ off. */
   showAerialways?: boolean;
+  /**
+   * Which visual language to draw in (see {@link StyleVariant}). Absent ⇒
+   * `"ink"`. `"mondrian"` overrides the theme colors — `background`/`foreground`
+   * are replaced by the Mondrian paper/ink pair — but the layer toggles above
+   * still apply, tinted from that ink. Issue #18.
+   */
+  variant?: StyleVariant;
 };
 
 // --- OSM Overpass shapes (only the fields we read) ---

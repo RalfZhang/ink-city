@@ -12,7 +12,7 @@ use tokio::sync::oneshot;
 use crate::bbox::{bbox_for_screen, Bbox};
 use crate::cdn;
 use crate::city;
-use crate::config::{ColorPair, StylePreset, ThemeMode, UpdateMode};
+use crate::config::{ColorPair, StylePreset, StyleVariant, ThemeMode, UpdateMode};
 use crate::events::FrontendEvent;
 use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
@@ -39,6 +39,7 @@ struct Style {
     show_railways: bool,
     #[serde(rename = "showAerialways")]
     show_aerialways: bool,
+    variant: StyleVariant,
 }
 
 #[derive(Serialize, Clone)]
@@ -572,6 +573,7 @@ async fn render_bytes_for(
     let show_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
     let show_railways = app.state::<AppState>().show_railways.load(Ordering::Acquire);
     let show_aerialways = app.state::<AppState>().show_aerialways.load(Ordering::Acquire);
+    let variant = *app.state::<AppState>().variant.lock().unwrap();
     let style = Style {
         background: colors.background,
         foreground: colors.foreground,
@@ -580,6 +582,7 @@ async fn render_bytes_for(
         show_airports,
         show_railways,
         show_aerialways,
+        variant,
     };
 
     let (tx, rx) = oneshot::channel::<Vec<u8>>();

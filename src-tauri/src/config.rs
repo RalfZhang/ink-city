@@ -91,6 +91,26 @@ impl Default for StylePreset {
     }
 }
 
+/// Which visual language the map is drawn in — one dimension rather than a set
+/// of independent flags, so exactly one variant is ever in effect and a second
+/// art style is a new arm here instead of another boolean that can contradict
+/// this one. `Ink` is the default ink-on-paper map in the theme's colors;
+/// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18).
+/// Mirrors `StyleVariant` in src/core/types.ts and is serialized straight into
+/// the renderer's `Style` payload.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StyleVariant {
+    Ink,
+    Mondrian,
+}
+
+impl Default for StyleVariant {
+    fn default() -> Self {
+        StyleVariant::Ink
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ColorPair {
     pub background: String,
@@ -144,6 +164,11 @@ pub struct Config {
     /// Draw the aerialway layer (cable cars / ropeways) on the wallpaper. Off by
     /// default.
     pub show_aerialways: bool,
+    /// Which visual language the wallpaper is drawn in (see `StyleVariant`).
+    /// `Ink` by default. A Lab-tab experiment for now: `Mondrian` replaces the
+    /// theme colors with the Mondrian paper/ink pair, but the layer toggles above
+    /// still apply. See src/core/mondrian.ts.
+    pub variant: StyleVariant,
     /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
     /// the 7-click gesture on the version number in About. Persisted so the tab
     /// stays unlocked across restarts. (The dev-only "bypass cache & CDN" toggle
@@ -175,6 +200,7 @@ impl Default for Config {
             show_airports: false,
             show_railways: false,
             show_aerialways: false,
+            variant: StyleVariant::default(),
             dev_mode: false,
             proxy_enabled: false,
             proxy_url: String::new(),

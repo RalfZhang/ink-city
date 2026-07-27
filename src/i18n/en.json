@@ -84,7 +84,9 @@
     "aerialwaysHint": "Cable cars and ropeways are drawn as a dotted line in the line color.",
     "showWater": "Show water bodies",
     "waterHint": "Rivers, lakes and sea are tinted with the line color.",
-    "save": "Save"
+    "save": "Save",
+    "mondrian": "Mondrian style",
+    "mondrianHint": "Paint the map as a Mondrian composition: black roads on white, with a few blocks filled in primary colors. Replaces the theme colors; the layers above still apply."
   },
   "about": {
     "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day.",

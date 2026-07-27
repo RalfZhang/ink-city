@@ -84,7 +84,9 @@
     "aerialwaysHint": "Teleféricos e funiculares são desenhados como linha pontilhada na cor das linhas.",
     "showWater": "Mostrar corpos d'água",
     "waterHint": "Rios, lagos e mares são coloridos com a cor das linhas.",
-    "save": "Salvar"
+    "save": "Salvar",
+    "mondrian": "Estilo Mondrian",
+    "mondrianHint": "Desenha o mapa como uma composição de Mondrian: ruas negras sobre branco, com alguns quarteirões preenchidos com cores primárias. Substitui as cores do tema; as camadas acima continuam a valer."
   },
   "about": {
     "p1": "O InkCity define o papel de parede da área de trabalho todos os dias com o mapa de ruas de uma cidade diferente.",

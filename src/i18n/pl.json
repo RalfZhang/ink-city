@@ -84,7 +84,9 @@
     "aerialwaysHint": "Kolejki linowe i wyciągi są rysowane jako kropkowana linia w kolorze linii.",
     "showWater": "Pokaż zbiorniki wodne",
     "waterHint": "Rzeki, jeziora i morza są zabarwione kolorem linii.",
-    "save": "Zapisz"
+    "save": "Zapisz",
+    "mondrian": "Styl Mondriana",
+    "mondrianHint": "Rysuje mapę jako kompozycję Mondriana: czarne ulice na białym tle, kilka kwartałów wypełnionych kolorami podstawowymi. Zastępuje kolory motywu; warstwy powyżej nadal działają."
   },
   "about": {
     "p1": "InkCity codziennie ustawia tapetę pulpitu na mapę drogową innego miasta.",

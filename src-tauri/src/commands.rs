@@ -1,11 +1,13 @@
 use std::sync::atomic::Ordering;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
-use crate::config::{self, ColorPair, CustomCity, StylePreset, ThemeMode, UpdateCheck, UpdateMode};
+use crate::config::{
+    self, ColorPair, CustomCity, StylePreset, StyleVariant, ThemeMode, UpdateCheck, UpdateMode,
+};
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
@@ -46,6 +48,9 @@ pub struct Status {
     pub show_railways: bool,
     #[serde(rename = "showAerialways")]
     pub show_aerialways: bool,
+    /// Which visual language the wallpaper is drawn in (issue #18). See
+    /// `config::Config::variant`.
+    pub variant: StyleVariant,
     /// Whether the hidden Dev Mode tab is unlocked (persisted). See
     /// `AppState::dev_mode`.
     #[serde(rename = "devMode")]
@@ -97,6 +102,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         show_airports: state.show_airports.load(Ordering::Acquire),
         show_railways: state.show_railways.load(Ordering::Acquire),
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
+        variant: *state.variant.lock().unwrap(),
         dev_mode: state.dev_mode.load(Ordering::Acquire),
         bypass_cache: state.effective_bypass_cache(),
         proxy_enabled: state.proxy_enabled.load(Ordering::Acquire),
@@ -266,36 +272,57 @@ pub fn apply_style_settings(
     Ok(ApplyResult { regen_started })
 }
 
-/// Atomic write of the Lab-tab settings: the optional data-layer toggles
-/// (airports, water, railways, aerialways). Same return contract as `apply_style_settings`:
-/// whether a re-render started.
+/// Every Lab-tab setting as one value: the optional data-layer toggles plus the
+/// map's visual variant. Deliberately one struct rather than a parameter list —
+/// it doubles as the command payload and as the before/after snapshot
+/// `apply_lab_settings` diffs, so a new Lab setting is one field here instead of
+/// a parameter, a `before_*` local and another `||` clause.
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct LabSettings {
+    pub show_airports: bool,
+    pub show_water: bool,
+    pub show_railways: bool,
+    pub show_aerialways: bool,
+    pub variant: StyleVariant,
+}
+
+/// The Lab settings as currently held in `AppState`.
+fn lab_settings(state: &AppState) -> LabSettings {
+    LabSettings {
+        show_airports: state.show_airports.load(Ordering::Acquire),
+        show_water: state.show_water.load(Ordering::Acquire),
+        show_railways: state.show_railways.load(Ordering::Acquire),
+        show_aerialways: state.show_aerialways.load(Ordering::Acquire),
+        variant: *state.variant.lock().unwrap(),
+    }
+}
+
+/// Atomic write of the Lab-tab settings (see `LabSettings`). Same return
+/// contract as `apply_style_settings`: whether a re-render started.
 #[tauri::command]
-pub fn apply_lab_settings(
-    app: AppHandle,
-    show_airports: bool,
-    show_water: bool,
-    show_railways: bool,
-    show_aerialways: bool,
-) -> Result<ApplyResult, String> {
+pub fn apply_lab_settings(app: AppHandle, settings: LabSettings) -> Result<ApplyResult, String> {
     let state = app.state::<AppState>();
-    let before_airports = state.show_airports.load(Ordering::Acquire);
-    let before_water = state.show_water.load(Ordering::Acquire);
-    let before_railways = state.show_railways.load(Ordering::Acquire);
-    let before_aerialways = state.show_aerialways.load(Ordering::Acquire);
+    let before = lab_settings(&state);
+    let LabSettings {
+        show_airports,
+        show_water,
+        show_railways,
+        show_aerialways,
+        variant,
+    } = settings;
 
     state.show_airports.store(show_airports, Ordering::Release);
     state.show_water.store(show_water, Ordering::Release);
     state.show_railways.store(show_railways, Ordering::Release);
     state.show_aerialways.store(show_aerialways, Ordering::Release);
+    *state.variant.lock().unwrap() = variant;
     persist(&app)?;
     // Push the new flags immediately, even when no re-render is triggered below
     // (a render, if any, will mark dirty again on completion).
     app.state::<AppState>().mark_status_dirty();
 
-    let regen_started = before_airports != show_airports
-        || before_water != show_water
-        || before_railways != show_railways
-        || before_aerialways != show_aerialways;
+    let regen_started = before != settings;
     if regen_started {
         pipeline::spawn_force_regen(app);
     }
@@ -507,6 +534,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         show_airports: s.show_airports.load(Ordering::Acquire),
         show_railways: s.show_railways.load(Ordering::Acquire),
         show_aerialways: s.show_aerialways.load(Ordering::Acquire),
+        variant: *s.variant.lock().unwrap(),
         dev_mode: s.dev_mode.load(Ordering::Acquire),
         proxy_enabled: s.proxy_enabled.load(Ordering::Acquire),
         proxy_url: s.proxy_url.lock().unwrap().clone(),

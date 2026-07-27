@@ -84,7 +84,9 @@
     "aerialwaysHint": "Kabelbanen en kabelspoorwegen worden getekend als gestippelde lijn in de lijnkleur.",
     "showWater": "Waterpartijen tonen",
     "waterHint": "Rivieren, meren en zeeën krijgen een tint in de lijnkleur.",
-    "save": "Opslaan"
+    "save": "Opslaan",
+    "mondrian": "Mondriaan-stijl",
+    "mondrianHint": "Tekent de kaart als een Mondriaan-compositie: zwarte wegen op wit, met een paar blokken in primaire kleuren. Vervangt de themakleuren; de lagen hierboven blijven gelden."
   },
   "about": {
     "p1": "InkCity stelt elke dag uw bureaubladachtergrond in op de wegenkaart van een andere stad.",

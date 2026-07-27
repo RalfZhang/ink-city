@@ -19,6 +19,9 @@
 //   -s, --size <WxH>                       pixel size        (default 2560x1664)
 //   -p, --preset <minimal|standard|bold>  road weights      (default standard)
 //       --theme <light|dark|both>         which themes      (default both)
+//       --mondrian                         Mondrian style (issue #18). Overrides
+//                                          the theme colors, so it renders once
+//                                          and tags the file `_mondrian`.
 //   -o, --out <dir>                        output dir  (default: test-out for
 //                                          coords, next to the file for a path)
 //
@@ -26,6 +29,7 @@
 //   npm run render -- 34.25668/108.95738
 //   npm run render -- test-out/34.25668_108.95738_20260725-234157.json -p bold
 //   npm run render -- 34.25668/108.95738 -t png -s 3840x2160 --theme dark -o /tmp/maps
+//   npm run render -- test-out/-16.50016_-68.1709.json --mondrian -t png
 //
 // Accepted .json shapes:
 //   - { lat, lon, osm:{ v, elements, ... } } from the throwaway test-data generator, or
@@ -85,6 +89,9 @@ function allLayersOn(): Pick<Style, `show${Capitalize<LayerId>}`> {
   ) as Pick<Style, `show${Capitalize<LayerId>}`>;
 }
 
+/** Flags that take no value — present ⇒ "true", and the next argv is left alone. */
+const BOOL_FLAGS = new Set(["mondrian"]);
+
 /** Minimal `-f value` / `--flag value` / `--flag=value` parser; bare args → positionals. */
 function parseArgs(argv: string[]): { positionals: string[]; flags: Record<string, string> } {
   const alias: Record<string, string> = { t: "type", s: "size", p: "preset", o: "out" };
@@ -92,6 +99,10 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
   const flags: Record<string, string> = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
+    // npm strips the `--` separator before handing argv over; pnpm passes it
+    // through. Ignore it either way, so both `npm run render -- x` and
+    // `pnpm run render -- x` see `x` as the positional.
+    if (a === "--") continue;
     if (!a.startsWith("-")) {
       positionals.push(a);
       continue;
@@ -100,6 +111,7 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
     const [name, inlineVal] = key.split("=");
     const long = alias[name] ?? name;
     if (inlineVal !== undefined) flags[long] = inlineVal;
+    else if (BOOL_FLAGS.has(long)) flags[long] = "true";
     else flags[long] = argv[++i] ?? "";
   }
   return { positionals, flags };
@@ -108,7 +120,7 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
 function fail(msg: string): never {
   console.error(`error: ${msg}\n`);
   console.error(
-    "usage: npm run render -- <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--theme light|dark|both] [-o dir]",
+    "usage: npm run render -- <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--theme light|dark|both] [--mondrian] [-o dir]",
   );
   process.exit(1);
 }
@@ -139,7 +151,15 @@ async function main() {
 
   const themeArg = (flags.theme ?? "both").toLowerCase();
   if (!["light", "dark", "both"].includes(themeArg)) fail(`--theme must be light/dark/both`);
-  const themes: ThemeName[] = themeArg === "both" ? ["light", "dark"] : [themeArg as ThemeName];
+  // Mondrian replaces `background`/`foreground` (see core/mondrian.ts), so both
+  // themes would render byte-identical output — render once and label it as the
+  // style rather than as a theme.
+  const mondrian = flags.mondrian === "true";
+  const themes: ThemeName[] = mondrian
+    ? ["light"]
+    : themeArg === "both"
+      ? ["light", "dark"]
+      : [themeArg as ThemeName];
 
   // --- Resolve the input into { lat, lon, osm, base, outDir } ---
   const ts = stamp();
@@ -207,17 +227,18 @@ async function main() {
           foreground: theme.foreground,
           preset,
           ...allLayersOn(),
+          variant: mondrian ? "mondrian" : "ink",
         },
         osm,
       });
       const buf = type === "svg" ? canvas.toBuffer() : canvas.toBuffer("image/png");
-      const file = join(outDir, `${base}_${name}_${ts}.${type}`);
+      const file = join(outDir, `${base}_${mondrian ? "mondrian" : name}_${ts}.${type}`);
       writeFileSync(file, buf);
       const summary = Object.entries(counts)
         .filter(([, n]) => n > 0)
         .map(([layer, n]) => `${n} ${layer}`)
         .join(", ");
-      console.log(`[render] ${name}/${type}: ${summary} → ${file}`);
+      console.log(`[render] ${mondrian ? "mondrian" : name}/${type}: ${summary} → ${file}`);
     }
   }
 }

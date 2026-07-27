@@ -3,7 +3,9 @@ use std::sync::{Arc, Mutex as StdMutex};
 
 use tokio::sync::{oneshot, Mutex, Notify};
 
-use crate::config::{ColorPair, CustomCity, StylePreset, ThemeMode, UpdateCheck, UpdateMode};
+use crate::config::{
+    ColorPair, CustomCity, StylePreset, StyleVariant, ThemeMode, UpdateCheck, UpdateMode,
+};
 use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
@@ -43,6 +45,9 @@ pub struct AppState {
     pub show_airports: AtomicBool,
     pub show_railways: AtomicBool,
     pub show_aerialways: AtomicBool,
+    /// Which visual language the map is drawn in (issue #18). See
+    /// `config::Config::variant`.
+    pub variant: StdMutex<StyleVariant>,
     /// Whether the hidden Dev Mode tab is unlocked. Unlike `bypass_cache`, this
     /// is persisted (see `config::Config::dev_mode`) so the tab stays unlocked
     /// across restarts once the 7-click gesture in About has revealed it.
@@ -107,6 +112,7 @@ impl AppState {
             show_airports: AtomicBool::new(cfg.show_airports),
             show_railways: AtomicBool::new(cfg.show_railways),
             show_aerialways: AtomicBool::new(cfg.show_aerialways),
+            variant: StdMutex::new(cfg.variant),
             dev_mode: AtomicBool::new(cfg.dev_mode),
             bypass_cache: AtomicBool::new(false),
             proxy_enabled: AtomicBool::new(cfg.proxy_enabled),
