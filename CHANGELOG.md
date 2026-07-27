@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/RalfZhang/ink-city/compare/v0.7.1...v0.8.0) (2026-07-27)
+
+
+### Features
+
+* Arabic ([3d90871](https://github.com/RalfZhang/ink-city/commit/3d9087127bf0a1763e37a9057b4d88824316204f)), closes [#39](https://github.com/RalfZhang/ink-city/issues/39)
+* More languages ([af79dcf](https://github.com/RalfZhang/ink-city/commit/af79dcf9a47089cdcf431e8e019b72d25ddfb651)), closes [#37](https://github.com/RalfZhang/ink-city/issues/37)
+
+
+### Bug Fixes
+
+* i18n ([44766b3](https://github.com/RalfZhang/ink-city/commit/44766b35b1a3d6c3d11f201d435936ed08d3fd47))
+
 ## [0.7.1](https://github.com/RalfZhang/ink-city/compare/v0.7.0...v0.7.1) (2026-07-26)
 
 
