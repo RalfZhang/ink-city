@@ -11,6 +11,11 @@ import { dedupeAdjacent, roundPts } from "../geom";
 // narrow_gauge, all rendered as one dashed centerline. Deliberately excluded:
 //   • subway  — underground; the wallpaper shows above-ground features only.
 //   • tram    — runs in the street, so it would just retrace the road network.
+//   • service tracks — any `service=*` (yard, siding, spur, crossover, …), the
+//     parallel yard/siding clutter around stations. Dropping them matches OSM's
+//     standard rendering (openstreetmap-carto hides service track at low/mid
+//     zoom, so a station reads as a few mainline tracks instead of a tangle of
+//     sidings). Enforced twice — see isServiceTrack.
 // These match the roads/water/airports convention of drawing what's visible on
 // the ground.
 
@@ -21,11 +26,24 @@ type RawOsm = { elements?: RawWay[] };
 /** OSM `railway` values we collect (surface heavy/light rail). */
 const RAIL_TYPES = ["rail", "light_rail", "narrow_gauge"] as const;
 
-/** Union-query fragment selecting surface railway ways — composed by fetch-city.ts. */
+/**
+ * Is this a service track? The slim-side twin of `railwaysSelector`'s
+ * `[!service]`: both ask only whether the key is *present*, whatever its value,
+ * so the two can't drift apart on some `service=` value nobody enumerated. See
+ * the header for why these are excluded.
+ */
+const isServiceTrack = (tags: RawWay["tags"]) => tags?.service !== undefined;
+
+/**
+ * Union-query fragment selecting surface railway ways — composed by
+ * fetch-city.ts. `[!service]` drops service tracks at query time, so their
+ * geometry never crosses the wire (see the header, and isServiceTrack for the
+ * slim-side guarantee).
+ */
 export function railwaysSelector(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
   const re = `^(${RAIL_TYPES.join("|")})$`;
-  return `way[railway~"${re}"](${bb});`;
+  return `way[railway~"${re}"][!service](${bb});`;
 }
 
 /**
@@ -33,6 +51,9 @@ export function railwaysSelector(b: Bbox): string {
  * Coordinates are optionally rounded to `coordPrecision` decimals — mirrors
  * slimAirports. The `railway` subtype isn't kept: all collected types render
  * identically, so a single polyline shape is enough.
+ *
+ * Service tracks are skipped here too, so any Overpass payload is cleaned even
+ * if it carried them (see isServiceTrack).
  */
 export function slimRailways(raw: RawOsm, coordPrecision?: number): RailwayFeature[] {
   const features: RailwayFeature[] = [];
@@ -41,6 +62,7 @@ export function slimRailways(raw: RawOsm, coordPrecision?: number): RailwayFeatu
     if (el.type !== "way" || !el.geometry || el.geometry.length < 2) continue;
     const rail = el.tags?.railway;
     if (!rail || !(RAIL_TYPES as readonly string[]).includes(rail)) continue;
+    if (isServiceTrack(el.tags)) continue;
     const pts = dedupeAdjacent(el.geometry);
     if (pts.length < 2) continue;
     features.push({ line: pts });

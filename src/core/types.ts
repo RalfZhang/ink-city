@@ -112,14 +112,20 @@ export type AerialwayFeature = { line: Geom[] };
 
 /**
  * The OSM container the renderer reads. `elements` (roads) is the original,
- * always-present shape. `water`, `airports`, and `v` are additive and
- * backward-compatible: old clients ignore unknown keys and render roads only,
- * and new clients treat a missing `water`/`airports` (only possible for data
+ * always-present shape. Every other key — `v` and each optional layer below — is
+ * additive and backward-compatible: old clients ignore unknown keys and render
+ * roads only, and new clients treat a missing layer (only possible for data
  * cached before that layer shipped) as "none of that layer".
  */
 export type Osm = {
   elements?: Way[];
-  /** Schema version (see OSM_SCHEMA_VERSION). Absent ⇒ pre-water data (roads only); `1` = roads + water; `2`/`3` = adds airports; `4` = adds railways; `5`+ = adds aerialways. */
+  /**
+   * Schema version. Absent ⇒ the oldest payloads (roads only); otherwise see
+   * OSM_SCHEMA_VERSION in core/constants.ts, which owns the history and the
+   * rule for bumping it. Don't infer which layers a payload carries from `v` —
+   * read the keys below. `v` is for cache invalidation and forward-compat, and
+   * one version has covered more than one change to the payload.
+   */
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];

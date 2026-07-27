@@ -34,8 +34,13 @@ export const RAILWAY_ALPHA = 0.7;
 // History: 1 = roads + water; 2 = adds the airports layer (runway + apron);
 // 3 = airports layer reshaped to runway + taxiway centerlines (apron dropped);
 // 4 = adds the railways layer (surface rail centerlines);
-// 5 = adds the aerialways layer (cable car / ropeway centerlines).
-export const OSM_SCHEMA_VERSION = 4;
+// 5 = adds the aerialways layer (cable car / ropeway centerlines) AND drops
+//     `service=*` tracks from the railways layer (why: osm/railways.ts).
+//     Two changes share one number because the aerialways layer (#33) shipped
+//     with this constant still reading 4, so it never invalidated the cached
+//     payloads; the #44 railway change is what finally bumps it, and that one
+//     bump backfills both.
+export const OSM_SCHEMA_VERSION = 5;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
