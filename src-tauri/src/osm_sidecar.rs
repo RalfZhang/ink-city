@@ -11,14 +11,13 @@ use crate::state::AppState;
 
 /// Fetch OSM data for `b` by invoking the bundled `osm-cli` sidecar in
 /// single-shot "fetch" mode — the exact same TypeScript implementation
-/// (`scripts/osm-cli.ts` → `src/core/fetch-city.ts`) that produces the
+/// (`scripts/osm-cli.ts` → `src/core/osm/fetch-city.ts`) that produces the
 /// precached CDN payload, run live. Used whenever CDN-cached data isn't
 /// available: a CDN miss on the daily rotation, or (in the future) a
 /// user-entered custom city/coordinates, which are never precached. Because
-/// both paths go through this one binary — and neither passes `--layers`, so
-/// both fall through to `osm-cli`'s all-layers default — the live fallback
-/// always carries the same layers as the CDN, instead of the roads-only gap
-/// the old hand-written Rust Overpass client left.
+/// both paths go through this one binary — which always fetches every layer —
+/// the live fallback always carries the same layers as the CDN, instead of the
+/// roads-only gap the old hand-written Rust Overpass client left.
 pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
     let sidecar = app
         .shell()

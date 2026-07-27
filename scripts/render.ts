@@ -51,7 +51,7 @@ import {
   type Style,
   type StylePreset,
 } from "../src/core/index.ts";
-import { fetchCityData } from "../src/core/fetch-city.ts";
+import { fetchCityData } from "../src/core/osm/index.ts";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");
@@ -157,7 +157,7 @@ async function main() {
 
     console.log(`[render] ${lat}/${lon} @ ${width}x${height} ${preset} → ${types.join("+")} (${themes.join(", ")})`);
     console.log(`[render] fetching roads + water + airports + railways + aerialways from Overpass ...`);
-    osm = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION, spacingMs: 1500 });
+    osm = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION });
 
     mkdirSync(outDir, { recursive: true });
     // Persist the raw payload (timestamped) so it can be replayed offline later.

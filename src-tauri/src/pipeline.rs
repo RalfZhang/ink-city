@@ -171,7 +171,7 @@ async fn render_bytes_for(
     // rectangle). The CDN square is a superset of `bbox`, so the renderer
     // projects within `bbox` and clips the rest; the sidecar fetches exactly
     // `bbox` to save bandwidth. Both the CDN payload and the sidecar go
-    // through the same TS implementation (src/core/fetch-city.ts), so a CDN
+    // through the same TS implementation (src/core/osm/fetch-city.ts), so a CDN
     // miss never produces data poorer than the CDN's (e.g. water is never
     // missing just because we fell back).
     // Dev Mode's "bypass cache & CDN" toggle: skip the day-cache read and the

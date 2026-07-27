@@ -7,10 +7,13 @@ name: Precache OSM
 # (notably mainland China) get fast, reliable data. See scripts/osm-cli.ts and
 # src-tauri/src/cdn.rs.
 #
-# Each <id>.json is also published gzip-compressed as <id>.json.gz — jsDelivr
-# rejects individual files over its size cap, which large/dense cities' plain
-# JSON can exceed; the client fetches the .gz first and falls back to the
-# plain .json (kept for older clients / as a fallback) if that 404s.
+# Each <id>.json is also published gzip-compressed as <id>.json.gz. This is
+# NOT for bandwidth (jsDelivr already transparently gzips .json responses over
+# the wire): it's to stay under jsDelivr's 20 MB per-file CDN cap, which
+# large/dense cities' plain JSON can exceed. gzip shrinks those payloads back
+# under 20 MB so the CDN will serve them at all. The client fetches the .gz
+# first and falls back to the plain .json (kept for older clients / as a
+# fallback) if that 404s.
 
 on:
   schedule:
@@ -84,7 +87,8 @@ jobs:
       - name: Pre-cache upcoming cities
         run: npx -y tsx@4 scripts/osm-cli.ts precache data-out/osm 7
 
-      # Gzip every cached payload alongside the original (kept for older
+      # Gzip every cached payload alongside the original so large cities land
+      # under jsDelivr's 20 MB per-file cap (the .json itself is kept for older
       # clients / as a fallback — see cdn.rs). `if: always()` so cities fetched
       # before an alarming precache failure still get compressed and
       # published. `-f` re-compresses on every run so a changed .json (or a

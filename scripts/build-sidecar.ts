@@ -8,7 +8,7 @@
 // Runs automatically (host triple) before every `npm run tauri ...` via the
 // "pretauri" npm script hook, so a fresh clone just needs bun installed —
 // no separate manual step. Re-run it yourself to pick up changes to
-// scripts/osm-cli.ts or src/core/{overpass,water,fetch-city,layers}.ts
+// scripts/osm-cli.ts or src/core/osm/*.ts (transport, layers, fetch-city)
 // without going through `tauri dev`/`build`.
 //
 // Usage:

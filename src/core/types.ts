@@ -43,8 +43,9 @@ export type Geom = { lat: number; lon: number };
 export type Way = { type: "way"; geometry?: Geom[]; tags?: { highway?: string } };
 
 // --- Water layer ---
-// Pre-assembled at precache time (the heavy stitching lives in src/core/water.ts
-// and runs in CI, never on the client) so the renderer just fills polygons.
+// Pre-assembled at precache time (the heavy stitching lives in
+// src/core/osm/water.ts and runs in CI, never on the client) so the renderer
+// just fills polygons.
 
 /** A polygon ready to fill: one outer ring + zero or more holes (islands). */
 export type WaterPolygon = { outer: Geom[]; holes?: Geom[][] };

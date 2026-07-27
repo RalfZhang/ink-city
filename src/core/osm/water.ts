@@ -4,18 +4,17 @@
 import polygonClipping, { type MultiPolygon, type Ring } from "polygon-clipping";
 const { difference, union } = polygonClipping;
 
-import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "./types";
-import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
-import { TOL, samePt, dedupeAdjacent, roundPts } from "./geom";
+import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "../types";
+import { TOL, samePt, dedupeAdjacent, roundPts } from "../geom";
 
 // Water layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
-// the client: it fetches OSM water + coastline for a bbox and assembles it
-// into ready-to-fill polygons (+ thin waterway lines) so the renderer
-// (src/core/render.ts) only has to fill/stroke them. All the fiddly geometry
-// lives here, in geographic (lat/lon) space where OSM's "land on the left,
-// water on the right" rule for coastlines holds as written. Mirrors the road
-// path in overpass.ts. The "water" layer implementation dispatched by
+// the client: it contributes a selector to fetch-city.ts's union query and
+// assembles that query's raw water + coastline elements into ready-to-fill
+// polygons (+ thin waterway lines) so the renderer (src/core/render.ts) only
+// has to fill/stroke them. All the fiddly geometry lives here, in geographic
+// (lat/lon) space where OSM's "land on the left, water on the right" rule for
+// coastlines holds as written. The "water" layer implementation dispatched by
 // fetch-city.ts's fetchCityData().
 //
 // This module is deliberately NOT re-exported from ./index (the client barrel):
@@ -37,29 +36,23 @@ type RawOsm = { elements?: RawElement[] };
 
 const LINE_CLASSES = new Set<WaterLineClass>(["river", "canal", "stream", "drain", "ditch"]);
 
-/** Overpass QL fetching area water, coastline, and linear waterways. */
-export function buildWaterQuery(b: Bbox): string {
+/**
+ * Union-query fragment selecting area water, coastline, and linear waterways —
+ * composed into fetch-city.ts's single Overpass query. Includes `relation[…]`
+ * members (assembled by slimWater); the shared `out geom;` there emits their
+ * geometry.
+ */
+export function waterSelector(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
   return (
-    `[out:json][timeout:90];(` +
     `way[natural=water](${bb});way[waterway=riverbank](${bb});` +
     `way[water](${bb});way[landuse=reservoir](${bb});way[landuse=basin](${bb});` +
     `relation[natural=water](${bb});relation[waterway=riverbank](${bb});` +
     `relation[water](${bb});relation[landuse=reservoir](${bb});relation[landuse=basin](${bb});` +
     `way[natural=coastline](${bb});` +
     `way[waterway=river](${bb});way[waterway=canal](${bb});way[waterway=stream](${bb});` +
-    `way[waterway=drain](${bb});way[waterway=ditch](${bb});` +
-    `);out geom;`
+    `way[waterway=drain](${bb});way[waterway=ditch](${bb});`
   );
-}
-
-/** Fetch the water layer for `b`. Shares overpass.ts mirror/retry handling. */
-export async function fetchWater(
-  b: Bbox,
-  mirrors: readonly string[] = MIRRORS,
-  opts: FetchOptions = {},
-): Promise<RawOsm> {
-  return (await fetchOverpass(buildWaterQuery(b), mirrors, opts)) as RawOsm;
 }
 
 // --- geometry helpers ---

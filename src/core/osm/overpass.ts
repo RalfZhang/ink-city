@@ -1,44 +1,16 @@
-import type { Bbox, Osm } from "./types";
-
-// Overpass road-geometry fetch with mirror fallback. Uses the global `fetch`,
-// so it runs in the browser, in Node 18+ (the CI pre-cache script), and in
-// Deno. The only Overpass client in the codebase — src-tauri's live fallback
-// shells out to this via scripts/osm-cli.ts (see src-tauri/src/osm_sidecar.rs)
-// instead of maintaining a separate Rust implementation.
+// The Overpass HTTP transport: mirror rotation + rate-limit retry, shared by
+// every layer. Uses the global `fetch`, so it runs in the browser, in Node 18+
+// (the CI pre-cache script), and in Deno. The only Overpass client in the
+// codebase — src-tauri's live fallback shells out to this via scripts/osm-cli.ts
+// (see src-tauri/src/osm_sidecar.rs) instead of maintaining a separate Rust
+// implementation. fetch-city.ts composes every layer's selector (./roads,
+// ./water, …) into one union query and POSTs it here once (see fetchOverpass).
 
 export const MIRRORS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
 ] as const;
-
-export function buildQuery(b: Bbox): string {
-  return `[out:json][timeout:90];way[highway](${b.south},${b.west},${b.north},${b.east});out geom;`;
-}
-
-/**
- * Strip an Overpass response down to only what the renderer reads: `way`
- * elements with a `highway` tag and a 2+ point geometry. Drops node ids, bounds
- * and every other tag. Optionally rounds coordinates to `coordPrecision`
- * decimals (5 ≈ 1m, sub-pixel at our 20km scale) to shrink the payload further.
- * Used to keep the CDN-served cache small for slow/blocked networks.
- */
-export function slimRoads(osm: Osm, coordPrecision?: number): Osm {
-  const round = (v: number) =>
-    coordPrecision === undefined
-      ? v
-      : Math.round(v * 10 ** coordPrecision) / 10 ** coordPrecision;
-  const elements = (osm.elements ?? [])
-    .filter(
-      (el) => el.type === "way" && !!el.tags?.highway && !!el.geometry && el.geometry.length >= 2,
-    )
-    .map((el) => ({
-      type: "way" as const,
-      geometry: el.geometry!.map((g) => ({ lat: round(g.lat), lon: round(g.lon) })),
-      tags: { highway: el.tags!.highway },
-    }));
-  return { elements };
-}
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -50,25 +22,13 @@ export type FetchOptions = {
 };
 
 /**
- * Fetch road geometry for `b`, trying each mirror in turn. Overpass returns 429
- * ("rate limited — slow down") and 504 ("no free slot") under load, especially
- * from shared IPs like CI runners, so when a whole round of mirrors fails on
- * those we wait and retry rather than giving up. Honors the server's
+ * POST an Overpass QL `query` to the mirrors, trying each in turn. Overpass
+ * returns 429 ("rate limited — slow down") and 504 ("no free slot") under load,
+ * especially from shared IPs like CI runners, so when a whole round of mirrors
+ * fails on those we wait and retry rather than giving up. Honors the server's
  * `Retry-After` header when present, otherwise uses exponential backoff with
- * jitter. Throws only after all retries are exhausted.
- */
-export async function fetchRoads(
-  b: Bbox,
-  mirrors: readonly string[] = MIRRORS,
-  opts: FetchOptions = {},
-): Promise<Osm> {
-  return (await fetchOverpass(buildQuery(b), mirrors, opts)) as Osm;
-}
-
-/**
- * POST an arbitrary Overpass QL `query` to the mirrors with the same rate-limit
- * handling as {@link fetchRoads}. Returns the parsed JSON untyped — callers
- * shape it (roads, water, …). Shared by `fetchRoads` and the water fetch.
+ * jitter. Throws only after all retries are exhausted. Returns the parsed JSON
+ * untyped — callers shape it (roads, water, …).
  */
 export async function fetchOverpass(
   query: string,

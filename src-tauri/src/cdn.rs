@@ -12,7 +12,7 @@ use crate::github_mirror;
 // sidecar run live, because jsDelivr is reliably reachable from mainland
 // China and the slim payload is small. A miss (404 / not yet cached / network
 // error) just falls back to the sidecar, which itself falls back across
-// Overpass mirrors (see osm_sidecar.rs / core/overpass.ts).
+// Overpass mirrors (see osm_sidecar.rs / core/osm/overpass.ts).
 //
 // See `github_mirror` for the mirrored-host fallback order and rationale.
 const GIT_REF: &str = "data";
@@ -24,10 +24,12 @@ pub async fn fetch_cached_osm(city_id: u64) -> Result<serde_json::Value> {
 
     let mut last_err = None;
     for base in bases {
-        // jsDelivr (and GitHub raw) reject/omit individual files over their
-        // size cap, which large/dense cities' plain JSON can exceed — the
-        // workflow publishes a gzip-compressed sibling for exactly that
-        // reason (see precache.yml), so prefer it. Fall back to the plain
+        // jsDelivr rejects individual files over its 20 MB per-file cap, which
+        // large/dense cities' plain JSON can exceed. The workflow publishes a
+        // gzip-compressed sibling to bring those payloads back under 20 MB so
+        // the CDN will serve them at all (see precache.yml) — this is about the
+        // file-size cap, not bandwidth, since jsDelivr already gzips .json over
+        // the wire transparently. So prefer the .gz. Fall back to the plain
         // .json on the *same* host (branch not yet re-published with .gz
         // files, or this particular id predates that) before moving to the
         // next host entirely.

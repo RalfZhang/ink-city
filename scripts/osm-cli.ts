@@ -4,22 +4,23 @@
 // compiled to a standalone binary, as the desktop app's sidecar for live
 // fetches (a CDN miss on the daily rotation, or a user-entered custom
 // city/coordinates, which are never precached). Both paths go through the same
-// src/core/fetch-city.ts, so the live fallback always gets the same layers
+// src/core/osm/fetch-city.ts, so the live fallback always gets the same layers
 // (water included) as the CDN — see that module's header for why.
 //
 // Usage:
 //   osm-cli precache [outDir] [days]
-//   osm-cli fetch --south=.. --west=.. --north=.. --east=.. [--layers=water] [--precision=5]
+//   osm-cli fetch --south=.. --west=.. --north=.. --east=.. [--precision=5]
 //
 // `precache` mode: for the next N days, pick the rotation's city (same logic
 // the desktop client uses) and fetch a 20km-square, slimmed for size, into
 // <outDir>/<city.id>.json. Already-present cities are skipped; cities no
 // longer in the window are removed. The CI workflow gzip-compresses each
 // <city.id>.json into a <city.id>.json.gz sibling before publishing (both are
-// served from the `data` branch — jsDelivr enforces a per-file size cap that
-// the plain JSON can exceed for large/dense cities, so the client prefers the
-// .gz and falls back to the plain .json for older data/clients — see
-// src-tauri/src/cdn.rs).
+// served from the `data` branch). The gzip step exists to keep large/dense
+// cities under jsDelivr's 20 MB per-file cap that their plain JSON can exceed
+// — it's about the file-size limit, not bandwidth (jsDelivr already gzips
+// .json responses over the wire). The client prefers the .gz and falls back
+// to the plain .json for older data/clients — see src-tauri/src/cdn.rs.
 //
 // `fetch` mode: fetch exactly the given bbox and print one JSON payload to
 // stdout (nothing else goes to stdout — diagnostics go to stderr). This is
@@ -30,8 +31,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { pickCityForDate, bboxForScreen, OSM_SCHEMA_VERSION, type City, type Bbox } from "../src/core/index.ts";
-import { fetchCityData } from "../src/core/fetch-city.ts";
-import { LAYER_IDS, isLayerId, type LayerId } from "../src/core/layers.ts";
+import { fetchCityData } from "../src/core/osm/index.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -55,18 +55,6 @@ function parseFlags(args: string[]): Record<string, string> {
   return out;
 }
 
-function parseLayers(spec: string | undefined): LayerId[] {
-  if (spec === undefined) return [...LAYER_IDS];
-  return spec
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((id) => {
-      if (!isLayerId(id)) throw new Error(`unknown layer "${id}" (known: ${LAYER_IDS.join(", ")})`);
-      return id;
-    });
-}
-
 // ---- fetch mode: one bbox, one JSON payload to stdout ----
 
 async function runFetch(args: string[]): Promise<void> {
@@ -79,10 +67,9 @@ async function runFetch(args: string[]): Promise<void> {
     return n;
   };
   const bbox: Bbox = { south: need("south"), west: need("west"), north: need("north"), east: need("east") };
-  const layers = parseLayers(flags.layers);
   const precision = flags.precision !== undefined ? Number(flags.precision) : COORD_PRECISION;
 
-  const data = await fetchCityData(bbox, { layers, coordPrecision: precision, spacingMs: 1500 });
+  const data = await fetchCityData(bbox, { coordPrecision: precision });
   process.stdout.write(JSON.stringify(data));
 }
 
@@ -185,7 +172,7 @@ async function runPrecache(args: string[]): Promise<void> {
     first = false;
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
-      const out = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION, spacingMs: 1500 });
+      const out = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION });
       writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify(out));
       cached.add(id);
       fetched++;
@@ -236,7 +223,7 @@ async function main() {
   const [mode, ...rest] = process.argv.slice(2);
   if (mode === "fetch") return runFetch(rest);
   if (mode === "precache") return runPrecache(rest);
-  throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir] [days]\n  fetch --south=.. --west=.. --north=.. --east=.. [--layers=water] [--precision=5]`);
+  throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir] [days]\n  fetch --south=.. --west=.. --north=.. --east=.. [--precision=5]`);
 }
 
 main().catch((e) => {

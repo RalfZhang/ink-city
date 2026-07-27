@@ -1,5 +1,4 @@
-import type { AerialwayFeature, Bbox, Geom } from "./types";
-import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
+import type { AerialwayFeature, Bbox, Geom } from "../types";
 
 // Aerialway layer extraction — cable cars, gondolas, chair/drag lifts, etc.
 // (OSM aerialway=*). Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's batch
@@ -38,21 +37,12 @@ export const AERIALWAY_LIFT_KINDS = [
   "goods", "zip_line", // cargo ropeway / gravity zip line
 ] as const;
 
-/** Overpass QL fetching aerialway (cable car / ropeway) lift ways. */
-export function buildAerialwaysQuery(b: Bbox): string {
+/** Union-query fragment selecting aerialway (cable car / ropeway) lift ways — composed by fetch-city.ts. */
+export function aerialwaysSelector(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
   // Positive whitelist: only the AERIALWAY_LIFT_KINDS lines, matching osm-carto.
   const kinds = AERIALWAY_LIFT_KINDS.join("|");
-  return `[out:json][timeout:90];(way[aerialway~"^(${kinds})$"](${bb}););out geom;`;
-}
-
-/** Fetch the aerialway layer for `b`. Shares overpass.ts mirror/retry handling. */
-export async function fetchAerialways(
-  b: Bbox,
-  mirrors: readonly string[] = MIRRORS,
-  opts: FetchOptions = {},
-): Promise<RawOsm> {
-  return (await fetchOverpass(buildAerialwaysQuery(b), mirrors, opts)) as RawOsm;
+  return `way[aerialway~"^(${kinds})$"](${bb});`;
 }
 
 const TOL = 1e-7; // ~1cm; matches airports.ts/water.ts endpoint-match precision

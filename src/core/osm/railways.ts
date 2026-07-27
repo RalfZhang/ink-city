@@ -1,6 +1,5 @@
-import type { Bbox, RailwayFeature } from "./types";
-import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
-import { dedupeAdjacent, roundPts } from "./geom";
+import type { Bbox, RailwayFeature } from "../types";
+import { dedupeAdjacent, roundPts } from "../geom";
 
 // Railway layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
@@ -22,20 +21,11 @@ type RawOsm = { elements?: RawWay[] };
 /** OSM `railway` values we collect (surface heavy/light rail). */
 const RAIL_TYPES = ["rail", "light_rail", "narrow_gauge"] as const;
 
-/** Overpass QL fetching surface railway ways. */
-export function buildRailwaysQuery(b: Bbox): string {
+/** Union-query fragment selecting surface railway ways — composed by fetch-city.ts. */
+export function railwaysSelector(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
   const re = `^(${RAIL_TYPES.join("|")})$`;
-  return `[out:json][timeout:90];(way[railway~"${re}"](${bb}););out geom;`;
-}
-
-/** Fetch the railway layer for `b`. Shares overpass.ts mirror/retry handling. */
-export async function fetchRailways(
-  b: Bbox,
-  mirrors: readonly string[] = MIRRORS,
-  opts: FetchOptions = {},
-): Promise<RawOsm> {
-  return (await fetchOverpass(buildRailwaysQuery(b), mirrors, opts)) as RawOsm;
+  return `way[railway~"${re}"](${bb});`;
 }
 
 /**

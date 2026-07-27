@@ -1,6 +1,5 @@
-import type { AirportFeature, Bbox } from "./types";
-import { fetchOverpass, MIRRORS, type FetchOptions } from "./overpass";
-import { dedupeAdjacent, roundPts } from "./geom";
+import type { AirportFeature, Bbox } from "../types";
+import { dedupeAdjacent, roundPts } from "../geom";
 
 // Airport layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
 // batch precache and the desktop app's live sidecar fallback alike), never on
@@ -19,23 +18,10 @@ type RawGeom = { lat: number; lon: number };
 type RawWay = { type: "way"; tags?: Record<string, string>; geometry?: RawGeom[] };
 type RawOsm = { elements?: RawWay[] };
 
-/** Overpass QL fetching runway and taxiway ways. */
-export function buildAirportsQuery(b: Bbox): string {
+/** Union-query fragment selecting runway/taxiway ways — composed by fetch-city.ts. */
+export function airportsSelector(b: Bbox): string {
   const bb = `${b.south},${b.west},${b.north},${b.east}`;
-  return (
-    `[out:json][timeout:90];(` +
-    `way[aeroway=runway](${bb});way[aeroway=taxiway](${bb});` +
-    `);out geom;`
-  );
-}
-
-/** Fetch the airports layer for `b`. Shares overpass.ts mirror/retry handling. */
-export async function fetchAirports(
-  b: Bbox,
-  mirrors: readonly string[] = MIRRORS,
-  opts: FetchOptions = {},
-): Promise<RawOsm> {
-  return (await fetchOverpass(buildAirportsQuery(b), mirrors, opts)) as RawOsm;
+  return `way[aeroway=runway](${bb});way[aeroway=taxiway](${bb});`;
 }
 
 /**
