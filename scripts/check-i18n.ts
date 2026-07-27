@@ -2,8 +2,8 @@
 // Guards locale parity: every key in the source-of-truth locale (en) must exist
 // in every other locale, and no locale may carry stray keys. Without this a
 // missing translation silently falls back to English in the UI and nothing in
-// the build complains. Keep this in sync with the locales wired into
-// `src/i18n/index.ts`.
+// the build complains. The locale list is imported from `src/i18n/locales.ts`,
+// so it tracks the shipped locales with no manual sync.
 //
 //   npm run check:i18n
 //
@@ -13,33 +13,16 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { LOCALES } from "../src/i18n/locales";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const i18nDir = join(here, "..", "src", "i18n");
 
-// The first entry is the source of truth (matches `fallbackLng` in index.ts).
+// Codes come straight from the shipped-locales table, so this stays in lockstep
+// with the app automatically. "en" is the source of truth (matches `fallbackLng`
+// in index.ts) and is compared against every other code.
 const SOURCE = "en";
-const OTHERS = [
-  "zh-Hans",
-  "zh-Hant",
-  "es",
-  "fr",
-  "de",
-  "ar",
-  "ja",
-  "ko",
-  "pt",
-  "hi",
-  "id",
-  "vi",
-  "th",
-  "it",
-  "tr",
-  "ru",
-  "nl",
-  "pl",
-  "uk",
-];
+const OTHERS = LOCALES.map((l) => l.code).filter((code) => code !== SOURCE);
 
 type Json = Record<string, unknown>;
 

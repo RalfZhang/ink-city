@@ -1,119 +1,28 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import en from "./en.json";
-import zhHans from "./zh-Hans.json";
-import zhHant from "./zh-Hant.json";
-import es from "./es.json";
-import fr from "./fr.json";
-import de from "./de.json";
-import ar from "./ar.json";
-import ja from "./ja.json";
-import ko from "./ko.json";
-import pt from "./pt.json";
-import hi from "./hi.json";
-import id from "./id.json";
-import vi from "./vi.json";
-import th from "./th.json";
-import it from "./it.json";
-import tr from "./tr.json";
-import ru from "./ru.json";
-import nl from "./nl.json";
-import pl from "./pl.json";
-import uk from "./uk.json";
+import { LOCALES, SUPPORTED, dirForLocale, type LocaleCode } from "./locales";
+
+export { LOCALES, RTL_LOCALES, dirForLocale, type LocaleCode } from "./locales";
 
 export const STORAGE_KEY = "inkcity:lang";
 
-export type LocaleCode =
-  | "en"
-  | "zh-Hans"
-  | "zh-Hant"
-  | "es"
-  | "fr"
-  | "de"
-  | "ar"
-  | "ja"
-  | "ko"
-  | "pt"
-  | "hi"
-  | "id"
-  | "vi"
-  | "th"
-  | "it"
-  | "tr"
-  | "ru"
-  | "nl"
-  | "pl"
-  | "uk";
 export type LocaleChoice = "auto" | LocaleCode;
 
-const SUPPORTED: LocaleCode[] = [
-  "en",
-  "zh-Hans",
-  "zh-Hant",
-  "es",
-  "fr",
-  "de",
-  "ar",
-  "ja",
-  "ko",
-  "pt",
-  "hi",
-  "id",
-  "vi",
-  "th",
-  "it",
-  "tr",
-  "ru",
-  "nl",
-  "pl",
-  "uk",
-];
-
-/** Locales that render right-to-left (drives the `dir` attribute — see applyDir). */
-export const RTL_LOCALES: readonly LocaleCode[] = ["ar"];
-
-/** Writing direction for a locale — "rtl" for Arabic etc., "ltr" otherwise. */
-export function dirForLocale(lng: string): "rtl" | "ltr" {
-  return (RTL_LOCALES as readonly string[]).includes(lng) ? "rtl" : "ltr";
-}
-
-
 function isLocaleCode(v: unknown): v is LocaleCode {
-  return typeof v === "string" && (SUPPORTED as string[]).includes(v);
+  return typeof v === "string" && (SUPPORTED as readonly string[]).includes(v);
 }
 
 /**
- * Resolve the OS locale to one of our supported codes. Chinese branches on
- * script/region: Traditional for Taiwan / Hong Kong / Macau (or an explicit
+ * Resolve the OS locale to one of our supported codes via each locale's own
+ * `detect` predicate (see locales.ts). Predicates are mutually exclusive, so
+ * the first match wins; nothing matching falls back to English. Chinese branches
+ * on script/region: Traditional for Taiwan / Hong Kong / Macau (or an explicit
  * `Hant` script), Simplified otherwise. Spanish / French / German match on the
  * primary subtag (any region — `es-419`, `fr-CA`, `de-AT`, … all collapse).
  */
 function detectFromNavigator(): LocaleCode {
   const lang = (navigator.language || "en").toLowerCase();
-  if (lang.startsWith("zh")) {
-    if (lang.includes("hant") || lang.includes("tw") || lang.includes("hk") || lang.includes("mo")) {
-      return "zh-Hant";
-    }
-    return "zh-Hans";
-  }
-  if (lang.startsWith("es")) return "es";
-  if (lang.startsWith("fr")) return "fr";
-  if (lang.startsWith("de")) return "de";
-  if (lang.startsWith("ar")) return "ar";
-  if (lang.startsWith("ja")) return "ja";
-  if (lang.startsWith("ko")) return "ko";
-  if (lang.startsWith("pt")) return "pt";
-  if (lang.startsWith("hi")) return "hi";
-  if (lang.startsWith("id")) return "id";
-  if (lang.startsWith("vi")) return "vi";
-  if (lang.startsWith("th")) return "th";
-  if (lang.startsWith("it")) return "it";
-  if (lang.startsWith("tr")) return "tr";
-  if (lang.startsWith("ru")) return "ru";
-  if (lang.startsWith("nl")) return "nl";
-  if (lang.startsWith("pl")) return "pl";
-  if (lang.startsWith("uk")) return "uk";
-  return "en";
+  return LOCALES.find((l) => l.detect(lang))?.code ?? "en";
 }
 
 function initialLanguage(): LocaleCode {
@@ -123,31 +32,12 @@ function initialLanguage(): LocaleCode {
 }
 
 i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: en },
-    "zh-Hans": { translation: zhHans },
-    "zh-Hant": { translation: zhHant },
-    es: { translation: es },
-    fr: { translation: fr },
-    de: { translation: de },
-    ar: { translation: ar },
-    ja: { translation: ja },
-    ko: { translation: ko },
-    pt: { translation: pt },
-    hi: { translation: hi },
-    id: { translation: id },
-    vi: { translation: vi },
-    th: { translation: th },
-    it: { translation: it },
-    tr: { translation: tr },
-    ru: { translation: ru },
-    nl: { translation: nl },
-    pl: { translation: pl },
-    uk: { translation: uk },
-  },
+  resources: Object.fromEntries(
+    LOCALES.map((l) => [l.code, { translation: l.translation }]),
+  ),
   lng: initialLanguage(),
   fallbackLng: "en",
-  supportedLngs: SUPPORTED,
+  supportedLngs: SUPPORTED as string[],
   interpolation: { escapeValue: false },
 });
 

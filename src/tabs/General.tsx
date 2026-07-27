@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import SettingRow from "@/components/SettingRow";
 import ProxySetting from "@/components/ProxySetting";
-import { getLocaleChoice, setLocaleChoice, type LocaleChoice } from "../i18n";
+import { getLocaleChoice, setLocaleChoice, LOCALES, type LocaleChoice } from "../i18n";
 import type { Status } from "../types";
 
 type Props = {
@@ -108,26 +108,11 @@ export default function General({ status, refresh, onError }: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="auto">{t("general.languageAuto")}</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="zh-Hans">简体中文</SelectItem>
-                  <SelectItem value="zh-Hant">繁體中文</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="de">Deutsch</SelectItem>
-                  <SelectItem value="ar">العربية</SelectItem>
-                  <SelectItem value="ja">日本語</SelectItem>
-                  <SelectItem value="ko">한국어</SelectItem>
-                  <SelectItem value="pt">Português</SelectItem>
-                  <SelectItem value="hi">हिन्दी</SelectItem>
-                  <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                  <SelectItem value="vi">Tiếng Việt</SelectItem>
-                  <SelectItem value="th">ไทย</SelectItem>
-                  <SelectItem value="it">Italiano</SelectItem>
-                  <SelectItem value="tr">Türkçe</SelectItem>
-                  <SelectItem value="ru">Русский</SelectItem>
-                  <SelectItem value="nl">Nederlands</SelectItem>
-                  <SelectItem value="pl">Polski</SelectItem>
-                  <SelectItem value="uk">Українська</SelectItem>
+                  {LOCALES.map((l) => (
+                    <SelectItem key={l.code} value={l.code}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             }
