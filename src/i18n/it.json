@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} file rimossi · {{size}} liberati",
     "cleanCacheEmpty": "La cache è già vuota",
     "bypassCacheTitle": "Ignora cache e CDN",
-    "bypassCacheDesc": "Recupera i dati mappa in tempo reale dall'API Overpass, saltando la CDN e sovrascrivendo con essi la cache locale. Da usare quando si testano modifiche ai dati mappa. Si disattiva al riavvio."
+    "bypassCacheDesc": "Recupera i dati mappa in tempo reale dall'API Overpass, saltando la CDN e sovrascrivendo con essi la cache locale. Da usare quando si testano modifiche ai dati mappa. Si disattiva al riavvio.",
+    "openFullSize": "Doppio clic per aprire a dimensione reale",
+    "savedTo": "Salvato in {{path}}"
   },
   "common": {
     "loading": "caricamento…"

@@ -113,7 +113,9 @@
     "cleanCacheResult": "파일 {{files}}개 삭제됨 · {{size}} 확보됨",
     "cleanCacheEmpty": "캐시가 이미 비어 있습니다",
     "bypassCacheTitle": "캐시 및 CDN 우회",
-    "bypassCacheDesc": "CDN을 건너뛰고 Overpass API에서 지도 데이터를 실시간으로 가져와 로컬 캐시를 덮어씁니다. 지도 데이터 변경 사항을 테스트할 때 사용하세요. 다시 시작하면 꺼짐 상태로 초기화됩니다."
+    "bypassCacheDesc": "CDN을 건너뛰고 Overpass API에서 지도 데이터를 실시간으로 가져와 로컬 캐시를 덮어씁니다. 지도 데이터 변경 사항을 테스트할 때 사용하세요. 다시 시작하면 꺼짐 상태로 초기화됩니다.",
+    "openFullSize": "두 번 클릭하면 원본 크기로 열기",
+    "savedTo": "{{path}}에 저장했습니다"
   },
   "common": {
     "loading": "로딩 중…"

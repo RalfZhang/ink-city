@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} file dihapus · {{size}} dibebaskan",
     "cleanCacheEmpty": "Cache sudah kosong",
     "bypassCacheTitle": "Lewati cache & CDN",
-    "bypassCacheDesc": "Mengambil data peta secara langsung dari Overpass API, melewati CDN dan menimpa cache lokal dengannya. Gunakan saat menguji perubahan pada data peta. Kembali nonaktif saat dimulai ulang."
+    "bypassCacheDesc": "Mengambil data peta secara langsung dari Overpass API, melewati CDN dan menimpa cache lokal dengannya. Gunakan saat menguji perubahan pada data peta. Kembali nonaktif saat dimulai ulang.",
+    "openFullSize": "Klik dua kali untuk membuka ukuran penuh",
+    "savedTo": "Disimpan ke {{path}}"
   },
   "common": {
     "loading": "memuat…"

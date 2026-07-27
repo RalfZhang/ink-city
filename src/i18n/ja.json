@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} 個のファイルを削除・{{size}} を解放",
     "cleanCacheEmpty": "キャッシュはすでに空です",
     "bypassCacheTitle": "キャッシュとCDNを回避",
-    "bypassCacheDesc": "CDNを回避してOverpass APIから地図データをライブで取得し、ローカルキャッシュを上書きします。地図データの変更をテストする際に使用してください。再起動時にオフに戻ります。"
+    "bypassCacheDesc": "CDNを回避してOverpass APIから地図データをライブで取得し、ローカルキャッシュを上書きします。地図データの変更をテストする際に使用してください。再起動時にオフに戻ります。",
+    "openFullSize": "ダブルクリックで原寸表示",
+    "savedTo": "{{path}} に保存しました"
   },
   "common": {
     "loading": "読み込み中…"

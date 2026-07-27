@@ -113,7 +113,9 @@
     "cleanCacheResult": "Usunięto {{files}} plików · zwolniono {{size}}",
     "cleanCacheEmpty": "Pamięć podręczna jest już pusta",
     "bypassCacheTitle": "Pomiń pamięć podręczną i CDN",
-    "bypassCacheDesc": "Pobiera dane mapy na żywo z API Overpass, pomijając CDN i nadpisując nimi lokalną pamięć podręczną. Używaj podczas testowania zmian w danych mapy. Po ponownym uruchomieniu wraca do wyłączonego stanu."
+    "bypassCacheDesc": "Pobiera dane mapy na żywo z API Overpass, pomijając CDN i nadpisując nimi lokalną pamięć podręczną. Używaj podczas testowania zmian w danych mapy. Po ponownym uruchomieniu wraca do wyłączonego stanu.",
+    "openFullSize": "Kliknij dwukrotnie, aby otworzyć w pełnym rozmiarze",
+    "savedTo": "Zapisano w {{path}}"
   },
   "common": {
     "loading": "wczytywanie…"

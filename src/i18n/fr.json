@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} fichiers supprimés · {{size}} libérés",
     "cleanCacheEmpty": "Le cache est déjà vide",
     "bypassCacheTitle": "Contourner le cache et le CDN",
-    "bypassCacheDesc": "Récupère les données cartographiques en direct depuis l'API Overpass, en contournant le CDN et en écrasant le cache local. À utiliser pour tester des modifications des données cartographiques. Réinitialisé au redémarrage."
+    "bypassCacheDesc": "Récupère les données cartographiques en direct depuis l'API Overpass, en contournant le CDN et en écrasant le cache local. À utiliser pour tester des modifications des données cartographiques. Réinitialisé au redémarrage.",
+    "openFullSize": "Double-cliquez pour ouvrir en taille réelle",
+    "savedTo": "Enregistré dans {{path}}"
   },
   "common": {
     "loading": "chargement…"

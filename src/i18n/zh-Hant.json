@@ -113,7 +113,9 @@
     "cleanCacheResult": "已清理 {{files}} 個檔案 · 釋放 {{size}}",
     "cleanCacheEmpty": "快取已為空",
     "bypassCacheTitle": "略過快取和 CDN",
-    "bypassCacheDesc": "略過 CDN，直接透過 Overpass API 即時取得地圖資料並覆寫本機快取。除錯地圖資料改動時使用。重新啟動後自動關閉。"
+    "bypassCacheDesc": "略過 CDN，直接透過 Overpass API 即時取得地圖資料並覆寫本機快取。除錯地圖資料改動時使用。重新啟動後自動關閉。",
+    "openFullSize": "雙擊開啟原圖",
+    "savedTo": "已儲存至 {{path}}"
   },
   "common": {
     "loading": "載入中…"

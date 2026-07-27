@@ -113,7 +113,9 @@
     "cleanCacheResult": "Đã xóa {{files}} tệp · giải phóng {{size}}",
     "cleanCacheEmpty": "Bộ nhớ đệm đã trống",
     "bypassCacheTitle": "Bỏ qua bộ nhớ đệm & CDN",
-    "bypassCacheDesc": "Lấy dữ liệu bản đồ trực tiếp từ Overpass API, bỏ qua CDN và ghi đè bộ nhớ đệm cục bộ bằng dữ liệu đó. Dùng khi kiểm thử các thay đổi đối với dữ liệu bản đồ. Sẽ tắt lại khi khởi động lại."
+    "bypassCacheDesc": "Lấy dữ liệu bản đồ trực tiếp từ Overpass API, bỏ qua CDN và ghi đè bộ nhớ đệm cục bộ bằng dữ liệu đó. Dùng khi kiểm thử các thay đổi đối với dữ liệu bản đồ. Sẽ tắt lại khi khởi động lại.",
+    "openFullSize": "Nhấp đúp để mở kích thước gốc",
+    "savedTo": "Đã lưu vào {{path}}"
   },
   "common": {
     "loading": "đang tải…"

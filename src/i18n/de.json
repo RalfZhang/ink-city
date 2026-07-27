@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} Dateien entfernt · {{size}} freigegeben",
     "cleanCacheEmpty": "Cache ist bereits leer",
     "bypassCacheTitle": "Cache & CDN umgehen",
-    "bypassCacheDesc": "Ruft Kartendaten live über die Overpass-API ab, umgeht das CDN und überschreibt damit den lokalen Cache. Nützlich beim Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt."
+    "bypassCacheDesc": "Ruft Kartendaten live über die Overpass-API ab, umgeht das CDN und überschreibt damit den lokalen Cache. Nützlich beim Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt.",
+    "openFullSize": "Doppelklick für Originalgröße",
+    "savedTo": "Gespeichert unter {{path}}"
   },
   "common": {
     "loading": "Wird geladen…"

@@ -113,7 +113,9 @@
     "cleanCacheResult": "Removed {{files}} files · freed {{size}}",
     "cleanCacheEmpty": "Cache is already empty",
     "bypassCacheTitle": "Bypass cache & CDN",
-    "bypassCacheDesc": "Fetch map data live from the Overpass API, skipping the CDN and overwriting the local cache with it. Use when testing edits to the map data. Resets to off on restart."
+    "bypassCacheDesc": "Fetch map data live from the Overpass API, skipping the CDN and overwriting the local cache with it. Use when testing edits to the map data. Resets to off on restart.",
+    "openFullSize": "Double-click to open full size",
+    "savedTo": "Saved to {{path}}"
   },
   "common": {
     "loading": "loading…"

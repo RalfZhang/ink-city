@@ -518,6 +518,43 @@ pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
     Ok(CleanCacheResult { removed_files, freed_bytes })
 }
 
+/// Save a base64 PNG (e.g. the Dev Mode Advance Preview image) into the user's
+/// default Pictures folder and open it in the OS default image viewer, so it can
+/// be inspected full-size. Falls back to Downloads, then the app cache dir, if
+/// Pictures is unavailable. Returns the saved path (for the frontend to surface).
+#[tauri::command]
+pub fn save_and_open_image(
+    app: AppHandle,
+    file_name: String,
+    png_base64: String,
+) -> Result<String, String> {
+    use base64::Engine;
+    use tauri_plugin_opener::OpenerExt;
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(png_base64.as_bytes())
+        .map_err(|e| e.to_string())?;
+    let dir = app
+        .path()
+        .picture_dir()
+        .or_else(|_| app.path().download_dir())
+        .or_else(|_| app.path().app_cache_dir())
+        .map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    // Sanitize the caller-supplied stem so it's a safe single path component on
+    // both macOS and Windows (Windows forbids \ / : * ? " < > | ). Keep it simple.
+    let safe: String = file_name
+        .chars()
+        .map(|c| if c.is_alphanumeric() || c == '-' || c == '_' || c == '.' { c } else { '-' })
+        .collect();
+    let safe = if safe.is_empty() { "inkcity-preview".to_string() } else { safe };
+    let path = dir.join(format!("{safe}.png"));
+    std::fs::write(&path, &bytes).map_err(|e| e.to_string())?;
+    app.opener()
+        .open_path(path.to_string_lossy(), None::<&str>)
+        .map_err(|e| e.to_string())?;
+    Ok(path.to_string_lossy().to_string())
+}
+
 fn persist(app: &AppHandle) -> Result<(), String> {
     let s = app.state::<AppState>();
     let cfg = config::Config {

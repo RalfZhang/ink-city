@@ -42,6 +42,9 @@ export default function DevMode({ status, onError }: Props) {
   const [cleaning, setCleaning] = useState(false);
   const [cleanResult, setCleanResult] = useState<string | null>(null);
   const [bypassCache, setBypassCache] = useState(status.bypassCache);
+  // Where the last double-click wrote the PNG, shown in place of the hint so the
+  // user knows the file is on disk (and where) — see `openPreview`.
+  const [savedPath, setSavedPath] = useState<string | null>(null);
 
   const toggleBypassCache = async (on: boolean) => {
     setBypassCache(on);
@@ -53,12 +56,26 @@ export default function DevMode({ status, onError }: Props) {
     }
   };
 
+  const openPreview = async () => {
+    if (!preview) return;
+    try {
+      const path = await invoke<string>("save_and_open_image", {
+        fileName: `InkCity-${preview.date}-${preview.city.name}`,
+        pngBase64: preview.pngBase64,
+      });
+      setSavedPath(path);
+    } catch (e) {
+      onError(e);
+    }
+  };
+
   const runPreview = async (value: string) => {
     setDaysAhead(value);
     setLoading(true);
     try {
       const result = await invoke<PreviewResult>("preview_city", { daysAhead: Number(value) });
       setPreview(result);
+      setSavedPath(null);
     } catch (e) {
       onError(e);
     } finally {
@@ -88,6 +105,45 @@ export default function DevMode({ status, onError }: Props) {
 
   return (
     <div className="space-y-4 max-w-2xl">
+      <Card>
+        <CardContent>
+          <SettingRow
+            label={t("devMode.bypassCacheTitle")}
+            description={t("devMode.bypassCacheDesc")}
+            control={
+              <Switch checked={bypassCache} onCheckedChange={toggleBypassCache} />
+            }
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-2">
+          <SettingRow
+            label={t("devMode.cleanCacheTitle")}
+            description={t("devMode.cleanCacheDesc")}
+            control={
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={cleanCache}
+                disabled={cleaning}
+              >
+                {cleaning ? (
+                  <Loader2 className="animate-spin size-3.5" />
+                ) : (
+                  <Trash2 className="size-3.5" />
+                )}
+                {cleaning ? t("devMode.cleaning") : t("devMode.cleanCacheButton")}
+              </Button>
+            }
+          />
+          {cleanResult && (
+            <div className="text-xs text-muted-foreground">{cleanResult}</div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardContent className="space-y-4">
           <SettingRow
@@ -124,48 +180,15 @@ export default function DevMode({ status, onError }: Props) {
               <img
                 src={`data:image/png;base64,${preview.pngBase64}`}
                 alt={`${preview.city.name} preview`}
-                className="w-full rounded border"
+                className="w-full rounded border cursor-zoom-in"
+                title={t("devMode.openFullSize")}
+                onDoubleClick={openPreview}
               />
+              {/* Same line either way, so saving doesn't reflow the card. */}
+              <div className="text-xs text-muted-foreground break-all">
+                {savedPath ? t("devMode.savedTo", { path: savedPath }) : t("devMode.openFullSize")}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent>
-          <SettingRow
-            label={t("devMode.bypassCacheTitle")}
-            description={t("devMode.bypassCacheDesc")}
-            control={
-              <Switch checked={bypassCache} onCheckedChange={toggleBypassCache} />
-            }
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="space-y-2">
-          <SettingRow
-            label={t("devMode.cleanCacheTitle")}
-            description={t("devMode.cleanCacheDesc")}
-            control={
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={cleanCache}
-                disabled={cleaning}
-              >
-                {cleaning ? (
-                  <Loader2 className="animate-spin size-3.5" />
-                ) : (
-                  <Trash2 className="size-3.5" />
-                )}
-                {cleaning ? t("devMode.cleaning") : t("devMode.cleanCacheButton")}
-              </Button>
-            }
-          />
-          {cleanResult && (
-            <div className="text-xs text-muted-foreground">{cleanResult}</div>
           )}
         </CardContent>
       </Card>

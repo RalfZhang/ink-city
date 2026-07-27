@@ -113,7 +113,9 @@
     "cleanCacheResult": "{{files}} dosya kaldırıldı · {{size}} boşaltıldı",
     "cleanCacheEmpty": "Önbellek zaten boş",
     "bypassCacheTitle": "Önbelleği ve CDN'yi atla",
-    "bypassCacheDesc": "CDN'yi atlayarak harita verilerini Overpass API'sinden canlı olarak alır ve yerel önbelleği bununla değiştirir. Harita verilerindeki değişiklikleri test ederken kullanın. Yeniden başlatıldığında kapalı duruma döner."
+    "bypassCacheDesc": "CDN'yi atlayarak harita verilerini Overpass API'sinden canlı olarak alır ve yerel önbelleği bununla değiştirir. Harita verilerindeki değişiklikleri test ederken kullanın. Yeniden başlatıldığında kapalı duruma döner.",
+    "openFullSize": "Tam boyutta açmak için çift tıklayın",
+    "savedTo": "{{path}} konumuna kaydedildi"
   },
   "common": {
     "loading": "yükleniyor…"
