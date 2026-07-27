@@ -17,8 +17,13 @@ async function render(req: RenderReq): Promise<void> {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("canvas 2d unavailable");
 
-  const drawn = drawScene(ctx, req);
-  logInfo(`[renderer] drew ${drawn} ways at ${req.width}x${req.height} (preset=${req.style.preset})`);
+  const counts = drawScene(ctx, req);
+  const summary =
+    Object.entries(counts)
+      .filter(([, n]) => n > 0)
+      .map(([layer, n]) => `${n} ${layer}`)
+      .join(", ") || "nothing";
+  logInfo(`[renderer] drew ${summary} at ${req.width}x${req.height} (preset=${req.style.preset})`);
 
   const blob: Blob | null = await new Promise((r) => canvas.toBlob((b) => r(b), "image/png"));
   if (!blob) throw new Error("toBlob returned null");

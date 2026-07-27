@@ -198,7 +198,7 @@ async function main() {
     for (const type of types) {
       const canvas = type === "svg" ? createCanvas(width, height, "svg") : createCanvas(width, height);
       const ctx = canvas.getContext("2d") as unknown as CanvasRenderingContext2D;
-      const drawn = drawScene(ctx, {
+      const counts = drawScene(ctx, {
         bbox,
         width,
         height,
@@ -213,7 +213,11 @@ async function main() {
       const buf = type === "svg" ? canvas.toBuffer() : canvas.toBuffer("image/png");
       const file = join(outDir, `${base}_${name}_${ts}.${type}`);
       writeFileSync(file, buf);
-      console.log(`[render] ${name}/${type}: ${drawn} ways → ${file}`);
+      const summary = Object.entries(counts)
+        .filter(([, n]) => n > 0)
+        .map(([layer, n]) => `${n} ${layer}`)
+        .join(", ");
+      console.log(`[render] ${name}/${type}: ${summary} → ${file}`);
     }
   }
 }

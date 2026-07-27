@@ -1,4 +1,5 @@
 import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
+import type { LayerId } from "./osm/layers";
 import { project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA, RAILWAY_ALPHA } from "./constants";
 
@@ -167,12 +168,14 @@ function waterLineWidth(cls: string, scale: number): number {
  * the water layer shipped), so older payloads degrade gracefully. Polygon holes
  * (islands) are punched out with the even-odd rule, which is winding-direction
  * agnostic — water.ts only guarantees rings are closed, not their orientation.
+ * Returns the number of water features (filled bodies + linear waterways) drawn.
  */
-export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const water = req.osm.water;
-  if (!req.style.showWater || !water || water.length === 0) return;
+  if (!req.style.showWater || !water || water.length === 0) return 0;
   const { bbox, width, height, style } = req;
   const color = mixColor(style.foreground, style.background);
+  let drawn = 0;
 
   // Filled bodies.
   ctx.fillStyle = color;
@@ -182,6 +185,7 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
     addRing(ctx, f.polygon.outer, bbox, width, height);
     for (const hole of f.polygon.holes ?? []) addRing(ctx, hole, bbox, width, height);
     ctx.fill("evenodd");
+    drawn++;
   }
 
   // Linear waterways, grouped by width so we set lineWidth once per bucket.
@@ -196,6 +200,7 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
     const list = buckets.get(w) ?? [];
     list.push(f.line);
     buckets.set(w, list);
+    drawn++;
   }
   for (const [lw, lines] of Array.from(buckets.entries()).sort((a, b) => a[0] - b[0])) {
     ctx.lineWidth = lw;
@@ -203,6 +208,7 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
     for (const line of lines) tracePolyline(ctx, line, bbox, width, height);
     ctx.stroke();
   }
+  return drawn;
 }
 
 /**
@@ -214,10 +220,11 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): void {
  * off), and a no-op when the data has no `airports` key. Runways/taxiways use
  * fixed widths rather than a real-world scale: OSM rarely tags `width` on them,
  * and unlike roads there's no hierarchy to differentiate by preset.
+ * Returns the number of runways + taxiways drawn.
  */
-export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const airports = req.osm.airports;
-  if (!req.style.showAirports || !airports || airports.length === 0) return;
+  if (!req.style.showAirports || !airports || airports.length === 0) return 0;
   const { bbox, width, height, style } = req;
   const lineColor = mixColor(style.foreground, style.background, RUNWAY_ALPHA);
   const scale = strokeScale(height);
@@ -225,17 +232,19 @@ export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): void 
   ctx.strokeStyle = lineColor;
   ctx.lineCap = "butt";
   ctx.lineJoin = "round";
-  const strokeKind = (kind: "runway" | "taxiway", weight: number) => {
+  const strokeKind = (kind: "runway" | "taxiway", weight: number): number => {
     ctx.lineWidth = scale * weight;
     ctx.beginPath();
+    let n = 0;
     for (const f of airports) {
       if (f.kind !== kind || f.line.length < 2) continue;
       tracePolyline(ctx, f.line, bbox, width, height);
+      n++;
     }
     ctx.stroke();
+    return n;
   };
-  strokeKind("taxiway", AIRPORT_WIDTHS.taxiway);
-  strokeKind("runway", AIRPORT_WIDTHS.runway);
+  return strokeKind("taxiway", AIRPORT_WIDTHS.taxiway) + strokeKind("runway", AIRPORT_WIDTHS.runway);
 }
 
 /**
@@ -244,11 +253,11 @@ export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): void 
  * network. Gated by the "show railways" Lab toggle (default off), and a no-op
  * when the data has no `railways` key. Butt caps give clean rectangular dash
  * segments; the dash is reset before returning so it can't leak into a later
- * layer's path.
+ * layer's path. Returns the number of railway lines drawn.
  */
-export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const railways = req.osm.railways;
-  if (!req.style.showRailways || !railways || railways.length === 0) return;
+  if (!req.style.showRailways || !railways || railways.length === 0) return 0;
   const { bbox, width, height, style } = req;
   const color = mixColor(style.foreground, style.background, RAILWAY_ALPHA);
   const scale = strokeScale(height);
@@ -259,12 +268,15 @@ export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): void 
   ctx.lineWidth = scale * RAILWAY_WIDTH;
   ctx.setLineDash([scale * RAILWAY_DASH[0], scale * RAILWAY_DASH[1]]);
   ctx.beginPath();
+  let drawn = 0;
   for (const f of railways) {
     if (f.line.length < 2) continue;
     tracePolyline(ctx, f.line, bbox, width, height);
+    drawn++;
   }
   ctx.stroke();
   ctx.setLineDash([]); // don't leak the dash into later layers
+  return drawn;
 }
 
 /**
@@ -279,10 +291,11 @@ export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): void 
  * running distance so spacing is uniform regardless of how densely the source
  * vertices are sampled; the carry across segments keeps the rhythm unbroken
  * through the bends. See the {@link AERIALWAY} tokens for the tuning knobs.
+ * Returns the number of aerialway lines drawn.
  */
-export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): void {
+export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const aerialways = req.osm.aerialways;
-  if (!req.style.showAerialways || !aerialways || aerialways.length === 0) return;
+  if (!req.style.showAerialways || !aerialways || aerialways.length === 0) return 0;
   const { bbox, width, height, style } = req;
   const lineColor = mixColor(style.foreground, style.background, AERIALWAY.lineAlpha);
   const dotColor = mixColor(style.foreground, style.background, AERIALWAY.dotAlpha);
@@ -330,6 +343,7 @@ export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): voi
       dist -= segLen;
     }
   }
+  return lines.length;
 }
 
 /**
@@ -374,17 +388,27 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   return drawn;
 }
 
+// A layer's draw fn returns the number of features it actually rendered (0 when
+// disabled or absent), paired with its id so drawScene can report per-layer counts.
+type LayerDraw = { id: LayerId; draw: (ctx: CanvasRenderingContext2D, req: DrawReq) => number };
+
 // Optional layers drawn under the road network (z-order, bottom → up).
-const UNDER_ROADS: ((ctx: CanvasRenderingContext2D, req: DrawReq) => void)[] = [drawWater];
+const UNDER_ROADS: LayerDraw[] = [{ id: "water", draw: drawWater }];
 // Optional layers drawn over the road network (z-order, bottom → up).
-const OVER_ROADS: ((ctx: CanvasRenderingContext2D, req: DrawReq) => void)[] = [
-  drawRailways,
-  drawAerialways,
-  drawAirports,
+const OVER_ROADS: LayerDraw[] = [
+  { id: "railways", draw: drawRailways },
+  { id: "aerialways", draw: drawAerialways },
+  { id: "airports", draw: drawAirports },
 ];
 
 /**
- * Compose the full wallpaper onto `ctx` and return the number of road ways drawn
+ * Per-layer counts of features drawn, for logging. `roads` (always present) plus
+ * one entry per optional {@link LayerId}; a disabled or absent layer reports 0.
+ */
+export type SceneCounts = { roads: number } & Record<LayerId, number>;
+
+/**
+ * Compose the full wallpaper onto `ctx` and return the per-layer feature counts
  * (for logging). This is the single source of truth for layer compositing order:
  *
  *   background ▸ water ▸ ROADS ▸ railways ▸ aerialways ▸ airports
@@ -399,14 +423,17 @@ const OVER_ROADS: ((ctx: CanvasRenderingContext2D, req: DrawReq) => void)[] = [
  * self-gates on its Style toggle + data presence, so a disabled or absent layer
  * is a no-op.
  */
-export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): number {
+export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCounts {
   const { width, height, style } = req;
 
   ctx.fillStyle = style.background;
   ctx.fillRect(0, 0, width, height);
 
-  for (const draw of UNDER_ROADS) draw(ctx, req);
-  const drawn = drawRoads(ctx, req);
-  for (const draw of OVER_ROADS) draw(ctx, req);
-  return drawn;
+  // Keys ordered to mirror the compositing pipeline (bottom → top) so the log
+  // reads in the same order things are painted.
+  const counts: SceneCounts = { water: 0, roads: 0, railways: 0, aerialways: 0, airports: 0 };
+  for (const { id, draw } of UNDER_ROADS) counts[id] = draw(ctx, req);
+  counts.roads = drawRoads(ctx, req);
+  for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, req);
+  return counts;
 }
