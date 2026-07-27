@@ -12,9 +12,9 @@
     "enabledDesc": "Cambia el fondo de pantalla a medianoche por el de la siguiente ciudad.",
     "autostartLabel": "Abrir al iniciar sesión",
     "autostartDesc": "Inicia InkCity automáticamente al iniciar sesión.",
-    "hideTrayLabel": "Ocultar el icono de la bandeja del sistema",
-    "hideTrayDescOn": "Con el icono oculto, vuelve a abrir la aplicación para mostrar esta ventana.",
-    "hideTrayDescOff": "El icono permanece visible en la barra de menús.",
+    "hideTrayLabel": "Ocultar el icono de la barra de estado",
+    "hideTrayDescOn": "Con el icono de la barra de estado oculto, vuelve a abrir la aplicación para mostrar esta ventana.",
+    "hideTrayDescOff": "El icono de la barra de estado permanece visible.",
     "updateCheckLabel": "Buscar actualizaciones",
     "updateCheckDesc": "Avisarme cuando haya una nueva versión disponible.",
     "autoUpdateLabel": "Instalar actualizaciones automáticamente",
@@ -54,7 +54,7 @@
     "mapStyle": "Estilo del mapa",
     "presetMinimal": "Minimalista",
     "presetStandard": "Estándar",
-    "presetBold": "Intenso",
+    "presetBold": "Negrita",
     "hintMinimal": "Solo vías principales",
     "hintStandard": "Grosor según la clase de vía",
     "hintBold": "Jerarquía de alto contraste",
@@ -75,7 +75,7 @@
     "showAerialways": "Mostrar teleféricos",
     "aerialwaysHint": "Los teleféricos y funiculares se dibujan como una línea punteada con el color de las líneas.",
     "showWater": "Mostrar masas de agua",
-    "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas",
+    "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas.",
     "save": "Guardar"
   },
   "about": {
@@ -89,7 +89,7 @@
     "logsDesc": "InkCity guarda un archivo de registro para ayudar a diagnosticar problemas. Adjúntalo al reportar un error.",
     "openLogs": "Abrir registros",
     "dataTitle": "Datos y agradecimientos",
-    "osmAttribution": "Datos del mapa de carreteras © <0>OpenStreetMap</0>, con licencia <1>ODbL</1>.",
+    "osmAttribution": "Datos del mapa de carreteras © colaboradores de <0>OpenStreetMap</0>, con licencia <1>ODbL</1>.",
     "geonamesAttribution": "Lista de ciudades de <0>GeoNames</0>, con licencia <1>CC BY 4.0</1>."
   },
   "devMode": {

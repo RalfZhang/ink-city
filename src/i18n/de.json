@@ -12,9 +12,9 @@
     "enabledDesc": "Wechselt das Hintergrundbild um Mitternacht zur nächsten Stadt.",
     "autostartLabel": "Bei der Anmeldung öffnen",
     "autostartDesc": "Startet InkCity automatisch bei der Anmeldung.",
-    "hideTrayLabel": "Symbol im Infobereich ausblenden",
-    "hideTrayDescOn": "Wenn das Symbol ausgeblendet ist, starten Sie die App neu, um dieses Fenster wieder zu öffnen.",
-    "hideTrayDescOff": "Das Symbol bleibt in der Menüleiste sichtbar.",
+    "hideTrayLabel": "Statusleistensymbol ausblenden",
+    "hideTrayDescOn": "Wenn das Statusleistensymbol ausgeblendet ist, starten Sie die App neu, um dieses Fenster wieder zu öffnen.",
+    "hideTrayDescOff": "Das Statusleistensymbol bleibt sichtbar.",
     "updateCheckLabel": "Nach Updates suchen",
     "updateCheckDesc": "Mich benachrichtigen, wenn eine neue Version verfügbar ist.",
     "autoUpdateLabel": "Updates automatisch installieren",
@@ -54,7 +54,7 @@
     "mapStyle": "Kartenstil",
     "presetMinimal": "Minimal",
     "presetStandard": "Standard",
-    "presetBold": "Kräftig",
+    "presetBold": "Fett",
     "hintMinimal": "Nur Hauptstraßen",
     "hintStandard": "Breite nach Straßenklasse",
     "hintBold": "Hochkontrast-Hierarchie",
@@ -75,7 +75,7 @@
     "showAerialways": "Seilbahnen anzeigen",
     "aerialwaysHint": "Seil- und Drahtseilbahnen werden als gepunktete Linie in der Linienfarbe dargestellt.",
     "showWater": "Gewässer anzeigen",
-    "waterHint": "Flüsse, Seen und Meere werden in der Linienfarbe eingefärbt",
+    "waterHint": "Flüsse, Seen und Meere werden in der Linienfarbe eingefärbt.",
     "save": "Speichern"
   },
   "about": {
@@ -89,7 +89,7 @@
     "logsDesc": "InkCity führt eine Protokolldatei, um Probleme zu diagnostizieren. Fügen Sie sie einem Fehlerbericht bei.",
     "openLogs": "Protokolle öffnen",
     "dataTitle": "Daten & Danksagungen",
-    "osmAttribution": "Straßenkartendaten © <0>OpenStreetMap</0>, lizenziert unter <1>ODbL</1>.",
+    "osmAttribution": "Straßenkartendaten © <0>OpenStreetMap</0>-Mitwirkende, lizenziert unter <1>ODbL</1>.",
     "geonamesAttribution": "Städteliste von <0>GeoNames</0>, lizenziert unter <1>CC BY 4.0</1>."
   },
   "devMode": {

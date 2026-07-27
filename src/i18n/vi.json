@@ -12,9 +12,9 @@
     "enabledDesc": "Làm mới hình nền vào lúc nửa đêm sang thành phố tiếp theo.",
     "autostartLabel": "Khởi chạy khi đăng nhập",
     "autostartDesc": "Tự động khởi động InkCity khi bạn đăng nhập.",
-    "hideTrayLabel": "Ẩn biểu tượng khay hệ thống",
-    "hideTrayDescOn": "Khi biểu tượng khay bị ẩn, hãy khởi chạy lại ứng dụng để mở lại cửa sổ này.",
-    "hideTrayDescOff": "Giữ biểu tượng thanh menu hiển thị.",
+    "hideTrayLabel": "Ẩn biểu tượng trên thanh trạng thái",
+    "hideTrayDescOn": "Khi biểu tượng trên thanh trạng thái bị ẩn, hãy khởi chạy lại ứng dụng để mở lại cửa sổ này.",
+    "hideTrayDescOff": "Giữ biểu tượng trên thanh trạng thái luôn hiển thị.",
     "updateCheckLabel": "Kiểm tra cập nhật",
     "updateCheckDesc": "Thông báo cho tôi khi có phiên bản mới.",
     "autoUpdateLabel": "Tự động cài đặt bản cập nhật",
@@ -67,7 +67,7 @@
     "save": "Lưu"
   },
   "lab": {
-    "intro": "Các tính năng này đang thử nghiệm, có thể còn lỗi và không đảm bảo hoạt động ổn định.",
+    "intro": "Các tính năng này đang thử nghiệm, có thể gặp sự cố và không đảm bảo hoạt động ổn định.",
     "showAirports": "Hiển thị sân bay",
     "airportsHint": "Đường băng và đường lăn được vẽ bằng màu của đường nét.",
     "showRailways": "Hiển thị đường sắt",
@@ -75,7 +75,7 @@
     "showAerialways": "Hiển thị cáp treo",
     "aerialwaysHint": "Cáp treo và tuyến cáp được vẽ dưới dạng đường chấm theo màu của đường nét.",
     "showWater": "Hiển thị vùng nước",
-    "waterHint": "Sông, hồ và biển được tô theo màu của đường nét",
+    "waterHint": "Sông, hồ và biển được tô theo màu của đường nét.",
     "save": "Lưu"
   },
   "about": {
@@ -83,10 +83,10 @@
     "p2": "Sắp có thêm nhiều tính năng mới.",
     "github": "GitHub",
     "feedbackTitle": "Phản hồi",
-    "feedbackDesc": "Bạn phát hiện lỗi hay có ý tưởng? Hãy tạo issue trên GitHub. Với báo cáo lỗi, vui lòng cho biết phiên bản hệ điều hành của bạn, và nếu liên quan, thành phố / ngày xảy ra sự cố.",
+    "feedbackDesc": "Bạn gặp sự cố hay có ý tưởng? Hãy tạo issue trên GitHub. Khi báo cáo sự cố, vui lòng cho biết phiên bản hệ điều hành của bạn, và nếu liên quan, thành phố / ngày xảy ra sự cố.",
     "openIssues": "Gửi phản hồi",
     "logsTitle": "Nhật ký",
-    "logsDesc": "InkCity lưu giữ tệp nhật ký để giúp chẩn đoán sự cố. Hãy đính kèm khi báo cáo lỗi.",
+    "logsDesc": "InkCity lưu giữ tệp nhật ký để giúp chẩn đoán sự cố. Hãy đính kèm khi báo cáo sự cố.",
     "openLogs": "Mở nhật ký",
     "dataTitle": "Dữ liệu & Lời cảm ơn",
     "osmAttribution": "Dữ liệu bản đồ đường phố © những người đóng góp cho <0>OpenStreetMap</0>, được cấp phép theo <1>ODbL</1>.",

@@ -12,9 +12,9 @@
     "enabledDesc": "Menyegarkan wallpaper pada tengah malam ke kota berikutnya.",
     "autostartLabel": "Jalankan saat masuk",
     "autostartDesc": "Memulai InkCity secara otomatis saat Anda masuk.",
-    "hideTrayLabel": "Sembunyikan ikon tray sistem",
-    "hideTrayDescOn": "Saat ikon tray disembunyikan, luncurkan ulang aplikasi untuk membuka kembali jendela ini.",
-    "hideTrayDescOff": "Ikon bilah menu tetap terlihat.",
+    "hideTrayLabel": "Sembunyikan ikon di bilah status",
+    "hideTrayDescOn": "Saat ikon di bilah status disembunyikan, luncurkan ulang aplikasi untuk membuka kembali jendela ini.",
+    "hideTrayDescOff": "Ikon di bilah status tetap terlihat.",
     "updateCheckLabel": "Periksa pembaruan",
     "updateCheckDesc": "Beri tahu saya saat versi baru tersedia.",
     "autoUpdateLabel": "Instal pembaruan secara otomatis",
@@ -40,7 +40,7 @@
   },
   "city": {
     "today": "Hari ini",
-    "population": "pop. {{value}}",
+    "population": "Penduduk {{value}}",
     "regenerate": "Buat ulang",
     "regenerating": "Membuat…",
     "wikipedia": "Wikipedia",
@@ -67,7 +67,7 @@
     "save": "Simpan"
   },
   "lab": {
-    "intro": "Fitur-fitur ini bersifat eksperimental, mungkin memiliki bug, dan tidak dijamin berfungsi.",
+    "intro": "Fitur-fitur ini bersifat eksperimental, mungkin memiliki masalah, dan tidak dijamin berfungsi.",
     "showAirports": "Tampilkan bandara",
     "airportsHint": "Landasan pacu dan taxiway digambar dengan warna garis.",
     "showRailways": "Tampilkan jalur kereta api",
@@ -75,7 +75,7 @@
     "showAerialways": "Tampilkan kereta gantung",
     "aerialwaysHint": "Kereta gantung dan ropeway digambar sebagai garis titik-titik dengan warna garis.",
     "showWater": "Tampilkan badan air",
-    "waterHint": "Sungai, danau, dan laut diberi warna sesuai warna garis",
+    "waterHint": "Sungai, danau, dan laut diberi warna sesuai warna garis.",
     "save": "Simpan"
   },
   "about": {
@@ -83,10 +83,10 @@
     "p2": "Lebih banyak fitur akan segera hadir.",
     "github": "GitHub",
     "feedbackTitle": "Masukan",
-    "feedbackDesc": "Menemukan bug atau punya ide? Buka issue di GitHub. Untuk laporan bug, sertakan versi OS Anda, dan jika relevan, kota / tanggal saat masalah terjadi.",
+    "feedbackDesc": "Menemukan masalah atau punya ide? Buka issue di GitHub. Untuk laporan masalah, sertakan versi OS Anda, dan jika relevan, kota / tanggal saat masalah terjadi.",
     "openIssues": "Kirim masukan",
     "logsTitle": "Log",
-    "logsDesc": "InkCity menyimpan file log untuk membantu mendiagnosis masalah. Lampirkan file ini saat melaporkan bug.",
+    "logsDesc": "InkCity menyimpan file log untuk membantu mendiagnosis masalah. Lampirkan file ini saat melaporkan masalah.",
     "openLogs": "Buka log",
     "dataTitle": "Data & Ucapan Terima Kasih",
     "osmAttribution": "Data peta jalan © kontributor <0>OpenStreetMap</0>, dilisensikan di bawah <1>ODbL</1>.",

@@ -12,9 +12,9 @@
     "enabledDesc": "Refresh the wallpaper at midnight with the next city.",
     "autostartLabel": "Launch at login",
     "autostartDesc": "Start InkCity automatically when you log in.",
-    "hideTrayLabel": "Hide system tray icon",
-    "hideTrayDescOn": "With the tray hidden, relaunch the app to reopen this window.",
-    "hideTrayDescOff": "Keep the menu-bar icon visible.",
+    "hideTrayLabel": "Hide status bar icon",
+    "hideTrayDescOn": "With the status bar icon hidden, relaunch the app to reopen this window.",
+    "hideTrayDescOff": "Keep the status bar icon visible.",
     "updateCheckLabel": "Check for updates",
     "updateCheckDesc": "Notify me when a new version is available.",
     "autoUpdateLabel": "Install updates automatically",
@@ -75,7 +75,7 @@
     "showAerialways": "Show cable cars",
     "aerialwaysHint": "Cable cars and ropeways are drawn as a dotted line in the line color.",
     "showWater": "Show water bodies",
-    "waterHint": "Rivers, lakes and sea are tinted with the line color",
+    "waterHint": "Rivers, lakes and sea are tinted with the line color.",
     "save": "Save"
   },
   "about": {

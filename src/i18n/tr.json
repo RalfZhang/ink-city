@@ -12,9 +12,9 @@
     "enabledDesc": "Duvar kağıdını gece yarısı bir sonraki şehirle yeniler.",
     "autostartLabel": "Oturum açılınca başlat",
     "autostartDesc": "Oturum açtığınızda InkCity'yi otomatik olarak başlatır.",
-    "hideTrayLabel": "Sistem tepsisi simgesini gizle",
-    "hideTrayDescOn": "Tepsi simgesi gizliyken bu pencereyi tekrar açmak için uygulamayı yeniden başlatın.",
-    "hideTrayDescOff": "Menü çubuğu simgesini görünür tutar.",
+    "hideTrayLabel": "Durum çubuğu simgesini gizle",
+    "hideTrayDescOn": "Durum çubuğu simgesi gizliyken bu pencereyi tekrar açmak için uygulamayı yeniden başlatın.",
+    "hideTrayDescOff": "Durum çubuğu simgesini görünür tutar.",
     "updateCheckLabel": "Güncellemeleri kontrol et",
     "updateCheckDesc": "Yeni bir sürüm çıktığında bana bildir.",
     "autoUpdateLabel": "Güncellemeleri otomatik yükle",
@@ -67,7 +67,7 @@
     "save": "Kaydet"
   },
   "lab": {
-    "intro": "Bu özellikler deneyseldir, hatalı olabilir ve çalışacakları garanti edilmez.",
+    "intro": "Bu özellikler deneyseldir, sorunlar içerebilir ve çalışacakları garanti edilmez.",
     "showAirports": "Havalimanlarını göster",
     "airportsHint": "Pistler ve taksi yolları çizgi renginde çizilir.",
     "showRailways": "Demiryollarını göster",
@@ -75,7 +75,7 @@
     "showAerialways": "Teleferikleri göster",
     "aerialwaysHint": "Teleferikler ve halatlı hatlar çizgi renginde noktalı çizgi olarak çizilir.",
     "showWater": "Su kütlelerini göster",
-    "waterHint": "Nehirler, göller ve denizler çizgi rengiyle tonlanır",
+    "waterHint": "Nehirler, göller ve denizler çizgi rengiyle tonlanır.",
     "save": "Kaydet"
   },
   "about": {
@@ -83,10 +83,10 @@
     "p2": "Daha fazla özellik yakında geliyor.",
     "github": "GitHub",
     "feedbackTitle": "Geri bildirim",
-    "feedbackDesc": "Bir hata mı buldunuz yoksa bir fikriniz mi var? GitHub'da bir issue açın. Hata bildirimleri için lütfen işletim sistemi sürümünüzü ve ilgiliyse sorunun oluştuğu şehri / tarihi belirtin.",
+    "feedbackDesc": "Bir sorun mu buldunuz yoksa bir fikriniz mi var? GitHub'da bir issue açın. Sorun bildirimleri için lütfen işletim sistemi sürümünüzü ve ilgiliyse sorunun oluştuğu şehri / tarihi belirtin.",
     "openIssues": "Geri bildirim gönder",
     "logsTitle": "Günlükler",
-    "logsDesc": "InkCity, sorunları teşhis etmeye yardımcı olmak için bir günlük dosyası tutar. Hata bildirirken bunu ekleyin.",
+    "logsDesc": "InkCity, sorunları teşhis etmeye yardımcı olmak için bir günlük dosyası tutar. Sorun bildirirken bunu ekleyin.",
     "openLogs": "Günlükleri aç",
     "dataTitle": "Veriler ve Teşekkürler",
     "osmAttribution": "Yol haritası verileri © <0>OpenStreetMap</0> katkıda bulunanları, <1>ODbL</1> lisansı altındadır.",

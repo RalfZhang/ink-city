@@ -12,9 +12,9 @@
     "enabledDesc": "Change le fond d'écran à minuit pour celui de la ville suivante.",
     "autostartLabel": "Ouvrir à la connexion",
     "autostartDesc": "Démarre InkCity automatiquement à la connexion.",
-    "hideTrayLabel": "Masquer l'icône dans la zone de notification",
-    "hideTrayDescOn": "Une fois l'icône masquée, relancez l'application pour rouvrir cette fenêtre.",
-    "hideTrayDescOff": "L'icône reste visible dans la barre des menus.",
+    "hideTrayLabel": "Masquer l'icône de la barre d'état",
+    "hideTrayDescOn": "Une fois l'icône de la barre d'état masquée, relancez l'application pour rouvrir cette fenêtre.",
+    "hideTrayDescOff": "L'icône de la barre d'état reste visible.",
     "updateCheckLabel": "Rechercher des mises à jour",
     "updateCheckDesc": "Me prévenir quand une nouvelle version est disponible.",
     "autoUpdateLabel": "Installer les mises à jour automatiquement",
@@ -54,7 +54,7 @@
     "mapStyle": "Style de carte",
     "presetMinimal": "Minimaliste",
     "presetStandard": "Standard",
-    "presetBold": "Contrasté",
+    "presetBold": "Gras",
     "hintMinimal": "Routes principales uniquement",
     "hintStandard": "Largeur selon la catégorie de route",
     "hintBold": "Hiérarchie à fort contraste",
@@ -67,7 +67,7 @@
     "save": "Enregistrer"
   },
   "lab": {
-    "intro": "Ces fonctionnalités sont expérimentales, peuvent contenir des bugs et ne sont pas garanties de fonctionner.",
+    "intro": "Ces fonctionnalités sont expérimentales, peuvent présenter des problèmes et ne sont pas garanties de fonctionner.",
     "showAirports": "Afficher les aéroports",
     "airportsHint": "Les pistes et voies de circulation des aéroports sont tracées dans la couleur des lignes.",
     "showRailways": "Afficher les voies ferrées",
@@ -75,7 +75,7 @@
     "showAerialways": "Afficher les téléphériques",
     "aerialwaysHint": "Les téléphériques et remontées mécaniques sont tracés en pointillés dans la couleur des lignes.",
     "showWater": "Afficher les plans d'eau",
-    "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes",
+    "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes.",
     "save": "Enregistrer"
   },
   "about": {
@@ -83,13 +83,13 @@
     "p2": "D'autres fonctionnalités arrivent bientôt.",
     "github": "GitHub",
     "feedbackTitle": "Commentaires",
-    "feedbackDesc": "Vous avez trouvé un bug ou avez une idée ? Ouvrez une issue sur GitHub. Pour un rapport de bug, merci d'indiquer la version de votre système d'exploitation et, si pertinent, la ville et la date concernées.",
+    "feedbackDesc": "Vous avez rencontré un problème ou avez une idée ? Ouvrez une issue sur GitHub. Pour un signalement de problème, merci d'indiquer la version de votre système d'exploitation et, si pertinent, la ville et la date concernées.",
     "openIssues": "Envoyer des commentaires",
     "logsTitle": "Journaux",
-    "logsDesc": "InkCity conserve un fichier journal pour aider à diagnostiquer les problèmes. Joignez-le lors d'un signalement de bug.",
+    "logsDesc": "InkCity conserve un fichier journal pour aider à diagnostiquer les problèmes. Joignez-le lors d'un signalement de problème.",
     "openLogs": "Ouvrir les journaux",
     "dataTitle": "Données et remerciements",
-    "osmAttribution": "Données cartographiques © <0>OpenStreetMap</0>, sous licence <1>ODbL</1>.",
+    "osmAttribution": "Données cartographiques routières © les contributeurs d'<0>OpenStreetMap</0>, sous licence <1>ODbL</1>.",
     "geonamesAttribution": "Liste des villes fournie par <0>GeoNames</0>, sous licence <1>CC BY 4.0</1>."
   },
   "devMode": {
