@@ -8,8 +8,6 @@
     "devMode": "Mode développeur"
   },
   "general": {
-    "enabledLabel": "Activer les mises à jour quotidiennes",
-    "enabledDesc": "Change le fond d'écran à minuit pour celui de la ville suivante.",
     "autostartLabel": "Ouvrir à la connexion",
     "autostartDesc": "Démarre InkCity automatiquement à la connexion.",
     "hideTrayLabel": "Masquer l'icône de la barre d'état",
@@ -35,8 +33,8 @@
     "languageAuto": "Automatique",
     "proxyLabel": "Proxy",
     "proxyDesc": "Achemine les requêtes de données cartographiques via un proxy, pour les réseaux où OpenStreetMap n'est pas accessible directement. Prend en charge les URL http:// et socks5://.",
-    "hideWindow": "Masquer la fenêtre",
-    "quit": "Quitter"
+    "quit": "Quitter",
+    "closeWindow": "Fermer la fenêtre"
   },
   "city": {
     "today": "Aujourd'hui",
@@ -44,7 +42,17 @@
     "regenerate": "Régénérer",
     "regenerating": "Génération…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Comment mettre à jour ?",
+    "modeDisable": "Désactivé",
+    "modeDaily": "Quotidien",
+    "modeCustomized": "Personnalisé",
+    "disabledHint": "La mise à jour automatique du fond d'écran est désactivée.",
+    "inputLocation": "Ville ou coordonnées",
+    "locationPlaceholder": "Nom de ville, coordonnées ou lien de carte",
+    "invalidLocation": "Aucune ville correspondante — essayez des coordonnées, p. ex. 51.5074, -0.1278.",
+    "apply": "Appliquer",
+    "customRateHint": "Les lieux personnalisés ne sont pas pré-mis en cache : chaque application télécharge les données cartographiques en direct. Évitez donc d'appliquer de nombreux nouveaux lieux à la suite, sous peine d'atteindre la limite de requêtes du service."
   },
   "style": {
     "theme": "Thème de la carte",

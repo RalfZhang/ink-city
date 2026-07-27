@@ -1,4 +1,3 @@
-use std::sync::atomic::Ordering;
 use std::time::Duration;
 
 use chrono::NaiveDate;
@@ -25,9 +24,10 @@ pub fn spawn(app: AppHandle) {
         // single shot when the date rolls over is plenty.
         let mut cities_checked: Option<NaiveDate> = None;
         // Last date we observed, to push the city/date rollover to an open
-        // window. Done regardless of `enabled` (reconcile early-returns when
-        // disabled) so the displayed city stays correct across midnight even
-        // when daily updates are off — the date is backend-observable state.
+        // window. Done regardless of the update mode (`reconcile` early-returns
+        // when there's nothing to render) so the displayed city stays correct
+        // across midnight even when daily updates are off — the date is
+        // backend-observable state.
         let mut last_date: Option<NaiveDate> = None;
         loop {
             let today = city::today();
@@ -57,20 +57,26 @@ pub fn spawn(app: AppHandle) {
     });
 }
 
-/// Ensure the desktop wallpaper matches today's city rendered in the current
-/// effective theme. Skips all work when `last_applied` already records that
-/// exact (date, theme) — so the steady-state poll is just two lock reads.
+/// Ensure the desktop wallpaper matches what the current UpdateMode calls for
+/// (today's Daily city, or the Customized pin) in the current effective theme.
+/// Skips all work when `last_applied` already records that exact render, and is
+/// a no-op when updates are disabled or a Customized pin isn't set yet — so the
+/// steady-state poll is just a couple of lock reads.
 async fn reconcile(app: &AppHandle) {
-    let enabled = app.state::<AppState>().enabled.load(Ordering::Acquire);
-    if !enabled {
+    let Some(desired) = pipeline::desired_signature(app) else {
+        return; // updates disabled, or Customized with no pin
+    };
+    let up_to_date = app
+        .state::<AppState>()
+        .last_applied
+        .lock()
+        .unwrap()
+        .as_deref()
+        == Some(desired.as_str());
+    if up_to_date {
         return;
     }
-    let date = city::today();
-    let theme = pipeline::effective_theme(app);
-    if *app.state::<AppState>().last_applied.lock().unwrap() == Some((date, theme)) {
-        return;
-    }
-    if let Err(e) = pipeline::run_for_date(app.clone(), date).await {
-        log::error!("[scheduler] pipeline failed for {}: {}", date, e);
+    if let Err(e) = pipeline::run_now(app.clone()).await {
+        log::error!("[scheduler] pipeline failed: {}", e);
     }
 }

@@ -8,8 +8,6 @@
     "devMode": "개발자 모드"
   },
   "general": {
-    "enabledLabel": "매일 업데이트 활성화",
-    "enabledDesc": "자정에 다음 도시로 배경화면을 새로 고칩니다.",
     "autostartLabel": "로그인 시 실행",
     "autostartDesc": "로그인할 때 InkCity를 자동으로 시작합니다.",
     "hideTrayLabel": "상태 표시줄 아이콘 숨기기",
@@ -35,8 +33,8 @@
     "languageAuto": "자동",
     "proxyLabel": "프록시",
     "proxyDesc": "OpenStreetMap에 직접 접속할 수 없는 네트워크에서 지도 데이터 요청을 프록시를 통해 전달합니다. http:// 및 socks5:// URL을 지원합니다.",
-    "hideWindow": "창 숨기기",
-    "quit": "종료"
+    "quit": "종료",
+    "closeWindow": "창 닫기"
   },
   "city": {
     "today": "오늘",
@@ -44,7 +42,17 @@
     "regenerate": "다시 생성",
     "regenerating": "생성 중…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google 지도"
+    "googleMaps": "Google 지도",
+    "howToUpdate": "업데이트 방식",
+    "modeDisable": "사용 안 함",
+    "modeDaily": "매일",
+    "modeCustomized": "사용자 지정",
+    "disabledHint": "배경 자동 업데이트가 꺼져 있습니다.",
+    "inputLocation": "도시 또는 좌표",
+    "locationPlaceholder": "도시 이름, 좌표 또는 지도 링크",
+    "invalidLocation": "일치하는 도시가 없습니다. 좌표를 입력하세요(예: 51.5074, -0.1278).",
+    "apply": "적용",
+    "customRateHint": "사용자 지정 위치는 미리 캐시되지 않아 적용할 때마다 지도 데이터를 실시간으로 가져옵니다. 짧은 시간에 새 위치를 여러 번 적용하면 서비스 요청 한도에 걸릴 수 있습니다."
   },
   "style": {
     "theme": "지도 테마",

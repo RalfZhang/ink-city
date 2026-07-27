@@ -8,8 +8,6 @@
     "devMode": "โหมดนักพัฒนา"
   },
   "general": {
-    "enabledLabel": "เปิดใช้งานการอัปเดตรายวัน",
-    "enabledDesc": "รีเฟรชวอลเปเปอร์เป็นเมืองถัดไปตอนเที่ยงคืน",
     "autostartLabel": "เปิดเมื่อเข้าสู่ระบบ",
     "autostartDesc": "เริ่ม InkCity โดยอัตโนมัติเมื่อคุณเข้าสู่ระบบ",
     "hideTrayLabel": "ซ่อนไอคอนบนแถบสถานะ",
@@ -35,8 +33,8 @@
     "languageAuto": "อัตโนมัติ",
     "proxyLabel": "พร็อกซี",
     "proxyDesc": "ส่งคำขอข้อมูลแผนที่ผ่านพร็อกซี สำหรับเครือข่ายที่ไม่สามารถเข้าถึง OpenStreetMap ได้โดยตรง รองรับ URL แบบ http:// และ socks5://",
-    "hideWindow": "ซ่อนหน้าต่าง",
-    "quit": "ออก"
+    "quit": "ออก",
+    "closeWindow": "ปิดหน้าต่าง"
   },
   "city": {
     "today": "วันนี้",
@@ -44,7 +42,17 @@
     "regenerate": "สร้างใหม่",
     "regenerating": "กำลังสร้าง…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "อัปเดตอย่างไร?",
+    "modeDisable": "ปิด",
+    "modeDaily": "ทุกวัน",
+    "modeCustomized": "กำหนดเอง",
+    "disabledHint": "การอัปเดตวอลเปเปอร์อัตโนมัติถูกปิดอยู่",
+    "inputLocation": "เมืองหรือพิกัด",
+    "locationPlaceholder": "ชื่อเมือง พิกัด หรือลิงก์แผนที่",
+    "invalidLocation": "ไม่พบเมืองที่ตรงกัน — ลองใส่พิกัด เช่น 51.5074, -0.1278",
+    "apply": "ใช้",
+    "customRateHint": "ตำแหน่งที่กำหนดเองไม่มีการแคชล่วงหน้า ทุกครั้งที่ใช้จะดึงข้อมูลแผนที่แบบสด จึงไม่ควรใช้ตำแหน่งใหม่หลายแห่งติดกันในเวลาสั้น ๆ เพราะอาจถึงขีดจำกัดคำขอของบริการ"
   },
   "style": {
     "theme": "ธีมแผนที่",

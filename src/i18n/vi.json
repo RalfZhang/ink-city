@@ -8,8 +8,6 @@
     "devMode": "Chế độ nhà phát triển"
   },
   "general": {
-    "enabledLabel": "Bật cập nhật hàng ngày",
-    "enabledDesc": "Làm mới hình nền vào lúc nửa đêm sang thành phố tiếp theo.",
     "autostartLabel": "Khởi chạy khi đăng nhập",
     "autostartDesc": "Tự động khởi động InkCity khi bạn đăng nhập.",
     "hideTrayLabel": "Ẩn biểu tượng trên thanh trạng thái",
@@ -35,8 +33,8 @@
     "languageAuto": "Tự động",
     "proxyLabel": "Proxy",
     "proxyDesc": "Định tuyến các yêu cầu dữ liệu bản đồ qua proxy, dành cho các mạng không thể truy cập trực tiếp OpenStreetMap. Hỗ trợ URL http:// và socks5://.",
-    "hideWindow": "Ẩn cửa sổ",
-    "quit": "Thoát"
+    "quit": "Thoát",
+    "closeWindow": "Đóng cửa sổ"
   },
   "city": {
     "today": "Hôm nay",
@@ -44,7 +42,17 @@
     "regenerate": "Tạo lại",
     "regenerating": "Đang tạo…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Cách cập nhật?",
+    "modeDisable": "Tắt",
+    "modeDaily": "Hằng ngày",
+    "modeCustomized": "Tùy chỉnh",
+    "disabledHint": "Tự động cập nhật hình nền đang tắt.",
+    "inputLocation": "Thành phố hoặc toạ độ",
+    "locationPlaceholder": "Tên thành phố, toạ độ, hoặc liên kết bản đồ",
+    "invalidLocation": "Không có thành phố phù hợp — hãy thử toạ độ, ví dụ 51.5074, -0.1278.",
+    "apply": "Áp dụng",
+    "customRateHint": "Vị trí tùy chỉnh không được lưu sẵn — mỗi lần áp dụng sẽ tải dữ liệu bản đồ trực tiếp, vì vậy đừng áp dụng nhiều vị trí mới liên tiếp, nếu không bạn có thể bị giới hạn số yêu cầu của dịch vụ."
   },
   "style": {
     "theme": "Chủ đề bản đồ",

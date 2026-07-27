@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex as StdMutex};
 
 use tokio::sync::{oneshot, Mutex, Notify};
 
-use crate::config::{ColorPair, StylePreset, ThemeMode, UpdateCheck};
+use crate::config::{ColorPair, CustomCity, StylePreset, ThemeMode, UpdateCheck, UpdateMode};
 use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
@@ -15,7 +15,12 @@ pub struct AppState {
     pub renderer_ready: AtomicBool,
     pub renderer_notify: Arc<Notify>,
     pub pending: Mutex<Option<PendingJob>>,
-    pub enabled: AtomicBool,
+    /// How the wallpaper is refreshed (see `config::UpdateMode`). Replaces the
+    /// old `enabled: bool`.
+    pub update_mode: StdMutex<UpdateMode>,
+    /// The pinned location for `UpdateMode::Customized`, or `None`. Persisted via
+    /// `config::Config::custom`.
+    pub custom: StdMutex<Option<CustomCity>>,
     pub hide_tray: AtomicBool,
     pub theme: StdMutex<ThemeMode>,
     pub light: StdMutex<ColorPair>,
@@ -56,17 +61,21 @@ pub struct AppState {
     pub update_strings: StdMutex<UpdateStrings>,
     pub running: Mutex<bool>,
     pub quitting: AtomicBool,
-    /// The (date, effective theme) the wallpaper was last successfully applied
-    /// for. In-memory only (None on launch → forces a reconcile at startup).
-    /// The scheduler's poll uses it to skip work when nothing has changed.
-    pub last_applied: StdMutex<Option<(chrono::NaiveDate, crate::pipeline::EffectiveTheme)>>,
+    /// Signature of the render the wallpaper was last successfully applied for —
+    /// see `pipeline::Target::signature`. In-memory only (None on launch →
+    /// forces a reconcile at startup). The scheduler's poll compares it against
+    /// `pipeline::desired_signature` to skip work when nothing has changed. A
+    /// string (rather than a typed tuple) so it can key both the Daily rotation
+    /// (by date + theme) and a Customized pin (by coordinates + theme) uniformly.
+    pub last_applied: StdMutex<Option<String>>,
     /// The city the pipeline actually resolved for a date — the schedule
     /// manifest's pick when the CDN served one, else the rotation fallback.
     /// `Status` reads it through `pipeline::city_for_status` rather than calling
     /// `city::pick_for_date` itself, which would name a different city than the
     /// wallpaper on every day the schedule was used. In-memory only; see
     /// `city_for_status` for how a restart onto an already-rendered day recovers
-    /// it from that day's cached payload.
+    /// it from that day's cached payload. Only the Daily flow writes it — a
+    /// Customized pin isn't a city and must not overwrite the day's answer.
     pub resolved_city: StdMutex<Option<(chrono::NaiveDate, crate::city::City)>>,
     /// Signal that some `Status`-affecting state changed. The status-emitter
     /// task waits on it and pushes a fresh snapshot to the frontend, replacing
@@ -83,7 +92,8 @@ impl AppState {
             renderer_ready: AtomicBool::new(false),
             renderer_notify: Arc::new(Notify::new()),
             pending: Mutex::new(None),
-            enabled: AtomicBool::new(cfg.enabled),
+            update_mode: StdMutex::new(cfg.update_mode),
+            custom: StdMutex::new(cfg.custom),
             hide_tray: AtomicBool::new(cfg.hide_tray),
             theme: StdMutex::new(cfg.theme),
             light: StdMutex::new(cfg.light.clone()),

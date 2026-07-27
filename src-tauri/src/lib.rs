@@ -294,7 +294,9 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::get_status,
-            commands::set_enabled,
+            commands::set_update_mode,
+            commands::apply_custom_city,
+            commands::search_cities,
             commands::set_hide_tray,
             commands::set_update_check,
             commands::set_auto_update,

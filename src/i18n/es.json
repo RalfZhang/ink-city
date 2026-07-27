@@ -8,8 +8,6 @@
     "devMode": "Modo desarrollador"
   },
   "general": {
-    "enabledLabel": "Activar actualizaciones diarias",
-    "enabledDesc": "Cambia el fondo de pantalla a medianoche por el de la siguiente ciudad.",
     "autostartLabel": "Abrir al iniciar sesión",
     "autostartDesc": "Inicia InkCity automáticamente al iniciar sesión.",
     "hideTrayLabel": "Ocultar el icono de la barra de estado",
@@ -35,8 +33,8 @@
     "languageAuto": "Automático",
     "proxyLabel": "Proxy",
     "proxyDesc": "Enruta las solicitudes de datos del mapa a través de un proxy, para redes donde OpenStreetMap no es accesible directamente. Admite URL http:// y socks5://.",
-    "hideWindow": "Ocultar ventana",
-    "quit": "Salir"
+    "quit": "Salir",
+    "closeWindow": "Cerrar ventana"
   },
   "city": {
     "today": "Hoy",
@@ -44,7 +42,17 @@
     "regenerate": "Regenerar",
     "regenerating": "Generando…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "¿Cómo actualizar?",
+    "modeDisable": "Desactivado",
+    "modeDaily": "Diario",
+    "modeCustomized": "Personalizado",
+    "disabledHint": "Las actualizaciones automáticas del fondo están desactivadas.",
+    "inputLocation": "Ciudad o coordenadas",
+    "locationPlaceholder": "Nombre de ciudad, coordenadas o un enlace de mapa",
+    "invalidLocation": "Ninguna ciudad coincide: prueba con coordenadas, p. ej. 51.5074, -0.1278.",
+    "apply": "Aplicar",
+    "customRateHint": "Las ubicaciones personalizadas no se precargan: cada vez que aplicas se descargan los datos del mapa en directo, así que evita aplicar muchas ubicaciones nuevas seguidas o podrías alcanzar el límite de peticiones del servicio."
   },
   "style": {
     "theme": "Tema del mapa",

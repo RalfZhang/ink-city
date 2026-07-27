@@ -8,8 +8,6 @@
     "devMode": "Geliştirici Modu"
   },
   "general": {
-    "enabledLabel": "Günlük güncellemeleri etkinleştir",
-    "enabledDesc": "Duvar kağıdını gece yarısı bir sonraki şehirle yeniler.",
     "autostartLabel": "Oturum açılınca başlat",
     "autostartDesc": "Oturum açtığınızda InkCity'yi otomatik olarak başlatır.",
     "hideTrayLabel": "Durum çubuğu simgesini gizle",
@@ -35,8 +33,8 @@
     "languageAuto": "Otomatik",
     "proxyLabel": "Proxy",
     "proxyDesc": "OpenStreetMap'e doğrudan erişilemeyen ağlar için harita verisi isteklerini bir proxy üzerinden yönlendirir. http:// ve socks5:// URL'lerini destekler.",
-    "hideWindow": "Pencereyi gizle",
-    "quit": "Çık"
+    "quit": "Çık",
+    "closeWindow": "Pencereyi kapat"
   },
   "city": {
     "today": "Bugün",
@@ -44,7 +42,17 @@
     "regenerate": "Yeniden oluştur",
     "regenerating": "Oluşturuluyor…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Nasıl güncellenir?",
+    "modeDisable": "Kapalı",
+    "modeDaily": "Günlük",
+    "modeCustomized": "Özel",
+    "disabledHint": "Duvar kağıdının otomatik güncellenmesi kapalı.",
+    "inputLocation": "Şehir veya koordinat",
+    "locationPlaceholder": "Şehir adı, koordinat veya harita bağlantısı",
+    "invalidLocation": "Eşleşen şehir yok — koordinat girin, ör. 51.5074, -0.1278.",
+    "apply": "Uygula",
+    "customRateHint": "Özel konumlar önceden önbelleğe alınmaz — her uygulama harita verilerini canlı çeker, bu yüzden kısa sürede çok sayıda yeni konum uygulamayın; aksi hâlde servisin istek sınırına takılabilirsiniz."
   },
   "style": {
     "theme": "Harita teması",

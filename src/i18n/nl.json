@@ -8,8 +8,6 @@
     "devMode": "Ontwikkelaarsmodus"
   },
   "general": {
-    "enabledLabel": "Dagelijkse updates inschakelen",
-    "enabledDesc": "Ververst de achtergrond om middernacht naar de volgende stad.",
     "autostartLabel": "Starten bij aanmelden",
     "autostartDesc": "Start InkCity automatisch wanneer u zich aanmeldt.",
     "hideTrayLabel": "Statusbalkpictogram verbergen",
@@ -35,8 +33,8 @@
     "languageAuto": "Automatisch",
     "proxyLabel": "Proxy",
     "proxyDesc": "Stuurt kaartgegevensverzoeken via een proxy, voor netwerken waar OpenStreetMap niet rechtstreeks bereikbaar is. Ondersteunt http:// en socks5:// URL's.",
-    "hideWindow": "Venster verbergen",
-    "quit": "Afsluiten"
+    "quit": "Afsluiten",
+    "closeWindow": "Venster sluiten"
   },
   "city": {
     "today": "Vandaag",
@@ -44,7 +42,17 @@
     "regenerate": "Opnieuw genereren",
     "regenerating": "Genereren…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Hoe bijwerken?",
+    "modeDisable": "Uit",
+    "modeDaily": "Dagelijks",
+    "modeCustomized": "Aangepast",
+    "disabledHint": "Automatisch bijwerken van de achtergrond staat uit.",
+    "inputLocation": "Stad of coördinaten",
+    "locationPlaceholder": "Naam van een stad, coördinaten of een kaartlink",
+    "invalidLocation": "Geen overeenkomende stad — probeer coördinaten, bijv. 51.5074, -0.1278.",
+    "apply": "Toepassen",
+    "customRateHint": "Aangepaste locaties worden niet vooraf gecached — bij elke toepassing worden de kaartgegevens live opgehaald. Pas dus niet snel achter elkaar veel nieuwe locaties toe, anders bereik je de aanvraaglimiet van de dienst."
   },
   "style": {
     "theme": "Kaartthema",

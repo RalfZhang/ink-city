@@ -5,7 +5,7 @@ use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuIt
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry};
 
-use crate::city;
+use crate::config::UpdateMode;
 use crate::pipeline;
 use crate::state::AppState;
 
@@ -24,11 +24,12 @@ static UPDATE_SEP: OnceLock<PredefinedMenuItem<Wry>> = OnceLock::new();
 static UPDATE_SHOWN: AtomicBool = AtomicBool::new(false);
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
-    let initial_enabled = app.state::<AppState>().enabled.load(Ordering::Acquire);
+    let initial_daily =
+        *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
 
     let open_item = MenuItemBuilder::with_id("open", "Open Settings").build(app)?;
     let toggle_item = CheckMenuItemBuilder::with_id("toggle_enabled", "Daily Updates")
-        .checked(initial_enabled)
+        .checked(initial_daily)
         .build(app)?;
     let sep1 = PredefinedMenuItem::separator(app)?;
     let regen_item = MenuItemBuilder::with_id("regen", "Regenerate Now").build(app)?;
@@ -91,23 +92,26 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
                     crate::updates::prompt_and_install(&app);
                 }
                 "toggle_enabled" => {
-                    let state = app.state::<AppState>();
-                    let new_val = !state.enabled.load(Ordering::Acquire);
-                    state.enabled.store(new_val, Ordering::Release);
-                    sync_enabled_to_tray(&app);
+                    // Toggle the Daily rotation on/off. Off ⇒ Disable; from a
+                    // Customized pin, "Daily Updates" switches to Daily.
+                    let now_daily = {
+                        let state = app.state::<AppState>();
+                        let mut m = state.update_mode.lock().unwrap();
+                        *m = if *m == UpdateMode::Daily { UpdateMode::Disable } else { UpdateMode::Daily };
+                        *m == UpdateMode::Daily
+                    };
+                    sync_mode_to_tray(&app);
                     // Tray is the one path the frontend can't observe via its own
                     // command round-trip — the push is what keeps an open window
-                    // in sync. (Note: unlike `commands::set_enabled`, this path
+                    // in sync. (Note: unlike `commands::set_update_mode`, this path
                     // doesn't persist — pre-existing, out of scope here.)
-                    state.mark_status_dirty();
+                    app.state::<AppState>().mark_status_dirty();
+                    if now_daily {
+                        pipeline::spawn_apply(app);
+                    }
                 }
                 "regen" => {
-                    tauri::async_runtime::spawn(async move {
-                        let date = city::today();
-                        if let Err(e) = pipeline::run_for_date(app, date).await {
-                            log::warn!("[tray] regenerate failed: {}", e);
-                        }
-                    });
+                    pipeline::spawn_force_regen(app);
                 }
                 "quit" => {
                     app.state::<AppState>().quitting.store(true, Ordering::Release);
@@ -136,10 +140,10 @@ pub fn show_settings(app: &AppHandle) {
     }
 }
 
-pub fn sync_enabled_to_tray(app: &AppHandle) {
-    let on = app.state::<AppState>().enabled.load(Ordering::Acquire);
+pub fn sync_mode_to_tray(app: &AppHandle) {
+    let daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
     if let Some(item) = TOGGLE_ITEM.get() {
-        let _ = item.set_checked(on);
+        let _ = item.set_checked(daily);
     }
 }
 

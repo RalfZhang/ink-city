@@ -3,6 +3,9 @@
 export * from "./types";
 export * from "./city";
 export * from "./bbox";
+// Lat/lon parsing for the customize-city feature (issue #11). Pure + portable,
+// used by the client (City tab) and unit-testable.
+export * from "./coords";
 // The OSM layer manifest (LAYER_IDS/LayerId) — client/website use it for UI
 // gating; kept in the client barrel even though its module now lives under ./osm.
 export * from "./osm/layers";

@@ -8,8 +8,6 @@
     "devMode": "डेवलपर मोड"
   },
   "general": {
-    "enabledLabel": "दैनिक अपडेट सक्षम करें",
-    "enabledDesc": "आधी रात को वॉलपेपर को अगले शहर से बदल देता है।",
     "autostartLabel": "लॉगिन पर लॉन्च करें",
     "autostartDesc": "लॉगिन करते ही InkCity को अपने आप शुरू कर देता है।",
     "hideTrayLabel": "स्टेटस बार आइकन छिपाएं",
@@ -35,8 +33,8 @@
     "languageAuto": "स्वतः",
     "proxyLabel": "प्रॉक्सी",
     "proxyDesc": "उन नेटवर्क के लिए जहाँ OpenStreetMap सीधे उपलब्ध नहीं है, मानचित्र डेटा अनुरोधों को प्रॉक्सी के माध्यम से भेजता है। http:// और socks5:// URL समर्थित हैं।",
-    "hideWindow": "विंडो छिपाएं",
-    "quit": "बंद करें"
+    "quit": "बंद करें",
+    "closeWindow": "विंडो बंद करें"
   },
   "city": {
     "today": "आज",
@@ -44,7 +42,17 @@
     "regenerate": "पुनः जनरेट करें",
     "regenerating": "जनरेट हो रहा है…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "कैसे अपडेट करें?",
+    "modeDisable": "बंद",
+    "modeDaily": "रोज़",
+    "modeCustomized": "कस्टम",
+    "disabledHint": "वॉलपेपर का स्वतः अपडेट बंद है।",
+    "inputLocation": "शहर या निर्देशांक",
+    "locationPlaceholder": "शहर का नाम, निर्देशांक, या मैप लिंक",
+    "invalidLocation": "कोई मेल खाता शहर नहीं — निर्देशांक आज़माएँ, जैसे 51.5074, -0.1278।",
+    "apply": "लागू करें",
+    "customRateHint": "कस्टम स्थान पहले से कैश नहीं होते — हर बार लागू करने पर मैप डेटा लाइव लाया जाता है, इसलिए कम समय में कई नए स्थान लागू करने से बचें, वरना सेवा की दर सीमा लग सकती है।"
   },
   "style": {
     "theme": "मानचित्र थीम",

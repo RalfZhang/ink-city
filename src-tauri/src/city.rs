@@ -87,3 +87,101 @@ pub fn pick_for_date(date: NaiveDate) -> City {
 pub fn today() -> NaiveDate {
     Local::now().date_naive()
 }
+
+/// Cities whose `name`, `localName` or country code matches `query`, best first,
+/// capped at `limit`. Backs the City tab's "Customized" name lookup (issue #11):
+/// the list is already in memory here, so searching it costs nothing and keeps
+/// ~1000 cities out of the frontend bundle.
+///
+/// Ranking is prefix-before-substring, then by population descending, so typing
+/// "san" surfaces San Antonio/San Diego ahead of Santiago de los Caballeros and
+/// never buries a big city under a small one that merely matched earlier in the
+/// file. Matching is ASCII-case-insensitive; `localName` is matched verbatim so
+/// a CJK/Cyrillic query finds its city too.
+pub fn search(query: &str, limit: usize) -> Vec<City> {
+    let q = query.trim().to_lowercase();
+    if q.is_empty() {
+        return Vec::new();
+    }
+    let mut hits: Vec<(u8, u64, &City)> = Vec::new();
+    for c in cities() {
+        let name = c.name.to_lowercase();
+        let local = c.local_name.to_lowercase();
+        let rank = if name.starts_with(&q) || local.starts_with(&q) {
+            0
+        } else if name.contains(&q) || local.contains(&q) {
+            1
+        } else if c.country.to_lowercase() == q {
+            2
+        } else {
+            continue;
+        };
+        hits.push((rank, c.population, c));
+    }
+    // Descending population within a rank: `sort_by_key` is ascending, so the
+    // population is negated via `Reverse`.
+    hits.sort_by_key(|(rank, pop, _)| (*rank, std::cmp::Reverse(*pop)));
+    hits.into_iter().take(limit).map(|(_, _, c)| c.clone()).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn city(id: u64, name: &str, local: &str, country: &str, population: u64) -> City {
+        City {
+            id,
+            name: name.into(),
+            local_name: local.into(),
+            country: country.into(),
+            lat: 0.0,
+            lon: 0.0,
+            population,
+        }
+    }
+
+    /// `search` reads the process-wide `CITIES`, which `initialize` can only fill
+    /// from an `AppHandle`. Seed it directly so the ranking is testable headless;
+    /// `OnceLock::set` is idempotent-safe here because these tests are the only
+    /// writer in the test binary.
+    fn seed() {
+        let _ = CITIES.set(vec![
+            city(1, "Santiago de los Caballeros", "Santiago", "DO", 550_753),
+            city(2, "San Antonio", "San Antonio", "US", 1_469_845),
+            city(3, "San Diego", "San Diego", "US", 1_394_928),
+            city(4, "Shenzhen", "深圳", "CN", 17_494_398),
+            city(5, "Busan", "부산", "KR", 3_678_555),
+        ]);
+    }
+
+    // Busan is the point of this one: it's far bigger than Santiago yet must still
+    // rank last, because a prefix match beats a substring match regardless of size.
+    #[test]
+    fn search_ranks_prefixes_above_substrings_then_by_population() {
+        seed();
+        let names: Vec<String> = search("san", 10).into_iter().map(|c| c.name).collect();
+        assert_eq!(
+            names,
+            [
+                "San Antonio",                // prefix, biggest
+                "San Diego",                  // prefix
+                "Santiago de los Caballeros", // prefix, smallest
+                "Busan",                      // substring ("buSAN")
+            ]
+        );
+    }
+
+    #[test]
+    fn search_matches_local_name_and_country_code() {
+        seed();
+        assert_eq!(search("深圳", 5).first().map(|c| c.id), Some(4));
+        assert_eq!(search("cn", 5).first().map(|c| c.id), Some(4));
+    }
+
+    #[test]
+    fn search_is_empty_for_blank_input_and_respects_the_limit() {
+        seed();
+        assert!(search("   ", 5).is_empty());
+        assert_eq!(search("san", 2).len(), 2);
+    }
+}

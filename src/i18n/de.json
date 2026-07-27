@@ -8,8 +8,6 @@
     "devMode": "Entwicklermodus"
   },
   "general": {
-    "enabledLabel": "Tägliche Updates aktivieren",
-    "enabledDesc": "Wechselt das Hintergrundbild um Mitternacht zur nächsten Stadt.",
     "autostartLabel": "Bei der Anmeldung öffnen",
     "autostartDesc": "Startet InkCity automatisch bei der Anmeldung.",
     "hideTrayLabel": "Statusleistensymbol ausblenden",
@@ -35,8 +33,8 @@
     "languageAuto": "Automatisch",
     "proxyLabel": "Proxy",
     "proxyDesc": "Leitet Kartendatenanfragen über einen Proxy, für Netzwerke, in denen OpenStreetMap nicht direkt erreichbar ist. Unterstützt http://- und socks5://-URLs.",
-    "hideWindow": "Fenster ausblenden",
-    "quit": "Beenden"
+    "quit": "Beenden",
+    "closeWindow": "Fenster schließen"
   },
   "city": {
     "today": "Heute",
@@ -44,7 +42,17 @@
     "regenerate": "Neu generieren",
     "regenerating": "Wird generiert…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Wie aktualisieren?",
+    "modeDisable": "Aus",
+    "modeDaily": "Täglich",
+    "modeCustomized": "Eigener Ort",
+    "disabledHint": "Automatische Hintergrundwechsel sind aus.",
+    "inputLocation": "Stadt oder Koordinaten",
+    "locationPlaceholder": "Stadtname, Koordinaten oder ein Karten-Link",
+    "invalidLocation": "Keine passende Stadt – versuche Koordinaten, z. B. 51.5074, -0.1278.",
+    "apply": "Übernehmen",
+    "customRateHint": "Eigene Orte sind nicht vorab zwischengespeichert – jedes Übernehmen lädt die Kartendaten live. Wende daher nicht viele neue Orte in kurzer Folge an, sonst erreichst du das Anfragelimit des Dienstes."
   },
   "style": {
     "theme": "Kartendesign",

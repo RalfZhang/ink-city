@@ -8,8 +8,6 @@
     "devMode": "Dev Mode"
   },
   "general": {
-    "enabledLabel": "Enable daily updates",
-    "enabledDesc": "Refresh the wallpaper at midnight with the next city.",
     "autostartLabel": "Launch at login",
     "autostartDesc": "Start InkCity automatically when you log in.",
     "hideTrayLabel": "Hide status bar icon",
@@ -35,8 +33,8 @@
     "languageAuto": "Auto",
     "proxyLabel": "Proxy",
     "proxyDesc": "Route map data requests through a proxy, for networks where OpenStreetMap is unreachable directly. Supports http:// and socks5:// URLs.",
-    "hideWindow": "Hide window",
-    "quit": "Quit"
+    "quit": "Quit",
+    "closeWindow": "Close window"
   },
   "city": {
     "today": "Today",
@@ -44,7 +42,17 @@
     "regenerate": "Regenerate",
     "regenerating": "Generating…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "How to update?",
+    "modeDisable": "Disable",
+    "modeDaily": "Daily",
+    "modeCustomized": "Customized",
+    "disabledHint": "Automatic wallpaper updates are off.",
+    "inputLocation": "City or coordinates",
+    "locationPlaceholder": "City name, coordinates, or a map link",
+    "invalidLocation": "No matching city — try coordinates, e.g. 51.5074, -0.1278.",
+    "apply": "Apply",
+    "customRateHint": "Custom locations aren't precached — each Apply fetches map data live, so avoid applying many new locations in quick succession or you may hit the service's rate limit."
   },
   "style": {
     "theme": "Map theme",

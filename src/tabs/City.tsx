@@ -1,23 +1,35 @@
 import { invoke } from "@tauri-apps/api/core";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import type { Status } from "../types";
-import { wikipediaUrl, googleMapsUrl } from "../constants";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import SettingRow from "@/components/SettingRow";
+import DailyCity from "@/components/DailyCity";
+import CustomCity from "@/components/CustomCity";
+import type { Status, UpdateMode } from "../types";
 
 type Props = {
   status: Status;
   onError: (e: unknown) => void;
 };
 
+/**
+ * The City tab: a "How to update?" selector (Disable / Daily / Customized) plus
+ * the panel for the active mode. The Daily and Customized panels are their own
+ * self-contained components — they're independent features that just happen to
+ * share this selector.
+ */
 export default function City({ status, onError }: Props) {
   const { t } = useTranslation();
-  const city = status.city;
 
-  const regenerate = async () => {
+  const setMode = async (mode: UpdateMode) => {
     try {
-      await invoke("regenerate_now");
+      await invoke("set_update_mode", { mode });
     } catch (e) {
       onError(e);
     }
@@ -27,38 +39,29 @@ export default function City({ status, onError }: Props) {
     <div className="space-y-4 max-w-2xl">
       <Card>
         <CardContent>
-          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-            {t("city.today")} · {status.date}
-          </div>
-          <div className="text-xl font-semibold">
-            {city.name}, {city.country}
-          </div>
-          {city.localName !== city.name && (
-            <div className="text-sm text-muted-foreground">{city.localName}</div>
-          )}
-          <div className="text-xs text-muted-foreground mt-1">
-            {city.lat.toFixed(4)}, {city.lon.toFixed(4)}
-          </div>
+          <SettingRow
+            label={t("city.howToUpdate")}
+            control={
+              <Select value={status.updateMode} onValueChange={(v) => setMode(v as UpdateMode)}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="disable">{t("city.modeDisable")}</SelectItem>
+                  <SelectItem value="daily">{t("city.modeDaily")}</SelectItem>
+                  <SelectItem value="customized">{t("city.modeCustomized")}</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+          />
         </CardContent>
-        <CardFooter className="min-w-32 justify-end gap-2">
-          <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
-            {t("city.wikipedia")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => openUrl(googleMapsUrl(city.lat, city.lon))}
-          >
-            {t("city.googleMaps")}
-          </Button>
-          <Button className="min-w-32" onClick={regenerate} disabled={status.running} size="sm">
-            {status.running ? t("city.regenerating") : t("city.regenerate")}
-          </Button>
-        </CardFooter>
       </Card>
 
-      {/* <div className="flex justify-end gap-2">
-      </div> */}
+      {status.updateMode === "disable" && (
+        <p className="text-sm text-muted-foreground px-1">{t("city.disabledHint")}</p>
+      )}
+      {status.updateMode === "daily" && <DailyCity status={status} onError={onError} />}
+      {status.updateMode === "customized" && <CustomCity status={status} onError={onError} />}
     </div>
   );
 }

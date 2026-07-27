@@ -171,5 +171,7 @@ day, as each new day adds another city and schedule day to the backlog.
   never re-rolled to a different city.
 - Manifest schema reuses `OSM_SCHEMA_VERSION` for `v`; the `date`/`city` envelope
   is additive.
-- Precedence vs. the "customize city" pin (#11, separate branch): a user pin
-  should win over the schedule; wire that ordering when both land.
+- Precedence vs. the "customize city" pin (#11) is settled by the `UpdateMode`
+  selector rather than by a fallback chain: `Customized` renders the pin and never
+  consults the schedule, `Daily` renders the schedule and never consults the pin.
+  So the two can't race, and the pin wins whenever the user has selected it.

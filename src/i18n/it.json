@@ -8,8 +8,6 @@
     "devMode": "Modalità sviluppatore"
   },
   "general": {
-    "enabledLabel": "Attiva aggiornamenti giornalieri",
-    "enabledDesc": "Aggiorna lo sfondo a mezzanotte con la città successiva.",
     "autostartLabel": "Avvia all'accesso",
     "autostartDesc": "Avvia automaticamente InkCity all'accesso.",
     "hideTrayLabel": "Nascondi l'icona nella barra di stato",
@@ -35,8 +33,8 @@
     "languageAuto": "Automatico",
     "proxyLabel": "Proxy",
     "proxyDesc": "Instrada le richieste dei dati della mappa attraverso un proxy, per le reti in cui OpenStreetMap non è raggiungibile direttamente. Supporta URL http:// e socks5://.",
-    "hideWindow": "Nascondi finestra",
-    "quit": "Esci"
+    "quit": "Esci",
+    "closeWindow": "Chiudi finestra"
   },
   "city": {
     "today": "Oggi",
@@ -44,7 +42,17 @@
     "regenerate": "Rigenera",
     "regenerating": "Generazione in corso…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Come aggiornare?",
+    "modeDisable": "Disattivato",
+    "modeDaily": "Giornaliero",
+    "modeCustomized": "Personalizzato",
+    "disabledHint": "L'aggiornamento automatico dello sfondo è disattivato.",
+    "inputLocation": "Città o coordinate",
+    "locationPlaceholder": "Nome della città, coordinate o un link di mappa",
+    "invalidLocation": "Nessuna città corrispondente: prova con le coordinate, es. 51.5074, -0.1278.",
+    "apply": "Applica",
+    "customRateHint": "Le posizioni personalizzate non sono precaricate: ogni applicazione scarica i dati della mappa in tempo reale, quindi evita di applicare molte nuove posizioni in rapida successione o potresti raggiungere il limite di richieste del servizio."
   },
   "style": {
     "theme": "Tema mappa",

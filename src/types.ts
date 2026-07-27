@@ -7,8 +7,14 @@ import type { City, ColorPair, StylePreset, ThemeMode } from "./core";
 
 export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 
+/** How the wallpaper is refreshed — the City-tab "How to update?" selector. */
+export type UpdateMode = "disable" | "daily" | "customized";
+
 export type Status = {
-  enabled: boolean;
+  /** How the wallpaper is refreshed (City tab). Replaces the old `enabled`. */
+  updateMode: UpdateMode;
+  /** The Customized-mode pin, or null until the user applies one. */
+  custom: { lat: number; lon: number } | null;
   hide_tray: boolean;
   running: boolean;
   city: City;

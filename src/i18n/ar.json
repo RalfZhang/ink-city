@@ -8,8 +8,6 @@
     "devMode": "وضع المطوّر"
   },
   "general": {
-    "enabledLabel": "تفعيل التحديثات اليومية",
-    "enabledDesc": "تحديث الخلفية عند منتصف الليل إلى المدينة التالية.",
     "autostartLabel": "التشغيل عند تسجيل الدخول",
     "autostartDesc": "تشغيل InkCity تلقائيًا عند تسجيل الدخول.",
     "hideTrayLabel": "إخفاء أيقونة شريط الحالة",
@@ -35,8 +33,8 @@
     "languageAuto": "تلقائي",
     "proxyLabel": "الوكيل",
     "proxyDesc": "توجيه طلبات بيانات الخرائط عبر وكيل، للشبكات التي يتعذّر فيها الوصول إلى OpenStreetMap مباشرة. يدعم روابط http:// و socks5://.",
-    "hideWindow": "إخفاء النافذة",
-    "quit": "إنهاء"
+    "quit": "إنهاء",
+    "closeWindow": "إغلاق النافذة"
   },
   "city": {
     "today": "اليوم",
@@ -44,7 +42,17 @@
     "regenerate": "إعادة التوليد",
     "regenerating": "جارٍ التوليد…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "خرائط Google"
+    "googleMaps": "خرائط Google",
+    "howToUpdate": "كيف يتم التحديث؟",
+    "modeDisable": "تعطيل",
+    "modeDaily": "يوميًا",
+    "modeCustomized": "مخصص",
+    "disabledHint": "التحديث التلقائي للخلفية معطّل.",
+    "inputLocation": "مدينة أو إحداثيات",
+    "locationPlaceholder": "اسم مدينة أو إحداثيات أو رابط خريطة",
+    "invalidLocation": "لا توجد مدينة مطابقة — جرّب إحداثيات، مثل 51.5074, -0.1278.",
+    "apply": "تطبيق",
+    "customRateHint": "المواقع المخصصة غير مخزّنة مسبقًا — كل تطبيق يجلب بيانات الخريطة مباشرةً، لذا تجنّب تطبيق مواقع جديدة كثيرة في وقت قصير وإلا فقد تصل إلى حد الطلبات للخدمة."
   },
   "style": {
     "theme": "سمة الخريطة",

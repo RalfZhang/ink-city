@@ -19,6 +19,34 @@ impl Default for ThemeMode {
     }
 }
 
+/// How the wallpaper is refreshed — the "How to update?" selector in the City
+/// tab. `Daily` rotates through the city list at midnight (the classic
+/// behavior); `Customized` pins the wallpaper to a user-entered location and
+/// never rotates; `Disable` turns automatic updates off entirely (the wallpaper
+/// stays whatever it currently is).
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum UpdateMode {
+    Disable,
+    Daily,
+    Customized,
+}
+
+impl Default for UpdateMode {
+    fn default() -> Self {
+        UpdateMode::Daily
+    }
+}
+
+/// A user-pinned location for `UpdateMode::Customized` (issue #11). No GeoNames
+/// id — arbitrary coordinates are never precached, so the map is always fetched
+/// live via the osm-cli sidecar (honoring the proxy for mainland-China users).
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+pub struct CustomCity {
+    pub lat: f64,
+    pub lon: f64,
+}
+
 /// How often the background scheduler checks GitHub for a new release.
 /// `Never` disables automatic checks entirely (the user can still check
 /// manually from the About tab).
@@ -85,7 +113,13 @@ impl ColorPair {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {
-    pub enabled: bool,
+    /// How the wallpaper is refreshed (see `UpdateMode`). Replaces the old
+    /// `enabled: bool`; legacy configs are migrated in `load`.
+    pub update_mode: UpdateMode,
+    /// The pinned location for `UpdateMode::Customized`, or `None` until the user
+    /// applies one. Kept even while the mode isn't `Customized` so switching back
+    /// restores the last location.
+    pub custom: Option<CustomCity>,
     pub hide_tray: bool,
     pub theme: ThemeMode,
     pub light: ColorPair,
@@ -128,7 +162,8 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            enabled: true,
+            update_mode: UpdateMode::default(),
+            custom: None,
             hide_tray: false,
             theme: ThemeMode::default(),
             light: ColorPair::light_default(),
@@ -178,11 +213,71 @@ pub fn mark_initialized(app: &AppHandle) -> Result<()> {
 pub fn load(app: &AppHandle) -> Config {
     let Ok(path) = config_path(app) else { return Config::default() };
     let Ok(raw) = fs::read_to_string(&path) else { return Config::default() };
-    serde_json::from_str(&raw).unwrap_or_default()
+    parse_config(&raw)
+}
+
+/// Parse persisted config JSON, migrating the legacy `enabled: bool` field to
+/// the tri-state `update_mode` when the latter is absent — so a user who had
+/// daily updates switched *off* stays on `Disable` after upgrading instead of
+/// silently reverting to the `Daily` default (and `enabled: true` maps to
+/// `Daily`). A config already on the new schema is left untouched. Unparseable
+/// or empty input falls back to `Config::default()` (⇒ `Daily`, the new-user
+/// default). Pure (no IO) so it's unit-testable — see the tests below.
+fn parse_config(raw: &str) -> Config {
+    let Ok(mut v) = serde_json::from_str::<serde_json::Value>(raw) else {
+        return Config::default();
+    };
+    if let Some(obj) = v.as_object_mut() {
+        if !obj.contains_key("update_mode") {
+            if let Some(enabled) = obj.get("enabled").and_then(|e| e.as_bool()) {
+                let mode = if enabled { "daily" } else { "disable" };
+                obj.insert("update_mode".into(), serde_json::Value::String(mode.into()));
+            }
+        }
+    }
+    serde_json::from_value(v).unwrap_or_default()
 }
 
 pub fn save(app: &AppHandle, cfg: &Config) -> Result<()> {
     let path = config_path(app)?;
     fs::write(path, serde_json::to_string_pretty(cfg)?)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn migrates_legacy_enabled_false_to_disable() {
+        assert_eq!(parse_config(r#"{"enabled": false}"#).update_mode, UpdateMode::Disable);
+    }
+
+    #[test]
+    fn migrates_legacy_enabled_true_to_daily() {
+        assert_eq!(parse_config(r#"{"enabled": true}"#).update_mode, UpdateMode::Daily);
+    }
+
+    #[test]
+    fn explicit_update_mode_wins_over_a_lingering_enabled() {
+        let cfg = parse_config(r#"{"update_mode":"customized","enabled":false}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Customized);
+    }
+
+    #[test]
+    fn new_or_unparseable_config_defaults_to_daily() {
+        // New install (no config file → "{}") and any corrupt file both land on
+        // the Daily default — so a fresh user opens the app already on Daily.
+        assert_eq!(parse_config("{}").update_mode, UpdateMode::Daily);
+        assert_eq!(parse_config("not json").update_mode, UpdateMode::Daily);
+        assert_eq!(Config::default().update_mode, UpdateMode::Daily);
+    }
+
+    #[test]
+    fn custom_pin_round_trips() {
+        let cfg =
+            parse_config(r#"{"update_mode":"customized","custom":{"lat":-16.5,"lon":-68.17}}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Customized);
+        assert_eq!(cfg.custom, Some(CustomCity { lat: -16.5, lon: -68.17 }));
+    }
 }

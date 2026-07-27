@@ -1,48 +1,34 @@
 use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
 
-pub fn set(path: &Path) -> Result<()> {
-    #[cfg(target_os = "macos")]
-    {
-        // Workaround: NSWorkspace.setDesktopImageURL caches by URL equality,
-        // so setting to the same path twice (even after content change) is a
-        // silent no-op. Copy the canonical PNG to a unique-suffix sibling
-        // each time and set wallpaper to that copy.
-        let unique = bump_live_path(path)?;
-        std::fs::copy(path, &unique)?;
-        let r = set_macos(unique.to_str().ok_or_else(|| anyhow!("non-utf8 live path"))?);
-        if let Some(dir) = unique.parent() {
-            cleanup_live_files(dir, &unique);
-        }
-        r
-    }
-
-    #[cfg(not(target_os = "macos"))]
-    {
-        let p = path.to_str().ok_or_else(|| anyhow!("non-utf8 path"))?;
-        wallpaper::set_from_path(p).map_err(|e| anyhow!("set wallpaper: {}", e))?;
-        let _ = wallpaper::set_mode(wallpaper::Mode::Crop);
-        Ok(())
-    }
+/// Apply `src` as the desktop wallpaper. Copies it to a freshly-timestamped
+/// `wallpaper-<ts>.png` in `live_dir` (the `wallpaper/` cache root) and points
+/// the OS at that copy, then removes the older `wallpaper-*.png` siblings.
+///
+/// The fresh filename on every call is what makes the change reliably take on
+/// macOS — NSWorkspace.setDesktopImageURL caches by URL equality, so re-setting
+/// the same path (even after the content changed) is a silent no-op — and it's
+/// harmless on Windows, which copies the image into its own store on set, so the
+/// source file can be replaced next time without disturbing the live desktop.
+pub fn set(src: &Path, live_dir: &Path) -> Result<()> {
+    std::fs::create_dir_all(live_dir)?;
+    let live = fresh_live_path(live_dir);
+    std::fs::copy(src, &live)?;
+    let r = set_os(&live);
+    cleanup_live_files(live_dir, &live);
+    r
 }
 
-#[cfg(target_os = "macos")]
-fn bump_live_path(orig: &Path) -> Result<PathBuf> {
-    let dir = orig
-        .parent()
-        .ok_or_else(|| anyhow!("png has no parent dir"))?;
-    let stem = orig
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("wallpaper");
+fn fresh_live_path(dir: &Path) -> PathBuf {
     let ts = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0);
-    Ok(dir.join(format!("{}.live.{}.png", stem, ts)))
+    dir.join(format!("wallpaper-{ts}.png"))
 }
 
-#[cfg(target_os = "macos")]
+/// Remove every `wallpaper-*.png` in `dir` except the one we just set, so the
+/// live copies don't pile up.
 fn cleanup_live_files(dir: &Path, keep: &Path) {
     let Ok(entries) = std::fs::read_dir(dir) else { return };
     for e in entries.flatten() {
@@ -51,10 +37,23 @@ fn cleanup_live_files(dir: &Path, keep: &Path) {
             continue;
         }
         let Some(name) = p.file_name().and_then(|n| n.to_str()) else { continue };
-        if name.contains(".live.") && name.ends_with(".png") {
+        if name.starts_with("wallpaper-") && name.ends_with(".png") {
             let _ = std::fs::remove_file(&p);
         }
     }
+}
+
+#[cfg(target_os = "macos")]
+fn set_os(path: &Path) -> Result<()> {
+    set_macos(path.to_str().ok_or_else(|| anyhow!("non-utf8 live path"))?)
+}
+
+#[cfg(not(target_os = "macos"))]
+fn set_os(path: &Path) -> Result<()> {
+    let p = path.to_str().ok_or_else(|| anyhow!("non-utf8 path"))?;
+    wallpaper::set_from_path(p).map_err(|e| anyhow!("set wallpaper: {}", e))?;
+    let _ = wallpaper::set_mode(wallpaper::Mode::Crop);
+    Ok(())
 }
 
 #[cfg(target_os = "macos")]

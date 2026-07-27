@@ -8,8 +8,6 @@
     "devMode": "Mode Pengembang"
   },
   "general": {
-    "enabledLabel": "Aktifkan pembaruan harian",
-    "enabledDesc": "Menyegarkan wallpaper pada tengah malam ke kota berikutnya.",
     "autostartLabel": "Jalankan saat masuk",
     "autostartDesc": "Memulai InkCity secara otomatis saat Anda masuk.",
     "hideTrayLabel": "Sembunyikan ikon di bilah status",
@@ -35,8 +33,8 @@
     "languageAuto": "Otomatis",
     "proxyLabel": "Proksi",
     "proxyDesc": "Merutekan permintaan data peta melalui proksi, untuk jaringan yang tidak dapat mengakses OpenStreetMap secara langsung. Mendukung URL http:// dan socks5://.",
-    "hideWindow": "Sembunyikan jendela",
-    "quit": "Keluar"
+    "quit": "Keluar",
+    "closeWindow": "Tutup jendela"
   },
   "city": {
     "today": "Hari ini",
@@ -44,7 +42,17 @@
     "regenerate": "Buat ulang",
     "regenerating": "Membuat…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Cara pembaruan?",
+    "modeDisable": "Nonaktif",
+    "modeDaily": "Harian",
+    "modeCustomized": "Kustom",
+    "disabledHint": "Pembaruan wallpaper otomatis nonaktif.",
+    "inputLocation": "Kota atau koordinat",
+    "locationPlaceholder": "Nama kota, koordinat, atau tautan peta",
+    "invalidLocation": "Tidak ada kota yang cocok — coba koordinat, mis. 51.5074, -0.1278.",
+    "apply": "Terapkan",
+    "customRateHint": "Lokasi kustom tidak di-cache lebih dulu — setiap penerapan mengambil data peta secara langsung, jadi hindari menerapkan banyak lokasi baru dalam waktu singkat agar tidak terkena batas permintaan layanan."
   },
   "style": {
     "theme": "Tema peta",

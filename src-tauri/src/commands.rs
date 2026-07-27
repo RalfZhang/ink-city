@@ -5,16 +5,22 @@ use tauri::{AppHandle, Manager, State};
 use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
-use crate::config::{self, ColorPair, StylePreset, ThemeMode, UpdateCheck};
+use crate::config::{self, ColorPair, CustomCity, StylePreset, ThemeMode, UpdateCheck, UpdateMode};
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
 
 #[derive(Serialize, Clone)]
 pub struct Status {
-    pub enabled: bool,
+    /// How the wallpaper is refreshed — the City-tab "How to update?" selector.
+    #[serde(rename = "updateMode")]
+    pub update_mode: UpdateMode,
+    /// The Customized-mode pin, or `None` until the user applies one.
+    pub custom: Option<CustomCity>,
     pub hide_tray: bool,
     pub running: bool,
+    /// Today's Daily-rotation city — informational; the actually-rendered map
+    /// depends on `update_mode`.
     pub city: City,
     pub date: String,
     pub theme: ThemeMode,
@@ -73,7 +79,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
     // Bound to a local so the lock-guard temporaries in the literal drop before
     // `state` (the function's tail expression would otherwise outlive it).
     let status = Status {
-        enabled: state.enabled.load(Ordering::Acquire),
+        update_mode: *state.update_mode.lock().unwrap(),
+        custom: *state.custom.lock().unwrap(),
         hide_tray: state.hide_tray.load(Ordering::Acquire),
         running,
         city,
@@ -103,12 +110,50 @@ pub async fn get_status(app: AppHandle) -> Result<Status, String> {
     Ok(build_status(&app).await)
 }
 
+/// Set the wallpaper update mode (Disable / Daily / Customized) — the City-tab
+/// selector. Persists, syncs the tray, and applies the wallpaper for the new
+/// mode: Daily and Customized reapply the current cached render (or render it if
+/// missing); Customized is a no-op until a pin is applied; Disable leaves the
+/// current wallpaper untouched.
 #[tauri::command]
-pub fn set_enabled(app: AppHandle, on: bool) -> Result<(), String> {
-    app.state::<AppState>().enabled.store(on, Ordering::Release);
-    tray::sync_enabled_to_tray(&app);
+pub fn set_update_mode(app: AppHandle, mode: UpdateMode) -> Result<(), String> {
+    *app.state::<AppState>().update_mode.lock().unwrap() = mode;
+    tray::sync_mode_to_tray(&app);
     app.state::<AppState>().mark_status_dirty();
-    persist(&app)
+    persist(&app)?;
+    if mode != UpdateMode::Disable {
+        pipeline::spawn_apply(app);
+    }
+    Ok(())
+}
+
+/// Apply a Customized-mode pin: store the coordinates, switch to Customized
+/// mode, and render that location. Coordinates are also validated on the
+/// frontend (see core/coords.ts); this re-checks the range defensively.
+#[tauri::command]
+pub fn apply_custom_city(app: AppHandle, lat: f64, lon: f64) -> Result<(), String> {
+    if !lat.is_finite() || !lon.is_finite() || lat.abs() > 90.0 || lon.abs() > 180.0 {
+        return Err("coordinates out of range".into());
+    }
+    {
+        let state = app.state::<AppState>();
+        *state.custom.lock().unwrap() = Some(CustomCity { lat, lon });
+        *state.update_mode.lock().unwrap() = UpdateMode::Customized;
+    }
+    tray::sync_mode_to_tray(&app);
+    app.state::<AppState>().mark_status_dirty();
+    persist(&app)?;
+    pipeline::spawn_apply(app);
+    Ok(())
+}
+
+/// Name lookup for the Customized-mode input (issue #11): the bundled city list
+/// filtered by `query`, best match first. Searched in the backend because the
+/// list already lives there (see `city::search`) — shipping ~1000 cities to the
+/// webview just to filter them would only bloat the bundle.
+#[tauri::command]
+pub fn search_cities(query: String) -> Vec<City> {
+    city::search(&query, 8)
 }
 
 #[tauri::command]
@@ -433,30 +478,15 @@ pub struct CleanCacheResult {
     pub freed_bytes: u64,
 }
 
-/// Dev Mode's "Clean cache": delete every cached artifact in the app cache dir
-/// — the downloaded OSM data (`{date}.osm.json`) and the rendered wallpapers
-/// (`{date}-{theme}.png`). Everything we write there is keyed by a leading
-/// 10-char ISO date, so we match on that prefix (like `pipeline::cleanup_cache`)
-/// and never touch anything else that might live in the cache dir. The cache is
-/// fully regenerable: the next render re-fetches from the CDN / sidecar and
-/// re-renders. Returns how many files were removed and how many bytes were
-/// freed, for UI feedback.
+/// Dev Mode's "Clean cache": wipe the whole wallpaper cache — the downloaded OSM
+/// data and rendered wallpapers under `wallpaper/{daily,customized}/` plus the
+/// live copies — and any legacy flat artifacts left by pre-reorg versions (see
+/// `pipeline::wipe_cache`). The cache is fully regenerable: the next render
+/// re-fetches from the CDN / sidecar and re-renders. Returns how many files were
+/// removed and how many bytes were freed, for UI feedback.
 #[tauri::command]
 pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
-    let cache = pipeline::cache_dir(&app).map_err(|e| e.to_string())?;
-    let mut removed_files = 0usize;
-    let mut freed_bytes = 0u64;
-    // Delete every artifact `for_each_artifact` matches (the same date-prefix
-    // whitelist `pipeline::cleanup_cache` prunes by age), counting files and
-    // bytes freed for UI feedback.
-    pipeline::for_each_artifact(&cache, |entry, _date| {
-        let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-        if std::fs::remove_file(entry.path()).is_ok() {
-            removed_files += 1;
-            freed_bytes += size;
-        }
-    })
-    .map_err(|e| e.to_string())?;
+    let (removed_files, freed_bytes) = pipeline::wipe_cache(&app).map_err(|e| e.to_string())?;
     log::info!("[commands] clean_cache removed {} files ({} bytes)", removed_files, freed_bytes);
     Ok(CleanCacheResult { removed_files, freed_bytes })
 }
@@ -464,7 +494,8 @@ pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
 fn persist(app: &AppHandle) -> Result<(), String> {
     let s = app.state::<AppState>();
     let cfg = config::Config {
-        enabled: s.enabled.load(Ordering::Acquire),
+        update_mode: *s.update_mode.lock().unwrap(),
+        custom: *s.custom.lock().unwrap(),
         hide_tray: s.hide_tray.load(Ordering::Acquire),
         theme: *s.theme.lock().unwrap(),
         light: s.light.lock().unwrap().clone(),

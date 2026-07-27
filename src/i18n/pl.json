@@ -8,8 +8,6 @@
     "devMode": "Tryb dewelopera"
   },
   "general": {
-    "enabledLabel": "Włącz codzienne aktualizacje",
-    "enabledDesc": "Zmienia tapetę o północy na kolejne miasto.",
     "autostartLabel": "Uruchamiaj przy logowaniu",
     "autostartDesc": "Automatycznie uruchamia InkCity po zalogowaniu.",
     "hideTrayLabel": "Ukryj ikonę na pasku stanu",
@@ -35,8 +33,8 @@
     "languageAuto": "Automatycznie",
     "proxyLabel": "Proxy",
     "proxyDesc": "Przekierowuje żądania danych mapy przez serwer proxy — dla sieci, w których OpenStreetMap nie jest dostępny bezpośrednio. Obsługuje adresy URL http:// i socks5://.",
-    "hideWindow": "Ukryj okno",
-    "quit": "Zamknij"
+    "quit": "Zamknij",
+    "closeWindow": "Zamknij okno"
   },
   "city": {
     "today": "Dziś",
@@ -44,7 +42,17 @@
     "regenerate": "Wygeneruj ponownie",
     "regenerating": "Generowanie…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Jak aktualizować?",
+    "modeDisable": "Wyłączone",
+    "modeDaily": "Codziennie",
+    "modeCustomized": "Własne",
+    "disabledHint": "Automatyczna zmiana tapety jest wyłączona.",
+    "inputLocation": "Miasto lub współrzędne",
+    "locationPlaceholder": "Nazwa miasta, współrzędne lub link do mapy",
+    "invalidLocation": "Brak pasującego miasta — podaj współrzędne, np. 51.5074, -0.1278.",
+    "apply": "Zastosuj",
+    "customRateHint": "Własne lokalizacje nie są wcześniej buforowane — każde zastosowanie pobiera dane mapy na bieżąco, więc nie stosuj wielu nowych lokalizacji w krótkim czasie, bo możesz przekroczyć limit zapytań serwisu."
   },
   "style": {
     "theme": "Motyw mapy",

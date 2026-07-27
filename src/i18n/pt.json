@@ -8,8 +8,6 @@
     "devMode": "Modo de desenvolvedor"
   },
   "general": {
-    "enabledLabel": "Ativar atualizações diárias",
-    "enabledDesc": "Atualiza o papel de parede à meia-noite para a próxima cidade.",
     "autostartLabel": "Iniciar ao fazer login",
     "autostartDesc": "Inicia o InkCity automaticamente ao fazer login.",
     "hideTrayLabel": "Ocultar o ícone da barra de status",
@@ -35,8 +33,8 @@
     "languageAuto": "Automático",
     "proxyLabel": "Proxy",
     "proxyDesc": "Roteia as solicitações de dados do mapa por um proxy, para redes onde o OpenStreetMap não é acessível diretamente. Compatível com URLs http:// e socks5://.",
-    "hideWindow": "Ocultar janela",
-    "quit": "Sair"
+    "quit": "Sair",
+    "closeWindow": "Fechar janela"
   },
   "city": {
     "today": "Hoje",
@@ -44,7 +42,17 @@
     "regenerate": "Regenerar",
     "regenerating": "Gerando…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google Maps"
+    "googleMaps": "Google Maps",
+    "howToUpdate": "Como atualizar?",
+    "modeDisable": "Desativado",
+    "modeDaily": "Diário",
+    "modeCustomized": "Personalizado",
+    "disabledHint": "As atualizações automáticas do papel de parede estão desativadas.",
+    "inputLocation": "Cidade ou coordenadas",
+    "locationPlaceholder": "Nome da cidade, coordenadas ou um link de mapa",
+    "invalidLocation": "Nenhuma cidade correspondente — tente coordenadas, ex.: 51.5074, -0.1278.",
+    "apply": "Aplicar",
+    "customRateHint": "Locais personalizados não são pré-armazenados em cache — cada aplicação busca os dados do mapa ao vivo, portanto evite aplicar muitos locais novos em sequência ou você pode atingir o limite de requisições do serviço."
   },
   "style": {
     "theme": "Tema do mapa",

@@ -6,6 +6,7 @@ import { Direction } from "radix-ui";
 import i18n, { dirForLocale } from "@/i18n";
 import { logWarn } from "@/lib/log";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import General from "./tabs/General";
 import City from "./tabs/City";
 import Style from "./tabs/Style";
@@ -19,7 +20,9 @@ type TabId = "general" | "city" | "style" | "lab" | "about" | "devMode";
 function App() {
   const { t } = useTranslation();
   const [status, setStatus] = useState<Status | null>(null);
-  const [tab, setTab] = useState<TabId>("general");
+  // Default to the City tab — the functional day-to-day view — rather than the
+  // rarely-changed General settings.
+  const [tab, setTab] = useState<TabId>("city");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -136,7 +139,7 @@ function App() {
     const next = !(status?.devMode ?? false);
     // Leaving devMode while it's the active tab would otherwise strand the Tabs
     // component on a value with no matching trigger/content.
-    if (!next && tab === "devMode") setTab("general");
+    if (!next && tab === "devMode") setTab("city");
     invoke("set_dev_mode", { on: next }).catch(onError);
   };
 
@@ -165,20 +168,31 @@ function App() {
         onValueChange={(v) => setTab(v as TabId)}
         className="flex-1 min-h-0 gap-0"
       >
-        <TabsList className="w-[180px] h-full bg-transparent rounded-none p-4 gap-0.5 items-stretch">
-          <TabsTrigger value="general">{t("sidebar.general")}</TabsTrigger>
-          <TabsTrigger value="city">{t("sidebar.city")}</TabsTrigger>
-          <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
-          <TabsTrigger value="lab">{t("sidebar.lab")}</TabsTrigger>
-          <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
-          {devMode && <TabsTrigger value="devMode">{t("sidebar.devMode")}</TabsTrigger>}
-        </TabsList>
+        <div className="w-[180px] h-full flex flex-col p-4">
+          <TabsList className="w-full bg-transparent rounded-none p-0 gap-0.5 items-stretch">
+            <TabsTrigger value="city">{t("sidebar.city")}</TabsTrigger>
+            <TabsTrigger value="general">{t("sidebar.general")}</TabsTrigger>
+            <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
+            <TabsTrigger value="lab">{t("sidebar.lab")}</TabsTrigger>
+            <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
+            {devMode && <TabsTrigger value="devMode">{t("sidebar.devMode")}</TabsTrigger>}
+          </TabsList>
+          {/* Window controls pinned to the bottom of the sidebar. */}
+          <div className="mt-auto flex flex-col gap-2 pt-4">
+            <Button variant="outline" size="sm" onClick={() => invoke("hide_window")}>
+              {t("general.closeWindow")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
+              {t("general.quit")}
+            </Button>
+          </div>
+        </div>
 
-        <TabsContent value="general" className="flex-1 overflow-y-auto border-s px-4 py-4">
-          <General status={effectiveStatus} refresh={refresh} onError={onError} />
-        </TabsContent>
         <TabsContent value="city" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <City status={effectiveStatus} onError={onError} />
+        </TabsContent>
+        <TabsContent value="general" className="flex-1 overflow-y-auto border-s px-4 py-4">
+          <General status={effectiveStatus} refresh={refresh} onError={onError} />
         </TabsContent>
         <TabsContent value="style" className="flex-1 overflow-y-auto border-s px-4 py-4">
           <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />

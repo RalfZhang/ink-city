@@ -15,7 +15,8 @@
     "precache": "tsx scripts/osm-cli.ts precache",
     "build:sidecar": "tsx scripts/build-sidecar.ts",
     "render": "tsx scripts/render.ts",
-    "schedule-test": "tsx scripts/schedule-test.ts"
+    "schedule-test": "tsx scripts/schedule-test.ts",
+    "coords-test": "tsx scripts/coords-test.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

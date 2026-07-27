@@ -8,8 +8,6 @@
     "devMode": "開発者モード"
   },
   "general": {
-    "enabledLabel": "毎日の更新を有効にする",
-    "enabledDesc": "深夜に次の都市の壁紙に切り替えます。",
     "autostartLabel": "ログイン時に起動",
     "autostartDesc": "ログイン時にInkCityを自動的に起動します。",
     "hideTrayLabel": "ステータスバーのアイコンを非表示にする",
@@ -35,8 +33,8 @@
     "languageAuto": "自動",
     "proxyLabel": "プロキシ",
     "proxyDesc": "OpenStreetMapに直接アクセスできないネットワーク向けに、地図データのリクエストをプロキシ経由で送信します。http:// と socks5:// のURLに対応しています。",
-    "hideWindow": "ウィンドウを非表示",
-    "quit": "終了"
+    "quit": "終了",
+    "closeWindow": "ウィンドウを閉じる"
   },
   "city": {
     "today": "今日",
@@ -44,7 +42,17 @@
     "regenerate": "再生成",
     "regenerating": "生成中…",
     "wikipedia": "Wikipedia",
-    "googleMaps": "Google マップ"
+    "googleMaps": "Google マップ",
+    "howToUpdate": "更新方法",
+    "modeDisable": "無効",
+    "modeDaily": "毎日",
+    "modeCustomized": "カスタム",
+    "disabledHint": "壁紙の自動更新はオフです。",
+    "inputLocation": "都市または座標",
+    "locationPlaceholder": "都市名、座標、または地図のリンク",
+    "invalidLocation": "一致する都市がありません。座標を入力してください（例: 51.5074, -0.1278）。",
+    "apply": "適用",
+    "customRateHint": "カスタムの場所は事前キャッシュされないため、適用ごとに地図データを取得します。短時間に多数の新しい場所を適用すると、サービスのレート制限に達する場合があります。"
   },
   "style": {
     "theme": "マップテーマ",
