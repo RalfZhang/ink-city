@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Pré-visualização antecipada",
-    "advancePreviewDesc": "Pré-visualiza o mapa da cidade de um dia futuro na rotação, sem alterar o papel de parede de hoje.",
+    "advancePreviewDesc": "Renderiza um dia futuro e o guarda como um render normal — os dados do mapa e a imagem vão para o cache diário, prontos para quando esse dia chegar. Não altera o papel de parede de hoje.",
     "loading": "Renderizando pré-visualização…",
     "cleanCacheTitle": "Limpar cache",
     "cleanCacheDesc": "Exclui os dados de mapa baixados e os papéis de parede gerados. Eles serão baixados e gerados novamente na próxima atualização.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} arquivos removidos · {{size}} liberados",
     "cleanCacheEmpty": "O cache já está vazio",
     "bypassCacheTitle": "Ignorar cache e CDN",
-    "bypassCacheDesc": "Busca os dados do mapa ao vivo pela API do Overpass, ignorando a CDN e sobrescrevendo o cache local com eles. Use ao testar alterações nos dados do mapa. Volta a desativado ao reiniciar.",
-    "openFullSize": "Clique duas vezes para abrir em tamanho real",
-    "savedTo": "Salvo em {{path}}"
+    "bypassCacheDesc": "Pega a cidade do dia no calendário lido direto do GitHub e busca os dados do mapa ao vivo na API Overpass em vez do CDN, sobrescrevendo o cache local. Útil para testar mudanças nos dados. Volta a desligado ao reiniciar.",
+    "dailyOnly": "Aplica-se apenas ao modo de atualização Diário."
   },
   "common": {
-    "loading": "carregando…"
+    "loading": "carregando…",
+    "dismiss": "Fechar"
   },
   "tray": {
     "openSettings": "Abrir configurações",

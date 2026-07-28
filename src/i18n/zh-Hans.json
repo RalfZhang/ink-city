@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "提前预览",
-    "advancePreviewDesc": "预览轮换中未来某一天将显示的城市地图，不会更改今天的壁纸。",
+    "advancePreviewDesc": "渲染未来某一天并按正常渲染缓存 —— 地图数据和图片都会写入每日缓存,那天到了直接可用。不影响今天的壁纸。",
     "loading": "正在渲染预览…",
     "cleanCacheTitle": "清理缓存",
     "cleanCacheDesc": "删除已下载的地图数据和已渲染的壁纸，下次更新时会重新获取并渲染。",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "已清理 {{files}} 个文件 · 释放 {{size}}",
     "cleanCacheEmpty": "缓存已为空",
     "bypassCacheTitle": "绕过缓存和 CDN",
-    "bypassCacheDesc": "跳过 CDN，直接通过 Overpass API 实时获取地图数据并覆盖本地缓存。调试地图数据改动时使用。重启后自动关闭。",
-    "openFullSize": "双击打开原图",
-    "savedTo": "已保存到 {{path}}"
+    "bypassCacheDesc": "当天的城市直接从 GitHub 读取排期获得,地图数据改为实时从 Overpass API 抓取(不走 CDN),并覆盖本地缓存。用于测试地图数据的改动。重启后自动关闭。",
+    "dailyOnly": "仅在「每日」更新模式下可用。"
   },
   "common": {
-    "loading": "加载中…"
+    "loading": "加载中…",
+    "dismiss": "关闭"
   },
   "tray": {
     "openSettings": "打开设置",

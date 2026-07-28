@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "사전 미리보기",
-    "advancePreviewDesc": "오늘의 배경화면을 변경하지 않고 로테이션의 다가오는 날짜에 대한 도시 지도를 미리 봅니다.",
+    "advancePreviewDesc": "다가오는 날짜를 렌더링해 일반 렌더링과 똑같이 캐시합니다. 지도 데이터와 이미지가 일별 캐시에 저장되어 그날이 오면 바로 쓰입니다. 오늘 배경은 바뀌지 않습니다.",
     "loading": "미리보기 렌더링 중…",
     "cleanCacheTitle": "캐시 정리",
     "cleanCacheDesc": "다운로드한 지도 데이터와 생성된 배경화면을 삭제합니다. 다음 업데이트 시 다시 가져오고 다시 생성됩니다.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "파일 {{files}}개 삭제됨 · {{size}} 확보됨",
     "cleanCacheEmpty": "캐시가 이미 비어 있습니다",
     "bypassCacheTitle": "캐시 및 CDN 우회",
-    "bypassCacheDesc": "CDN을 건너뛰고 Overpass API에서 지도 데이터를 실시간으로 가져와 로컬 캐시를 덮어씁니다. 지도 데이터 변경 사항을 테스트할 때 사용하세요. 다시 시작하면 꺼짐 상태로 초기화됩니다.",
-    "openFullSize": "두 번 클릭하면 원본 크기로 열기",
-    "savedTo": "{{path}}에 저장했습니다"
+    "bypassCacheDesc": "그날의 도시를 GitHub에서 바로 읽은 일정에서 가져오고, 지도 데이터는 CDN 대신 Overpass API에서 실시간으로 받아 로컬 캐시를 덮어씁니다. 지도 데이터 변경을 테스트할 때 사용하세요. 재시작하면 꺼집니다.",
+    "dailyOnly": "«매일» 업데이트 모드에서만 적용됩니다."
   },
   "common": {
-    "loading": "로딩 중…"
+    "loading": "로딩 중…",
+    "dismiss": "닫기"
   },
   "tray": {
     "openSettings": "설정 열기",

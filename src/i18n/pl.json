@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Podgląd z wyprzedzeniem",
-    "advancePreviewDesc": "Podgląd mapy miasta dla nadchodzącego dnia w rotacji, bez zmiany dzisiejszej tapety.",
+    "advancePreviewDesc": "Renderuje przyszły dzień i zapisuje go jak zwykłe renderowanie — dane mapy i obraz trafiają do pamięci dziennej, gotowe na ten dzień. Nie zmienia dzisiejszej tapety.",
     "loading": "Renderowanie podglądu…",
     "cleanCacheTitle": "Wyczyść pamięć podręczną",
     "cleanCacheDesc": "Usuwa pobrane dane mapy i wyrenderowane tapety. Zostaną ponownie pobrane i wyrenderowane przy następnej aktualizacji.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "Usunięto {{files}} plików · zwolniono {{size}}",
     "cleanCacheEmpty": "Pamięć podręczna jest już pusta",
     "bypassCacheTitle": "Pomiń pamięć podręczną i CDN",
-    "bypassCacheDesc": "Pobiera dane mapy na żywo z API Overpass, pomijając CDN i nadpisując nimi lokalną pamięć podręczną. Używaj podczas testowania zmian w danych mapy. Po ponownym uruchomieniu wraca do wyłączonego stanu.",
-    "openFullSize": "Kliknij dwukrotnie, aby otworzyć w pełnym rozmiarze",
-    "savedTo": "Zapisano w {{path}}"
+    "bypassCacheDesc": "Bierze miasto dnia z harmonogramu czytanego wprost z GitHuba, a dane mapy pobiera na żywo z API Overpass zamiast z CDN, nadpisując lokalną pamięć podręczną. Przydatne przy testowaniu zmian w danych. Po restarcie wraca do wyłączonego.",
+    "dailyOnly": "Dotyczy tylko trybu aktualizacji Codziennie."
   },
   "common": {
-    "loading": "wczytywanie…"
+    "loading": "wczytywanie…",
+    "dismiss": "Zamknij"
   },
   "tray": {
     "openSettings": "Otwórz ustawienia",

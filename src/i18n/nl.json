@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Vooruitblik",
-    "advancePreviewDesc": "Bekijk een voorbeeld van de stadskaart voor een komende dag in de rotatie, zonder de achtergrond van vandaag te wijzigen.",
+    "advancePreviewDesc": "Rendert een komende dag en bewaart die als een gewone render — de kaartgegevens en de afbeelding komen in de dagcache, klaar voor als die dag aanbreekt. Verandert de achtergrond van vandaag niet.",
     "loading": "Voorbeeld wordt weergegeven…",
     "cleanCacheTitle": "Cache leegmaken",
     "cleanCacheDesc": "Verwijdert gedownloade kaartgegevens en gegenereerde achtergronden. Deze worden bij de volgende update opnieuw opgehaald en gegenereerd.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} bestanden verwijderd · {{size}} vrijgemaakt",
     "cleanCacheEmpty": "Cache is al leeg",
     "bypassCacheTitle": "Cache & CDN omzeilen",
-    "bypassCacheDesc": "Haalt kaartgegevens live op via de Overpass API, waarbij de CDN wordt overgeslagen en de lokale cache ermee wordt overschreven. Gebruik dit bij het testen van wijzigingen aan kaartgegevens. Wordt bij herstart teruggezet naar uit.",
-    "openFullSize": "Dubbelklik om op volledige grootte te openen",
-    "savedTo": "Opgeslagen in {{path}}"
+    "bypassCacheDesc": "Neemt de stad van de dag uit het schema dat rechtstreeks van GitHub wordt gelezen en haalt de kaartgegevens live op via de Overpass-API in plaats van het CDN, waarbij de lokale cache wordt overschreven. Handig bij het testen van wijzigingen in de kaartgegevens. Staat na een herstart weer uit.",
+    "dailyOnly": "Geldt alleen voor de updatemodus Dagelijks."
   },
   "common": {
-    "loading": "laden…"
+    "loading": "laden…",
+    "dismiss": "Sluiten"
   },
   "tray": {
     "openSettings": "Instellingen openen",

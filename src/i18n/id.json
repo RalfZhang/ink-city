@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Pratinjau Lanjutan",
-    "advancePreviewDesc": "Pratinjau peta kota untuk hari mendatang dalam rotasi, tanpa mengubah wallpaper hari ini.",
+    "advancePreviewDesc": "Merender hari mendatang dan menyimpannya seperti render biasa — data peta dan gambar masuk ke cache harian, siap saat hari itu tiba. Tidak mengubah wallpaper hari ini.",
     "loading": "Merender pratinjau…",
     "cleanCacheTitle": "Bersihkan cache",
     "cleanCacheDesc": "Menghapus data peta yang diunduh dan wallpaper yang telah dirender. Data akan diambil dan dirender ulang pada pembaruan berikutnya.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} file dihapus · {{size}} dibebaskan",
     "cleanCacheEmpty": "Cache sudah kosong",
     "bypassCacheTitle": "Lewati cache & CDN",
-    "bypassCacheDesc": "Mengambil data peta secara langsung dari Overpass API, melewati CDN dan menimpa cache lokal dengannya. Gunakan saat menguji perubahan pada data peta. Kembali nonaktif saat dimulai ulang.",
-    "openFullSize": "Klik dua kali untuk membuka ukuran penuh",
-    "savedTo": "Disimpan ke {{path}}"
+    "bypassCacheDesc": "Mengambil kota hari itu dari jadwal yang dibaca langsung dari GitHub, lalu mengambil data petanya langsung dari Overpass API alih-alih CDN, dan menimpa cache lokal. Berguna saat menguji perubahan data peta. Kembali nonaktif setelah restart.",
+    "dailyOnly": "Hanya berlaku untuk mode pembaruan Harian."
   },
   "common": {
-    "loading": "memuat…"
+    "loading": "memuat…",
+    "dismiss": "Tutup"
   },
   "tray": {
     "openSettings": "Buka Pengaturan",

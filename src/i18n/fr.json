@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Aperçu anticipé",
-    "advancePreviewDesc": "Prévisualisez la carte d'une ville pour un jour à venir dans la rotation, sans changer le fond d'écran du jour.",
+    "advancePreviewDesc": "Rend un jour à venir et le met en cache comme un rendu normal : les données cartographiques et l'image vont dans le cache quotidien, prêtes pour ce jour-là. Ne change pas le fond d'écran du jour.",
     "loading": "Génération de l'aperçu…",
     "cleanCacheTitle": "Vider le cache",
     "cleanCacheDesc": "Supprime les données cartographiques téléchargées et les fonds d'écran générés. Ils sont de nouveau récupérés et générés lors de la prochaine mise à jour.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} fichiers supprimés · {{size}} libérés",
     "cleanCacheEmpty": "Le cache est déjà vide",
     "bypassCacheTitle": "Contourner le cache et le CDN",
-    "bypassCacheDesc": "Récupère les données cartographiques en direct depuis l'API Overpass, en contournant le CDN et en écrasant le cache local. À utiliser pour tester des modifications des données cartographiques. Réinitialisé au redémarrage.",
-    "openFullSize": "Double-cliquez pour ouvrir en taille réelle",
-    "savedTo": "Enregistré dans {{path}}"
+    "bypassCacheDesc": "Prend la ville du jour dans le calendrier lu directement sur GitHub, puis récupère ses données cartographiques en direct via l'API Overpass au lieu du CDN, en écrasant le cache local. Utile pour tester des modifications des données. Réinitialisé au redémarrage.",
+    "dailyOnly": "Ne s'applique qu'au mode de mise à jour Quotidien."
   },
   "common": {
-    "loading": "chargement…"
+    "loading": "chargement…",
+    "dismiss": "Fermer"
   },
   "tray": {
     "openSettings": "Ouvrir les paramètres",

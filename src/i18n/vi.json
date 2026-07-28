@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Xem trước sớm",
-    "advancePreviewDesc": "Xem trước bản đồ thành phố cho một ngày sắp tới trong vòng quay, mà không thay đổi hình nền của hôm nay.",
+    "advancePreviewDesc": "Kết xuất một ngày sắp tới và lưu đệm như một lần kết xuất bình thường — dữ liệu bản đồ và hình ảnh vào bộ đệm hằng ngày, sẵn sàng cho ngày đó. Không thay đổi hình nền hôm nay.",
     "loading": "Đang dựng bản xem trước…",
     "cleanCacheTitle": "Dọn bộ nhớ đệm",
     "cleanCacheDesc": "Xóa dữ liệu bản đồ đã tải xuống và hình nền đã dựng. Chúng sẽ được tải lại và dựng lại vào lần cập nhật tiếp theo.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "Đã xóa {{files}} tệp · giải phóng {{size}}",
     "cleanCacheEmpty": "Bộ nhớ đệm đã trống",
     "bypassCacheTitle": "Bỏ qua bộ nhớ đệm & CDN",
-    "bypassCacheDesc": "Lấy dữ liệu bản đồ trực tiếp từ Overpass API, bỏ qua CDN và ghi đè bộ nhớ đệm cục bộ bằng dữ liệu đó. Dùng khi kiểm thử các thay đổi đối với dữ liệu bản đồ. Sẽ tắt lại khi khởi động lại.",
-    "openFullSize": "Nhấp đúp để mở kích thước gốc",
-    "savedTo": "Đã lưu vào {{path}}"
+    "bypassCacheDesc": "Lấy thành phố của ngày đó từ lịch đọc trực tiếp từ GitHub, rồi tải dữ liệu bản đồ trực tiếp từ Overpass API thay vì CDN, ghi đè bộ đệm cục bộ. Dùng khi thử nghiệm thay đổi dữ liệu bản đồ. Tự tắt sau khi khởi động lại.",
+    "dailyOnly": "Chỉ áp dụng cho chế độ cập nhật Hằng ngày."
   },
   "common": {
-    "loading": "đang tải…"
+    "loading": "đang tải…",
+    "dismiss": "Đóng"
   },
   "tray": {
     "openSettings": "Mở Cài đặt",

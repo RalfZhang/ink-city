@@ -92,6 +92,7 @@ fn custom_dir(app: &AppHandle) -> Result<PathBuf> {
     Ok(wallpaper_dir(app)?.join("customized"))
 }
 
+
 pub fn effective_theme(app: &AppHandle) -> EffectiveTheme {
     let mode = *app.state::<AppState>().theme.lock().unwrap();
     match mode {
@@ -279,13 +280,7 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
         }
     }
 
-    let resolved = resolve_and_record(app, &target.kind).await;
-    let city = resolved.city.clone();
-    let bytes = render_bytes_for(app, &target.signature, &target.osm_path, resolved).await?;
-    if let Some(parent) = target.png_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(&target.png_path, &bytes)?;
+    let (city, _png) = render_and_cache(app, &target).await?;
     wallpaper_set::set(&target.png_path, &live)?;
     mark_applied(app, &target.signature);
 
@@ -296,6 +291,22 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
     }
     log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
     Ok(())
+}
+
+/// Resolve `target`, render it, and write both halves to its cache — the day's
+/// (or pin's) `.osm.json` (inside `render_bytes_for`) and its `<…>-<theme>.png`.
+/// Everything the pipeline does for a target *except* applying the wallpaper, so
+/// `run_now_inner` and Dev Mode's Advance Preview can share one path and can't
+/// drift apart. Returns the city drawn plus the PNG bytes.
+async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::City, Vec<u8>)> {
+    let resolved = resolve_and_record(app, target).await;
+    let city = resolved.city.clone();
+    let bytes = render_bytes_for(app, &target.signature, &target.osm_path, resolved).await?;
+    if let Some(parent) = target.png_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(&target.png_path, &bytes)?;
+    Ok((city, bytes))
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -319,10 +330,20 @@ enum DayOsm {
 struct Resolved {
     city: city::City,
     /// `Some(id)` ⇒ the legacy id-keyed jsDelivr pre-cache may hold this city's
-    /// map data and is worth a try; `None` ⇒ sidecar only (a Customized pin is
-    /// arbitrary coordinates, never precached).
+    /// map data and is worth a try; `None` ⇒ sidecar only. `None` covers both a
+    /// Customized pin (arbitrary coordinates, never precached) and Dev Mode's
+    /// "bypass cache & CDN" — which is the single place that switch is read, so
+    /// `render_bytes_for` needs no second look at it.
     cdn_id: Option<u64>,
     osm: Option<DayOsm>,
+    /// `Some(date)` ⇒ a payload fetched live from the sidecar gets `{ date, city }`
+    /// spliced onto it before it's cached, reproducing exactly what the published
+    /// `osm-v2/data/<date>.json` holds. That's what makes the reconstruction path
+    /// (schedule state file + Overpass) produce a day cache indistinguishable from
+    /// a manifest download — including for `city_for_status`, which reads the
+    /// `city` envelope back after a restart. `None` for a Customized pin, which
+    /// isn't a day and whose cache nothing reads for a name.
+    stamp: Option<NaiveDate>,
 }
 
 /// The synthetic `City` a Customized pin renders as. Not a real place — there's
@@ -345,15 +366,16 @@ fn pin_city(lat: f64, lon: f64) -> city::City {
 /// `AppState::resolved_city` so `Status` names the city that was actually
 /// rendered instead of recomputing the rotation pick. A Customized pin isn't a
 /// city and deliberately doesn't touch that memo.
-async fn resolve_and_record(app: &AppHandle, kind: &TargetKind) -> Resolved {
-    match *kind {
+async fn resolve_and_record(app: &AppHandle, target: &Target) -> Resolved {
+    match target.kind {
         TargetKind::Custom { lat, lon, .. } => Resolved {
             city: pin_city(lat, lon),
             cdn_id: None,
             osm: None,
+            stamp: None,
         },
         TargetKind::Daily(date) => {
-            let resolved = resolve_daily(app, date).await;
+            let resolved = resolve_daily(app, date, &target.osm_path).await;
             let state = app.state::<AppState>();
             *state.resolved_city.lock().unwrap() = Some((date, resolved.city.clone()));
             // Push the name to an open window now rather than at the end of the
@@ -365,21 +387,67 @@ async fn resolve_and_record(app: &AppHandle, kind: &TargetKind) -> Resolved {
     }
 }
 
-/// The day's city + (optionally) its OSM. Resolution order: the local day cache,
-/// then the date-keyed schedule manifest (issue #1) — one CDN request yields both
-/// the constrained-random city and its map data — then the legacy client-side
-/// rotation pick, which leaves OSM to be fetched the usual way. Fallback-guarded
-/// so the new path can never break the existing behavior.
-async fn resolve_daily(app: &AppHandle, date: NaiveDate) -> Resolved {
-    // Dev Mode's "bypass cache & CDN": neither the day cache nor the schedule is
-    // consulted, so the rotation picks the city and `render_bytes_for` fetches
-    // live from the sidecar.
+/// The day's city + (optionally) its OSM, resolved together — the pair has to be
+/// consistent, so nothing resolves one without the other.
+///
+/// The full ladder, in order, each rung tried only once the one above has missed:
+///
+///  1. **The local cache** at `osm_path`. No network, and load-bearing beyond the
+///     saving — see the comment on that branch below.
+///  2. **The published manifest** `osm-v2/data/<date>.json[.gz]`, one request for
+///     the day's city *and* its map data. `cdn::fetch_scheduled` walks every CDN
+///     edge (`.gz` then `.json` per host) before GitHub's raw origin, so this rung
+///     alone is "CDN gz → CDN json → GitHub gz → GitHub json".
+///  3. **Reconstruct it.** With no manifest anywhere, read the schedule *state*
+///     file `osm-v2/city-list.json` (a few KB, CDN then GitHub) for the day's
+///     city, fetch its map data live from Overpass, and splice `{ date, city }`
+///     back on — yielding byte-for-byte the shape rung 2 would have delivered, so
+///     the day cache and `city_for_status` can't tell the difference.
+///  4. **The legacy rotation** (`city::pick_for_date` + the id-keyed pre-cache →
+///     sidecar). Only reachable when not one host served either schedule file; on
+///     its way out, kept so a total CDN outage still paints something.
+///
+/// Dev Mode's "bypass cache & CDN" jumps straight to rung 3 — see below.
+async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Resolved {
+    let stamp = |city: city::City| Resolved {
+        city,
+        // No CDN for this render: rung 3 is defined as live Overpass data, and the
+        // id-keyed pre-cache is keyed off the *rotation* list anyway, so a
+        // scheduled city often isn't in it. `None` routes `render_bytes_for`
+        // straight to the sidecar.
+        cdn_id: None,
+        osm: None,
+        stamp: Some(date),
+    };
+
+    // Dev Mode's "bypass cache & CDN". The switch is about the *map data*, not
+    // about which city the day is — so the local cache and every published
+    // manifest are skipped, and we go directly to rung 3. The one file still read
+    // is the schedule state, and it's read from GitHub's origin rather than a CDN
+    // edge (`Hosts::GithubOnly`), since a cached copy of it is precisely what the
+    // switch is meant to rule out.
     if app.state::<AppState>().effective_bypass_cache() {
-        return rotation_fallback(date, None);
+        return match cdn::fetch_schedule_city(&date.to_string(), cdn::Hosts::GithubOnly).await {
+            Ok(city) => {
+                log::info!(
+                    "[pipeline] bypass on: schedule (github) says {} is {} ({}); osm live from overpass",
+                    date,
+                    city.name,
+                    city.country
+                );
+                stamp(city)
+            }
+            Err(e) => {
+                log::warn!("[pipeline] bypass on: no schedule city for {} ({}); using rotation", date, e);
+                // Still no CDN — with bypass on, the id-keyed pre-cache is exactly
+                // what we're avoiding.
+                Resolved { cdn_id: None, ..rotation_fallback(date, None) }
+            }
+        };
     }
 
-    // The day cache comes before *any* network. Whatever is cached for `date` is
-    // what that day was already rendered from, so this is both a big saving and
+    // Rung 1. The cache comes before *any* network. Whatever is cached for `date`
+    // is what that day was already rendered from, so this is both a big saving and
     // the thing that keeps a day stable:
     //
     //   - `spawn_force_regen` (theme switch, colour/style edit, Lab toggles,
@@ -391,44 +459,55 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate) -> Resolved {
     //     under a PNG still cached for the other theme. The PNG cache key is
     //     date+theme, not city, so once a day is rendered it must keep its city.
     //
-    // An envelope-less payload predates the `city` stamp or came from a live
-    // sidecar fetch — both are the rotation city by construction, so that's the
-    // right fallback for its name.
-    if let Some(v) = cached_day_osm(app, date) {
-        match city_envelope(&v) {
+    // An envelope-less payload predates the `city` stamp, so the rotation is the
+    // right name for it — every flow that writes one now stamps it (see `stamp`).
+    if let Some(v) = cached_osm_at(osm_path) {
+        return match city_envelope(&v) {
             Some(city) => {
-                log::info!(
-                    "[pipeline] city for {} from day cache: {} ({})",
-                    date,
-                    city.name,
-                    city.country
-                );
+                log::info!("[pipeline] city for {} from cache: {} ({})", date, city.name, city.country);
                 let cdn_id = Some(city.id);
-                return Resolved { city, cdn_id, osm: Some(DayOsm::Cached(v)) };
+                Resolved { city, cdn_id, osm: Some(DayOsm::Cached(v)), stamp: Some(date) }
             }
-            None => return rotation_fallback(date, Some(DayOsm::Cached(v))),
-        }
+            None => rotation_fallback(date, Some(DayOsm::Cached(v))),
+        };
     }
 
+    // Rung 2.
     match cdn::fetch_scheduled(&date.to_string()).await {
         Ok((city, v)) => {
             log::info!("[pipeline] scheduled city for {}: {} ({})", date, city.name, city.country);
             let cdn_id = Some(city.id);
-            Resolved { city, cdn_id, osm: Some(DayOsm::Fetched(v)) }
+            return Resolved { city, cdn_id, osm: Some(DayOsm::Fetched(v)), stamp: Some(date) };
         }
+        Err(e) => log::info!("[pipeline] no manifest for {} ({}); trying the schedule state", date, e),
+    }
+
+    // Rung 3.
+    match cdn::fetch_schedule_city(&date.to_string(), cdn::Hosts::Mirrored).await {
+        Ok(city) => {
+            log::info!(
+                "[pipeline] schedule state says {} is {} ({}); rebuilding its manifest from overpass",
+                date,
+                city.name,
+                city.country
+            );
+            stamp(city)
+        }
+        // Rung 4.
         Err(e) => {
-            log::info!("[pipeline] no schedule manifest for {} ({}); using rotation", date, e);
+            log::info!("[pipeline] no scheduled city for {} ({}); using rotation", date, e);
             rotation_fallback(date, None)
         }
     }
 }
 
-/// The legacy client-side rotation pick — the fallback whenever the schedule
-/// can't answer. `osm` carries a day cache that was already read back, if any.
+/// The legacy client-side rotation pick — the last rung, whenever no published
+/// schedule file could be read at all. `osm` carries a cached payload that was
+/// already read back, if any.
 fn rotation_fallback(date: NaiveDate, osm: Option<DayOsm>) -> Resolved {
     let city = city::pick_for_date(date);
     let cdn_id = Some(city.id);
-    Resolved { city, cdn_id, osm }
+    Resolved { city, cdn_id, osm, stamp: Some(date) }
 }
 
 /// The city `date`'s wallpaper shows, for `Status`. Three sources, in order:
@@ -469,12 +548,18 @@ fn daily_osm_name(date: NaiveDate) -> String {
     format!("{}.osm.json", date)
 }
 
-/// `date`'s cached OSM payload, or `None` when there is none / it won't parse.
-/// A corrupt one reads as absent on purpose: the caller then refetches and
+/// The cached OSM payload at `path`, or `None` when there is none / it won't
+/// parse. A corrupt one reads as absent on purpose: the caller then refetches and
 /// overwrites it, rather than failing the render on a file we can't use.
-fn cached_day_osm(app: &AppHandle, date: NaiveDate) -> Option<serde_json::Value> {
-    let path = daily_dir(app).ok()?.join(daily_osm_name(date));
+fn cached_osm_at(path: &Path) -> Option<serde_json::Value> {
     serde_json::from_str(&fs::read_to_string(path).ok()?).ok()
+}
+
+/// `date`'s payload from the *Daily* cache specifically — what `city_for_status`
+/// reads. (`resolve_daily` takes its path as an argument instead, so Advance
+/// Preview can point it at the preview cache.)
+fn cached_day_osm(app: &AppHandle, date: NaiveDate) -> Option<serde_json::Value> {
+    cached_osm_at(&daily_dir(app).ok()?.join(daily_osm_name(date)))
 }
 
 /// The `city` envelope both published flows stamp onto a payload, or `None` when
@@ -506,7 +591,7 @@ async fn render_bytes_for(
     // 10km half = 20km long side. MUST match MAX_HALF_KM in scripts/osm-cli.ts:
     // the precached square (aspect=1) is the superset every screen-aspect
     // rectangle here must fit inside, so the CDN data always covers the wallpaper.
-    let Resolved { city, cdn_id, osm: preloaded } = resolved;
+    let Resolved { city, cdn_id, osm: preloaded, stamp } = resolved;
     let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
 
     // OSM acquisition order: local cache → the date-keyed schedule manifest →
@@ -523,9 +608,9 @@ async fn render_bytes_for(
     // data poorer than the CDN's (e.g. water is never missing just because we
     // fell back).
     //
-    // A Customized pin has no precached entry (`cdn_id` is `None`), so it goes
-    // straight to the sidecar — which honors the proxy, important for
-    // mainland-China users.
+    // A Customized pin has no precached entry, and Dev Mode's bypass deliberately
+    // refuses one; both arrive here as `cdn_id: None` and go straight to the
+    // sidecar — which honors the proxy, important for mainland-China users.
     let osm: serde_json::Value = match preloaded {
         // Fetched from the date-keyed schedule manifest (issue #1): authoritative
         // for the scheduled city, so cache + use it directly (overwriting any
@@ -537,17 +622,13 @@ async fn render_bytes_for(
         // Already the contents of `osm_path` — writing it back would just burn a
         // multi-MB write.
         Some(DayOsm::Cached(v)) => v,
-        // No usable cache and no manifest — or Dev Mode's "bypass cache & CDN",
-        // which skips both on purpose (gated read; see
-        // `AppState::effective_bypass_cache`) and fetches live from the sidecar,
-        // writing it back so it overwrites the stale local data.
+        // Nothing preloaded: either no usable cache and no manifest, or a flow
+        // that refuses the CDN outright (`cdn_id: None` — a Customized pin, or
+        // Dev Mode's bypass). Written back afterwards, so a bypassed fetch
+        // overwrites the stale local data as documented.
         None => {
-            let bypass = app.state::<AppState>().effective_bypass_cache();
-            let v = if bypass {
-                log::info!("[pipeline] bypass on: fetching osm live from sidecar (overwriting cache)");
-                osm_sidecar::fetch(app, bbox).await?
-            } else if let Some(id) = cdn_id {
-                match cdn::fetch_cached_osm(id).await {
+            let mut v = match cdn_id {
+                Some(id) => match cdn::fetch_cached_osm(id).await {
                     Ok(v) => {
                         log::info!("[pipeline] osm from CDN ({id})");
                         v
@@ -556,11 +637,15 @@ async fn render_bytes_for(
                         log::warn!("[pipeline] CDN miss ({id}), falling back to sidecar: {e}");
                         osm_sidecar::fetch(app, bbox).await?
                     }
+                },
+                None => {
+                    log::info!("[pipeline] fetching osm live from sidecar (no CDN for this render)");
+                    osm_sidecar::fetch(app, bbox).await?
                 }
-            } else {
-                log::info!("[pipeline] custom pin: fetching osm live from sidecar");
-                osm_sidecar::fetch(app, bbox).await?
             };
+            if let Some(date) = stamp {
+                stamp_manifest_envelope(&mut v, date, &city);
+            }
             write_osm(osm_path, &v)?;
             v
         }
@@ -608,6 +693,22 @@ async fn render_bytes_for(
         .map_err(|_| anyhow!("renderer dropped"))
 }
 
+/// Splice the `{ date, city }` envelope a published manifest carries onto a payload
+/// fetched live from the sidecar, so what lands in the day cache is shaped exactly
+/// like `osm-v2/data/<date>.json` (`{ v, …osm, date, city }`) — that's what makes
+/// the reconstruction rung indistinguishable from a manifest download, both for the
+/// next cache read and for `city_for_status` after a restart. Existing keys are
+/// left alone: a real manifest's own envelope is authoritative.
+fn stamp_manifest_envelope(v: &mut serde_json::Value, date: NaiveDate, city: &city::City) {
+    let Some(obj) = v.as_object_mut() else { return };
+    obj.entry("date").or_insert_with(|| serde_json::Value::String(date.to_string()));
+    if !obj.contains_key("city") {
+        if let Ok(c) = serde_json::to_value(city) {
+            obj.insert("city".into(), c);
+        }
+    }
+}
+
 fn write_osm(path: &Path, v: &serde_json::Value) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -616,19 +717,33 @@ fn write_osm(path: &Path, v: &serde_json::Value) -> Result<()> {
     Ok(())
 }
 
-/// Render (but do not apply or cache as a wallpaper) the daily city for `date` —
-/// Dev Mode's "Advance Preview". Always previews the Daily flow regardless of the
-/// current UpdateMode. Reuses the same OSM day-cache as the real pipeline
-/// (harmless: it's the exact theme-independent payload the real pipeline will
-/// fetch anyway once that day arrives), but deliberately does NOT write to the
-/// PNG cache path (`{date}-{theme}.png`): the real pipeline treats that path's
-/// mere existence as "already rendered, just reapply it" with no staleness check,
-/// so a preview-cached PNG would silently outlive a later style/color change and
-/// get wrongly reapplied when that day actually arrives. Shares `state.running`
-/// with the real pipeline (both drive the same single renderer window/channel, so
-/// only one may be in flight at a time) — callers see this as the same "busy"
-/// state as a normal regen.
-pub async fn render_preview(app: &AppHandle, date: NaiveDate) -> Result<(city::City, Vec<u8>)> {
+/// Render an upcoming day without applying it as the wallpaper — Dev Mode's
+/// "Advance Preview".
+///
+/// Deliberately just the ordinary Daily path with a date handed to it: same
+/// `resolve_daily` ladder (so it shows the scheduled city, and honours the bypass
+/// switch), same `wallpaper/daily/` cache for both the payload and the PNG. Those
+/// files are what that day will want in a day or two anyway, so caching them is a
+/// head start rather than pollution — and Clean cache sits directly above this
+/// control if you'd rather start over.
+///
+/// The one consequence worth knowing: the real pipeline treats a cached
+/// `{date}-{theme}.png` as "already rendered, just reapply it" with no staleness
+/// check, so a day previewed *before* a style/colour change will reapply the
+/// pre-change PNG when it arrives. Clean cache (or previewing again) is the fix.
+///
+/// The only thing it doesn't do is apply the wallpaper or touch `last_applied`.
+/// Shares `state.running` with the real pipeline — both drive the same single
+/// renderer window/channel, so only one may be in flight at a time — which callers
+/// see as the same "busy" state as a normal regen.
+///
+/// Returns the city drawn, the PNG bytes (for the inline preview) and the cached
+/// PNG's path — that path is what Dev Mode opens full-size, so no copy of the
+/// image is exported anywhere (see `commands::open_preview_image`).
+pub async fn render_preview(
+    app: &AppHandle,
+    date: NaiveDate,
+) -> Result<(city::City, Vec<u8>, PathBuf)> {
     {
         let state = app.state::<AppState>();
         let mut g = state.running.lock().await;
@@ -641,11 +756,11 @@ pub async fn render_preview(app: &AppHandle, date: NaiveDate) -> Result<(city::C
     let theme = effective_theme(app);
     let r = match daily_target(app, date, theme) {
         Ok(target) => {
-            let resolved = resolve_and_record(app, &target.kind).await;
-            let city = resolved.city.clone();
-            render_bytes_for(app, &target.signature, &target.osm_path, resolved)
-                .await
-                .map(|bytes| (city, bytes))
+            let out = render_and_cache(app, &target).await;
+            if let Ok(dir) = daily_dir(app) {
+                let _ = cleanup_daily(&dir, KEEP_DAYS);
+            }
+            out.map(|(city, bytes)| (city, bytes, target.png_path))
         }
         Err(e) => Err(e),
     };
@@ -838,6 +953,94 @@ mod tests {
     fn city_envelope_absent_on_a_partial_city() {
         let v: serde_json::Value = serde_json::from_str(r#"{"city":{"lat":22.5,"lon":114.0}}"#).unwrap();
         assert!(city_envelope(&v).is_none());
+    }
+
+    // A live sidecar fetch has no `city` of its own, so the stamp is what lets a
+    // bypassed render still name its city after a restart (`city_for_status`).
+    #[test]
+    fn stamp_manifest_envelope_reproduces_a_manifest() {
+        let mut v: serde_json::Value = serde_json::from_str(r#"{"v":5,"elements":[]}"#).unwrap();
+        let city = city::City {
+            id: 702550,
+            name: "Lviv".into(),
+            local_name: "Львів".into(),
+            country: "UA".into(),
+            lat: 49.84,
+            lon: 24.03,
+            population: 717803,
+        };
+        stamp_manifest_envelope(&mut v, NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(), &city);
+        let read = city_envelope(&v).expect("stamped");
+        assert_eq!(read.id, 702550);
+        assert_eq!(read.local_name, "Львів");
+        // Both envelope keys a published manifest carries, so the reconstruction is
+        // indistinguishable from a download.
+        assert_eq!(v["date"], "2026-07-28");
+        // The rest of the payload is untouched.
+        assert_eq!(v["v"], 5);
+    }
+
+    // The CDN's own envelope is authoritative — never overwrite it.
+    #[test]
+    fn stamp_manifest_envelope_leaves_an_existing_one_alone() {
+        let mut v: serde_json::Value = serde_json::from_str(
+            r#"{"elements":[],"date":"2026-01-01","city":{"id":1,"name":"Kept",
+                "localName":"Kept","country":"XX","lat":0.0,"lon":0.0,"population":1}}"#,
+        )
+        .unwrap();
+        let other = city::City {
+            id: 2,
+            name: "Other".into(),
+            local_name: "Other".into(),
+            country: "YY".into(),
+            lat: 1.0,
+            lon: 1.0,
+            population: 2,
+        };
+        stamp_manifest_envelope(&mut v, NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(), &other);
+        assert_eq!(city_envelope(&v).unwrap().id, 1);
+        assert_eq!(v["date"], "2026-01-01");
+    }
+
+    // A payload that isn't a JSON object can't carry an envelope; must not panic.
+    #[test]
+    fn stamp_manifest_envelope_ignores_a_non_object_payload() {
+        let mut v: serde_json::Value = serde_json::from_str("[1,2,3]").unwrap();
+        let date = NaiveDate::from_ymd_opt(2026, 7, 28).unwrap();
+        stamp_manifest_envelope(&mut v, date, &pin_city(0.0, 0.0));
+        assert!(v.is_array());
+    }
+
+    // The whole claim of resolution rung 3 is that a sidecar payload + the envelope
+    // is indistinguishable from a downloaded manifest. Pinned against the real key
+    // set of a published `osm-v2/data/<date>.json` (checked against the live CDN on
+    // 2026-07-28), so a change to either side has to come here and say so.
+    #[test]
+    fn a_stamped_sidecar_payload_has_a_manifests_exact_shape() {
+        let mut v: serde_json::Value = serde_json::from_str(
+            r#"{"v":5,"elements":[{"type":"way"}],"water":[],"airports":[],
+                "railways":[],"aerialways":[]}"#,
+        )
+        .unwrap();
+        stamp_manifest_envelope(
+            &mut v,
+            NaiveDate::from_ymd_opt(2026, 7, 30).unwrap(),
+            &city::City {
+                id: 1172451,
+                name: "Lahore".into(),
+                local_name: "لاہور".into(),
+                country: "PK".into(),
+                lat: 31.549722222,
+                lon: 74.343611111,
+                population: 11126285,
+            },
+        );
+        let mut keys: Vec<&str> = v.as_object().unwrap().keys().map(String::as_str).collect();
+        keys.sort_unstable();
+        assert_eq!(
+            keys,
+            ["aerialways", "airports", "city", "date", "elements", "railways", "v", "water"]
+        );
     }
 
     // The pin cache key is a filename component, so it must be stable and free of

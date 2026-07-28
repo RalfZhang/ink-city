@@ -18,12 +18,21 @@ use crate::github_mirror;
 // See `github_mirror` for the mirrored-host fallback order and rationale.
 const GIT_REF: &str = "data";
 const PATH: &str = "osm";
-/// The date-keyed manifests. Their schedule (`osm-v2/city-list.json`) sits one
-/// level up and is CI/human-facing only — the client never fetches it.
+/// The date-keyed manifests.
 ///
 /// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `src/core/schedule.ts`,
 /// which is where the layout is defined and the producer side reads it from.
 const SCHEDULE_PATH: &str = "osm-v2/data";
+/// The schedule *state* file, one level up from the manifests: `<dir>/<stem>.json`
+/// = `osm-v2/city-list.json`. Must match `SCHEDULE_ROOT`/`SCHEDULE_STATE_FILE` in
+/// `src/core/schedule.ts`.
+///
+/// Normally CI/human-facing only — the client gets city *and* map data from one
+/// manifest and never needs this. The exception is Dev Mode's "bypass cache &
+/// CDN", which wants the day's true-random city precisely *without* that day's
+/// precached map data; see `fetch_schedule_city`.
+const SCHEDULE_STATE_DIR: &str = "osm-v2";
+const SCHEDULE_STATE_STEM: &str = "city-list";
 
 /// Fetch the date-keyed schedule manifest published by precache (issue #1):
 /// `osm-v2/data/<date>.json[.gz]` = `{ v, elements, …, date, city }`, so one
@@ -41,13 +50,49 @@ const SCHEDULE_PATH: &str = "osm-v2/data";
 /// NOTE: the publish→CDN→client path is unverified end-to-end (needs a real
 /// precache run + the live CDN); the fetch is fallback-guarded so a miss is safe.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
-    let v = fetch_from_mirrors(SCHEDULE_PATH, date, require_city).await?;
+    let bases = github_mirror::mirror_urls(GIT_REF, SCHEDULE_PATH);
+    let v = fetch_from_mirrors(bases, date, Gz::Prefer, validate_scheduled).await?;
     let city = scheduled_city(&v)?;
     Ok((city, v))
 }
 
+/// Which mirror hosts a read may use.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Hosts {
+    /// Every mirror: CDN edges first, GitHub's raw origin last (`mirror_urls`).
+    Mirrored,
+    /// GitHub's raw origin only, no CDN edge — Dev Mode's "bypass cache & CDN".
+    GithubOnly,
+}
+
+/// `date`'s city from the schedule state file alone — no map data.
+///
+/// Two callers, for the same underlying reason — they want the day's *city*
+/// without the multi-MB manifest that normally carries it:
+///
+///   • the daily fallback chain, once every manifest host has missed: the city
+///     from here plus a live Overpass fetch reproduces what the manifest would
+///     have held (`Hosts::Mirrored`);
+///   • Dev Mode's "bypass cache & CDN", which wants exactly that reconstruction
+///     every time, and reads from `Hosts::GithubOnly` so no CDN edge can serve it
+///     a cached copy of the one file it still needs.
+///
+/// Never cached locally: it's a few KB, and it's the hand-editable override point
+/// (see docs/random-city-strategy.md), so a stale copy is worse than a refetch.
+/// Unlike the manifests it's never gzipped by the workflow, so it's fetched plain
+/// (`Gz::Skip`) rather than spending a request on a `.gz` that can't exist.
+pub async fn fetch_schedule_city(date: &str, hosts: Hosts) -> Result<city::City> {
+    let bases = match hosts {
+        Hosts::Mirrored => github_mirror::mirror_urls(GIT_REF, SCHEDULE_STATE_DIR),
+        Hosts::GithubOnly => github_mirror::github_only_urls(GIT_REF, SCHEDULE_STATE_DIR),
+    };
+    let v = fetch_from_mirrors(bases, SCHEDULE_STATE_STEM, Gz::Skip, validate_state).await?;
+    schedule_entry(&v, date)
+}
+
 pub async fn fetch_cached_osm(city_id: u64) -> Result<serde_json::Value> {
-    fetch_from_mirrors(PATH, &city_id.to_string(), |_, _| Ok(())).await
+    let bases = github_mirror::mirror_urls(GIT_REF, PATH);
+    fetch_from_mirrors(bases, &city_id.to_string(), Gz::Prefer, validate_osm).await
 }
 
 /// The manifest's `city` envelope as a `City`. The id-keyed flow's payloads carry
@@ -63,10 +108,55 @@ fn require_city(v: &serde_json::Value, url: &str) -> Result<()> {
         .map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))
 }
 
-/// Fetch `{path}/{stem}.json` from the first mirror host that serves a payload
-/// passing `validate_osm` and `extra`. Shared by both published flows — they
-/// differ only in the directory, the file stem (city id vs. date) and that extra
-/// check.
+/// A date-keyed manifest must be usable as *both* map data and a city — validate
+/// exactly what `fetch_scheduled` hands back, so a truncated or half-written one
+/// gives the next mirror a turn instead of silently dropping the day.
+fn validate_scheduled(v: &serde_json::Value, url: &str) -> Result<()> {
+    validate_osm(v, url)?;
+    require_city(v, url)
+}
+
+/// `city-list.json` carries no `elements`, so the OSM check doesn't apply — what
+/// makes it usable is a `list` object. An array passes `is_object()` nowhere, and
+/// a missing/renamed key must not read as "an empty schedule": that would look
+/// like every day legitimately having no entry.
+fn validate_state(v: &serde_json::Value, url: &str) -> Result<()> {
+    match v.get("list") {
+        Some(l) if l.is_object() => Ok(()),
+        _ => Err(anyhow!("unusable schedule state ({url}): no `list` object")),
+    }
+}
+
+/// One day out of a parsed `city-list.json`. A date the schedule doesn't cover is
+/// an ordinary miss (the client's window can sit outside the published 30 days).
+fn schedule_entry(v: &serde_json::Value, date: &str) -> Result<city::City> {
+    let entry = v
+        .get("list")
+        .and_then(|l| l.get(date))
+        .ok_or_else(|| anyhow!("schedule has no entry for {date}"))?;
+    Ok(serde_json::from_value(entry.clone())?)
+}
+
+/// Whether a `.json.gz` sibling is worth asking for before the plain `.json`.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Gz {
+    /// The map payloads: try `.gz` first (see `fetch_from_mirrors`).
+    Prefer,
+    /// `city-list.json` — the workflow's gzip pass deliberately sweeps only
+    /// `osm-v2/data/`, so a `.gz` here would always 404. Don't spend the request.
+    Skip,
+}
+
+/// Fetch `{base}/{stem}.json` from the first of `bases` that serves a payload
+/// `validate` accepts. Shared by every published read — they differ only in the
+/// host list, the file stem (city id / date / `city-list`), whether a `.gz`
+/// sibling exists, and what "usable" means for that file.
+///
+/// `bases` is already ordered by the caller (see `github_mirror::mirror_urls`):
+/// every CDN edge first, GitHub's raw origin last. Combined with the per-host
+/// `.gz` → `.json` pair below, that's the whole fallback ladder for a day's map
+/// data — CDN gz, CDN json, …, GitHub gz, GitHub json — before `pipeline` gives
+/// up on the manifest and reconstructs it from the schedule state file instead.
 ///
 /// jsDelivr rejects individual files over its 20 MB per-file cap, which
 /// large/dense cities' plain JSON can exceed. The workflow publishes a
@@ -77,24 +167,24 @@ fn require_city(v: &serde_json::Value, url: &str) -> Result<()> {
 /// host (branch not yet re-published with .gz files, or this particular file
 /// predates that) before moving to the next host entirely.
 async fn fetch_from_mirrors(
-    path: &str,
+    bases: Vec<String>,
     stem: &str,
-    extra: fn(&serde_json::Value, &str) -> Result<()>,
+    gz: Gz,
+    validate: fn(&serde_json::Value, &str) -> Result<()>,
 ) -> Result<serde_json::Value> {
     let client = github_mirror::client()?;
     let mut last_err = None;
-    for base in github_mirror::mirror_urls(GIT_REF, path) {
-        let attempts: [(String, bool); 2] = [
-            (format!("{base}/{stem}.json.gz"), true),
-            (format!("{base}/{stem}.json"), false),
-        ];
+    for base in bases {
+        let mut attempts: Vec<(String, bool)> = Vec::with_capacity(2);
+        if gz == Gz::Prefer {
+            attempts.push((format!("{base}/{stem}.json.gz"), true));
+        }
+        attempts.push((format!("{base}/{stem}.json"), false));
         for (url, gzipped) in attempts {
-            let result = if gzipped {
-                fetch_and_validate_gz(&client, &url).await
-            } else {
-                fetch_and_validate(&client, &url).await
-            };
-            match result.and_then(|v| extra(&v, &url).map(|()| v)) {
+            let result = fetch_json(&client, &url, gzipped)
+                .await
+                .and_then(|v| validate(&v, &url).map(|()| v));
+            match result {
                 Ok(v) => return Ok(v),
                 Err(e) => last_err = Some(e),
             }
@@ -103,26 +193,23 @@ async fn fetch_from_mirrors(
     Err(last_err.unwrap_or_else(|| anyhow!("no CDN hosts configured")))
 }
 
-async fn fetch_and_validate(client: &reqwest::Client, url: &str) -> Result<serde_json::Value> {
+async fn fetch_json(
+    client: &reqwest::Client,
+    url: &str,
+    gzipped: bool,
+) -> Result<serde_json::Value> {
     let res = client.get(url).send().await?;
     if !res.status().is_success() {
         return Err(anyhow!("CDN HTTP {} ({url})", res.status()));
     }
-    let v: serde_json::Value = res.json().await?;
-    validate_osm(v, url)
-}
-
-async fn fetch_and_validate_gz(client: &reqwest::Client, url: &str) -> Result<serde_json::Value> {
-    let res = client.get(url).send().await?;
-    if !res.status().is_success() {
-        return Err(anyhow!("CDN HTTP {} ({url})", res.status()));
+    if gzipped {
+        decode_gz_json(&res.bytes().await?, url)
+    } else {
+        Ok(res.json().await?)
     }
-    let bytes = res.bytes().await?;
-    let v = decode_gz_osm(&bytes, url)?;
-    validate_osm(v, url)
 }
 
-fn decode_gz_osm(bytes: &[u8], url: &str) -> Result<serde_json::Value> {
+fn decode_gz_json(bytes: &[u8], url: &str) -> Result<serde_json::Value> {
     let mut decoder = GzDecoder::new(bytes);
     let mut s = String::new();
     decoder
@@ -133,15 +220,15 @@ fn decode_gz_osm(bytes: &[u8], url: &str) -> Result<serde_json::Value> {
 
 // Validate before trusting it, so a truncated/garbage response falls back to
 // the osm-cli sidecar instead of producing an empty wallpaper.
-fn validate_osm(v: serde_json::Value, url: &str) -> Result<serde_json::Value> {
+fn validate_osm(v: &serde_json::Value, url: &str) -> Result<()> {
     let has_roads = v
         .get("elements")
         .and_then(|e| e.as_array())
-        .map_or(false, |a| !a.is_empty());
+        .is_some_and(|a| !a.is_empty());
     if !has_roads {
         return Err(anyhow!("CDN payload has no road elements ({url})"));
     }
-    Ok(v)
+    Ok(())
 }
 
 #[cfg(test)]
@@ -157,36 +244,36 @@ mod tests {
         encoder.finish().unwrap()
     }
 
+    fn json(s: &str) -> serde_json::Value {
+        serde_json::from_str(s).unwrap()
+    }
+
     #[test]
-    fn decode_gz_osm_round_trips_json() {
-        let json = r#"{"elements":[{"type":"way"}]}"#;
-        let compressed = gzip(json.as_bytes());
-        let v = decode_gz_osm(&compressed, "test://x").unwrap();
+    fn decode_gz_json_round_trips() {
+        let compressed = gzip(br#"{"elements":[{"type":"way"}]}"#);
+        let v = decode_gz_json(&compressed, "test://x").unwrap();
         assert_eq!(v["elements"].as_array().unwrap().len(), 1);
     }
 
     #[test]
-    fn decode_gz_osm_rejects_non_gzip_bytes() {
-        let err = decode_gz_osm(b"not gzip data", "test://x").unwrap_err();
+    fn decode_gz_json_rejects_non_gzip_bytes() {
+        let err = decode_gz_json(b"not gzip data", "test://x").unwrap_err();
         assert!(err.to_string().contains("gunzip failed"));
     }
 
     #[test]
     fn validate_osm_accepts_payload_with_roads() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"elements":[{"type":"way"}]}"#).unwrap();
-        assert!(validate_osm(v, "test://x").is_ok());
+        assert!(validate_osm(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_ok());
     }
 
     #[test]
     fn validate_osm_rejects_empty_elements() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"elements":[]}"#).unwrap();
-        assert!(validate_osm(v, "test://x").is_err());
+        assert!(validate_osm(&json(r#"{"elements":[]}"#), "test://x").is_err());
     }
 
     #[test]
     fn validate_osm_rejects_missing_elements() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"water":[]}"#).unwrap();
-        assert!(validate_osm(v, "test://x").is_err());
+        assert!(validate_osm(&json(r#"{"water":[]}"#), "test://x").is_err());
     }
 
     const CITY: &str = r#"{"id":2797656,"name":"Ghent","localName":"Gent",
@@ -194,22 +281,60 @@ mod tests {
 
     #[test]
     fn require_city_accepts_a_schedule_manifest() {
-        let v: serde_json::Value = serde_json::from_str(&format!(r#"{{"city":{CITY}}}"#)).unwrap();
-        assert!(require_city(&v, "test://x").is_ok());
+        assert!(require_city(&json(&format!(r#"{{"city":{CITY}}}"#)), "test://x").is_ok());
     }
 
     // The id-keyed flow's payload: valid OSM, but nothing naming the day's city.
     #[test]
     fn require_city_rejects_a_payload_without_one() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"elements":[{"type":"way"}]}"#).unwrap();
-        assert!(require_city(&v, "test://x").is_err());
+        assert!(require_city(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_err());
     }
 
     // A half-written `city` must fail here, not later in the pipeline: failing
     // here lets the mirror loop try the next host instead of dropping the day.
     #[test]
     fn require_city_rejects_a_partial_city() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"city":{"lat":51.05,"lon":3.72}}"#).unwrap();
-        assert!(require_city(&v, "test://x").is_err());
+        assert!(require_city(&json(r#"{"city":{"lat":51.05,"lon":3.72}}"#), "test://x").is_err());
+    }
+
+    // A manifest has to pass both halves — map data *and* city.
+    #[test]
+    fn validate_scheduled_needs_both_osm_and_city() {
+        let both = json(&format!(r#"{{"elements":[{{"type":"way"}}],"city":{CITY}}}"#));
+        assert!(validate_scheduled(&both, "test://x").is_ok());
+        assert!(validate_scheduled(&json(&format!(r#"{{"city":{CITY}}}"#)), "test://x").is_err());
+        assert!(validate_scheduled(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_err());
+    }
+
+    // --- the schedule state file (Dev Mode's bypass path) ---
+
+    #[test]
+    fn validate_state_accepts_a_list_object() {
+        assert!(validate_state(&json(r#"{"list":{}}"#), "test://x").is_ok());
+    }
+
+    // A missing or array `list` must be an error, not "an empty schedule" — the
+    // latter would look like every day legitimately having no entry.
+    #[test]
+    fn validate_state_rejects_a_missing_or_array_list() {
+        assert!(validate_state(&json(r#"{"list":[]}"#), "test://x").is_err());
+        assert!(validate_state(&json(r#"{}"#), "test://x").is_err());
+    }
+
+    #[test]
+    fn schedule_entry_reads_the_day() {
+        let v = json(&format!(r#"{{"list":{{"2026-07-28":{CITY}}}}}"#));
+        let city = schedule_entry(&v, "2026-07-28").expect("the day is in the list");
+        assert_eq!(city.id, 2797656);
+        assert_eq!(city.local_name, "Gent");
+    }
+
+    // A date outside the published window, and a day whose hand-edited entry is
+    // malformed, are both ordinary misses the caller has to handle.
+    #[test]
+    fn schedule_entry_errors_on_an_absent_or_broken_day() {
+        let v = json(&format!(r#"{{"list":{{"2026-07-28":{CITY},"2026-07-29":{{"lat":1}}}}}}"#));
+        assert!(schedule_entry(&v, "2026-08-15").is_err());
+        assert!(schedule_entry(&v, "2026-07-29").is_err());
     }
 }

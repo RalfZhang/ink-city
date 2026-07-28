@@ -9,6 +9,13 @@ use crate::config::{
 use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
+    /// Opaque job id, echoed back verbatim by the renderer window and matched
+    /// here so a stale result is discarded (`commands::submit_render_result`).
+    /// It carries a date for historical reasons — hence the name and the
+    /// `render-request`/`submit_render_result` field name — but since a render is
+    /// no longer identified by a date alone it holds `Target::signature`
+    /// (`daily:<date>:<theme>` / `custom:<key>:<theme>`). The renderer never
+    /// parses it.
     pub date: String,
     pub tx: oneshot::Sender<Vec<u8>>,
 }
@@ -52,12 +59,15 @@ pub struct AppState {
     /// is persisted (see `config::Config::dev_mode`) so the tab stays unlocked
     /// across restarts once the 7-click gesture in About has revealed it.
     pub dev_mode: AtomicBool,
-    /// Dev-only: when on, `render_bytes_for` skips the day-cache read and the
-    /// CDN, fetches OSM live from the Overpass sidecar, and overwrites the local
-    /// cache with it, so map-data edits are tested against fresh data. In-memory
-    /// only (always off on launch) and deliberately never persisted — leaving it
-    /// on would make every render hit Overpass live, which isn't always
-    /// China-reachable (the reason the CDN exists).
+    /// Dev-only: when on, `resolve_daily` skips the day cache and every published
+    /// manifest, takes the day's city from `osm-v2/city-list.json` read straight
+    /// off GitHub, fetches the map live from Overpass, and overwrites the local
+    /// cache with the result — so map-data edits are tested against fresh data
+    /// while the day still shows the city it's actually scheduled for. In-memory
+    /// only (always off on launch) and deliberately never persisted — leaving it on
+    /// would make every render hit Overpass live, which isn't always
+    /// China-reachable (the reason the CDN exists). Read through
+    /// `effective_bypass_cache`, never directly.
     pub bypass_cache: AtomicBool,
     pub proxy_enabled: AtomicBool,
     pub proxy_url: StdMutex<String>,
@@ -132,12 +142,24 @@ impl AppState {
         self.status_dirty.notify_one();
     }
 
-    /// Effective value of the Dev Mode "bypass cache & CDN" switch: gated on
-    /// `dev_mode`, so while the tab is locked it always reads as off. The stored
-    /// `bypass_cache` is left untouched, so the real setting is restored the
-    /// moment the tab is unlocked again. Every consumer of the switch (pipeline,
-    /// `Status`) reads through here rather than the raw atom.
+    /// Effective value of the Dev Mode "bypass cache & CDN" switch. Two gates, and
+    /// in both cases the stored `bypass_cache` is left untouched so the real setting
+    /// comes back once the gate lifts:
+    ///
+    ///   • `dev_mode` — while the tab is locked the switch reads as off;
+    ///   • `update_mode != Customized` — the switch only means anything on the
+    ///     Daily path (skip the manifest, take the city from the schedule state,
+    ///     fetch the map live). A Customized pin is arbitrary coordinates that
+    ///     nothing precaches, so it already goes straight to Overpass and there is
+    ///     nothing left to bypass. Gating it here rather than only in the UI is
+    ///     what keeps `Status::bypass_cache` — and therefore the rendered switch —
+    ///     honest about that.
+    ///
+    /// Every consumer of the switch (pipeline, `Status`) reads through here rather
+    /// than the raw atom.
     pub fn effective_bypass_cache(&self) -> bool {
-        self.dev_mode.load(Ordering::Acquire) && self.bypass_cache.load(Ordering::Acquire)
+        self.dev_mode.load(Ordering::Acquire)
+            && self.bypass_cache.load(Ordering::Acquire)
+            && *self.update_mode.lock().unwrap() != UpdateMode::Customized
     }
 }

@@ -48,7 +48,12 @@ pub const JSDELIVR_STYLE_HOSTS: &[&str] = &[
     "https://fastly.jsdelivr.net",
     "https://cdn.statically.io",
 ];
-pub const RAW_STYLE_HOSTS: &[&str] = &["https://raw.githack.com", "https://raw.githubusercontent.com"];
+/// GitHub's own raw host — the origin everything above mirrors. It sits last in
+/// `RAW_STYLE_HOSTS` because it's the one known to be DNS-poisoned in mainland
+/// China, but it's also the only entry that *isn't* a cache or a CDN edge, which
+/// is why Dev Mode's "bypass cache & CDN" asks for it by name (`github_only_urls`).
+pub const GITHUB_RAW_HOST: &str = "https://raw.githubusercontent.com";
+pub const RAW_STYLE_HOSTS: &[&str] = &["https://raw.githack.com", GITHUB_RAW_HOST];
 
 const USER_AGENT: &str = "InkCity/0.1";
 
@@ -80,9 +85,29 @@ pub fn mirror_urls(git_ref: &str, path: &str) -> Vec<String> {
         .collect()
 }
 
+/// `{REPO}@{git_ref}/{path}` at GitHub's raw host only — no CDN edge, no proxy
+/// mirror. For Dev Mode's "bypass cache & CDN", which still has to read one small
+/// file (the schedule state, see `cdn::fetch_schedule_city`) and must read it from
+/// the origin: a CDN edge could serve a cached copy, and a cached copy is the
+/// exact thing that switch exists to avoid.
+pub fn github_only_urls(git_ref: &str, path: &str) -> Vec<String> {
+    vec![format!("{GITHUB_RAW_HOST}/{REPO}/{git_ref}/{path}")]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn github_only_urls_is_the_origin_alone() {
+        let urls = github_only_urls("data", "osm-v2");
+        assert_eq!(urls, ["https://raw.githubusercontent.com/RalfZhang/ink-city/data/osm-v2"]);
+        // Nothing cache-y may sneak in — that's the point of the bypass.
+        for url in &urls {
+            assert!(!JSDELIVR_STYLE_HOSTS.iter().any(|h| url.starts_with(h)));
+            assert!(!url.starts_with("https://raw.githack.com"));
+        }
+    }
 
     #[test]
     fn mirror_urls_covers_all_hosts_jsdelivr_style_first() {
@@ -96,5 +121,15 @@ mod tests {
             urls[JSDELIVR_STYLE_HOSTS.len()],
             "https://raw.githack.com/RalfZhang/ink-city/main/src/data/cities.json"
         );
+    }
+
+    // The fallback chain's shape is load-bearing (see `cdn::fetch_from_mirrors`):
+    // every CDN edge is tried before anything GitHub-side, and the origin is last.
+    #[test]
+    fn mirror_urls_puts_every_cdn_edge_before_github() {
+        let urls = mirror_urls("data", "osm-v2/data");
+        let first_raw = urls.iter().position(|u| u.contains("raw.")).unwrap();
+        assert_eq!(first_raw, JSDELIVR_STYLE_HOSTS.len());
+        assert!(urls.last().unwrap().starts_with(GITHUB_RAW_HOST));
     }
 }

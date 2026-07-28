@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "提前預覽",
-    "advancePreviewDesc": "預覽輪替中未來某一天將顯示的城市地圖，不會更改今天的桌布。",
+    "advancePreviewDesc": "繪製未來某一天並依正常流程快取 —— 地圖資料與圖片都會寫入每日快取,那天到了可直接使用。不影響今天的桌布。",
     "loading": "正在渲染預覽…",
     "cleanCacheTitle": "清理快取",
     "cleanCacheDesc": "刪除已下載的地圖資料和已渲染的桌布，下次更新時會重新取得並渲染。",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "已清理 {{files}} 個檔案 · 釋放 {{size}}",
     "cleanCacheEmpty": "快取已為空",
     "bypassCacheTitle": "略過快取和 CDN",
-    "bypassCacheDesc": "略過 CDN，直接透過 Overpass API 即時取得地圖資料並覆寫本機快取。除錯地圖資料改動時使用。重新啟動後自動關閉。",
-    "openFullSize": "雙擊開啟原圖",
-    "savedTo": "已儲存至 {{path}}"
+    "bypassCacheDesc": "當天的城市直接從 GitHub 讀取排程取得,地圖資料改為即時從 Overpass API 抓取(不走 CDN),並覆寫本機快取。用於測試地圖資料的變更。重新啟動後自動關閉。",
+    "dailyOnly": "僅在「每日」更新模式下可用。"
   },
   "common": {
-    "loading": "載入中…"
+    "loading": "載入中…",
+    "dismiss": "關閉"
   },
   "tray": {
     "openSettings": "開啟設定",

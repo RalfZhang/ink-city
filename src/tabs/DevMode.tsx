@@ -21,7 +21,7 @@ type Props = {
 };
 
 type PreviewCity = { name: string; localName: string; country: string };
-type PreviewResult = { city: PreviewCity; date: string; pngBase64: string };
+type PreviewResult = { city: PreviewCity; date: string; pngBase64: string; pngPath: string };
 type CleanCacheResult = { removedFiles: number; freedBytes: number };
 
 const DAYS_AHEAD_OPTIONS = [0, 1, 2, 3, 4, 5];
@@ -42,9 +42,12 @@ export default function DevMode({ status, onError }: Props) {
   const [cleaning, setCleaning] = useState(false);
   const [cleanResult, setCleanResult] = useState<string | null>(null);
   const [bypassCache, setBypassCache] = useState(status.bypassCache);
-  // Where the last double-click wrote the PNG, shown in place of the hint so the
-  // user knows the file is on disk (and where) — see `openPreview`.
-  const [savedPath, setSavedPath] = useState<string | null>(null);
+  // Neither control means anything while the wallpaper is pinned to a custom
+  // location: there's no daily schedule to look ahead at, and a pin already
+  // fetches live from Overpass so there's no cache or CDN left to bypass. The
+  // backend enforces the same thing (see `preview_city` /
+  // `AppState::effective_bypass_cache`); this just says so in the UI.
+  const customized = status.updateMode === "customized";
 
   const toggleBypassCache = async (on: boolean) => {
     setBypassCache(on);
@@ -56,14 +59,12 @@ export default function DevMode({ status, onError }: Props) {
     }
   };
 
+  // The render already sits in the day cache, so full-size means opening that
+  // file in the OS image viewer — nothing is written outside the cache.
   const openPreview = async () => {
     if (!preview) return;
     try {
-      const path = await invoke<string>("save_and_open_image", {
-        fileName: `InkCity-${preview.date}-${preview.city.name}`,
-        pngBase64: preview.pngBase64,
-      });
-      setSavedPath(path);
+      await invoke("open_preview_image", { path: preview.pngPath });
     } catch (e) {
       onError(e);
     }
@@ -75,7 +76,6 @@ export default function DevMode({ status, onError }: Props) {
     try {
       const result = await invoke<PreviewResult>("preview_city", { daysAhead: Number(value) });
       setPreview(result);
-      setSavedPath(null);
     } catch (e) {
       onError(e);
     } finally {
@@ -106,18 +106,6 @@ export default function DevMode({ status, onError }: Props) {
   return (
     <div className="space-y-4 max-w-2xl">
       <Card>
-        <CardContent>
-          <SettingRow
-            label={t("devMode.bypassCacheTitle")}
-            description={t("devMode.bypassCacheDesc")}
-            control={
-              <Switch checked={bypassCache} onCheckedChange={toggleBypassCache} />
-            }
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
         <CardContent className="space-y-2">
           <SettingRow
             label={t("devMode.cleanCacheTitle")}
@@ -145,12 +133,35 @@ export default function DevMode({ status, onError }: Props) {
       </Card>
 
       <Card>
+        <CardContent className="space-y-2">
+          <SettingRow
+            label={t("devMode.bypassCacheTitle")}
+            description={t("devMode.bypassCacheDesc")}
+            control={
+              <Switch
+                checked={bypassCache}
+                onCheckedChange={toggleBypassCache}
+                disabled={customized}
+              />
+            }
+          />
+          {customized && (
+            <div className="text-xs text-muted-foreground">{t("devMode.dailyOnly")}</div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardContent className="space-y-4">
           <SettingRow
             label={t("devMode.advancePreviewTitle")}
             description={t("devMode.advancePreviewDesc")}
             control={
-              <Select value={daysAhead} onValueChange={runPreview} disabled={loading}>
+              <Select
+                value={daysAhead}
+                onValueChange={runPreview}
+                disabled={loading || customized}
+              >
                 <SelectTrigger className="w-[100px]">
                   <SelectValue placeholder="–" />
                 </SelectTrigger>
@@ -164,6 +175,10 @@ export default function DevMode({ status, onError }: Props) {
               </Select>
             }
           />
+
+          {customized && (
+            <div className="text-xs text-muted-foreground">{t("devMode.dailyOnly")}</div>
+          )}
 
           {loading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -181,13 +196,8 @@ export default function DevMode({ status, onError }: Props) {
                 src={`data:image/png;base64,${preview.pngBase64}`}
                 alt={`${preview.city.name} preview`}
                 className="w-full rounded border cursor-zoom-in"
-                title={t("devMode.openFullSize")}
                 onDoubleClick={openPreview}
               />
-              {/* Same line either way, so saving doesn't reflow the card. */}
-              <div className="text-xs text-muted-foreground break-all">
-                {savedPath ? t("devMode.savedTo", { path: savedPath }) : t("devMode.openFullSize")}
-              </div>
             </div>
           )}
         </CardContent>

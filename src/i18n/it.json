@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Anteprima avanzata",
-    "advancePreviewDesc": "Visualizza in anteprima la mappa della città per un giorno futuro nella rotazione, senza modificare lo sfondo di oggi.",
+    "advancePreviewDesc": "Esegue il rendering di un giorno futuro e lo mette in cache come un rendering normale: i dati della mappa e l'immagine finiscono nella cache giornaliera, pronti per quel giorno. Non cambia lo sfondo di oggi.",
     "loading": "Rendering anteprima in corso…",
     "cleanCacheTitle": "Svuota cache",
     "cleanCacheDesc": "Elimina i dati mappa scaricati e gli sfondi generati. Verranno recuperati e generati nuovamente al prossimo aggiornamento.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} file rimossi · {{size}} liberati",
     "cleanCacheEmpty": "La cache è già vuota",
     "bypassCacheTitle": "Ignora cache e CDN",
-    "bypassCacheDesc": "Recupera i dati mappa in tempo reale dall'API Overpass, saltando la CDN e sovrascrivendo con essi la cache locale. Da usare quando si testano modifiche ai dati mappa. Si disattiva al riavvio.",
-    "openFullSize": "Doppio clic per aprire a dimensione reale",
-    "savedTo": "Salvato in {{path}}"
+    "bypassCacheDesc": "Prende la città del giorno dal calendario letto direttamente da GitHub, poi scarica i suoi dati della mappa in tempo reale dall'API Overpass invece che dal CDN, sovrascrivendo la cache locale. Utile per testare modifiche ai dati. Si disattiva al riavvio.",
+    "dailyOnly": "Vale solo per la modalità di aggiornamento Giornaliero."
   },
   "common": {
-    "loading": "caricamento…"
+    "loading": "caricamento…",
+    "dismiss": "Chiudi"
   },
   "tray": {
     "openSettings": "Apri impostazioni",

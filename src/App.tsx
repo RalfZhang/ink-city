@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
 import { Direction } from "radix-ui";
+import { X } from "lucide-react";
 import i18n, { dirForLocale } from "@/i18n";
 import { logWarn } from "@/lib/log";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -161,7 +162,7 @@ function App() {
 
   return (
     <Direction.Provider dir={dir}>
-    <div className="h-screen flex flex-col">
+    <div className="relative h-screen flex flex-col">
       <Tabs
         orientation="vertical"
         value={tab}
@@ -215,9 +216,27 @@ function App() {
         )}
       </Tabs>
 
+      {/* Dismissable, and overlaid rather than in flow: nothing else clears `err`,
+          so without the button a one-off failure (a preview whose cached PNG was
+          since cleaned, say) would sit there for the rest of the session — and an
+          error appearing must not shove the content it's about out from under the
+          cursor. Floating means an opaque background, and `start-[180px]` (the
+          sidebar's width, logical so it flips under RTL) so it can't cover the
+          window controls pinned to the sidebar's bottom. */}
       {err && (
-        <div className="mx-4 mb-4 p-3 rounded border border-destructive/30 bg-destructive/5 text-destructive text-xs whitespace-pre-wrap">
-          {err}
+        <div className="absolute bottom-0 start-[180px] end-0 mx-4 mb-4 flex items-start gap-3 p-3 rounded border border-destructive/30 bg-background shadow-lg">
+          <div className="flex-1 min-w-0 max-h-40 overflow-y-auto text-destructive text-xs whitespace-pre-wrap break-words">
+            {err}
+          </div>
+          <button
+            type="button"
+            onClick={() => setErr(null)}
+            aria-label={t("common.dismiss")}
+            title={t("common.dismiss")}
+            className="shrink-0 text-destructive/60 hover:text-destructive"
+          >
+            <X className="size-3.5" />
+          </button>
         </div>
       )}
     </div>

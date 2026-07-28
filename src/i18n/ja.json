@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "先行プレビュー",
-    "advancePreviewDesc": "今日の壁紙を変更せずに、ローテーション内の今後の日付の都市マップをプレビューします。",
+    "advancePreviewDesc": "先の日付をレンダリングし、通常のレンダリングと同じようにキャッシュします。地図データと画像は日次キャッシュに保存され、その日が来たらそのまま使われます。今日の壁紙は変更しません。",
     "loading": "プレビューをレンダリング中…",
     "cleanCacheTitle": "キャッシュを削除",
     "cleanCacheDesc": "ダウンロード済みの地図データと生成済みの壁紙を削除します。次回の更新時に再取得・再生成されます。",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} 個のファイルを削除・{{size}} を解放",
     "cleanCacheEmpty": "キャッシュはすでに空です",
     "bypassCacheTitle": "キャッシュとCDNを回避",
-    "bypassCacheDesc": "CDNを回避してOverpass APIから地図データをライブで取得し、ローカルキャッシュを上書きします。地図データの変更をテストする際に使用してください。再起動時にオフに戻ります。",
-    "openFullSize": "ダブルクリックで原寸表示",
-    "savedTo": "{{path}} に保存しました"
+    "bypassCacheDesc": "その日の都市を GitHub から直接読んだスケジュールから取得し、地図データは CDN ではなく Overpass API から直接取得して、ローカルキャッシュを上書きします。地図データの変更をテストするときに使います。再起動でオフに戻ります。",
+    "dailyOnly": "「毎日」更新モードでのみ有効です。"
   },
   "common": {
-    "loading": "読み込み中…"
+    "loading": "読み込み中…",
+    "dismiss": "閉じる"
   },
   "tray": {
     "openSettings": "設定を開く",

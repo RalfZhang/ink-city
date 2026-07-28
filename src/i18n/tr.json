@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Erken Önizleme",
-    "advancePreviewDesc": "Bugünün duvar kağıdını değiştirmeden, rotasyondaki gelecek bir gün için şehir haritasını önizler.",
+    "advancePreviewDesc": "Gelecek bir günü işler ve normal bir işleme gibi önbelleğe alır — harita verisi ve görüntü günlük önbelleğe yazılır, o gün geldiğinde hazır olur. Bugünün duvar kağıdını değiştirmez.",
     "loading": "Önizleme oluşturuluyor…",
     "cleanCacheTitle": "Önbelleği temizle",
     "cleanCacheDesc": "İndirilen harita verilerini ve oluşturulan duvar kağıtlarını siler. Bir sonraki güncellemede yeniden alınır ve oluşturulur.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} dosya kaldırıldı · {{size}} boşaltıldı",
     "cleanCacheEmpty": "Önbellek zaten boş",
     "bypassCacheTitle": "Önbelleği ve CDN'yi atla",
-    "bypassCacheDesc": "CDN'yi atlayarak harita verilerini Overpass API'sinden canlı olarak alır ve yerel önbelleği bununla değiştirir. Harita verilerindeki değişiklikleri test ederken kullanın. Yeniden başlatıldığında kapalı duruma döner.",
-    "openFullSize": "Tam boyutta açmak için çift tıklayın",
-    "savedTo": "{{path}} konumuna kaydedildi"
+    "bypassCacheDesc": "Günün şehrini doğrudan GitHub'dan okunan takvimden alır, harita verisini ise CDN yerine Overpass API'den canlı çeker ve yerel önbelleği üzerine yazar. Harita verisi değişikliklerini denerken kullanın. Yeniden başlatmada kapanır.",
+    "dailyOnly": "Yalnızca Günlük güncelleme modunda geçerlidir."
   },
   "common": {
-    "loading": "yükleniyor…"
+    "loading": "yükleniyor…",
+    "dismiss": "Kapat"
   },
   "tray": {
     "openSettings": "Ayarları Aç",

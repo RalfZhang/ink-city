@@ -318,7 +318,7 @@ pub fn run() {
             commands::open_log_dir,
             commands::preview_city,
             commands::clean_cache,
-            commands::save_and_open_image,
+            commands::open_preview_image,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

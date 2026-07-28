@@ -411,6 +411,10 @@ pub struct PreviewResult {
     pub date: String,
     /// Base64-encoded PNG, ready for an `<img src="data:image/png;base64,...">`.
     pub png_base64: String,
+    /// Where the same PNG landed in the day cache
+    /// (`wallpaper/daily/<date>-<theme>.png`). Handed back so double-clicking the
+    /// preview can open that file — see `open_preview_image`.
+    pub png_path: String,
 }
 
 /// Dev Mode's "Advance Preview": render (without applying) the city map for
@@ -421,12 +425,20 @@ pub async fn preview_city(app: AppHandle, days_ahead: i64) -> Result<PreviewResu
     if !(0..=5).contains(&days_ahead) {
         return Err("daysAhead must be between 0 and 5".to_string());
     }
+    // The City tab's Customized pin has no daily schedule to preview, and the UI
+    // disables this control there — re-checked here so the command can't be driven
+    // into rendering a day the user isn't on.
+    if *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Customized {
+        return Err("Advance Preview applies to the Daily update mode".to_string());
+    }
     let date = city::today() + chrono::Duration::days(days_ahead);
-    let (city, bytes) = pipeline::render_preview(&app, date).await.map_err(|e| e.to_string())?;
+    let (city, bytes, png_path) =
+        pipeline::render_preview(&app, date).await.map_err(|e| e.to_string())?;
     Ok(PreviewResult {
         city,
         date: date.to_string(),
         png_base64: base64::Engine::encode(&base64::engine::general_purpose::STANDARD, bytes),
+        png_path: png_path.to_string_lossy().to_string(),
     })
 }
 
@@ -518,41 +530,27 @@ pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
     Ok(CleanCacheResult { removed_files, freed_bytes })
 }
 
-/// Save a base64 PNG (e.g. the Dev Mode Advance Preview image) into the user's
-/// default Pictures folder and open it in the OS default image viewer, so it can
-/// be inspected full-size. Falls back to Downloads, then the app cache dir, if
-/// Pictures is unavailable. Returns the saved path (for the frontend to surface).
+/// Open a cached render in the OS default image viewer, so the Dev Mode Advance
+/// Preview can be inspected full-size. Nothing is exported: `render_preview`
+/// already wrote this PNG into the day cache, and `path` is the `pngPath` its
+/// `PreviewResult` carried back — the file the viewer shows is the very one the
+/// pipeline will reapply when that day arrives.
+///
+/// Refuses anything outside the app cache dir (canonicalized on both sides, so a
+/// symlinked cache root still matches), and reports a missing file as such: Clean
+/// cache sits above this control and can leave a previously returned path stale.
+/// The original `path` is what gets opened — a canonicalized Windows path is
+/// `\\?\C:\…`, which not every shell handler accepts.
 #[tauri::command]
-pub fn save_and_open_image(
-    app: AppHandle,
-    file_name: String,
-    png_base64: String,
-) -> Result<String, String> {
-    use base64::Engine;
-    use tauri_plugin_opener::OpenerExt;
-    let bytes = base64::engine::general_purpose::STANDARD
-        .decode(png_base64.as_bytes())
-        .map_err(|e| e.to_string())?;
-    let dir = app
-        .path()
-        .picture_dir()
-        .or_else(|_| app.path().download_dir())
-        .or_else(|_| app.path().app_cache_dir())
-        .map_err(|e| e.to_string())?;
-    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    // Sanitize the caller-supplied stem so it's a safe single path component on
-    // both macOS and Windows (Windows forbids \ / : * ? " < > | ). Keep it simple.
-    let safe: String = file_name
-        .chars()
-        .map(|c| if c.is_alphanumeric() || c == '-' || c == '_' || c == '.' { c } else { '-' })
-        .collect();
-    let safe = if safe.is_empty() { "inkcity-preview".to_string() } else { safe };
-    let path = dir.join(format!("{safe}.png"));
-    std::fs::write(&path, &bytes).map_err(|e| e.to_string())?;
-    app.opener()
-        .open_path(path.to_string_lossy(), None::<&str>)
-        .map_err(|e| e.to_string())?;
-    Ok(path.to_string_lossy().to_string())
+pub fn open_preview_image(app: AppHandle, path: String) -> Result<(), String> {
+    let file = std::path::Path::new(&path);
+    let real = file.canonicalize().map_err(|_| "image is no longer in the cache".to_string())?;
+    let cache = app.path().app_cache_dir().map_err(|e| e.to_string())?;
+    let cache = cache.canonicalize().map_err(|e| e.to_string())?;
+    if !real.starts_with(&cache) {
+        return Err(format!("refusing to open {path}: outside the cache"));
+    }
+    app.opener().open_path(&path, None::<&str>).map_err(|e| e.to_string())
 }
 
 fn persist(app: &AppHandle) -> Result<(), String> {

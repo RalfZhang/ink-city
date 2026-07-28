@@ -104,7 +104,7 @@
   },
   "devMode": {
     "advancePreviewTitle": "Vorausschau",
-    "advancePreviewDesc": "Zeigt die Kartenvorschau für einen kommenden Tag in der Rotation, ohne das heutige Hintergrundbild zu ändern.",
+    "advancePreviewDesc": "Rendert einen kommenden Tag und legt ihn wie ein normales Rendering ab — Kartendaten und Bild landen im Tages-Cache und sind bereit, wenn der Tag kommt. Ändert das heutige Hintergrundbild nicht.",
     "loading": "Vorschau wird gerendert…",
     "cleanCacheTitle": "Cache leeren",
     "cleanCacheDesc": "Löscht heruntergeladene Kartendaten und gerenderte Hintergrundbilder. Sie werden beim nächsten Update neu abgerufen und gerendert.",
@@ -113,12 +113,12 @@
     "cleanCacheResult": "{{files}} Dateien entfernt · {{size}} freigegeben",
     "cleanCacheEmpty": "Cache ist bereits leer",
     "bypassCacheTitle": "Cache & CDN umgehen",
-    "bypassCacheDesc": "Ruft Kartendaten live über die Overpass-API ab, umgeht das CDN und überschreibt damit den lokalen Cache. Nützlich beim Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt.",
-    "openFullSize": "Doppelklick für Originalgröße",
-    "savedTo": "Gespeichert unter {{path}}"
+    "bypassCacheDesc": "Nimmt die Stadt des Tages aus dem direkt bei GitHub gelesenen Zeitplan und lädt ihre Kartendaten live über die Overpass-API statt vom CDN, wobei der lokale Cache überschrieben wird. Zum Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt.",
+    "dailyOnly": "Gilt nur für den Modus „Täglich“."
   },
   "common": {
-    "loading": "Wird geladen…"
+    "loading": "Wird geladen…",
+    "dismiss": "Schließen"
   },
   "tray": {
     "openSettings": "Einstellungen öffnen",

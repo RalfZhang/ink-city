@@ -21,7 +21,10 @@ import { dateStamp } from "./city";
 // within 30 days" needs to know the last 30 days, and with random picks that
 // can't be recomputed — only remembered.
 //
-// PRODUCER-ONLY (CI). The client just reads `osm-v2/data/<date>.json`; it never
+// PRODUCER-ONLY (CI). The client normally just reads `osm-v2/data/<date>.json`
+// (city + map data in one request); the one exception is Dev Mode's "bypass cache
+// & CDN", which reads `city-list.json` for the day's city precisely *because* it
+// carries no map data (see `pipeline::resolve_daily`). Either way the client never
 // recomputes a pick, so there is no Rust port to keep in lockstep. Deliberately
 // NOT re-exported from ./index (the client barrel), same rule as ./osm.
 
