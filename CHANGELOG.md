@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.9.0](https://github.com/RalfZhang/ink-city/compare/v0.8.0...v0.9.0) (2026-07-29)
+
+
+### Features
+
+* customize city ([ff92fbd](https://github.com/RalfZhang/ink-city/commit/ff92fbd60b4b356b6d8d5550af31291dd68a3572)), closes [#11](https://github.com/RalfZhang/ink-city/issues/11)
+* Dev Mode for new pipeline ([013b072](https://github.com/RalfZhang/ink-city/commit/013b072679b7fe2244b09d29bd08404e8d1f5940))
+* Double-click to open img on advance preview ([773c7dd](https://github.com/RalfZhang/ink-city/commit/773c7dd07185604189bbc8ed501acd458ee9a0a6)), closes [#43](https://github.com/RalfZhang/ink-city/issues/43)
+* Mondrian Style Map ([70e2140](https://github.com/RalfZhang/ink-city/commit/70e2140b5a0e69aa7ffd9233bbcd0dee64b63a55)), closes [#18](https://github.com/RalfZhang/ink-city/issues/18)
+* Random city strategy from src/data/cities-*.json ([0fa86ae](https://github.com/RalfZhang/ink-city/commit/0fa86ae9d263ed333a79a93d952b5beac2589ff3)), closes [#1](https://github.com/RalfZhang/ink-city/issues/1)
+
+
+### Bug Fixes
+
+* cities data ([3556e26](https://github.com/RalfZhang/ink-city/commit/3556e268c0a2cd85e5103ca3ee83c03256e11e9c))
+* Less railway lines ([af3b0ad](https://github.com/RalfZhang/ink-city/commit/af3b0ad626dc1c15a771cc9ef4be0e15dfc071db)), closes [#44](https://github.com/RalfZhang/ink-city/issues/44)
+* new precache strategy ([9f8e7ef](https://github.com/RalfZhang/ink-city/commit/9f8e7efec5df186cd360be202605b79e7de0fb75))
+
 ## [0.8.0](https://github.com/RalfZhang/ink-city/compare/v0.7.1...v0.8.0) (2026-07-27)
 
 
