@@ -78,23 +78,48 @@ country cooldown a city shares.
    treating it as empty would append a fresh rotation over the top and silently
    discard every hand-pinned day. Nothing is written, the restored copy is
    republished untouched, and the run goes red so a human fixes the JSON.
-2. Append days until the last key is `today+6`. **Existing entries are never
-   re-rolled.** Each new pick excludes every city already in the file (a ~30-day
-   city cooldown) and every country used in the last 5 entries.
-3. Trim to the newest 30 entries (`today-23 … today+6`).
+2. Give **one** day a city: `today+6`, the day that just came into range.
+   **Existing entries are never re-rolled**, so a day already in the file — by an
+   earlier run or by hand — is left exactly as it is. The pick excludes every city
+   scheduled within 30 days *either side* of it, and every country within 5 days
+   either side.
+3. Drop every entry older than `today-23`. Entries *newer* than `today+6` are
+   kept: those are hand-pinned future days, waiting for the calendar to reach them.
 4. Reconcile the published manifests against it: an `osm-v2/data/<date>.json` is kept
    only if its `city.id` **and** `city.name` still match and its `v` is current;
-   otherwise it's deleted and re-fetched. Days outside the newest 9 are pruned.
+   otherwise it's deleted and re-fetched. Days outside `today-2 … today+6` are pruned.
 5. Fetch the missing days into
    `osm-v2/data/<YYYY-MM-DD>.json = { v, …osm, date, city }`, so the client gets a
    day's city + map data in one request.
 
+Steps 2 and 3 are one function (`advanceSchedule`) because the order matters and
+must not be separable at a call site. Picking `today+6` looks back 30 days to
+`today-24`, and that is precisely the day step 3 removes — prune first and the
+edge of the cooldown goes unguarded. The symptom would be a repeat at a gap of
+exactly 30 days, about once every 1200 days: far too rare to notice, which is why
+the constants carry an asserted invariant
+(`CITY_COOLDOWN_DAYS === HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS`) and
+`schedule-test.ts` pins the ordering with a forced-RNG case rather than trusting a
+random run to expose it.
+
 **Changing a city by hand** — edit that day's entry in `city-list.json` on the
 `data` branch. The next run (≤6h, or trigger `Precache OSM` manually) sees the
 manifest disagree, deletes it, and re-fetches the map data for the new city. Step 2
-never touches days that already exist, so the edit sticks. Two caveats: editing a
-day *in the past* has no effect (the client has moved on), and an edit can break
-the cooldowns for days already scheduled after it — those aren't re-rolled.
+never touches days that already exist, so the edit sticks — **at any distance in
+the future**, because both the retention window (step 3) and the manifest window
+are measured in days off today rather than in entry counts, so a day pinned months
+out neither gets pruned nor steals a manifest slot. And because the cooldowns are
+symmetric, the days scheduled *around* it later will honour it: they see it inside
+their own window and pick something else. Two things it can't do: editing a day
+*in the past* has no effect (the client has moved on), and two days you pin **by
+hand** can still conflict with each other, since nothing re-rolls an existing
+entry.
+
+Because only `today+6` is ever filled, a day that has no entry stays empty — the
+client falls back to the rotation for it. That's deliberate (re-rolling a day the
+calendar has nearly reached would fight the hand-edits this file exists to carry),
+but it does mean a gap has to come from somewhere unusual: a hand-deletion, a
+`parseState` rejection, or CI not running for more than a day.
 
 **Client** (`src-tauri`) — `pipeline::resolve_daily` resolves the day's city and
 its map data *together*, walking one ladder and stopping at the first rung that
@@ -215,6 +240,12 @@ day, as each new day adds another city and schedule day to the backlog.
   upcoming days. A *skipped* publish is harmless by comparison — the branch keeps
   its previous copy — but it does throw away that run's work, which is why the
   publish guard checks `osm-v2/` as well as `osm/`.
+- Because a run only ever fills `today+6`, a reset branch comes back **empty and
+  fills forward one day at a time**: `today … today+5` have no entry and the client
+  falls back to the rotation for them, with the schedule taking over on day 6.
+  The same applies after CI misses more than a full day — the days that were
+  skipped are not back-filled. Both are recoverable by hand (add the days to
+  `city-list.json`) and neither fails the job.
 - The PNG cache key is date+theme, not city, so **a day keeps the city it first
   rendered with** — a schedule manifest that lands after the day already fell back
   to the rotation only takes effect tomorrow. That's the day cache's job (step 1

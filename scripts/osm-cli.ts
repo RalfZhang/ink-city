@@ -57,10 +57,11 @@ import {
   manifestWindow,
   mergePools,
   parseState,
-  pruneHistory,
   serializeState,
+  shiftStamp,
   stamps,
-  HISTORY_DAYS,
+  HISTORY_BACK_DAYS,
+  LOOKAHEAD_DAYS,
   SCHEDULE_DATA_DIR,
   SCHEDULE_POOL_RE,
   SCHEDULE_ROOT,
@@ -389,14 +390,16 @@ function removePublished(dir: string, name: string): void {
  *   osm-v2/city-list.json        the schedule itself
  *   osm-v2/data/<date>.json[.gz] one day's city + map data
  *
- * `city-list.json` is read back here, appended to (never re-rolled), pruned to
- * 30 days, and written out again. See src/core/schedule.ts for why it's stored
- * rather than derived, and for the cooldown rules. Because it's stored,
- * **editing a future day in that file is the supported way to override it**:
- * this run notices the published manifest disagrees and re-fetches that day's
- * map data.
+ * `city-list.json` is read back here, given a city for `today + LOOKAHEAD_DAYS`,
+ * trimmed of anything older than `today - HISTORY_BACK_DAYS`, and written out
+ * again. See src/core/schedule.ts for why it's stored rather than derived, and for
+ * the cooldown rules. Because it's stored, **editing a day in that file is the
+ * supported way to override it** — at any distance in the future, since nothing
+ * re-rolls an entry that exists and the retention window is measured in days off
+ * today, not entries: this run notices the published manifest disagrees and
+ * re-fetches that day's map data.
  *
- * Each of the newest `MANIFEST_DAYS` days gets
+ * Every day in `manifestWindow` (today-2 … today+6) gets
  * `osm-v2/data/<YYYY-MM-DD>.json = { v, ...osm, date, city }`, so the client
  * fetches a day's wallpaper (city + map data) in one request. The schedule lives
  * one level up from the manifests so the gzip/prune passes over `data/` can't
@@ -443,10 +446,16 @@ async function runScheduleCache(root: string): Promise<{ fetched: number; failed
     for (const k of rejected) warn(`[schedule] ${SCHEDULE_STATE_FILE}: dropped malformed entry ${k}`);
   }
 
-  // --- extend it to today+6, then trim the history back to 30 days ---
+  // --- give today+6 a city, then drop anything older than today-23 ---
+  // One day per run; days already present (including any pinned by hand, however
+  // far ahead) are left exactly as they are. `advanceSchedule` does both halves so
+  // the pick can't be starved of the history it needs — see its doc.
   const today = dateStamp(new Date());
-  const added = advanceSchedule(state, pool, today);
-  for (const { stamp, city, relaxed } of added) {
+  const { added, dropped } = advanceSchedule(state, pool, today);
+  if (added === undefined) {
+    console.log(`[schedule] ${shiftStamp(today, LOOKAHEAD_DAYS)} already scheduled — nothing to pick`);
+  } else {
+    const { stamp, city, relaxed } = added;
     const note =
       relaxed === "none"
         ? ""
@@ -456,9 +465,10 @@ async function runScheduleCache(root: string): Promise<{ fetched: number; failed
     console.log(`[schedule] scheduled ${stamp} → ${city.name}, ${city.country}${note}`);
     if (relaxed !== "none") warn(`[schedule] ${stamp} picked with relaxed cooldowns${note}`);
   }
-  const dropped = pruneHistory(state);
   if (dropped.length > 0) {
-    console.log(`[schedule] history trimmed to ${HISTORY_DAYS} days (dropped ${dropped.join(", ")})`);
+    console.log(
+      `[schedule] dropped ${dropped.length} day(s) older than ${shiftStamp(today, -HISTORY_BACK_DAYS)}: ${dropped.join(", ")}`,
+    );
   }
   writeFileSync(statePath, serializeState(state));
   console.log(`[schedule] ${SCHEDULE_STATE_FILE} now holds ${stamps(state).length} days`);
@@ -468,7 +478,7 @@ async function runScheduleCache(root: string): Promise<{ fetched: number; failed
   // day is now scheduled for (id *and* name — this is what makes a hand-edit take
   // effect), and matches the current schema version. Everything else is dropped,
   // out-of-window days here and unusable ones in the loop below.
-  const wanted = manifestWindow(state);
+  const wanted = manifestWindow(state, today);
   const wantedSet = new Set(wanted);
   for (const name of readdirSync(dataDir)) {
     const m = name.match(/^(\d{4}-\d{2}-\d{2})\.json$/);
