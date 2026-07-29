@@ -63,10 +63,11 @@ recomputed, only remembered.
 `cities-countries.json`), merged and **deduped by `id`**, with later files
 winning: ~1055 cities from 1276 rows. `cities.json` is excluded on purpose (the
 hyphen in the glob) — it belongs to the legacy rotation. The two pools share ids
-for the ~221 cities they both list but differ in coordinate precision and in how
-they spell names (`Bogotá` vs `Bogota`) and attribute dependencies (`Hong Kong`
-as CN vs HK, which also decides whose country cooldown it shares);
-`cities-famous.json` wins those by glob order.
+for the 221 cities they both list but differ in coordinate precision and in how
+they spell names (`Bogotá` vs `Bogota`); `cities-famous.json` wins those by glob
+order. `country` is **not** one of the divergences — all pools carry the same ISO
+3166-1 alpha-2 code for a given id — so which pool wins never shifts whose
+country cooldown a city shares.
 
 **Each run** (`scripts/osm-cli.ts` → `runScheduleCache`):
 

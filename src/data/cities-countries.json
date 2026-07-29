@@ -47,7 +47,7 @@
   {
     "id": 1566083,
     "name": "Ho Chi Minh City",
-    "localName": "TPHCM",
+    "localName": "Thành phố Hồ Chí Minh",
     "country": "VN",
     "lat": 10.82302,
     "lon": 106.62965,
@@ -258,7 +258,7 @@
     "country": "AU",
     "lat": -33.86785,
     "lon": 151.20732,
-    "population": 5557233
+    "population": 5638830
   },
   {
     "id": 160263,
@@ -1536,7 +1536,7 @@
     "country": "KZ",
     "lat": 51.1801,
     "lon": 71.44598,
-    "population": 345604
+    "population": 1544142
   },
   {
     "id": 290030,
@@ -1793,7 +1793,7 @@
   {
     "id": 1252416,
     "name": "Thimphu",
-    "localName": "ཐིམ་ཕུུུུ",
+    "localName": "ཐིམ་ཕུ",
     "country": "BT",
     "lat": 27.46609,
     "lon": 89.64191,

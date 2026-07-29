@@ -104,8 +104,9 @@ export function stamps(state: ScheduleState): string[] {
  * Callers pass `src/data/cities-*.json` in glob (alphabetical) order, so
  * `cities-famous.json` overrides `cities-countries.json` — the two carry the
  * same ids for shared cities but differ in coordinate precision and in how they
- * spell names (`Bogotá` vs `Bogota`) and attribute dependencies (`Hong Kong` as
- * CN vs HK, which also decides whose country cooldown it shares).
+ * spell names (`Bogotá` vs `Bogota`). `country` is *not* one of the divergences:
+ * all pools carry the same ISO 3166-1 alpha-2 code per id, so which pool wins
+ * never shifts whose country cooldown a city shares.
  */
 export function mergePools(pools: readonly (readonly City[])[]): City[] {
   const byId = new Map<number, City>();

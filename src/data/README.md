@@ -33,6 +33,23 @@ localName passes below rewrite *just* the `localName` line via text-level replac
 leaving every other byte intact (so floats like `"lon": 10.0` and trailing newline
 don't reformat).
 
+## `country` field — which ISO code
+
+`country` is an **ISO 3166-1 alpha-2 code**, and a place gets **its own** code before
+its sovereign's: Hong Kong is `HK` not `CN`, Macau `MO`, San Juan `PR` not `US`,
+Gibraltar `GI` not `GB`, Laayoune `EH` not `MA`, Cayenne / Saint-Denis /
+Fort-de-France `GF` / `RE` / `MQ` not `FR`. A place with no code of its own falls
+back to the sovereign ISO assigns it — Crimea → `UA` (ISO 3166-2 `UA-43` / `UA-40`).
+Kosovo has no ISO 3166-1 code at all and uses the user-assigned **`XK`**.
+
+That's exactly the GeoNames `country code` column, which makes the invariant
+checkable: join all three pools to `cities1000.txt` by `id` and every `country` must
+match. It holds for all 2276 pins except the two with no `cities1000.txt` row at all
+(Jaboatão in `cities.json`, Monte Águila — see below). Across pools it's also
+consistent: shared ids never disagree on `country`, which is what lets
+[`mergePools`](../core/schedule.ts) pick a winner without moving a city between
+country cooldowns.
+
 ## `localName` field — what language/script it holds
 
 `localName` means "this city's name in the locally-appropriate language/script."
@@ -65,6 +82,18 @@ don't reformat).
   language has a non-Latin script — then curated to it: `IN → मुंबई / नई दिल्ली` (hi),
   `TD → نجامينا` (ar), `DJ → جيبوتي` (ar). Minority/co-official non-Latin langs are
   *not* used (no CA→Inuktitut, no CX→Chinese).
+- `name` is **ASCII-only** (0/284 non-ASCII): GeoNames `name` where that's already
+  ASCII, `asciiname` for the 15 that aren't (`Bogota`, `São Paulo` → `Sao Paulo`,
+  `Zürich` → `Zuerich`). `cities-famous.json` keeps the diacritics instead, so the
+  two pools differ on 19 of their 221 shared ids. Worth knowing before "fixing" either
+  side: [`city.rs`'s search](../../src-tauri/src/city.rs) lowercases but does **not**
+  fold diacritics, so an ASCII `name` is what a user typing `bogota` can actually find.
+- `lat` / `lon` / `population` are **GeoNames verbatim** — the whole file re-derives
+  from a dump, so a stale dump shows up here as a stale number (Astana `345604` and
+  Sydney `5557233` were refreshed by hand to `1544142` / `5638830`). Ngerulmud's
+  `population: 0` is *not* one of those: Palau's capital is government buildings only
+  and genuinely has no residents. It's the sole 0 in either pool, which puts it last in
+  the population-descending search ranking — a `city.rs` tiebreak question, not a data one.
 
 ### `cities-famous.json` specifics
 
@@ -105,11 +134,38 @@ Target-language priority: **CURATED > China autonomous region > India state > mu
   Ticino → it, Belgium Wallonia + Brussels → fr (Liège / Namur / Bruxelles),
   Spain Catalonia/Valencia/Balearic → ca (Alicante → Alacant).
 - **Suffix stripping:** zh prefers the `zh-CN` tag and strips trailing 市/区 (avoids
-  Traditional like Changsha 長沙 → 长沙); ko strips 특별시/광역시/etc.; my strips မြို့.
+  Traditional like Changsha 長沙 → 长沙); ja likewise strips 市 (京都市 → 京都 — this ran
+  for zh only at first, so 7 of the 21 JP pins kept the suffix); ko strips
+  특별시/광역시/etc. — **as a whole word**, since peeling only 시 off 평양직할시 leaves the
+  broken stem 평양직할; my strips မြို့.
 - **~15 manual curations** for data gaps / bad preferred-name picks: Prayagraj → प्रयागराज
   (not pre-2018 इलाहाबाद), Ho Chi Minh City → Thành phố Hồ Chí Minh (not abbrev TPHCM),
   Rhodes → Ρόδος, Basra → البصرة (not "Old Basra"), Espoo → Espoo (GeoNames had only
-  Swedish "Esbo"). TD/DJ curated to Arabic to **match `cities-countries.json`.**
+  Swedish "Esbo"), Vatican City → Città del Vaticano (it — Latin `Civitas Vaticana` is
+  the *state's* name, and `la` is a document language, not a spoken one), Singapore →
+  Singapore (not the state form "Republic of Singapore"). TD/DJ curated to Arabic to
+  **match `cities-countries.json`.** `localName` follows `country`, so the two
+  dependencies whose code isn't their sovereign's also take that region's language:
+  Laayoune → العيون (`EH` → ar, rule 4 — it had drifted to Spanish "El Aaiún") and
+  Pristina → Prishtinë (`XK` → sq, not Serbian Приштина).
+- **`wikiId` and `id` don't always denote the same thing** — the pin list is Wikidata's
+  and the coordinates came with it, so three pins needed their `lat`/`lon` re-pinned to
+  the GeoNames point. Each is a different failure:
+  - **Rhodes** — genuinely the wrong entity: `wikiId` `Q43048` is the *island*
+    ("island in Aegean sea"), while `id` `400666` is GeoNames' Ródos, the town. The
+    island's `P625` is its inland centroid, 40 km from town.
+  - **Cần Thơ** — the *right* entity (`Q216075`, "city of Vietnam", 芹苴市) but the wrong
+    kind of point. Cần Thơ is a centrally-governed municipality, ~1,440 km² before the
+    July 2025 merger with Hậu Giang + Sóc Trăng, and its `P625` lands in the rural
+    north-west of that area, 34 km from the urban core at Ninh Kiều where GeoNames
+    puts it. Any Vietnamese *thành phố trực thuộc trung ương* can do this — an
+    area-wide point is not the city you want to render.
+  - **Babylon** — the inverse of Rhodes: `wikiId` `Q5684` *is* Babylon, but `id`
+    `99347` is **Al Hillah**, the modern city 9 km south, because Babylon has no
+    `cities1000.txt` row of its own (archaeological site, not a populated place).
+    `name`/`localName`/coords describe Babylon (بابل); `population` is Al Hillah's
+    455,700, because the pin needs a live figure for the search ranking and Wikidata's
+    150,000 is an estimate of the *ancient* city's peak.
 - **Neighbour bleed** — three pins had a *different* city's name as their `localName`,
   found by the geonameid join and fixed from Wikidata labels: Offenbach am Main
   (was "Frankfurt am Main"), Ludwigshafen → Ludwigshafen am Rhein (was "Mannheim"),
