@@ -180,11 +180,11 @@ function App() {
           </TabsList>
           {/* Window controls pinned to the bottom of the sidebar. */}
           <div className="mt-auto flex flex-col gap-2 pt-4">
-            <Button variant="outline" size="sm" onClick={() => invoke("hide_window")}>
-              {t("general.closeWindow")}
-            </Button>
             <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
               {t("general.quit")}
+            </Button>
+            <Button size="sm" onClick={() => invoke("hide_window")}>
+              {t("general.closeWindow")}
             </Button>
           </div>
         </div>

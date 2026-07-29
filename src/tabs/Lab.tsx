@@ -83,6 +83,14 @@ export default function Lab({ status, busy, onError }: Props) {
         <p className="text-sm text-muted-foreground">{t("lab.intro")}</p>
 
         <SettingRow
+          label={t("lab.showWater")}
+          description={t("lab.waterHint")}
+          control={<Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />}
+        />
+
+        <Separator />
+
+        <SettingRow
           label={t("lab.showAirports")}
           description={t("lab.airportsHint")}
           control={
@@ -108,14 +116,6 @@ export default function Lab({ status, busy, onError }: Props) {
           control={
             <Switch checked={showAerialways} onCheckedChange={setShowAerialways} disabled={saving} />
           }
-        />
-
-        <Separator />
-
-        <SettingRow
-          label={t("lab.showWater")}
-          description={t("lab.waterHint")}
-          control={<Switch checked={showWater} onCheckedChange={setShowWater} disabled={saving} />}
         />
 
         <Separator />
