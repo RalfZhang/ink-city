@@ -142,6 +142,13 @@ answers:
    → sidecar chain. Only reachable when not one host served *either* schedule file.
    On its way out; kept so a total CDN outage still paints something.
 
+Rungs 1–3 log at `info`; **rung 4 logs a `warn`**, and it's the only signal that the
+CI→CDN→client path has broken. Reaching it means the schedule was bypassed entirely
+and the day reverted to the rotation — which is seamless by design, so nothing in the
+UI gives it away. It fires once per day in the case worth catching (the render that
+follows writes the day cache, and rung 1 short-circuits from then on); an offline
+machine repeats it per poll, alongside the scheduler's own `error!`.
+
 The client never computes a schedule pick, so there is no Rust port to keep in
 lockstep — and with random picks there couldn't be one.
 

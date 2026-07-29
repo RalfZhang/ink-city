@@ -479,6 +479,9 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
             let cdn_id = Some(city.id);
             return Resolved { city, cdn_id, osm: Some(DayOsm::Fetched(v)), stamp: Some(date) };
         }
+        // `info`, not `warn`: rung 3 still yields the *scheduled* city, so a missing
+        // manifest costs an Overpass fetch, not correctness. Warning here would cry
+        // wolf over the one rung that recovers on its own.
         Err(e) => log::info!("[pipeline] no manifest for {} ({}); trying the schedule state", date, e),
     }
 
@@ -495,7 +498,22 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
         }
         // Rung 4.
         Err(e) => {
-            log::info!("[pipeline] no scheduled city for {} ({}); using rotation", date, e);
+            // The one rung worth a `warn`: getting here means no host served
+            // *either* schedule file, so the schedule is bypassed entirely and the
+            // day silently reverts to the legacy rotation. The fallback is seamless
+            // by design — nothing else surfaces it — so this line is the only
+            // signal that the CI→CDN→client path has broken.
+            //
+            // Self-limiting in the case worth catching (published schedule broken,
+            // network fine): the render that follows writes the OSM cache, so rung 1
+            // short-circuits every later resolution that day and this fires once.
+            // A plain offline machine repeats it per poll, but that state is already
+            // logging a scheduler `error!` per poll.
+            log::warn!(
+                "[pipeline] no manifest and no schedule state for {} ({}); falling back to the legacy rotation",
+                date,
+                e
+            );
             rotation_fallback(date, None)
         }
     }
