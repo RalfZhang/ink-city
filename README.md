@@ -16,7 +16,7 @@ Open https://github.com/RalfZhang/ink-city/releases/latest/
 
 ## Features
 
-- **A new city every day** — a deterministic rotation through the world's ~1000 most populous cities.
+- **A new city every day** — drawn from ~1000 of the world's most notable cities, with no city repeating within a month and no country within five days.
 - **Real road data** — road geometry from OpenStreetMap, rendered to cover-fit your screen without stretching.
 - **Themeable maps** — Light / Dark / Follow-system map palettes, each with customizable background and line colors, plus three line-weight presets (Minimal / Standard / Bold).
 - **Mondrian mode** — an experimental repaint of the very same street grid as a De Stijl composition: black roads on warm white, with a scattering of real city blocks filled in primary colors. In the Lab tab; it takes over the theme colors while it's on.

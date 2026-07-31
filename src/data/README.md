@@ -22,11 +22,14 @@ list-selection setting + parameterizing that hardcoded filename/URL.
 
 ## How these are built / regenerated
 
-No generators are committed. Each file is produced by a **throwaway script run from
-`/tmp`** (we commit only the resulting JSON, not the generator). `cities.json` mirrors
-[`scripts/build-cities.mjs`](../../scripts/build-cities.mjs); the other two reuse its
-GeoNames download/parse logic. Sources: GeoNames `cities1000.txt`,
-`alternateNamesV2.txt`, `countryInfo.txt`.
+`cities.json` has a committed generator,
+[`scripts/build-cities.mjs`](../../scripts/build-cities.mjs) (`npm run build:cities`).
+
+**The two curated pools do not, by convention** — they're produced by a throwaway
+script run from `/tmp`, and only the resulting JSON is committed. They reuse
+`build-cities.mjs`'s GeoNames download/parse logic plus the `localName` rules below,
+which is why those rules are written out here rather than left implicit in code.
+Sources: GeoNames `cities1000.txt`, `alternateNamesV2.txt`, `countryInfo.txt`.
 
 When editing an existing file, change **only the field you mean to** — e.g. the
 localName passes below rewrite *just* the `localName` line via text-level replacement,

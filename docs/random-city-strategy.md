@@ -4,7 +4,7 @@ The daily city moves from a stateless client-side permutation to a **CI-authored
 date-keyed schedule** with no-repeat constraints, published to the CDN and read
 by the client, with a graceful fallback to the legacy strategy.
 
-## Status — implemented
+## Status — implemented (last verified 2026-07-28)
 
 | Part | State |
 |---|---|
@@ -176,7 +176,7 @@ schedule: it will name the rotation city until it reads the manifests too.
 envelope (backfilled into already-cached files without re-fetching). Additive and
 ignored by existing clients. A payload fetched live from the sidecar has no
 envelope of its own, so the client stamps one on before caching it
-(`pipeline::stamp_city_envelope`) — otherwise a day rendered from a live fetch
+(`pipeline::stamp_manifest_envelope`) — otherwise a day rendered from a live fetch
 would revert to the rotation name after a restart.
 
 ## Dev Mode
