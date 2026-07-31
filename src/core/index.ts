@@ -1,24 +1,19 @@
-// Barrel for the portable core. Consumers can import from "@/core" (desktop)
-// or copy/depend on this directory from the CI script and website repos.
+// Barrel for the portable core — the client-safe surface. Consumers import from
+// "@/core" (desktop) or vendor this directory into the CI script / website repos.
+//
+// Two parts of this directory are deliberately absent, and vendoring must still
+// include them:
+//
+//   • ./osm/* beyond ./osm/layers — precache/sidecar-only (Node/Deno/Bun).
+//     ./osm/water pulls in `polygon-clipping`, which we keep out of the client
+//     bundle; the acquisition path is reached only via scripts/osm-cli.ts → ./osm.
+//   • ./mondrian — no standalone consumer, reached only through `drawScene`'s
+//     `variant`, but ./render imports it directly.
 export * from "./types";
 export * from "./city";
 export * from "./bbox";
-// Lat/lon parsing for the customize-city feature (issue #11). Pure + portable,
-// used by the client (City tab) and unit-testable.
 export * from "./coords";
-// The OSM layer manifest (LAYER_IDS/LayerId) — client/website use it for UI
-// gating; kept in the client barrel even though its module now lives under ./osm.
+// LAYER_IDS/LayerId only: the client and website use them for UI gating.
 export * from "./osm/layers";
-// NOTE: the rest of ./osm (the Overpass transport, the per-layer selector/slim
-// modules, and the fetch-city orchestrator) is intentionally NOT re-exported
-// here — it's all precache/sidecar-only (Node/Deno/Bun, never the client):
-// ./osm/water pulls in `polygon-clipping`, and the acquisition path is reached
-// only through scripts/osm-cli.ts → ./osm. The client only needs the layer
-// feature types (e.g. `AirportFeature`) and `Osm` (from ./types, exported
-// above) plus the renderers (from ./render, exported below).
 export * from "./render";
 export * from "./constants";
-// NOTE: ./mondrian (the De Stijl variant's block extraction + fills, issue #18)
-// is deliberately not re-exported either — it has no standalone consumer, it is
-// reached only through `drawScene`'s `variant`. It is still a *required* file for
-// anyone vendoring this directory: ./render imports it directly.

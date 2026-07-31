@@ -7,23 +7,19 @@ const { difference, union } = polygonClipping;
 import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "../types";
 import { TOL, samePt, dedupeAdjacent, roundPts } from "../geom";
 
-// Water layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
-// batch precache and the desktop app's live sidecar fallback alike), never on
-// the client: it contributes a selector to fetch-city.ts's union query and
-// assembles that query's raw water + coastline elements into ready-to-fill
-// polygons (+ thin waterway lines) so the renderer (src/core/render.ts) only
-// has to fill/stroke them. All the fiddly geometry lives here, in geographic
-// (lat/lon) space where OSM's "land on the left, water on the right" rule for
-// coastlines holds as written. The "water" layer implementation dispatched by
-// fetch-city.ts's fetchCityData().
+// The "water" layer's selector + slim, dispatched by fetch-city.ts. Runs at
+// PRECACHE/FETCH time (Node/Deno/Bun), never on the client — and unlike its sibling
+// layer modules it is also kept out of ../index because it depends on
+// `polygon-clipping`, which must stay out of the desktop/website bundle.
 //
-// This module is deliberately NOT re-exported from ./index (the client barrel):
-// it depends on `polygon-clipping`, which we keep out of the desktop/website
-// bundle. fetch-city.ts imports it directly.
+// This is where all the fiddly geometry lives, worked in geographic (lat/lon) space
+// where OSM's "land on the left, water on the right" coastline rule holds as
+// written, so the renderer only has to fill/stroke what comes out.
 //
 // Scope: area water = natural=water + waterway=riverbank + water=* +
-// landuse=reservoir/basin; ocean from natural=coastline (robustly, via
-// polygon difference); linear waterway=river/canal/stream as thin strokes.
+// landuse=reservoir/basin; ocean from natural=coastline (robustly, via polygon
+// difference); and linear waterway=river/canal/stream/drain/ditch as thin strokes,
+// with drain/ditch kept only when named (see slimWater).
 
 // --- raw Overpass `out geom` shapes (only the fields we read) ---
 

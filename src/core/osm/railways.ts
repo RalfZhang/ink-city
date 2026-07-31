@@ -1,11 +1,8 @@
 import type { Bbox, RailwayFeature } from "../types";
 import { dedupeAdjacent, roundPts } from "../geom";
 
-// Railway layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
-// batch precache and the desktop app's live sidecar fallback alike), never on
-// the client — mirrors airports.ts. A railway is a plain polyline (no filled
-// areas), so like airports there's no edge-tracing/clipping to do. The
-// "railways" layer implementation dispatched by fetch-city.ts's fetchCityData().
+// The "railways" layer's selector + slim, dispatched by fetch-city.ts. Runs at
+// PRECACHE/FETCH time (Node/Deno/Bun), never on the client.
 //
 // Scope: surface heavy/light rail only — railway=rail | light_rail |
 // narrow_gauge, all rendered as one dashed centerline. Deliberately excluded:
@@ -47,13 +44,9 @@ export function railwaysSelector(b: Bbox): string {
 }
 
 /**
- * Assemble a raw railway Overpass response into slim, render-ready features.
- * Coordinates are optionally rounded to `coordPrecision` decimals — mirrors
- * slimAirports. The `railway` subtype isn't kept: all collected types render
- * identically, so a single polyline shape is enough.
- *
- * Service tracks are skipped here too, so any Overpass payload is cleaned even
- * if it carried them (see isServiceTrack).
+ * Slim a raw Overpass response to surface railway centerlines. Service tracks are
+ * skipped here as well as in the query, so any payload is cleaned even if it
+ * carried them (see isServiceTrack).
  */
 export function slimRailways(raw: RawOsm, coordPrecision?: number): RailwayFeature[] {
   const features: RailwayFeature[] = [];

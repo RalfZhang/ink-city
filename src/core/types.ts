@@ -79,35 +79,21 @@ export type WaterFeature =
   | { kind: "area" | "ocean"; polygon: WaterPolygon }
   | { kind: "line"; cls: WaterLineClass; line: Geom[] };
 
-// --- Airport layer ---
-// Standalone ways only (no multipolygon relations; see core/airports.ts).
-// Unlike water's `ocean` kind, these never span the whole bbox, so no
-// edge-of-bbox clipping is needed: a runway/taxiway that only partially falls
-// inside the requested area is passed through as-is and simply clips at the
-// canvas edge when drawn.
+// --- The polyline layers ---
+// Airports, railways and aerialways are all bare centerlines. Unlike water's
+// `ocean` kind, none of them can span the whole bbox, so no edge-of-bbox clipping
+// is needed: a line only partly inside the requested area is passed through as-is
+// and clips at the canvas edge when drawn. Which OSM tags each layer collects (and
+// what it deliberately leaves out) lives in core/osm/{airports,railways,
+// aerialways}.ts; how each is stroked lives in core/render.ts.
 
-/**
- * `runway` / `taxiway` = centerlines (stroked). They share the same slim shape
- * (a polyline) and differ only at render time in stroke width and layering — a
- * taxiway is thinner and drawn beneath runways.
- */
+/** Airport centerlines. The kind selects a stroke width and layer at render time. */
 export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
 
-// --- Railway layer ---
-// Surface heavy/light rail centerlines (railway=rail / light_rail /
-// narrow_gauge), stroked as a dashed line — the classic cartographic railway
-// symbol, which also reads as distinct from the solid road network. Underground
-// (subway) and on-street (tram) tracks are deliberately excluded upstream (see
-// core/railways.ts): the wallpaper shows above-ground features, and trams would
-// just double up the roads they run in. Like airports, a single polyline shape.
+/** Surface rail centerlines. The `railway` subtype isn't kept — all render alike. */
 export type RailwayFeature = { line: Geom[] };
 
-// --- Aerialway layer ---
-// Cable cars, gondolas, chair lifts, drag lifts, … (OSM aerialway=*), popular in
-// ski resorts and mountain cities. All rendered identically as a thin dotted
-// line — evoking the cabins/cars strung along the cable, and distinct from both
-// the solid roads and the dashed railways. Like airports, a single polyline
-// shape (no filled areas, no clipping needed).
+/** Cable car / ropeway centerlines. The lift kind isn't kept — all render alike. */
 export type AerialwayFeature = { line: Geom[] };
 
 /**

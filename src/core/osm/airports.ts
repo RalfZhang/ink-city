@@ -1,18 +1,14 @@
 import type { AirportFeature, Bbox } from "../types";
 import { dedupeAdjacent, roundPts } from "../geom";
 
-// Airport layer extraction. Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's
-// batch precache and the desktop app's live sidecar fallback alike), never on
-// the client — mirrors water.ts, but far simpler: unlike coastline-derived
-// ocean fill, a runway/taxiway never spans the whole bbox, so there's no
-// edge-tracing/clipping to do. The "airports" layer implementation dispatched
-// by fetch-city.ts's fetchCityData().
+// The "airports" layer's selector + slim, dispatched by fetch-city.ts. Runs at
+// PRECACHE/FETCH time (Node/Deno/Bun), never on the client.
 //
-// Scope: standalone ways only — aeroway=runway and aeroway=taxiway, both
-// rendered as stroked centerlines (matching how the overwhelming majority of OSM
-// data tags them; taxiways draw thinner and beneath runways). Aprons and other
-// filled aeroway areas are intentionally not collected — the airport reads as
-// pure linework, consistent with the road/water styling.
+// Scope: standalone ways only — aeroway=runway and aeroway=taxiway, matching how
+// the overwhelming majority of OSM data tags them. Aprons and other filled aeroway
+// areas are intentionally not collected: the airport reads as pure linework,
+// consistent with the road/water styling. (Aprons *were* collected until schema
+// v3; a payload that predates it is invalidated by `v`, not read.)
 
 type RawGeom = { lat: number; lon: number };
 type RawWay = { type: "way"; tags?: Record<string, string>; geometry?: RawGeom[] };
@@ -24,11 +20,7 @@ export function airportsSelector(b: Bbox): string {
   return `way[aeroway=runway](${bb});way[aeroway=taxiway](${bb});`;
 }
 
-/**
- * Assemble a raw runway/taxiway Overpass response into slim, render-ready
- * features. Coordinates are optionally rounded to `coordPrecision` decimals —
- * mirrors slimWater.
- */
+/** Slim a raw Overpass response to runway/taxiway centerlines. */
 export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeature[] {
   const features: AirportFeature[] = [];
 

@@ -1,10 +1,9 @@
-// The Overpass HTTP transport: mirror rotation + rate-limit retry, shared by
-// every layer. Uses the global `fetch`, so it runs in the browser, in Node 18+
-// (the CI pre-cache script), and in Deno. The only Overpass client in the
-// codebase — src-tauri's live fallback shells out to this via scripts/osm-cli.ts
-// (see src-tauri/src/osm_sidecar.rs) instead of maintaining a separate Rust
-// implementation. fetch-city.ts composes every layer's selector (./roads,
-// ./water, …) into one union query and POSTs it here once (see fetchOverpass).
+// The Overpass HTTP transport: mirror rotation + rate-limit retry. Uses the global
+// `fetch`, so it runs in the browser, in Node 18+ (the CI pre-cache script), and in
+// Deno. This is the codebase's only Overpass client — src-tauri's live fallback
+// shells out to it via scripts/osm-cli.ts (see src-tauri/src/osm_sidecar.rs) rather
+// than carrying a Rust one. fetch-city.ts composes every layer's selector into one
+// union query and POSTs it here once.
 
 export const MIRRORS = [
   "https://overpass-api.de/api/interpreter",

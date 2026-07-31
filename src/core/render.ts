@@ -11,15 +11,11 @@ import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./
 // per-layer `drawX` functions are exported for reuse/testing.
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Visual design tokens
-//
-// The product's whole visual language lives here as plain data, so it can be
-// read and tuned in one place instead of being chased through five drawing
-// functions. Every value is a *weight* in "px at 1000px tall"; multiply by
-// `strokeScale(height)` at draw time so strokes stay consistent across canvas
-// sizes. Layer opacities that the Lab-tab UI also reads live in constants.ts
-// (WATER_ALPHA / RUNWAY_ALPHA / RAILWAY_ALPHA); the aerialway opacities are
-// render-only and stay here with the rest of its knobs.
+// Visual design tokens — the whole visual language as plain data, tunable in one
+// place instead of across five drawing functions. Every value is a *weight* in
+// "px at 1000px tall": multiply by `strokeScale(height)` at draw time so strokes
+// read the same at any canvas size. Layer opacities the Lab-tab UI also reads
+// live in constants.ts; the aerialway ones are render-only and stay here.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -162,14 +158,18 @@ function waterLineWidth(cls: string, scale: number): number {
   return scale * (WATER_LINE_WEIGHTS[cls] ?? WATER_LINE_WEIGHT_DEFAULT);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// The optional layers. Each self-gates twice and returns how many features it
+// drew: on its own Style toggle (all default off) and on the data actually
+// carrying its key — absent only for payloads cached before that layer shipped,
+// which is what lets old data degrade to "none of that layer" instead of failing.
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Draw the water layer: filled bodies (lakes, sea) plus thin linear waterways
- * (creeks/canals). Gated by the user's "show water" setting (default off) and a
- * no-op when the data has no `water` key (only possible for data cached before
- * the water layer shipped), so older payloads degrade gracefully. Polygon holes
- * (islands) are punched out with the even-odd rule, which is winding-direction
- * agnostic — water.ts only guarantees rings are closed, not their orientation.
- * Returns the number of water features (filled bodies + linear waterways) drawn.
+ * (creeks/canals). Polygon holes (islands) are punched out with the even-odd
+ * rule, which is winding-direction agnostic — water.ts only guarantees rings are
+ * closed, not their orientation.
  */
 export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const water = req.osm.water;
@@ -214,14 +214,10 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
 
 /**
  * Draw the airport layer: taxiways (thin) drawn first, then runways (thick) on
- * top so a runway crossing a taxiway stays unbroken. Both are stroked
- * centerlines sharing one color, differing only in width. Square (`butt`) caps,
- * unlike roads' round ones — a runway/taxiway is a rectangular strip, not a
- * network of joined lines. Gated by the "show airports" Lab toggle (default
- * off), and a no-op when the data has no `airports` key. Runways/taxiways use
- * fixed widths rather than a real-world scale: OSM rarely tags `width` on them,
- * and unlike roads there's no hierarchy to differentiate by preset.
- * Returns the number of runways + taxiways drawn.
+ * top so a runway crossing a taxiway stays unbroken. Square (`butt`) caps, unlike
+ * roads' round ones — a runway/taxiway is a rectangular strip, not a network of
+ * joined lines. Widths are fixed rather than preset-scaled: OSM rarely tags
+ * `width` on them, and unlike roads there's no hierarchy to differentiate by.
  */
 export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const airports = req.osm.airports;
@@ -249,12 +245,10 @@ export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): numbe
 }
 
 /**
- * Draw the railway layer: surface rail centerlines as a dashed line — the
- * classic cartographic railway symbol, visually distinct from the solid road
- * network. Gated by the "show railways" Lab toggle (default off), and a no-op
- * when the data has no `railways` key. Butt caps give clean rectangular dash
- * segments; the dash is reset before returning so it can't leak into a later
- * layer's path. Returns the number of railway lines drawn.
+ * Draw the railway layer: surface rail centerlines as a dashed line — the classic
+ * cartographic railway symbol, visually distinct from the solid road network. Butt
+ * caps give clean rectangular dash segments; the dash is reset before returning so
+ * it can't leak into a later layer's path.
  */
 export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const railways = req.osm.railways;
@@ -281,18 +275,14 @@ export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): numbe
 }
 
 /**
- * Draw the aerialway layer (cable cars / ropeways) in OSM's default symbol: a
- * thin continuous "cable" line with round "cabin" dots strung along it at even
- * arc-length spacing — the line reads as the cable, the dots as the cars,
- * distinct from both the solid roads and the dashed railways. Gated by the
- * "show cable cars" Lab toggle (default off), and a no-op when the data has no
- * `aerialways` key.
+ * Draw the aerialway layer (cable cars / ropeways) in OSM's default symbol: a thin
+ * continuous "cable" line with round "cabin" dots strung along it at even
+ * arc-length spacing — distinct from both the solid roads and the dashed railways.
  *
- * Dots are placed by walking each polyline in screen space and stepping a
- * running distance so spacing is uniform regardless of how densely the source
- * vertices are sampled; the carry across segments keeps the rhythm unbroken
- * through the bends. See the {@link AERIALWAY} tokens for the tuning knobs.
- * Returns the number of aerialway lines drawn.
+ * Dots are placed by walking each polyline in screen space and stepping a running
+ * distance, so spacing is uniform however densely the source vertices are sampled;
+ * the carry across segments keeps the rhythm unbroken through the bends. Tuning
+ * knobs: {@link AERIALWAY}.
  */
 export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const aerialways = req.osm.aerialways;
@@ -350,8 +340,9 @@ export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): num
 /**
  * Draw only the road network onto `ctx` and return the number of ways drawn.
  * Assumes the background (and any under-road layers) are already painted —
- * {@link drawScene} owns compositing order. Ways are grouped by stroke width and
- * drawn thinnest-first so heavier roads layer on top.
+ * {@link drawScene} owns compositing order. Ways are bucketed by stroke width and
+ * drawn thinnest-first, so heavier roads layer on top and `lineWidth` is set once
+ * per bucket rather than per way.
  */
 export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
@@ -360,10 +351,8 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
-  // Scale stroke widths to canvas size so densities look consistent.
   const scale = strokeScale(height);
 
-  // Group draws by stroke width so we don't toggle lineWidth every iteration.
   const buckets = new Map<number, Way[]>();
   for (const el of osm.elements ?? []) {
     if (el.type !== "way" || !el.geometry || el.geometry.length < 2) continue;
@@ -374,7 +363,6 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
     buckets.set(w, list);
   }
 
-  // Draw thinnest first so heavier roads layer on top.
   const sorted = Array.from(buckets.entries()).sort((a, b) => a[0] - b[0]);
   let drawn = 0;
   for (const [lw, ways] of sorted) {
@@ -389,13 +377,11 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   return drawn;
 }
 
-// A layer's draw fn returns the number of features it actually rendered (0 when
-// disabled or absent), paired with its id so drawScene can report per-layer counts.
+// A draw fn paired with its id, so drawScene can report per-layer counts.
 type LayerDraw = { id: LayerId; draw: (ctx: CanvasRenderingContext2D, req: DrawReq) => number };
 
-// Optional layers drawn under the road network (z-order, bottom → up).
+// Optional layers, in z-order (bottom → up) within each side of the roads.
 const UNDER_ROADS: LayerDraw[] = [{ id: "water", draw: drawWater }];
-// Optional layers drawn over the road network (z-order, bottom → up).
 const OVER_ROADS: LayerDraw[] = [
   { id: "railways", draw: drawRailways },
   { id: "aerialways", draw: drawAerialways },

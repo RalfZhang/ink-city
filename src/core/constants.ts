@@ -16,30 +16,22 @@ export const RUNWAY_ALPHA = 0.6;
 export const RAILWAY_ALPHA = 0.7;
 
 // Schema version stamped on the OSM payload
-// (`{ v, elements, water, airports, railways, aerialways }`),
-// whether precached to the `data` branch or fetched live via the sidecar (both
-// go through fetch-city.ts). Two consumers rely on it, so bump it on ANY change
-// to what the payload carries — a non-additive reshape of an existing layer AND
-// an additive new layer alike:
-//   • client (forward-compat): a bump lets a client recognize data newer than
-//     it understands. Purely additive layers stay backward-compatible anyway —
-//     old clients ignore unknown keys and a missing layer reads as "off" — so
-//     this side only strictly needs a bump on a non-additive reshape.
-//   • precache CI (cache invalidation, scripts/osm-cli.ts): a cached
-//     `<id>.json` whose `v` differs from this constant is discarded and
-//     re-fetched. This is why even an additive layer bumps `v`: without it, a
-//     newly added layer would never backfill into already-cached cities.
-// Absent ⇒ pre-water data (roads only). Single source of truth for the producer
-// (scripts/osm-cli.ts) and every consumer.
-// History: 1 = roads + water; 2 = adds the airports layer (runway + apron);
-// 3 = airports layer reshaped to runway + taxiway centerlines (apron dropped);
-// 4 = adds the railways layer (surface rail centerlines);
-// 5 = adds the aerialways layer (cable car / ropeway centerlines) AND drops
-//     `service=*` tracks from the railways layer (why: osm/railways.ts).
-//     Two changes share one number because the aerialways layer (#33) shipped
-//     with this constant still reading 4, so it never invalidated the cached
-//     payloads; the #44 railway change is what finally bumps it, and that one
-//     bump backfills both.
+// (`{ v, elements, water, airports, railways, aerialways }`), whether precached to
+// the `data` branch or fetched live via the sidecar (both go through
+// fetch-city.ts). Absent ⇒ pre-water data (roads only).
+//
+// Bump on ANY change to what the payload carries — an additive new layer as much
+// as a non-additive reshape. The additive case is the one that looks skippable and
+// isn't: precache CI (scripts/osm-cli.ts) discards and re-fetches a cached payload
+// whose `v` differs, so without a bump a newly added layer never backfills into
+// already-cached cities. Clients only strictly need the bump for a reshape, since
+// they ignore unknown keys and read a missing layer as "off".
+//
+// One number can cover more than one payload change, so don't infer a payload's
+// layers from `v` — read its keys. Version 5 is such a case: it adds aerialways
+// *and* drops `service=*` from railways (why: osm/railways.ts). Aerialways shipped
+// while this constant still read 4 and so invalidated nothing; the railway change
+// bumped it, and that one bump backfills both.
 export const OSM_SCHEMA_VERSION = 5;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";

@@ -1,11 +1,8 @@
 import type { AerialwayFeature, Bbox, Geom } from "../types";
 
-// Aerialway layer extraction — cable cars, gondolas, chair/drag lifts, etc.
-// (OSM aerialway=*). Runs at PRECACHE/FETCH time (Node/Deno/Bun — CI's batch
-// precache and the desktop app's live sidecar fallback alike), never on the
-// client — mirrors airports.ts. An aerialway is a plain polyline (no filled
-// areas), so like airports there's no edge-tracing/clipping to do. The
-// "aerialways" layer implementation dispatched by fetch-city.ts's fetchCityData().
+// The "aerialways" layer's selector + slim, dispatched by fetch-city.ts — cable
+// cars, gondolas, chair/drag lifts, etc. (OSM aerialway=*). Runs at PRECACHE/FETCH
+// time (Node/Deno/Bun), never on the client.
 //
 // Scope: the aerialway *lift lines* — each cable's centerline. Rather than take
 // every `aerialway=*` way and blacklist the non-lines, we WHITELIST the lift
@@ -56,11 +53,9 @@ function dedupeAdjacent(pts: RawGeom[]): RawGeom[] {
 }
 
 /**
- * Assemble a raw aerialway Overpass response into slim, render-ready features.
- * Coordinates are optionally rounded to `coordPrecision` decimals — mirrors
- * slimAirports. The lift subtype isn't kept: all render identically, so a single
- * polyline shape is enough. The query already restricts to `way[aerialway]`, so
- * every element here carries the tag; we only guard geometry.
+ * Slim a raw Overpass response to aerialway lift centerlines. The query already
+ * restricts to `way[aerialway]`, so every element carries the tag and only the
+ * geometry needs guarding.
  */
 export function slimAerialways(raw: RawOsm, coordPrecision?: number): AerialwayFeature[] {
   const features: AerialwayFeature[] = [];

@@ -1,10 +1,8 @@
-// Single entry point for acquiring one city's OSM data. Fetches every layer
-// (roads plus all optional ones) in ONE Overpass request and assembles the
-// final payload — used by both of scripts/osm-cli.ts's modes (batch "precache"
-// and single-shot "fetch", the latter invoked live by the desktop app's
-// sidecar). Precache and the live fallback therefore always produce the same
-// shape for the same bbox, instead of the old split where the Rust-side live
-// fallback was a separate, roads-only reimplementation.
+// Single entry point for acquiring one city's OSM data. Fetches every layer (roads
+// plus all optional ones) in ONE Overpass request and assembles the final payload.
+// Both of scripts/osm-cli.ts's modes go through here — batch "precache" and
+// single-shot "fetch" (the latter invoked live by the desktop app's sidecar) — so
+// the CDN and the live fallback always produce the same shape for the same bbox.
 //
 // Runs in Node/Deno/Bun — never on the client (see water.ts's note on
 // polygon-clipping) — so this module is deliberately NOT re-exported from
@@ -23,8 +21,8 @@ export type FetchCityOptions = {
   coordPrecision?: number;
 };
 
-// One union query does, in a single timeout budget, the work the five per-layer
-// queries used to split across five budgets of 90s each — so give it more room.
+// All five layers share one timeout budget, so it has to be generous — this is
+// the whole per-city fetch, not one layer's.
 const OVERPASS_TIMEOUT_S = 180;
 
 /**

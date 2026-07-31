@@ -280,6 +280,7 @@ export function fillMondrianBlocks(
   return count;
 }
 
+/** Weighted pick from {@link PALETTE}. */
 function pickColor(rng: () => number): string {
   const r = rng() * TOTAL_WEIGHT;
   let acc = 0;

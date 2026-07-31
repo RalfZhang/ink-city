@@ -85,11 +85,10 @@ export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
  *     `.gz` variant).
  *   - `.github/workflows/precache.yml` — the gzip glob and the publish guard.
  *
- * Don't rely on grepping to find them all: the stem above matches neither
- * `osm-v2` nor `city-list.json`, which is how it stayed absent from this comment
- * for two releases. `npm run schedule-test` now parses those five declarations
- * out of the two files and fails if any of them disagrees with the values here,
- * so changing the layout below is caught rather than merely documented.
+ * Don't go looking for those five copies by grep — the stem above matches neither
+ * `osm-v2` nor `city-list.json`. `npm run schedule-test` parses all five
+ * declarations out of the two files and fails if any disagrees with the values
+ * here, so a layout change is caught rather than merely documented.
  */
 export const SCHEDULE_ROOT = "osm-v2";
 export const SCHEDULE_STATE_FILE = "city-list.json";
