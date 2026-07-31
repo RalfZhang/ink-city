@@ -49,10 +49,6 @@ const SCHEDULE_STATE_STEM: &str = "city-list";
 /// the *next mirror* gets a turn, rather than the whole day silently dropping to
 /// the rotation. Validating exactly what the caller consumes is also what keeps
 /// the two from drifting apart.
-///
-/// NOTE: no automated test covers this fetch against the real CDN — the
-/// publish→CDN→client path has only been checked by hand (see the status note in
-/// docs/random-city-strategy.md). Every rung is fallback-guarded, so a miss is safe.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
     let bases = github_mirror::mirror_urls(GIT_REF, SCHEDULE_PATH);
     let v = fetch_from_mirrors(bases, date, Gz::Prefer, validate_scheduled).await?;
@@ -147,7 +143,8 @@ enum Gz {
     /// The map payloads: try `.gz` first (see `fetch_from_mirrors`).
     Prefer,
     /// `city-list.json` — the workflow's gzip pass deliberately sweeps only
-    /// `osm-v2/data/`, so a `.gz` here would always 404. Don't spend the request.
+    /// `osm-v2/data/` (asserted by `pnpm schedule-test`), so no `.gz` sibling is
+    /// ever published for it and asking would just spend a request on a 404.
     Skip,
 }
 

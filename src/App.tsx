@@ -16,7 +16,10 @@ import About from "./tabs/About";
 import DevMode from "./tabs/DevMode";
 import type { Status } from "./types";
 
-type TabId = "general" | "city" | "style" | "lab" | "about" | "devMode";
+const TAB_IDS = ["general", "city", "style", "lab", "about", "devMode"] as const;
+type TabId = (typeof TAB_IDS)[number];
+
+const isTabId = (v: string): v is TabId => (TAB_IDS as readonly string[]).includes(v);
 
 function App() {
   const { t } = useTranslation();
@@ -69,10 +72,15 @@ function App() {
     };
   }, []);
 
-  // Generic "jump to a tab" channel. Nothing in the backend emits it today — see
-  // `FrontendEvent::OpenTab` — but the listener is what makes it a one-line change.
+  // "Jump to a tab", emitted by the tray's "Open Settings" entry (see
+  // `FrontendEvent::OpenTab`). Validated rather than cast: the payload crosses IPC
+  // as a plain string, and an unrecognized one would strand Tabs on a value with no
+  // trigger or content.
   useEffect(() => {
-    const off = listen<string>("open-tab", (e) => setTab(e.payload as TabId));
+    const off = listen<string>("open-tab", (e) => {
+      if (isTabId(e.payload)) setTab(e.payload);
+      else logWarn("[app] ignoring open-tab for an unknown tab", e.payload);
+    });
     return () => {
       off.then((f) => f());
     };

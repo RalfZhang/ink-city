@@ -4,24 +4,24 @@ The daily city moves from a stateless client-side permutation to a **CI-authored
 date-keyed schedule** with no-repeat constraints, published to the CDN and read
 by the client, with a graceful fallback to the legacy strategy.
 
-## Status — implemented (last verified 2026-07-28)
+## Status — implemented (last verified 2026-07-31)
 
 | Part | State |
 |---|---|
-| Schedule state + cooldowns (`src/core/schedule.ts`) | ✅ + tested (`npm run schedule-test`) |
+| Schedule state + cooldowns (`src/core/schedule.ts`) | ✅ + tested (`pnpm schedule-test`) |
 | Pre-cache advances the schedule and emits manifests (`scripts/osm-cli.ts`) | ✅ (additive to `osm/<id>.json`) |
 | Workflow gzips + publishes `osm-v2/` (`.github/workflows/precache.yml`) | ✅ |
 | Client fetch-by-date + fallback (`cdn.rs` + `pipeline.rs`) | ✅ (fallback-guarded) |
 | `Status` names the rendered city, not a second rotation pick (`pipeline::city_for_status`) | ✅ |
 | Dev Mode reads the schedule, not the rotation (`render_preview`, bypass) | ✅ |
 
-> **The CI→CDN hop is live.** `osm-v2/city-list.json` and the `osm-v2/data/<date>.json[.gz]`
-> manifests are published on the `data` branch and served by jsDelivr (verified
-> 2026-07-28: the schedule held 7 days, today…today+6, and every manifest fetched
-> 200). The schedule logic itself is covered by `npm run schedule-test`. What is
-> still only exercised by hand is the client's own consumption of it; every new
-> path is fallback-guarded, so a miss degrades to the previous behavior rather
-> than failing.
+> **The whole path is live, verified end to end** — CI publishes, jsDelivr serves,
+> and the client consumes. `osm-v2/city-list.json` and the
+> `osm-v2/data/<date>.json[.gz]` manifests are on the `data` branch (checked
+> 2026-07-28: the schedule held 7 days, today…today+6, every manifest fetched 200;
+> client consumption confirmed 2026-07-31). The schedule logic itself is covered by
+> `pnpm schedule-test`. Every rung stays fallback-guarded regardless, so a miss
+> degrades to the previous behavior rather than failing.
 
 ## Published layout (`data` branch)
 

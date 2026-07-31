@@ -6,10 +6,10 @@
   "packageManager": "pnpm@11.11.0",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check:i18n && tsc && vite build",
+    "build": "pnpm check:i18n && tsc && vite build",
     "check:i18n": "tsx scripts/check-i18n.ts",
     "preview": "vite preview",
-    "pretauri": "npm run build:sidecar",
+    "pretauri": "pnpm build:sidecar",
     "tauri": "tauri",
     "build:cities": "node scripts/build-cities.mjs",
     "precache": "tsx scripts/osm-cli.ts precache",

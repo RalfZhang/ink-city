@@ -15,7 +15,7 @@
 //   • candidate selection degrades instead of failing on a tiny pool.
 // Exits non-zero (printing the first violation) on any failure, so it can gate CI.
 //
-//   npm run schedule-test
+//   pnpm schedule-test
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";

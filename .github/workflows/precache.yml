@@ -8,9 +8,10 @@ name: Precache OSM
 # See scripts/osm-cli.ts and src-tauri/src/cdn.rs.
 #
 # Every published .json also gets a gzip-compressed sibling. That is NOT for
-# bandwidth (jsDelivr already gzips .json over the wire transparently): it's to stay
-# under jsDelivr's 20 MB per-file cap, which large/dense cities' plain JSON can
-# exceed. The client asks for the .gz first and falls back to the plain .json.
+# bandwidth — jsDelivr already compresses .json over the wire on its own (it answers
+# with `content-encoding: br`) — it's to stay under jsDelivr's 20 MB *per-file* cap,
+# which large/dense cities' plain JSON can exceed, and which the wire encoding does
+# not help with. The client asks for the .gz first and falls back to the plain .json.
 
 on:
   schedule:

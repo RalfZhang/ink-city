@@ -23,7 +23,7 @@ list-selection setting + parameterizing that hardcoded filename/URL.
 ## How these are built / regenerated
 
 `cities.json` has a committed generator,
-[`scripts/build-cities.mjs`](../../scripts/build-cities.mjs) (`npm run build:cities`).
+[`scripts/build-cities.mjs`](../../scripts/build-cities.mjs) (`pnpm build:cities`).
 
 **The two curated pools do not, by convention** — they're produced by a throwaway
 script run from `/tmp`, and only the resulting JSON is committed. They reuse

@@ -304,7 +304,9 @@ async function runPrecache(args: string[]): Promise<void> {
       writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify({ ...out, city }));
       cached.add(id);
       console.log(
-        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ${out.water?.length ?? 0} water, ${out.railways?.length ?? 0} railways, ${out.aerialways?.length ?? 0} aerialways`,
+        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ` +
+          `${out.water?.length ?? 0} water, ${out.airports?.length ?? 0} airports, ` +
+          `${out.railways?.length ?? 0} railways, ${out.aerialways?.length ?? 0} aerialways`,
       );
     },
   );
@@ -403,12 +405,7 @@ function removePublished(dir: string, name: string): void {
  * old clients keep working.
  *
  * Returns fetch counts (plus `aborted`, see below) so the caller can decide
- * whether to alarm.
- *
- * The schedule logic itself is covered by `npm run schedule-test`. The publish →
- * jsDelivr hop has been checked by hand against the live CDN, but nothing here
- * exercises it automatically — see the status note in
- * docs/random-city-strategy.md, which owns that claim.
+ * whether to alarm. The schedule logic itself is covered by `pnpm schedule-test`.
  */
 async function runScheduleCache(root: string): Promise<{ fetched: number; failed: number; aborted?: boolean }> {
   const dataDir = join(root, SCHEDULE_DATA_DIR);
@@ -532,7 +529,11 @@ async function runScheduleCache(root: string): Promise<{ fetched: number; failed
 }
 
 async function main() {
-  const [mode, ...rest] = process.argv.slice(2);
+  // pnpm forwards `--` through to the script instead of stripping it, so a habitual
+  // `pnpm precache -- data/osm 7` would otherwise read `--` as the output directory
+  // and write the whole cache into a directory of that name. `--` is never a
+  // meaningful argument here, so drop it wherever it appears (as render.ts does).
+  const [mode, ...rest] = process.argv.slice(2).filter((a) => a !== "--");
   if (mode === "fetch") return runFetch(rest);
   if (mode === "precache") return runPrecache(rest);
   throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir] [days]\n  fetch --south=.. --west=.. --north=.. --east=.. [--precision=5]`);

@@ -42,6 +42,7 @@ scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mod
 **Prerequisites**
 
 - [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/installation) — the project's package manager, pinned by `packageManager` in `package.json`. Use it rather than npm: the lockfile is `pnpm-lock.yaml` and CI installs with `pnpm install --frozen-lockfile`.
 - [Rust](https://www.rust-lang.org/tools/install) (stable)
 - Platform toolchain for Tauri — see [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Xcode Command Line Tools on macOS; the WebView2 runtime + MSVC build tools on Windows)
 - [Bun](https://bun.sh) — build-time only, to compile the `osm-cli` sidecar. Not needed at app runtime.
@@ -49,26 +50,28 @@ scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mod
 **Develop**
 
 ```bash
-npm install
-npm run tauri dev
+pnpm install
+pnpm tauri dev
 ```
 
-`npm run tauri dev`/`build` always compiles the `osm-cli` sidecar for your machine first (the `pretauri` script runs `npm run build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `npm run build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
+`pnpm tauri dev`/`build` always compiles the `osm-cli` sidecar for your machine first (the `pretauri` script runs `build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `pnpm build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
 
 **Build a release bundle**
 
 ```bash
-npm run tauri build
+pnpm tauri build
 ```
 
 **Regenerate the city list** (downloads GeoNames `cities1000`, takes the top 1000 by population):
 
 ```bash
-npm run build:cities
+pnpm build:cities
 ```
 
 **Pre-cache OSM data** (what the GitHub Action runs; writes `data/osm/<id>.json`):
 
 ```bash
-npm run precache -- data/osm 7
+pnpm precache data/osm 7
 ```
+
+Script arguments are passed directly, with no `--` separator. pnpm forwards `--` through to the script rather than stripping it (npm strips it), so both `osm-cli.ts` and `render.ts` drop a bare `--` from their argv — `pnpm precache -- data/osm 7` works too, it just isn't the idiomatic form.

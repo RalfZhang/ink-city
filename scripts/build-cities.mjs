@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Builds src/data/cities.json from GeoNames cities1000.
-// Run with: npm run build:cities
+// Run with: pnpm build:cities
 
 import { mkdtempSync, createWriteStream, readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";

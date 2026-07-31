@@ -12,7 +12,7 @@
 // the repo.
 //
 // Usage:
-//   npm run render -- <lat/lon | city.json> [options]
+//   pnpm render <lat/lon | city.json> [options]
 //
 // Options:
 //   -t, --type <png|svg|both>             output format(s)  (default both)
@@ -26,10 +26,10 @@
 //                                          coords, next to the file for a path)
 //
 // Examples:
-//   npm run render -- 34.25668/108.95738
-//   npm run render -- test-out/34.25668_108.95738_20260725-234157.json -p bold
-//   npm run render -- 34.25668/108.95738 -t png -s 3840x2160 --theme dark -o /tmp/maps
-//   npm run render -- test-out/-16.50016_-68.1709.json --mondrian -t png
+//   pnpm render 34.25668/108.95738
+//   pnpm render test-out/34.25668_108.95738_20260725-234157.json -p bold
+//   pnpm render 34.25668/108.95738 -t png -s 3840x2160 --theme dark -o /tmp/maps
+//   pnpm render test-out/-16.50016_-68.1709.json --mondrian -t png
 //
 // Accepted .json shapes:
 //   - { lat, lon, osm:{ v, elements, ... } } from the throwaway test-data generator, or
@@ -99,9 +99,9 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
   const flags: Record<string, string> = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    // npm strips the `--` separator before handing argv over; pnpm passes it
-    // through. Ignore it either way, so both `npm run render -- x` and
-    // `pnpm run render -- x` see `x` as the positional.
+    // pnpm forwards `--` through to the script rather than stripping it, so a
+    // habitual `pnpm render -- x` would otherwise read `--` as the positional.
+    // Skipping it makes the separator optional.
     if (a === "--") continue;
     if (!a.startsWith("-")) {
       positionals.push(a);
@@ -120,7 +120,7 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
 function fail(msg: string): never {
   console.error(`error: ${msg}\n`);
   console.error(
-    "usage: npm run render -- <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--theme light|dark|both] [--mondrian] [-o dir]",
+    "usage: pnpm render <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--theme light|dark|both] [--mondrian] [-o dir]",
   );
   process.exit(1);
 }

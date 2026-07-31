@@ -13,6 +13,7 @@ use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}
 use tauri::{AppHandle, Manager, Wry};
 
 use crate::config::UpdateMode;
+use crate::events::{FrontendEvent, Tab};
 use crate::pipeline;
 use crate::state::AppState;
 
@@ -71,7 +72,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     // light/dark; other platforms use the full-color app icon. The template is
     // embedded at compile time (path is relative to src-tauri/). Regenerate
     // icons/tray.png from icons/tray-icon.svg:
-    //   npx tauri icon src-tauri/icons/tray-icon.svg -o /tmp/tray-out
+    //   pnpm tauri icon src-tauri/icons/tray-icon.svg -o /tmp/tray-out
     //   sips -z 44 44 /tmp/tray-out/128x128.png --out src-tauri/icons/tray.png
     #[cfg(target_os = "macos")]
     {
@@ -92,7 +93,16 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
         .on_menu_event(|app, event| {
             let app = app.clone();
             match event.id().as_ref() {
-                "open" => show_settings(&app),
+                "open" => {
+                    show_settings(&app);
+                    // Land on City — the day-to-day view, and the frontend's own
+                    // default on a fresh mount. Worth emitting anyway: the window is
+                    // only hidden when closed, so without this it reopens on
+                    // whatever tab it was left on. Deliberately not in
+                    // `show_settings`, so the tray icon click and the
+                    // relaunch/reopen paths keep the user where they were.
+                    FrontendEvent::OpenTab(Tab::City).emit(&app);
+                }
                 "update" => {
                     // Short path: confirm and install in place via a native
                     // dialog — no need to open the settings window at all.

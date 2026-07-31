@@ -5,7 +5,7 @@
 // the build complains. The locale list is imported from `src/i18n/locales.ts`,
 // so it tracks the shipped locales with no manual sync.
 //
-//   npm run check:i18n
+//   pnpm check:i18n
 //
 // Exits non-zero (and prints the offending keys) on any drift, so it can gate
 // the build / CI.

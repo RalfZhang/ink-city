@@ -12,6 +12,23 @@ use tauri::{AppHandle, Emitter};
 
 use crate::commands::Status;
 
+/// The tabs `FrontendEvent::OpenTab` can target. An enum rather than a bare string
+/// because the frontend receives this as a `TabId` (see `src/App.tsx`) and switches
+/// to it: a value that isn't one of those ids would strand the Tabs component on a
+/// tab with no trigger and no content. Add an arm when a new tab needs targeting.
+pub enum Tab {
+    City,
+}
+
+impl Tab {
+    /// The `TabId` string the frontend matches on.
+    fn id(&self) -> &'static str {
+        match self {
+            Self::City => "city",
+        }
+    }
+}
+
 pub enum FrontendEvent {
     /// Full status snapshot. Pushed by the status-emitter task after any
     /// `mark_status_dirty()`. THE state channel; the frontend does not poll.
@@ -21,12 +38,10 @@ pub enum FrontendEvent {
     PipelineStart,
     /// Render pipeline finished.
     PipelineEnd,
-    /// Ask the frontend to jump to a tab. The frontend listens (see `App.tsx`) but
-    /// no backend path emits it — the tray's "update available" entry installs in
-    /// place instead. Kept so the registry stays complete and a nav trigger is a
-    /// one-line `.emit()`.
-    #[allow(dead_code)]
-    OpenTab(String),
+    /// Ask the frontend to switch to a tab. Emitted by the tray's "Open Settings"
+    /// entry, which lands on {@link Tab::City} — reopening the window from the tray
+    /// otherwise leaves it on whatever tab it was hidden on.
+    OpenTab(Tab),
 }
 
 impl FrontendEvent {
@@ -49,7 +64,7 @@ impl FrontendEvent {
             Self::StatusChanged(s) => app.emit(name, s),
             Self::PipelineStart => app.emit(name, ()),
             Self::PipelineEnd => app.emit(name, ()),
-            Self::OpenTab(tab) => app.emit(name, tab),
+            Self::OpenTab(tab) => app.emit(name, tab.id()),
         };
         if let Err(e) = result {
             log::warn!("[events] emit {name} failed: {e}");

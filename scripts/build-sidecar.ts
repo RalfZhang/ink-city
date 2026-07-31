@@ -5,11 +5,11 @@
 // only — the compiled binary is a standalone executable; nothing at app
 // runtime needs a JS engine.
 //
-// Runs automatically (host triple) before every `npm run tauri ...` via the
-// "pretauri" npm script hook, so a fresh clone just needs bun installed —
-// no separate manual step. Re-run it yourself to pick up changes to
-// scripts/osm-cli.ts or src/core/osm/*.ts (transport, layers, fetch-city)
-// without going through `tauri dev`/`build`.
+// Runs automatically (host triple) before every `pnpm tauri ...` via the
+// "pretauri" script hook, so a fresh clone just needs bun installed — no separate
+// manual step. Re-run it yourself to pick up changes to scripts/osm-cli.ts or
+// src/core/osm/*.ts (transport, layers, fetch-city) without going through
+// `tauri dev`/`build`.
 //
 // Usage:
 //   tsx scripts/build-sidecar.ts                 host triple, for local `tauri dev`/`build`

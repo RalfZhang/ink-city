@@ -86,7 +86,7 @@ export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
  *   - `.github/workflows/precache.yml` — the gzip glob and the publish guard.
  *
  * Don't go looking for those five copies by grep — the stem above matches neither
- * `osm-v2` nor `city-list.json`. `npm run schedule-test` parses all five
+ * `osm-v2` nor `city-list.json`. `pnpm schedule-test` parses all five
  * declarations out of the two files and fails if any disagrees with the values
  * here, so a layout change is caught rather than merely documented.
  */

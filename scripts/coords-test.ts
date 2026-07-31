@@ -6,7 +6,7 @@
 //   • out-of-range and junk input is rejected rather than pinned.
 // Exits non-zero (printing every violation) on failure, so it can gate CI.
 //
-//   npm run coords-test
+//   pnpm coords-test
 
 import { parseLatLon } from "../src/core/coords.ts";
 
