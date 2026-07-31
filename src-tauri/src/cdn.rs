@@ -1,3 +1,16 @@
+//! Reads of the pre-cached map data the GitHub Actions workflow
+//! (.github/workflows/precache.yml) publishes to the `data` branch and jsDelivr
+//! serves. Two flows live there: the date-keyed schedule manifests (`osm-v2/`) and
+//! the legacy id-keyed rotation payloads (`osm/`), each a slimmed 20km-square OSM
+//! response carrying every layer (see scripts/osm-cli.ts).
+//!
+//! Tried before the live osm-cli sidecar because jsDelivr is reliably reachable
+//! from mainland China and the slim payload is small. Any miss (404 / not yet
+//! cached / network error) falls through to the sidecar, which itself falls back
+//! across Overpass mirrors (see osm_sidecar.rs / core/osm/overpass.ts).
+//!
+//! See `github_mirror` for the mirrored-host order and why those hosts.
+
 use std::io::Read;
 
 use anyhow::{anyhow, Result};
@@ -6,16 +19,6 @@ use flate2::read::GzDecoder;
 use crate::city;
 use crate::github_mirror;
 
-// Pre-cached road + water data published daily by the GitHub Actions workflow
-// (.github/workflows/precache.yml) to the `data` branch, served via jsDelivr.
-// Keyed by GeoNames city id; the payload is a slimmed 20km-square OSM response
-// (see scripts/osm-cli.ts). We fetch this before falling back to the osm-cli
-// sidecar run live, because jsDelivr is reliably reachable from mainland
-// China and the slim payload is small. A miss (404 / not yet cached / network
-// error) just falls back to the sidecar, which itself falls back across
-// Overpass mirrors (see osm_sidecar.rs / core/osm/overpass.ts).
-//
-// See `github_mirror` for the mirrored-host fallback order and rationale.
 const GIT_REF: &str = "data";
 const PATH: &str = "osm";
 /// The date-keyed manifests.

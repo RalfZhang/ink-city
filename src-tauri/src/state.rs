@@ -1,3 +1,12 @@
+//! Live application state, seeded from `config::Config` at launch and read by
+//! every other module through `app.state::<AppState>()`.
+//!
+//! Two things are worth knowing before adding a field. Whether it belongs here or
+//! in `config`: this struct also holds state that is deliberately *not* persisted
+//! (`bypass_cache`, `last_applied`, `resolved_city`), and each such field says why
+//! below. And if the field is reflected in `commands::Status`, every site that
+//! mutates it must call `mark_status_dirty()` or an open window will go stale.
+
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex as StdMutex};
 
@@ -24,8 +33,7 @@ pub struct AppState {
     pub renderer_ready: AtomicBool,
     pub renderer_notify: Arc<Notify>,
     pub pending: Mutex<Option<PendingJob>>,
-    /// How the wallpaper is refreshed (see `config::UpdateMode`). Replaces the
-    /// old `enabled: bool`.
+    /// How the wallpaper is refreshed (see `config::UpdateMode`).
     pub update_mode: StdMutex<UpdateMode>,
     /// The pinned location for `UpdateMode::Customized`, or `None`. Persisted via
     /// `config::Config::custom`.
@@ -92,12 +100,11 @@ pub struct AppState {
     /// it from that day's cached payload. Only the Daily flow writes it — a
     /// Customized pin isn't a city and must not overwrite the day's answer.
     pub resolved_city: StdMutex<Option<(chrono::NaiveDate, crate::city::City)>>,
-    /// Signal that some `Status`-affecting state changed. The status-emitter
-    /// task waits on it and pushes a fresh snapshot to the frontend, replacing
-    /// the old 2s poll. Mutation sites only signal (`mark_status_dirty`); the
-    /// snapshot is built in one place. `notify_one` stores a permit, so a signal
-    /// raised while the emitter is mid-build is not lost — the trailing state is
-    /// always delivered.
+    /// Signal that some `Status`-affecting state changed. The status-emitter task
+    /// waits on it and pushes a fresh snapshot to the frontend. Mutation sites only
+    /// signal (`mark_status_dirty`); the snapshot is built in one place.
+    /// `notify_one` stores a permit, so a signal raised while the emitter is
+    /// mid-build is not lost — the trailing state is always delivered.
     pub status_dirty: Arc<Notify>,
 }
 

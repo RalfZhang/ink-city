@@ -1,3 +1,7 @@
+//! Handing a rendered PNG to the OS as the desktop wallpaper — the one module that
+//! talks to the platform's desktop APIs (osascript/JXA on macOS, the `wallpaper`
+//! crate elsewhere).
+
 use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
 

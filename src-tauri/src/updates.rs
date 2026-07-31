@@ -215,11 +215,11 @@ pub fn restore_pending(app: &AppHandle) {
     }
 }
 
-/// Re-check and install the latest update, then relaunch. Re-checking (rather
-/// than caching the `Update` object) keeps state simple and naturally handles
-/// the case where the user upgraded out-of-band: `check()` returns `None`, we
-/// clear the affordance and report `Ok(false)` ("already up to date").
-/// On success this calls `app.restart()` and never returns.
+/// Re-check and install the latest update, then relaunch. Re-checking rather than
+/// caching the `Update` object keeps state simple and handles the user having
+/// upgraded out-of-band for free: `check()` returns `None`, so we clear the
+/// affordance and report `Ok(false)` ("already up to date"). On success this calls
+/// `app.restart()` and never returns.
 async fn perform_install(app: &AppHandle) -> Result<bool> {
     let update = updater(app)?
         .check()
@@ -362,12 +362,11 @@ async fn endpoint_reachable() -> bool {
 /// `last_check`) is the single source of truth for "is it time yet", so calling
 /// this often is cheap — when nothing is due it's a no-op that touches no network.
 ///
-/// Crucially this is safe to retry, unlike the old fire-once-per-day trigger: a
-/// check that can't complete (most commonly the wake-from-sleep race above)
-/// leaves `last_check` untouched, so the next tick tries again instead of the
-/// day's only attempt being burned. It also means a `Daily` cadence fires the
-/// moment 24h have actually elapsed, not only at the next date rollover. Never
-/// blocks meaningfully or fails the caller.
+/// Crucially it is safe to retry: a check that can't complete (most commonly the
+/// wake-from-sleep race above) leaves `last_check` untouched, so the next tick tries
+/// again rather than the day's only attempt being burned. It also means a `Daily`
+/// cadence fires the moment 24h have actually elapsed, not only at the next date
+/// rollover. Never blocks meaningfully or fails the caller.
 pub async fn run_scheduled_check(app: &AppHandle) {
     let meta = load_meta(app);
     if !is_due(app, &meta) {

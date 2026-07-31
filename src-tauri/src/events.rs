@@ -14,17 +14,17 @@ use crate::commands::Status;
 
 pub enum FrontendEvent {
     /// Full status snapshot. Pushed by the status-emitter task after any
-    /// `mark_status_dirty()`. This is THE state channel that replaced polling.
+    /// `mark_status_dirty()`. THE state channel; the frontend does not poll.
     StatusChanged(Status),
     /// Render pipeline started. An edge event (deliberately separate from the
     /// coalesced `StatusChanged`) driving the spinner / Style save-button.
     PipelineStart,
     /// Render pipeline finished.
     PipelineEnd,
-    /// Ask the frontend to jump to a tab. Reserved: the frontend listens for
-    /// `open-tab`, but no backend path emits it today (the tray's "update
-    /// available" entry installs in place instead). Kept here so the registry
-    /// stays complete and a future nav trigger is a one-line `.emit()`.
+    /// Ask the frontend to jump to a tab. The frontend listens (see `App.tsx`) but
+    /// no backend path emits it — the tray's "update available" entry installs in
+    /// place instead. Kept so the registry stays complete and a nav trigger is a
+    /// one-line `.emit()`.
     #[allow(dead_code)]
     OpenTab(String),
 }

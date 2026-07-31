@@ -1,3 +1,10 @@
+//! The system-tray icon and its menu — the app's primary surface, since there is
+//! no Dock/taskbar entry.
+//!
+//! Menu items are held in `OnceLock`s because the labels are localized *after*
+//! construction: the frontend pushes translations in via `update_labels` on i18n
+//! init and on every language change, so Rust never owns a user-facing string.
+
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
 
@@ -102,9 +109,10 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
                     };
                     sync_mode_to_tray(&app);
                     // Tray is the one path the frontend can't observe via its own
-                    // command round-trip — the push is what keeps an open window
-                    // in sync. (Note: unlike `commands::set_update_mode`, this path
-                    // doesn't persist — pre-existing, out of scope here.)
+                    // command round-trip — the push is what keeps an open window in
+                    // sync. Note this path does NOT persist the new mode, unlike
+                    // `commands::set_update_mode`: a tray toggle is forgotten on
+                    // restart.
                     app.state::<AppState>().mark_status_dirty();
                     if now_daily {
                         pipeline::spawn_apply(app);

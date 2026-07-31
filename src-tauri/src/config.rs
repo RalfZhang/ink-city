@@ -151,18 +151,15 @@ pub struct Config {
     /// `update_check` is `Never` (no automatic checks fire), so it's forced off in
     /// that case (see `set_update_check`).
     pub auto_update: bool,
-    /// Draw the water layer on the wallpaper. Off by default; only surfaced in
-    /// the UI when the current city's data actually has water.
+    /// The optional data layers, all off by default. Each is offered
+    /// unconditionally in the Lab tab — a city whose data lacks the layer simply
+    /// renders nothing for it, so nothing probes the payload first.
     pub show_water: bool,
-    /// Draw the airport layer (runways + aprons) on the wallpaper. Off by
-    /// default; only surfaced in the UI when the current city's data actually
-    /// has an airport.
+    /// Runway + taxiway centerlines (no aprons — see core/osm/airports.ts).
     pub show_airports: bool,
-    /// Draw the railway layer (surface rail centerlines) on the wallpaper. Off
-    /// by default.
+    /// Surface rail centerlines.
     pub show_railways: bool,
-    /// Draw the aerialway layer (cable cars / ropeways) on the wallpaper. Off by
-    /// default.
+    /// Cable car / ropeway centerlines.
     pub show_aerialways: bool,
     /// Which visual language the wallpaper is drawn in (see `StyleVariant`).
     /// `Ink` by default. A Lab-tab experiment for now: `Mondrian` replaces the

@@ -1,3 +1,19 @@
+//! App entry point and wiring: plugin registration, window setup, the per-OS
+//! chrome tweaks, and the two background tasks (`scheduler::spawn` and the
+//! status-emitter loop at the end of `setup`).
+//!
+//! The modules, roughly outermost-in:
+//!
+//!   - `commands` / `events` — the two halves of the frontend boundary: invokable
+//!     commands in, `FrontendEvent`s out. `state` holds what both read.
+//!   - `scheduler` — the 60s poll that reconciles the wallpaper; drives `pipeline`.
+//!   - `pipeline` — resolve what to render → get its OSM → draw it in the hidden
+//!     renderer window → `wallpaper_set` it. The core of the app.
+//!   - `cdn` / `github_mirror` / `osm_sidecar` — where OSM data comes from, in
+//!     fallback order. `cities_update` refreshes the bundled city list the same way.
+//!   - `city` / `bbox` — ports of `src/core/{city,bbox}.ts`; keep them in sync.
+//!   - `config` (persisted) vs `state` (live). `tray`, `updates` — the windowless
+//!     surfaces, whose user-facing strings are pushed in from the frontend's i18n.
 mod bbox;
 mod cdn;
 mod cities_update;
@@ -127,12 +143,6 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             let _ = handle.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
-            // Must be (re-)registered every launch (Windows does not persist
-            // it): if Windows ever restarts this app on our behalf (e.g.
-            // "Restart apps after sign-in" following an update reboot), make
-            // sure that relaunch carries `--autostart` too, so it stays as
-            // silent as a real login autostart instead of surfacing the
-            // window like a fresh user launch.
             #[cfg(target_os = "windows")]
             register_restart_with_autostart_flag();
 
@@ -274,12 +284,12 @@ pub fn run() {
             scheduler::spawn(handle.clone());
 
             // Status-emitter task: the single point that pushes state to the
-            // frontend, replacing the old 2s poll. Mutation sites only call
-            // `mark_status_dirty()`; this task builds the snapshot once and
-            // emits it. `notify_one`'s stored permit means the trailing state is
-            // never lost even if signals arrive mid-build. No window gate: a
-            // closed settings window is only hidden (its webview stays alive and
-            // subscribed), so emitting keeps it current for an instant reopen.
+            // frontend. Mutation sites only call `mark_status_dirty()`; this task
+            // builds the snapshot once and emits it. `notify_one`'s stored permit
+            // means the trailing state is never lost even if signals arrive
+            // mid-build. No window gate: a closed settings window is only hidden
+            // (its webview stays alive and subscribed), so emitting keeps it
+            // current for an instant reopen.
             let emit_handle = handle.clone();
             tauri::async_runtime::spawn(async move {
                 let dirty = emit_handle.state::<AppState>().status_dirty.clone();

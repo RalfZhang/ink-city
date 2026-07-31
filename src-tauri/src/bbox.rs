@@ -1,3 +1,7 @@
+//! Port of `src/core/bbox.ts`. Keep the two in sync: CI precaches against the TS
+//! version and the client renders against this one, so a divergence means the
+//! fetched area stops matching the drawn area.
+
 use serde::Serialize;
 
 const KM_PER_DEG_LAT: f64 = 111.32;

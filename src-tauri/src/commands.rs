@@ -12,6 +12,10 @@ use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
 
+/// The whole backend→frontend state contract, rebuilt by `build_status` and pushed
+/// on every change. Mirrored field-for-field by `Status` in `src/types.ts`, so a
+/// field added here needs adding there too (and a `mark_status_dirty()` at whatever
+/// mutates it, or an open window won't see it).
 #[derive(Serialize, Clone)]
 pub struct Status {
     /// How the wallpaper is refreshed — the City-tab "How to update?" selector.
@@ -21,8 +25,9 @@ pub struct Status {
     pub custom: Option<CustomCity>,
     pub hide_tray: bool,
     pub running: bool,
-    /// Today's Daily-rotation city — informational; the actually-rendered map
-    /// depends on `update_mode`.
+    /// The city today's Daily wallpaper depicts, per `pipeline::city_for_status` —
+    /// what was actually rendered, not a second rotation pick. Informational when
+    /// `update_mode` isn't `Daily`; a Customized pin is reported by `custom`.
     pub city: City,
     pub date: String,
     pub theme: ThemeMode,

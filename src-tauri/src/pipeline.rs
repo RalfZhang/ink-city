@@ -18,6 +18,8 @@ use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
 
+/// How many days of Daily artifacts (`<date>.osm.json` + its per-theme PNGs) the
+/// cache keeps. Everything older is swept by `cleanup_daily` after each render.
 const KEEP_DAYS: i64 = 7;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -612,23 +614,17 @@ async fn render_bytes_for(
     let Resolved { city, cdn_id, osm: preloaded, stamp } = resolved;
     let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
 
-    // OSM acquisition order: local cache → the date-keyed schedule manifest →
-    // jsDelivr's id-keyed pre-cache (20km square, China-reachable) → the osm-cli
-    // sidecar, run live (screen rectangle). The first two steps happen in
-    // `resolve_daily`, because both also decide *which city* this is and the two
-    // answers must not be resolved independently; whatever it found arrives here
-    // as `preloaded`. The remaining two run below.
+    // The back half of the acquisition ladder `resolve_daily` documents: its two
+    // rungs (cache, schedule manifest) arrive here already resolved as `preloaded`,
+    // because they also decide *which city* this is. What's left is the id-keyed
+    // pre-cache and then the live sidecar.
     //
-    // The CDN square is a superset of `bbox`, so the renderer projects within
-    // `bbox` and clips the rest; the sidecar fetches exactly `bbox` to save
-    // bandwidth. Both the CDN payload and the sidecar go through the same TS
-    // implementation (src/core/osm/fetch-city.ts), so a CDN miss never produces
-    // data poorer than the CDN's (e.g. water is never missing just because we
-    // fell back).
+    // The CDN square is a superset of `bbox`, so the renderer projects within `bbox`
+    // and clips the rest; the sidecar fetches exactly `bbox` to save bandwidth.
     //
-    // A Customized pin has no precached entry, and Dev Mode's bypass deliberately
-    // refuses one; both arrive here as `cdn_id: None` and go straight to the
-    // sidecar — which honors the proxy, important for mainland-China users.
+    // `cdn_id: None` means no CDN for this render at all (a Customized pin, or Dev
+    // Mode's bypass) and routes straight to the sidecar — which honors the proxy,
+    // important for mainland-China users.
     let osm: serde_json::Value = match preloaded {
         // Fetched from the date-keyed schedule manifest (issue #1): authoritative
         // for the scheduled city, so cache + use it directly (overwriting any
@@ -727,6 +723,8 @@ fn stamp_manifest_envelope(v: &mut serde_json::Value, date: NaiveDate, city: &ci
     }
 }
 
+/// Write a payload to its cache path, creating the directory (see the note above
+/// the `*_dir` helpers — writers own creation).
 fn write_osm(path: &Path, v: &serde_json::Value) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;

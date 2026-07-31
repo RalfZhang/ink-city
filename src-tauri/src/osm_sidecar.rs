@@ -9,15 +9,13 @@ use tauri_plugin_shell::ShellExt;
 use crate::bbox::Bbox;
 use crate::state::AppState;
 
-/// Fetch OSM data for `b` by invoking the bundled `osm-cli` sidecar in
-/// single-shot "fetch" mode — the exact same TypeScript implementation
-/// (`scripts/osm-cli.ts` → `src/core/osm/fetch-city.ts`) that produces the
-/// precached CDN payload, run live. Used whenever CDN-cached data isn't
-/// available: a CDN miss on the daily rotation, or (in the future) a
-/// user-entered custom city/coordinates, which are never precached. Because
-/// both paths go through this one binary — which always fetches every layer —
-/// the live fallback always carries the same layers as the CDN, instead of the
-/// roads-only gap the old hand-written Rust Overpass client left.
+/// Fetch OSM data for `b` by invoking the bundled `osm-cli` sidecar in single-shot
+/// "fetch" mode — the same TypeScript implementation
+/// (`scripts/osm-cli.ts` → `src/core/osm/fetch-city.ts`) that produces the precached
+/// CDN payload, run live. Reached whenever CDN-cached data isn't available: a CDN
+/// miss on a Daily render, a Customized pin (arbitrary coordinates are never
+/// precached), or Dev Mode's bypass. Because that one binary always fetches every
+/// layer, a fallback never yields poorer data than the CDN would have.
 pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
     let sidecar = app
         .shell()
