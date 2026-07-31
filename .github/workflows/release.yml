@@ -84,12 +84,12 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
 
-      # Compiles scripts/osm-cli.ts (see src/core/fetch-city.ts) into the
-      # bundled sidecar binary the desktop app runs for live OSM fetches (a
-      # CDN miss, or — in the future — a user-entered custom city). Same
-      # implementation as the daily precache job, just packaged for the app
-      # instead of run from CI. See scripts/build-sidecar.ts and
-      # tauri.conf.json's bundle.externalBin.
+      # Compiles scripts/osm-cli.ts (see src/core/osm/fetch-city.ts) into the
+      # bundled sidecar binary the desktop app runs for live OSM fetches (a CDN
+      # miss, a user-entered custom location, or Dev Mode's bypass). Same
+      # implementation as the precache job, just packaged for the app instead of
+      # run from CI. See scripts/build-sidecar.ts and tauri.conf.json's
+      # bundle.externalBin.
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
