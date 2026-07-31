@@ -33,6 +33,8 @@ const PRESETS: { id: StylePreset; labelKey: ParseKeys; hintKey: ParseKeys }[] = 
 export default function Style({ status, busy, onError }: Props) {
   const { t } = useTranslation();
 
+  // Seeded from `status` on first mount only. Deliberately never re-synced from a
+  // later status push, which would clobber an in-progress edit (same rule as Lab).
   const [theme, setTheme] = useState<ThemeMode>(status.theme);
   const [preset, setPreset] = useState<StylePreset>(status.style);
   const [light, setLight] = useState<ColorPair>(status.light);
@@ -41,17 +43,13 @@ export default function Style({ status, busy, onError }: Props) {
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
-  // Initialize pending state from status on first mount only. We deliberately
-  // do not auto-sync from later status updates so the user's in-progress
-  // edits aren't clobbered by polling.
-
   useEffect(() => {
     invoke<Defaults>("get_color_defaults").then(setDefaults).catch(onError);
   }, []);
 
-  // Track pipeline lifecycle to release the Save button only after regen
-  // completes. `sawBusy` ensures we wait for busy to flip on first, so we
-  // don't release before the pipeline has actually started.
+  // Release the Save button only once the regen has actually completed. `sawBusy`
+  // makes us wait for `busy` to flip on first, so we don't release before the
+  // pipeline has even started.
   useEffect(() => {
     if (!saving) return;
     if (busy) {

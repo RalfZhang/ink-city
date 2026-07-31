@@ -35,10 +35,9 @@ function App() {
     }
   };
 
-  // The backend pushes a fresh Status snapshot on every change (replacing the
-  // old 2s poll). Subscribe first, then fetch the initial snapshot — so a
-  // change landing between fetch and subscribe can't be missed (a redundant
-  // push during the gap is harmless: last-write-wins).
+  // The backend pushes a fresh Status snapshot on every change. Subscribe first,
+  // then fetch the initial snapshot, so a change landing between the two can't be
+  // missed (a redundant push during the gap is harmless: last-write-wins).
   useEffect(() => {
     let off: (() => void) | undefined;
     let cancelled = false;
@@ -70,8 +69,8 @@ function App() {
     };
   }, []);
 
-  // Generic "jump to a tab" channel. (The tray's "Update available" entry no
-  // longer uses it — it confirms + installs in place via a native dialog.)
+  // Generic "jump to a tab" channel. Nothing in the backend emits it today — see
+  // `FrontendEvent::OpenTab` — but the listener is what makes it a one-line change.
   useEffect(() => {
     const off = listen<string>("open-tab", (e) => setTab(e.payload as TabId));
     return () => {
@@ -124,10 +123,9 @@ function App() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Cross-midnight rollover is handled entirely by the backend now: the
-  // scheduler detects the date change and pushes a fresh Status (and, when
-  // daily updates are enabled, repaints within its ≤60s reconcile). No frontend
-  // timer is needed — which also sidesteps wall-clock timer fragility across
+  // There is deliberately no midnight timer here: the backend scheduler detects the
+  // date change and pushes a fresh Status (repainting within its ≤60s reconcile when
+  // daily updates are on), which also sidesteps wall-clock timer fragility across
   // sleep/wake and DST.
 
   const onError = (e: unknown) => setErr(String(e));

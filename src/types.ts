@@ -10,8 +10,9 @@ export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 /** How the wallpaper is refreshed — the City-tab "How to update?" selector. */
 export type UpdateMode = "disable" | "daily" | "customized";
 
+/** Mirrors the Rust `commands::Status` — see there for the field-by-field contract. */
 export type Status = {
-  /** How the wallpaper is refreshed (City tab). Replaces the old `enabled`. */
+  /** How the wallpaper is refreshed (City tab). */
   updateMode: UpdateMode;
   /** The Customized-mode pin, or null until the user applies one. */
   custom: { lat: number; lon: number } | null;

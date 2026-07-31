@@ -13,8 +13,10 @@ type Props = {
 };
 
 /**
- * The "Daily" update mode: today's rotation city, with quick links and a manual
- * Regenerate. Rendered by the City tab when `updateMode === "daily"`.
+ * The "Daily" update mode: the city today's wallpaper depicts, with quick links and
+ * a manual Regenerate. Rendered by the City tab when `updateMode === "daily"`.
+ * `status.city` is whatever the backend actually rendered, not a pick recomputed
+ * here — see `pipeline::city_for_status`.
  */
 export default function DailyCity({ status, onError }: Props) {
   const { t } = useTranslation();
