@@ -1,19 +1,16 @@
 name: Precache OSM
 
-# Fetches road + water data for the next few days' cities and publishes it to
-# the `data` branch, which jsDelivr serves as a CDN (cdn.jsdelivr.net/gh/<repo>@data).
-# The desktop client pulls from there before falling back to the same osm-cli
-# binary run live (as a sidecar), so users on slow / Overpass-blocked networks
-# (notably mainland China) get fast, reliable data. See scripts/osm-cli.ts and
-# src-tauri/src/cdn.rs.
+# Fetches the next few days' cities — every map layer, not just roads — and
+# publishes them to the `data` branch, which jsDelivr serves as a CDN
+# (cdn.jsdelivr.net/gh/<repo>@data). The desktop client pulls from there before
+# falling back to the same osm-cli binary run live (as a sidecar), so users on slow
+# or Overpass-blocked networks (notably mainland China) get fast, reliable data.
+# See scripts/osm-cli.ts and src-tauri/src/cdn.rs.
 #
-# Each <id>.json is also published gzip-compressed as <id>.json.gz. This is
-# NOT for bandwidth (jsDelivr already transparently gzips .json responses over
-# the wire): it's to stay under jsDelivr's 20 MB per-file CDN cap, which
-# large/dense cities' plain JSON can exceed. gzip shrinks those payloads back
-# under 20 MB so the CDN will serve them at all. The client fetches the .gz
-# first and falls back to the plain .json (kept for older clients / as a
-# fallback) if that 404s.
+# Every published .json also gets a gzip-compressed sibling. That is NOT for
+# bandwidth (jsDelivr already gzips .json over the wire transparently): it's to stay
+# under jsDelivr's 20 MB per-file cap, which large/dense cities' plain JSON can
+# exceed. The client asks for the .gz first and falls back to the plain .json.
 
 on:
   schedule:
@@ -47,7 +44,7 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      # Water assembly (scripts/osm-cli.ts → src/core/water.ts) needs
+      # Water assembly (scripts/osm-cli.ts → src/core/osm/water.ts) needs
       # `polygon-clipping`. `--ignore-scripts` skips the `canvas` native build,
       # which is a devDependency only used by the local render harness, not here.
       - name: Install dependencies

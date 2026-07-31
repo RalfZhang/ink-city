@@ -50,8 +50,9 @@ const SCHEDULE_STATE_STEM: &str = "city-list";
 /// the rotation. Validating exactly what the caller consumes is also what keeps
 /// the two from drifting apart.
 ///
-/// NOTE: the publish→CDN→client path is unverified end-to-end (needs a real
-/// precache run + the live CDN); the fetch is fallback-guarded so a miss is safe.
+/// NOTE: no automated test covers this fetch against the real CDN — the
+/// publish→CDN→client path has only been checked by hand (see the status note in
+/// docs/random-city-strategy.md). Every rung is fallback-guarded, so a miss is safe.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
     let bases = github_mirror::mirror_urls(GIT_REF, SCHEDULE_PATH);
     let v = fetch_from_mirrors(bases, date, Gz::Prefer, validate_scheduled).await?;

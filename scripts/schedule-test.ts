@@ -79,15 +79,14 @@ console.log(
 // SCHEDULE_ROOT / SCHEDULE_DATA_DIR / SCHEDULE_STATE_FILE define the published
 // layout, but the two consumers that can't import them — the client
 // (src-tauri/src/cdn.rs) and the workflow that publishes the branch
-// (.github/workflows/precache.yml) — repeat the strings literally. Until this
-// check existed the only thing holding the five copies together was a comment,
-// and it had already drifted: cdn.rs grew a second pair of constants the comment
-// never mentioned, one of which stores the state file *without* its extension and
-// so matched neither `grep osm-v2` nor `grep city-list.json`.
+// (.github/workflows/precache.yml) — repeat the strings literally. A comment alone
+// does not hold five copies together: one of cdn.rs's stores the state file
+// *without* its extension, so it matches neither `grep osm-v2` nor
+// `grep city-list.json`, and it drifted unnoticed.
 //
-// So parse the real declarations and compare the values. Substring-searching the
-// files would let a stale comment mentioning `osm-v2` satisfy the check — which is
-// the exact failure mode this replaces.
+// So parse the real declarations and compare values. Substring-searching the files
+// would let a stale comment mentioning `osm-v2` satisfy the check — the exact
+// failure mode this guards against.
 
 /** The one capture group of `re` in `text`, or a failed run naming what's missing. */
 function capture(text: string, re: RegExp, what: string): string {

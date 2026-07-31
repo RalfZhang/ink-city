@@ -1,11 +1,10 @@
 #!/usr/bin/env -S npx tsx
 // Single entry point for OSM data acquisition — used both as the CI batch
 // pre-cacher (publishing to the `data` branch, served by jsDelivr) and, once
-// compiled to a standalone binary, as the desktop app's sidecar for live
-// fetches (a CDN miss on the daily rotation, or a user-entered custom
-// city/coordinates, which are never precached). Both paths go through the same
-// src/core/osm/fetch-city.ts, so the live fallback always gets the same layers
-// (water included) as the CDN — see that module's header for why.
+// compiled to a standalone binary, as the desktop app's sidecar for live fetches (a
+// CDN miss, a user-entered custom location, or Dev Mode's bypass). Both paths go
+// through the same src/core/osm/fetch-city.ts, so a live fallback always gets the
+// same layers as the CDN.
 //
 // Usage:
 //   osm-cli precache [outDir] [days]
@@ -26,13 +25,10 @@
 //     future day in that file overrides it; this script re-fetches the map data
 //     to match.
 //
-// Both payloads carry the same `city` envelope. The CI workflow gzip-compresses
-// each .json into a .json.gz sibling before publishing (both are served from the
-// `data` branch). The gzip step exists to keep large/dense cities under
-// jsDelivr's 20 MB per-file cap that their plain JSON can exceed — it's about
-// the file-size limit, not bandwidth (jsDelivr already gzips .json responses
-// over the wire). The client prefers the .gz and falls back to the plain .json
-// for older data/clients — see src-tauri/src/cdn.rs.
+// Both payloads carry the same `city` envelope. The CI workflow gzips each .json
+// into a .json.gz sibling before publishing; why that exists (jsDelivr's per-file
+// cap, not bandwidth) is documented in .github/workflows/precache.yml, and the
+// client's .gz-then-.json preference in src-tauri/src/cdn.rs.
 //
 // `fetch` mode: fetch exactly the given bbox and print one JSON payload to
 // stdout (nothing else goes to stdout — diagnostics go to stderr). This is
@@ -409,9 +405,10 @@ function removePublished(dir: string, name: string): void {
  * Returns fetch counts (plus `aborted`, see below) so the caller can decide
  * whether to alarm.
  *
- * NOTE: the CI/CDN end-to-end (publish → jsDelivr → client fetch) is unverified
- * here — needs a real precache run + the live CDN. The schedule logic itself is
- * covered by `npm run schedule-test`.
+ * The schedule logic itself is covered by `npm run schedule-test`. The publish →
+ * jsDelivr hop has been checked by hand against the live CDN, but nothing here
+ * exercises it automatically — see the status note in
+ * docs/random-city-strategy.md, which owns that claim.
  */
 async function runScheduleCache(root: string): Promise<{ fetched: number; failed: number; aborted?: boolean }> {
   const dataDir = join(root, SCHEDULE_DATA_DIR);
