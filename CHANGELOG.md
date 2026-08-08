@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://github.com/RalfZhang/ink-city/compare/v0.9.0...v0.10.0) (2026-08-08)
+
+
+### Features
+
+* New Icon ([6509f2f](https://github.com/RalfZhang/ink-city/commit/6509f2f3f1a0124fbc12a508a1fcdd6f6802000c))
+
+
+### Bug Fixes
+
+* handle case of runway area in a airport ([b1c2588](https://github.com/RalfZhang/ink-city/commit/b1c2588ec61b368ba40d2256d5f3b72c28b355b4))
+* stable bypass cache & CDN ([0caeec5](https://github.com/RalfZhang/ink-city/commit/0caeec5837f1847e425820fe34f7249513cb9637))
+
 ## [0.9.0](https://github.com/RalfZhang/ink-city/compare/v0.8.0...v0.9.0) (2026-07-29)
 
 
