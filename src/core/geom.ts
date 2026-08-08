@@ -12,6 +12,15 @@ export const TOL = 1e-7;
 export const samePt = (a: Pt, b: Pt): boolean =>
   Math.abs(a.lat - b.lat) < TOL && Math.abs(a.lon - b.lon) < TOL;
 
+/**
+ * Whether a way's points form a closed ring (first point repeated as the last).
+ * Four points is the minimum — three distinct corners plus the repeat. This is
+ * the geometric half of "is this way an area?"; the tag half (`area=no`) is the
+ * caller's, since it differs per layer.
+ */
+export const isClosed = (ring: Pt[]): boolean =>
+  ring.length >= 4 && samePt(ring[0], ring[ring.length - 1]);
+
 /** Drop consecutive duplicate points (cheap, avoids zero-length segments). */
 export function dedupeAdjacent<T extends Pt>(pts: T[]): T[] {
   const out: T[] = [];

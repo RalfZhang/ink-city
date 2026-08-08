@@ -5,7 +5,7 @@ import polygonClipping, { type MultiPolygon, type Ring } from "polygon-clipping"
 const { difference, union } = polygonClipping;
 
 import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "../types";
-import { TOL, samePt, dedupeAdjacent, roundPts } from "../geom";
+import { TOL, isClosed, dedupeAdjacent, roundPts } from "../geom";
 
 // The "water" layer's selector + slim, dispatched by fetch-city.ts. Runs at
 // PRECACHE/FETCH time (Node/Deno/Bun), never on the client — and unlike its sibling
@@ -97,8 +97,6 @@ function stitchIdx(segs: RawGeom[][], directed: boolean): Array<{ pts: RawGeom[]
 }
 
 const stitch = (segs: RawGeom[][], directed: boolean): RawGeom[][] => stitchIdx(segs, directed).map((g) => g.pts);
-
-const isClosed = (ring: RawGeom[]) => ring.length >= 4 && samePt(ring[0], ring[ring.length - 1]);
 
 /** Ray-cast point-in-polygon (treats the ring as implicitly closed). lon=x, lat=y. */
 function pointInRing(pt: RawGeom, ring: RawGeom[]): boolean {

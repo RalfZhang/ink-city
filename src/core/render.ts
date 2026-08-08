@@ -1,4 +1,4 @@
-import type { Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
+import type { AirportKind, Bbox, Geom, Osm, Style, StylePreset, Way } from "./types";
 import type { LayerId } from "./osm/layers";
 import { project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA, RAILWAY_ALPHA } from "./constants";
@@ -53,7 +53,11 @@ const ROAD_WEIGHT_DEFAULT: Record<StylePreset, number | null> = {
 const WATER_LINE_WEIGHTS: Record<string, number> = { river: 1.6, canal: 1.3 };
 const WATER_LINE_WEIGHT_DEFAULT = 0.7;
 
-/** Runway/taxiway stroke weights (fixed, not scaled by preset — see drawAirports). */
+/**
+ * Runway/taxiway *centerline* stroke weights (fixed, not scaled by preset — see
+ * drawAirports). Area-mapped runways/taxiways carry their own width and are
+ * filled, not stroked.
+ */
 const AIRPORT_WIDTHS = { taxiway: 1.5, runway: 5 } as const;
 
 /** Railway dashed-line stroke weight and [dash, gap] pattern. */
@@ -213,35 +217,66 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
 }
 
 /**
- * Draw the airport layer: taxiways (thin) drawn first, then runways (thick) on
- * top so a runway crossing a taxiway stays unbroken. Square (`butt`) caps, unlike
- * roads' round ones — a runway/taxiway is a rectangular strip, not a network of
- * joined lines. Widths are fixed rather than preset-scaled: OSM rarely tags
- * `width` on them, and unlike roads there's no hierarchy to differentiate by.
+ * Draw the airport layer, in both of the shapes OSM maps runways/taxiways in
+ * (`AirportFeature` in core/types.ts): closed ways are *filled* at their true
+ * footprint, open ones are *stroked* as centerlines. Areas go down first, then
+ * the centerlines, and within each pass taxiways precede runways so a runway
+ * crossing a taxiway stays unbroken — the same ordering openstreetmap-carto gets
+ * from its `highway-area-fill` (areas, below) / `aeroways` (lines, above, runways
+ * last) layer split. Both share one color, as carto's `@aeroway-fill` does.
+ *
+ * Areas are filled at true size with no minimum width, also matching carto, which
+ * leans on the centerline's fixed width for legibility and simply hides areas
+ * below z14. This canvas sits at roughly z14 anyway (a 20km bbox over a ~2560px
+ * screen is ~7.8 m/px), where a 45m runway fills ~6px.
+ *
+ * Stroke widths are fixed rather than preset-scaled: OSM rarely tags `width` on
+ * these, and unlike roads there's no hierarchy to differentiate by. Square
+ * (`butt`) caps, unlike roads' round ones — a runway/taxiway is a rectangular
+ * strip, not a network of joined lines.
  */
 export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const airports = req.osm.airports;
   if (!req.style.showAirports || !airports || airports.length === 0) return 0;
   const { bbox, width, height, style } = req;
-  const lineColor = mixColor(style.foreground, style.background, RUNWAY_ALPHA);
+  const inkColor = mixColor(style.foreground, style.background, RUNWAY_ALPHA);
   const scale = strokeScale(height);
 
-  ctx.strokeStyle = lineColor;
+  ctx.fillStyle = inkColor;
+  const fillKind = (kind: AirportKind): number => {
+    ctx.beginPath();
+    let n = 0;
+    for (const f of airports) {
+      if (f.kind !== kind || !("area" in f) || f.area.length < 3) continue;
+      addRing(ctx, f.area, bbox, width, height);
+      n++;
+    }
+    if (n > 0) ctx.fill();
+    return n;
+  };
+
+  ctx.strokeStyle = inkColor;
   ctx.lineCap = "butt";
   ctx.lineJoin = "round";
-  const strokeKind = (kind: "runway" | "taxiway", weight: number): number => {
+  const strokeKind = (kind: AirportKind, weight: number): number => {
     ctx.lineWidth = scale * weight;
     ctx.beginPath();
     let n = 0;
     for (const f of airports) {
-      if (f.kind !== kind || f.line.length < 2) continue;
+      if (f.kind !== kind || !("line" in f) || f.line.length < 2) continue;
       tracePolyline(ctx, f.line, bbox, width, height);
       n++;
     }
-    ctx.stroke();
+    if (n > 0) ctx.stroke();
     return n;
   };
-  return strokeKind("taxiway", AIRPORT_WIDTHS.taxiway) + strokeKind("runway", AIRPORT_WIDTHS.runway);
+
+  return (
+    fillKind("taxiway") +
+    fillKind("runway") +
+    strokeKind("taxiway", AIRPORT_WIDTHS.taxiway) +
+    strokeKind("runway", AIRPORT_WIDTHS.runway)
+  );
 }
 
 /**

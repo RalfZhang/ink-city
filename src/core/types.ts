@@ -79,16 +79,32 @@ export type WaterFeature =
   | { kind: "area" | "ocean"; polygon: WaterPolygon }
   | { kind: "line"; cls: WaterLineClass; line: Geom[] };
 
-// --- The polyline layers ---
-// Airports, railways and aerialways are all bare centerlines. Unlike water's
-// `ocean` kind, none of them can span the whole bbox, so no edge-of-bbox clipping
-// is needed: a line only partly inside the requested area is passed through as-is
-// and clips at the canvas edge when drawn. Which OSM tags each layer collects (and
-// what it deliberately leaves out) lives in core/osm/{airports,railways,
-// aerialways}.ts; how each is stroked lives in core/render.ts.
+// --- The airport / railway / aerialway layers ---
+// Railways and aerialways are bare centerlines; airports carry both centerlines
+// and closed areas (below). Unlike water's `ocean` kind, none of them can span the
+// whole bbox, so no edge-of-bbox clipping is needed: a feature only partly inside
+// the requested area is passed through as-is and clips at the canvas edge when
+// drawn. Which OSM tags each layer collects (and what it deliberately leaves out)
+// lives in core/osm/{airports,railways,aerialways}.ts; how each is drawn lives in
+// core/render.ts.
 
-/** Airport centerlines. The kind selects a stroke width and layer at render time. */
-export type AirportFeature = { kind: "runway" | "taxiway"; line: Geom[] };
+/** Runway or taxiway — selects the stroke width (lines) and draw order at render time. */
+export type AirportKind = "runway" | "taxiway";
+
+/**
+ * An airport feature in one of the two shapes OSM maps them in, split the way
+ * openstreetmap-carto splits them:
+ *   • `line` — a centerline way, stroked at a fixed weight that reads as the
+ *              runway/taxiway at any canvas size.
+ *   • `area` — a closed way mapped as the paved surface itself, filled at its
+ *              true footprint (no width fudging, matching carto).
+ * Which one a way becomes is decided at slim time — see core/osm/airports.ts.
+ * The union is additive: payloads cached before areas shipped carry only `line`
+ * features and still parse.
+ */
+export type AirportFeature =
+  | { kind: AirportKind; line: Geom[] }
+  | { kind: AirportKind; area: Geom[] };
 
 /** Surface rail centerlines. The `railway` subtype isn't kept — all render alike. */
 export type RailwayFeature = { line: Geom[] };
@@ -115,7 +131,7 @@ export type Osm = {
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
-  /** Pre-assembled runway/taxiway centerlines. Absent ⇒ no airport layer. */
+  /** Pre-assembled runway/taxiway centerlines + areas. Absent ⇒ no airport layer. */
   airports?: AirportFeature[];
   /** Pre-assembled railway centerlines. Absent ⇒ no railway layer. */
   railways?: RailwayFeature[];

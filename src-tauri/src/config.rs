@@ -155,7 +155,7 @@ pub struct Config {
     /// unconditionally in the Lab tab — a city whose data lacks the layer simply
     /// renders nothing for it, so nothing probes the payload first.
     pub show_water: bool,
-    /// Runway + taxiway centerlines (no aprons — see core/osm/airports.ts).
+    /// Runways + taxiways, as centerlines or areas (no aprons — see core/osm/airports.ts).
     pub show_airports: bool,
     /// Surface rail centerlines.
     pub show_railways: bool,

@@ -3,10 +3,11 @@
 // renderer and the Lab-tab water UI share one source of truth.
 export const WATER_ALPHA = 0.3;
 
-// Opacity of the airport centerlines (runways + taxiways), baked into an opaque
-// color the same way as WATER_ALPHA (see mixColor). Both share one alpha and
-// differ only in stroke width; the airport is pure linework, with no filled
-// surfaces.
+// Opacity of the airport layer (runways + taxiways), baked into an opaque color
+// the same way as WATER_ALPHA (see mixColor). One alpha covers the whole layer:
+// runways and taxiways differ only in stroke width, and area-mapped ones are
+// filled in the same tint — as in openstreetmap-carto, where a single
+// `@aeroway-fill` serves both the line and the polygon rules.
 export const RUNWAY_ALPHA = 0.6;
 
 // Opacity of the railway centerlines, baked into an opaque color like the
@@ -32,7 +33,12 @@ export const RAILWAY_ALPHA = 0.7;
 // *and* drops `service=*` from railways (why: osm/railways.ts). Aerialways shipped
 // while this constant still read 4 and so invalidated nothing; the railway change
 // bumped it, and that one bump backfills both.
-export const OSM_SCHEMA_VERSION = 5;
+//
+// Version 6 splits airport features into centerlines and areas (why:
+// osm/airports.ts). A v5 payload isn't wrong, just lossy — a closed runway way in
+// it was recorded as a `line` and draws as a fat outlined ring — so the bump is
+// what makes already-cached cities re-fetch and pick the areas up.
+export const OSM_SCHEMA_VERSION = 6;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
