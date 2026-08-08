@@ -84,12 +84,19 @@ if [ ! -f "$work/out/Assets.car" ]; then
   exit 1
 fi
 
+# Dump the catalog once and assert against the text. Piping `assetutil` straight
+# into a reader that exits early is a trap here: `grep -q` quits on the first
+# match, assetutil takes SIGPIPE, and `set -o pipefail` turns that into a failed
+# pipeline even though the match succeeded. That is timing-dependent, so it passed
+# for v0.10.2 and then failed the v0.10.3 build on an unchanged check.
+info="$(assetutil --info "$work/out/Assets.car")"
+
 # CFBundleIconName is read back out of the catalog by the bundler
 # (app_icon_name_from_assets_car), so a catalog without an "Icon Image" entry
 # would bundle silently without naming an icon.
-if ! assetutil --info "$work/out/Assets.car" | grep -q '"Icon Image"'; then
+if ! grep -q '"Icon Image"' <<<"$info"; then
   echo "error: compiled catalog has no \"Icon Image\" entry; CFBundleIconName would be unset" >&2
-  assetutil --info "$work/out/Assets.car" || true
+  printf '%s\n' "$info" >&2
   exit 1
 fi
 
@@ -99,7 +106,7 @@ fi
 # taupe square. Nothing upstream complains — actool succeeds, the catalog is
 # well-formed and full-size, and both Info.plist keys get set — so assert the
 # stacking here, where it is cheap and unambiguous.
-if ! assetutil --info "$work/out/Assets.car" | python3 -c '
+if ! python3 -c '
 import json, sys
 groups = [e for e in json.load(sys.stdin)[1:]
           if e.get("AssetType") == "IconGroup" and e.get("Appearance") == "NSAppearanceNameAqua"]
@@ -110,7 +117,7 @@ names = [l["Name"].rsplit("/", 1)[-1] for l in layers]
 print("   compiled back-to-front:", " -> ".join(names), file=sys.stderr)
 if not names or not names[0].startswith("bg-"):
     sys.exit(f"backmost layer is {names[0]!r}, expected the bg- background")
-'; then
+' <<<"$info"; then
   echo "error: layer stacking is wrong; the icon would not render as designed" >&2
   exit 1
 fi
