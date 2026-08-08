@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/RalfZhang/ink-city/compare/v0.10.0...v0.10.1) (2026-08-08)
+
+
+### Bug Fixes
+
+* macoOS build ([9783c6e](https://github.com/RalfZhang/ink-city/commit/9783c6ecc2c283082ffc5ea4e0e129d34c9373b3))
+
 ## [0.10.0](https://github.com/RalfZhang/ink-city/compare/v0.9.0...v0.10.0) (2026-08-08)
 
 
