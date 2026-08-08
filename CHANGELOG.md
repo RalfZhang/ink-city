@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/RalfZhang/ink-city/compare/v0.10.3...v0.10.4) (2026-08-08)
+
+
+### Bug Fixes
+
+* stop SIGPIPE failing the icon catalog check ([92d635d](https://github.com/RalfZhang/ink-city/commit/92d635da89702818b302f6f7a20fc8b0e4f4a91b))
+
 ## [0.10.3](https://github.com/RalfZhang/ink-city/compare/v0.10.2...v0.10.3) (2026-08-08)
 
 
