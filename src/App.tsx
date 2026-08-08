@@ -195,19 +195,19 @@ function App() {
           </div>
         </div>
 
-        <TabsContent value="city" className="flex-1 overflow-y-auto border-s px-4 py-4">
+        <TabsContent value="city" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
           <City status={effectiveStatus} onError={onError} />
         </TabsContent>
-        <TabsContent value="general" className="flex-1 overflow-y-auto border-s px-4 py-4">
+        <TabsContent value="general" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
           <General status={effectiveStatus} refresh={refresh} onError={onError} />
         </TabsContent>
-        <TabsContent value="style" className="flex-1 overflow-y-auto border-s px-4 py-4">
+        <TabsContent value="style" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
           <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
-        <TabsContent value="lab" className="flex-1 overflow-y-auto border-s px-4 py-4">
+        <TabsContent value="lab" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
           <Lab status={effectiveStatus} busy={busy || status.running} onError={onError} />
         </TabsContent>
-        <TabsContent value="about" className="flex-1 overflow-y-auto border-s px-4 py-4">
+        <TabsContent value="about" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
           <About
             status={effectiveStatus}
             refresh={refresh}
@@ -216,7 +216,7 @@ function App() {
           />
         </TabsContent>
         {devMode && (
-          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-s px-4 py-4">
+          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
             <DevMode status={effectiveStatus} onError={onError} />
           </TabsContent>
         )}
