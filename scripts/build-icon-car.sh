@@ -93,5 +93,27 @@ if ! assetutil --info "$work/out/Assets.car" | grep -q '"Icon Image"'; then
   exit 1
 fi
 
+# icon.json lists layers front-to-back, and actool reverses that into LayerIndex,
+# where 0 is the back. Getting it backwards shipped in v0.10.2: the opaque
+# Background layer composited over everything and the icon came out as a flat
+# taupe square. Nothing upstream complains — actool succeeds, the catalog is
+# well-formed and full-size, and both Info.plist keys get set — so assert the
+# stacking here, where it is cheap and unambiguous.
+if ! assetutil --info "$work/out/Assets.car" | python3 -c '
+import json, sys
+groups = [e for e in json.load(sys.stdin)[1:]
+          if e.get("AssetType") == "IconGroup" and e.get("Appearance") == "NSAppearanceNameAqua"]
+if not groups:
+    sys.exit("no NSAppearanceNameAqua IconGroup")
+layers = sorted(groups[0].get("Layers", []), key=lambda l: l["LayerIndex"])
+names = [l["Name"].rsplit("/", 1)[-1] for l in layers]
+print("   compiled back-to-front:", " -> ".join(names), file=sys.stderr)
+if not names or not names[0].startswith("bg-"):
+    sys.exit(f"backmost layer is {names[0]!r}, expected the bg- background")
+'; then
+  echo "error: layer stacking is wrong; the icon would not render as designed" >&2
+  exit 1
+fi
+
 cp "$work/out/Assets.car" "$dest"
 echo "wrote $dest (actool $version)"

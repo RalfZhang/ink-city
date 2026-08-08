@@ -19,14 +19,14 @@
           "glass" : false,
           "image-name-specializations" : [
             {
-              "value" : "bg-light.png"
+              "value" : "roads-light.png"
             },
             {
               "appearance" : "dark",
-              "value" : "bg-dark.png"
+              "value" : "roads-dark.png"
             }
           ],
-          "name" : "Background"
+          "name" : "Roads"
         },
         {
           "glass" : false,
@@ -45,14 +45,14 @@
           "glass" : false,
           "image-name-specializations" : [
             {
-              "value" : "roads-light.png"
+              "value" : "bg-light.png"
             },
             {
               "appearance" : "dark",
-              "value" : "roads-dark.png"
+              "value" : "bg-dark.png"
             }
           ],
-          "name" : "Roads"
+          "name" : "Background"
         }
       ],
       "shadow" : {
