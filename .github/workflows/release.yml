@@ -178,6 +178,16 @@ jobs:
             exit 1
           fi
 
+      # Compile icons/InkCity.icon into icons/Assets.car ourselves and let the
+      # bundler copy it, instead of letting the bundler drive actool. Its own path
+      # crashes actool on macOS 26 (tauri-apps/tauri#15315, still open; the same
+      # command run from a shell succeeds), and `create_assets_car_file` returns
+      # on the first `.car` entry in bundle.icon, so a pre-compiled catalog skips
+      # the broken code entirely. Gitignored, same as the osm-cli sidecar.
+      - name: Compile the macOS icon catalog
+        if: matrix.platform == 'macos-latest'
+        run: pnpm icon:car
+
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:

@@ -67,8 +67,11 @@ steps a bad icon would sail through signing and publishing.
 
 - **"Select an Xcode whose actool can compile the icon catalog"** runs before the
   build and `xcode-select`s an Xcode whose actool reports `short-bundle-version`
-  >= 26 — the same check tauri-bundler makes. It probes the current selection
-  first and only sweeps `/Applications` if that one is too old.
+  >= 26. It probes the current selection first and only sweeps `/Applications` if
+  that one is too old.
+- **"Compile the macOS icon catalog"** runs `pnpm icon:car`
+  ([scripts/build-icon-car.sh](../scripts/build-icon-car.sh)), producing the
+  gitignored `src-tauri/icons/Assets.car` that `bundle.icon` points at.
 - **`--verbose` in the macOS matrix `args`** is load-bearing, not leftover
   debugging. tauri-bundler reports an actool rejection as a bare `failed to
   bundle project: Failed to create app Assets.car: 'failed to run actool'`. It
@@ -78,10 +81,28 @@ steps a bad icon would sail through signing and publishing.
 - **"Verify the macOS 26 icon was compiled into the bundle"** runs after and
   asserts `Assets.car` exists and `CFBundleIconName` is set.
 
-Known failure, v0.10.0: `supported-platforms.squares` in `icon.json` was written
-as a list of platform names. It takes the string `"shared"` — only `circles`
-takes a list (`["watchOS"]`). Validate the file against the Icon Composer schema
-before guessing; every published `.icon` fixture uses `"squares": "shared"`.
+### Why we compile the catalog ourselves
+
+`bundle.icon` lists `icons/Assets.car`, not `icons/InkCity.icon`, even though the
+bundler is perfectly capable of compiling a `.icon`. Its version of that crashes:
+
+```
+error: Exception while running actool: *** -[__NSPlaceholderArray
+initWithObjects:count:]: attempt to insert nil object from objects[0]
+```
+
+That is [tauri-apps/tauri#15315](https://github.com/tauri-apps/tauri/issues/15315)
+— open, and reproducible with Tauri's own `examples/api`. The maddening part is
+that the *identical* actool command run from a normal shell succeeds; only the
+bundler's invocation fails, and it fails every time. `create_assets_car_file`
+returns as soon as it finds a `.car` entry in `bundle.icon`, so handing it a
+pre-compiled catalog skips the broken code path entirely. Revisit if the issue
+closes.
+
+Earlier failure, v0.10.0 (a real defect of ours, separate from the above):
+`supported-platforms.squares` in `icon.json` was written as a list of platform
+names. It takes the string `"shared"` — only `circles` takes a list
+(`["watchOS"]`). Validate against the Icon Composer schema before guessing.
 
 If a step goes red:
 
@@ -95,9 +116,16 @@ If a step goes red:
    holds a bad build — but `publish` needs the job, so it never goes public and
    the updater keeps resolving to the previous release. Re-running against the
    same tag overwrites the assets; see *Recovering from a bad draft release*.
-4. A dispatch against the *old* tag will not pick up a fix that landed after it —
-   `Checkout` resolves to the tag, not to `main`. Icon/bundling fixes need a new
-   `fix:` commit and a new version.
+4. **A dispatch takes the workflow from one ref and the source from another**, and
+   that asymmetry is easy to misread. "Use workflow from" decides which
+   `release.yml` *runs*; the `tag` input decides what `Checkout` puts on disk. So
+   dispatching from `dev` against `v0.10.1` runs dev's steps over v0.10.1's
+   source. A change confined to `release.yml` (a new step, a matrix flag) takes
+   effect immediately; a change touching anything else — `scripts/`,
+   `package.json`, `tauri.conf.json`, the icon sources — does not, and the run
+   will fail on dev's steps referencing files the tag doesn't have. Fixes of that
+   shape need a new `fix:` commit and a new version; there is no tag to rehearse
+   them against.
 
 `CFBundleIconName` is `Icon`, not `InkCity` — the bundler copies the `.icon`
 directory to `Icon.icon` and passes `--app-icon Icon` to `actool`, so the

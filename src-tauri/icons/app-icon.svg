@@ -24,23 +24,18 @@
        pnpm exec tauri icon /tmp/legacy-1024.png -o /tmp/mac-out
        cp /tmp/mac-out/icon.icns /tmp/mac-out/icon.png /tmp/mac-out/{32x32,64x64,128x128,128x128@2x}.png src-tauri/icons/
 
-     One ordering constraint in bundle.icon, since tauri.conf.json can't hold a
-     comment: "icons/InkCity.icon" must stay AFTER "icons/icon.icns". It is the
-     only directory in that list, and the bundler reads the list twice. The
-     Icon Composer path (create_assets_car_file) walks the raw config strings and
-     is fine with a directory; the legacy .icns path (create_icns_file) iterates
-     Settings::icon_files(), which is ResourcePaths with allow_walk = false and
-     yields Err(NotAllowedToWalkDir) on a directory rather than skipping it — and
-     the caller `?`s that straight out. It only survives today because the .icns
-     entry matches first and returns early, so the directory is never reached.
-     Move it up, or drop icon.icns, and the macOS bundle fails with
+     Note what bundle.icon does NOT list: InkCity.icon itself. The bundler can
+     compile a .icon on its own, but that path crashes actool on macOS 26
+     (tauri-apps/tauri#15315, still open — the identical command run from a shell
+     succeeds). So the catalog is pre-compiled to icons/Assets.car
+     (scripts/build-icon-car.sh, `pnpm icon:car`, run by CI) and the config points
+     at that: create_assets_car_file returns on the first `.car` entry and never
+     invokes actool. InkCity.icon stays in the repo as that file's source.
 
-       could not walk directory `.../InkCity.icon`, try changing `allow_walk`
-       to true on the `ResourcePaths` constructor
-
-     which says nothing about ordering. Windows is unaffected: NSIS reads only
-     nsis.installer_icon, WiX flattens the Err away, and the .exe icon comes from
-     tauri-build's own window_icon_path. -->
+     Keep bundle.icon free of *directories* generally: create_icns_file iterates
+     Settings::icon_files(), which is ResourcePaths with allow_walk = false, and
+     that yields Err(NotAllowedToWalkDir) on a directory rather than skipping it —
+     a failure whose message says nothing about which entry caused it. -->
 
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
   <defs>
