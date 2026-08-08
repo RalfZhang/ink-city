@@ -47,8 +47,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # --verbose is load-bearing on macOS, not leftover debugging. When
+          # `actool` rejects the icon catalog, tauri-bundler reports only
+          # "failed to run actool" — it captures actool's stdout/stderr but
+          # emits them through log::debug!, so at the default log level the
+          # actual complaint is discarded and the build fails with nothing to
+          # go on. Verbose keeps those lines. See docs/ci-release-troubleshooting.md.
           - platform: macos-latest
-            args: "--target universal-apple-darwin"
+            args: "--target universal-apple-darwin --verbose"
           - platform: windows-latest
             args: ""
 
@@ -118,25 +124,19 @@ jobs:
         run: npx tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
 
       # macOS 26 draws the app icon from a compiled asset catalog rather than the
-      # .icns (see the verification step after the build). Two separate things can
-      # go wrong there, and by default both only surface after a full Rust build:
+      # .icns (see the verification step after the build), and `actool` — which
+      # compiles it — ships only inside full Xcode. tauri-bundler silently skips
+      # the catalog when actool reports `short-bundle-version` < 26, so pin the
+      # toolchain instead of inheriting whatever the image defaults to: GitHub now
+      # cuts one runner image per major Xcode, and an Xcode 27 image is already in
+      # preview.
       #
-      #   1. actool ships only inside full Xcode, and tauri-bundler silently skips
-      #      the catalog when `short-bundle-version` < 26. The runner's default
-      #      Xcode moves with the image — GitHub now cuts one image per major
-      #      Xcode, and an Xcode 27 image is already in preview — so choose
-      #      explicitly rather than inheriting whatever the image ships.
-      #   2. actool can reject the catalog itself. tauri-bundler surfaces that as a
-      #      bare "failed to run actool"; actool's own diagnostics go through
-      #      log::debug!, so at normal log level they are lost entirely. That is
-      #      exactly how v0.10.0 failed, ~7 minutes into the build, with no clue
-      #      as to which part of icon.json actool disliked.
-      #
-      # So: select an Xcode, then dry-run the *same* actool invocation the bundler
-      # will make (it copies the .icon to `Icon.icon` and passes `--app-icon Icon`,
-      # so the stem matters) and let actool print for itself. Seconds, not minutes,
-      # and the error is actool's own.
-      - name: Select Xcode and dry-run actool on the icon catalog
+      # Probe the current selection first and only sweep /Applications when it is
+      # too old. Every probe runs a real actool, and actool is a client of a
+      # long-lived `ibtoold` daemon — so touching fifteen other Xcodes to confirm
+      # what the default already answers is both slow and a way to leave daemons
+      # from foreign toolchains running during the build.
+      - name: Select an Xcode whose actool can compile the icon catalog
         if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
@@ -154,50 +154,27 @@ jobs:
               | head -1
           }
 
-          best_dir=""
-          best_major=0
-          for dev in "$(xcode-select -p)" /Applications/Xcode*.app/Contents/Developer; do
-            [ -d "$dev" ] || continue
-            major="$(actool_major "$dev")" || continue
-            [ -n "$major" ] || continue
-            echo "  $dev -> actool $major"
-            if [ "$major" -gt "$best_major" ]; then
-              best_major="$major"
-              best_dir="$dev"
-            fi
-          done
+          current="$(xcode-select -p)"
+          major="$(actool_major "$current" || true)"
+          echo "current: $current -> actool ${major:-none}"
 
-          if [ "$best_major" -lt 26 ]; then
-            echo "::error::no installed Xcode has actool >= 26 (best: ${best_major} at ${best_dir:-none}); the macOS 26 icon catalog cannot be compiled"
-            exit 1
+          if [ -z "${major:-}" ] || [ "$major" -lt 26 ]; then
+            for dev in /Applications/Xcode*.app/Contents/Developer; do
+              [ -d "$dev" ] || continue
+              m="$(actool_major "$dev" || true)"
+              [ -n "${m:-}" ] || continue
+              echo "  candidate: $dev -> actool $m"
+              if [ "$m" -ge 26 ]; then
+                echo "Selecting $dev (actool $m)"
+                sudo xcode-select -s "$dev"
+                major="$m"
+                break
+              fi
+            done
           fi
 
-          echo "Selecting $best_dir (actool $best_major)"
-          sudo xcode-select -s "$best_dir"
-
-          work="$(mktemp -d)"
-          cp -R src-tauri/icons/InkCity.icon "$work/Icon.icon"
-          mkdir -p "$work/out"
-
-          echo "--- actool dry run ---"
-          status=0
-          actool "$work/Icon.icon" \
-            --compile "$work/out" \
-            --output-format human-readable-text \
-            --notices \
-            --warnings \
-            --output-partial-info-plist "$work/out/assetcatalog_generated_info.plist" \
-            --app-icon Icon \
-            --include-all-app-icons \
-            --accent-color AccentColor \
-            --enable-on-demand-resources NO \
-            --development-region en \
-            --target-device mac \
-            --minimum-deployment-target 26.0 \
-            --platform macosx || status=$?
-
-          if [ "$status" -ne 0 ] || [ ! -f "$work/out/Assets.car" ]; then
-            echo "::error::actool cannot compile src-tauri/icons/InkCity.icon (exit $status) — its diagnostics are above; the build would fail with a bare 'failed to run actool'"
+          if [ -z "${major:-}" ] || [ "$major" -lt 26 ]; then
+            echo "::error::no installed Xcode has actool >= 26; the macOS 26 icon catalog cannot be compiled"
             exit 1
           fi
 

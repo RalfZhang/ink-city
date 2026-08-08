@@ -65,34 +65,39 @@ single line and carries on, and the app falls back to the `.icns` — which macO
 renders inside a grey rounded-rect plate. Nothing else fails, so without these
 steps a bad icon would sail through signing and publishing.
 
-- **"Select Xcode and dry-run actool on the icon catalog"** runs before the build.
-  It `xcode-select`s the newest installed Xcode whose actool reports
-  `short-bundle-version` >= 26 (the same check tauri-bundler makes), then runs the
-  bundler's exact `actool` invocation against a temp copy of the `.icon`.
+- **"Select an Xcode whose actool can compile the icon catalog"** runs before the
+  build and `xcode-select`s an Xcode whose actool reports `short-bundle-version`
+  >= 26 — the same check tauri-bundler makes. It probes the current selection
+  first and only sweeps `/Applications` if that one is too old.
+- **`--verbose` in the macOS matrix `args`** is load-bearing, not leftover
+  debugging. tauri-bundler reports an actool rejection as a bare `failed to
+  bundle project: Failed to create app Assets.car: 'failed to run actool'`. It
+  *does* capture actool's stdout/stderr — but emits them through `log::debug!`,
+  so at the default log level **the actual complaint is discarded**. Without
+  `--verbose` a red build tells you nothing about what actool disliked.
 - **"Verify the macOS 26 icon was compiled into the bundle"** runs after and
   asserts `Assets.car` exists and `CFBundleIconName` is set.
 
-Why the dry run exists: tauri-bundler reports an actool rejection as a bare
-`failed to bundle project: Failed to create app Assets.car: 'failed to run
-actool'`. actool's own diagnostics go through `log::debug!`, so at normal log
-level **they are lost entirely**. v0.10.0 failed exactly this way — seven minutes
-into the build, with nothing saying which part of `icon.json` was wrong. (If you
-ever need those diagnostics from the real build instead, add `--verbose` to the
-tauri-action `args`.) The cause was `supported-platforms.squares`: it takes the
-string `"shared"`, not a list of platform names.
+Known failure, v0.10.0: `supported-platforms.squares` in `icon.json` was written
+as a list of platform names. It takes the string `"shared"` — only `circles`
+takes a list (`["watchOS"]`). Validate the file against the Icon Composer schema
+before guessing; every published `.icon` fixture uses `"squares": "shared"`.
 
-If either goes red:
+If a step goes red:
 
-1. Read the per-Xcode `actool <major>` lines the selection step prints. If the
-   best available is < 26, the runner image changed — that's the whole finding;
-   fix it there rather than working around it downstream.
-2. If the dry run fails, actool's real error is printed directly above the
-   `::error::` line. Nothing has been built or uploaded yet at that point.
+1. Read the `actool <major>` lines the selection step prints. If nothing on the
+   runner is >= 26, the image changed — that's the whole finding; fix it there
+   rather than working around it downstream.
+2. For a bundling failure, search the build log for `actool` — with `--verbose`
+   the daemon's own diagnostics are in there, above the generic error line.
 3. **A red build leaving a draft release behind is expected**, not a second bug.
    The verification step runs after `tauri-action` has uploaded, so the draft
    holds a bad build — but `publish` needs the job, so it never goes public and
    the updater keeps resolving to the previous release. Re-running against the
    same tag overwrites the assets; see *Recovering from a bad draft release*.
+4. A dispatch against the *old* tag will not pick up a fix that landed after it —
+   `Checkout` resolves to the tag, not to `main`. Icon/bundling fixes need a new
+   `fix:` commit and a new version.
 
 `CFBundleIconName` is `Icon`, not `InkCity` — the bundler copies the `.icon`
 directory to `Icon.icon` and passes `--app-icon Icon` to `actool`, so the
