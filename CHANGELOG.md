@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/RalfZhang/ink-city/compare/v0.10.1...v0.10.2) (2026-08-08)
+
+
+### Bug Fixes
+
+* precompile macOS icon catalog ([13df469](https://github.com/RalfZhang/ink-city/commit/13df469347ec2a547dcb7bc7ed7b7587257c92b9))
+
 ## [0.10.1](https://github.com/RalfZhang/ink-city/compare/v0.10.0...v0.10.1) (2026-08-08)
 
 
