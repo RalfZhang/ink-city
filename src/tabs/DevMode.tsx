@@ -24,7 +24,12 @@ type PreviewCity = { name: string; localName: string; country: string };
 type PreviewResult = { city: PreviewCity; date: string; pngBase64: string; pngPath: string };
 type CleanCacheResult = { removedFiles: number; freedBytes: number };
 
-const DAYS_AHEAD_OPTIONS = [0, 1, 2, 3, 4, 5];
+// Strings, not numbers: Radix mirrors the selected item's children into the trigger
+// through a portal, and a falsy child (the bare number `0`) gets written there and
+// then removed again, leaving the trigger blank while "1".."5" render fine. Keeping
+// the labels as strings sidesteps it — `Select` is a string-valued API anyway, so
+// this is also what `value` wants.
+const DAYS_AHEAD_OPTIONS = ["0", "1", "2", "3", "4", "5"];
 
 /** Human-readable byte size (e.g. 1536 → "1.5 KB"). */
 function formatBytes(bytes: number): string {
@@ -41,7 +46,6 @@ export default function DevMode({ status, onError }: Props) {
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [cleaning, setCleaning] = useState(false);
   const [cleanResult, setCleanResult] = useState<string | null>(null);
-  const [bypassCache, setBypassCache] = useState(status.bypassCache);
   // Neither control means anything while the wallpaper is pinned to a custom
   // location: there's no daily schedule to look ahead at, and a pin already
   // fetches live from Overpass so there's no cache or CDN left to bypass. The
@@ -49,12 +53,17 @@ export default function DevMode({ status, onError }: Props) {
   // `AppState::effective_bypass_cache`); this just says so in the UI.
   const customized = status.updateMode === "customized";
 
+  // Deliberately no local mirror of `status.bypassCache`: switching tabs unmounts
+  // this panel (Radix only renders the selected tab's children), so a mirror is
+  // re-seeded from `status` on every remount and can only ever be as fresh as the
+  // last `status:changed` push. Reading the pushed value directly means a backend
+  // that stops answering leaves the switch visibly stuck instead of quietly
+  // reporting a state the backend isn't in, and it also picks up the
+  // `update_mode`-dependent gate in `AppState::bypass_cache_for` while mounted.
   const toggleBypassCache = async (on: boolean) => {
-    setBypassCache(on);
     try {
       await invoke("set_bypass_cache", { on });
     } catch (e) {
-      setBypassCache(!on);
       onError(e);
     }
   };
@@ -139,7 +148,7 @@ export default function DevMode({ status, onError }: Props) {
             description={t("devMode.bypassCacheDesc")}
             control={
               <Switch
-                checked={bypassCache}
+                checked={status.bypassCache}
                 onCheckedChange={toggleBypassCache}
                 disabled={customized}
               />
@@ -167,7 +176,7 @@ export default function DevMode({ status, onError }: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   {DAYS_AHEAD_OPTIONS.map((n) => (
-                    <SelectItem key={n} value={String(n)}>
+                    <SelectItem key={n} value={n}>
                       {n}
                     </SelectItem>
                   ))}

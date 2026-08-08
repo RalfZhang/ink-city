@@ -149,24 +149,84 @@ impl AppState {
         self.status_dirty.notify_one();
     }
 
-    /// Effective value of the Dev Mode "bypass cache & CDN" switch. Two gates, and
-    /// in both cases the stored `bypass_cache` is left untouched so the real setting
-    /// comes back once the gate lifts:
+    /// Effective value of the Dev Mode "bypass cache & CDN" switch for a given
+    /// `UpdateMode`. Two gates, and in both cases the stored `bypass_cache` is left
+    /// untouched so the real setting comes back once the gate lifts:
     ///
     ///   • `dev_mode` — while the tab is locked the switch reads as off;
-    ///   • `update_mode != Customized` — the switch only means anything on the
-    ///     Daily path (skip the manifest, take the city from the schedule state,
-    ///     fetch the map live). A Customized pin is arbitrary coordinates that
-    ///     nothing precaches, so it already goes straight to Overpass and there is
-    ///     nothing left to bypass. Gating it here rather than only in the UI is
-    ///     what keeps `Status::bypass_cache` — and therefore the rendered switch —
-    ///     honest about that.
+    ///   • `mode != Customized` — the switch only means anything on the Daily path
+    ///     (skip the manifest, take the city from the schedule state, fetch the map
+    ///     live). A Customized pin is arbitrary coordinates that nothing precaches,
+    ///     so it already goes straight to Overpass and there is nothing left to
+    ///     bypass. Gating it here rather than only in the UI is what keeps
+    ///     `Status::bypass_cache` — and therefore the rendered switch — honest
+    ///     about that.
     ///
-    /// Every consumer of the switch (pipeline, `Status`) reads through here rather
-    /// than the raw atom.
-    pub fn effective_bypass_cache(&self) -> bool {
+    /// The mode is a parameter, and this **must stay lock-free**: `build_status`
+    /// calls it while the guard for the `update_mode` it already read is still
+    /// alive, so locking `update_mode` here would re-enter a non-reentrant
+    /// `StdMutex` and hang the status-emitter task — the app's only state channel —
+    /// for the rest of the process. That the `&&` chain short-circuits is what made
+    /// the old version look healthy: the third gate was only ever reached with the
+    /// switch actually on.
+    pub fn bypass_cache_for(&self, mode: UpdateMode) -> bool {
         self.dev_mode.load(Ordering::Acquire)
             && self.bypass_cache.load(Ordering::Acquire)
-            && *self.update_mode.lock().unwrap() != UpdateMode::Customized
+            && mode != UpdateMode::Customized
+    }
+
+    /// `bypass_cache_for` for callers that hold no `update_mode` guard (the render
+    /// pipeline). Every consumer of the switch reads through one of these two
+    /// rather than the raw atom.
+    pub fn effective_bypass_cache(&self) -> bool {
+        let mode = *self.update_mode.lock().unwrap();
+        self.bypass_cache_for(mode)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::Config;
+
+    fn unlocked_and_on() -> AppState {
+        let state = AppState::from_config(&Config::default());
+        state.dev_mode.store(true, Ordering::Release);
+        state.bypass_cache.store(true, Ordering::Release);
+        state
+    }
+
+    /// Deadlock regression guard: computing the effective bypass flag must never
+    /// need the `update_mode` lock, because `commands::build_status` calls it while
+    /// holding that lock's guard. Against a lock-taking implementation this test
+    /// hangs forever instead of failing.
+    #[test]
+    fn bypass_cache_for_does_not_touch_the_update_mode_lock() {
+        let state = unlocked_and_on();
+        let mode = state.update_mode.lock().unwrap();
+        assert!(state.bypass_cache_for(*mode));
+    }
+
+    #[test]
+    fn locked_dev_mode_reads_as_off() {
+        let state = unlocked_and_on();
+        state.dev_mode.store(false, Ordering::Release);
+        assert!(!state.bypass_cache_for(UpdateMode::Daily));
+    }
+
+    #[test]
+    fn switch_off_reads_as_off() {
+        let state = unlocked_and_on();
+        state.bypass_cache.store(false, Ordering::Release);
+        assert!(!state.bypass_cache_for(UpdateMode::Daily));
+    }
+
+    /// A pin already fetches live, so there is nothing left to bypass — and the
+    /// stored atom stays on, so Daily gets the real setting back.
+    #[test]
+    fn customized_mode_reads_as_off_without_clearing_the_switch() {
+        let state = unlocked_and_on();
+        assert!(!state.bypass_cache_for(UpdateMode::Customized));
+        assert!(state.bypass_cache_for(UpdateMode::Daily));
     }
 }

@@ -790,25 +790,46 @@ pub async fn render_preview(
     r
 }
 
+/// The hidden renderer window, built on demand if `setup` hasn't already made it.
+///
+/// Both paths wait for readiness, and that's the point: the window *existing* says
+/// nothing about the webview inside it having subscribed yet. `render-request` is a
+/// fire-and-forget `emit`, so a render that gets here first has its request dropped
+/// on the floor and then burns the full 120s result timeout ("renderer timeout").
+/// Since `lib.rs`'s setup pre-builds the window, the found path is the one that
+/// actually runs in production — it used to be the one that skipped the wait.
 async fn ensure_renderer(app: &AppHandle) -> Result<WebviewWindow> {
-    if let Some(w) = app.get_webview_window("renderer") {
-        return Ok(w);
-    }
-    let w = WebviewWindowBuilder::new(app, "renderer", WebviewUrl::App("render.html".into()))
-        .visible(false)
-        .title("InkCity Renderer")
-        .build()?;
+    let w = match app.get_webview_window("renderer") {
+        Some(w) => w,
+        None => WebviewWindowBuilder::new(app, "renderer", WebviewUrl::App("render.html".into()))
+            .visible(false)
+            .skip_taskbar(true)
+            .title("InkCity Renderer")
+            .build()?,
+    };
     wait_renderer_ready(app).await?;
     Ok(w)
 }
 
+/// Wait until the renderer webview has announced itself (`commands::renderer_ready`).
+///
+/// Joins the waiter list *before* the final flag check. `renderer_ready` signals with
+/// `notify_waiters()`, which wakes only already-registered waiters and — unlike
+/// `notify_one` — stores no permit, so a check-then-subscribe order would drop a
+/// signal landing in between and then stall for the whole timeout. Cheap to get wrong
+/// unnoticed while this was only reachable on the cold-start path.
 async fn wait_renderer_ready(app: &AppHandle) -> Result<()> {
     let state = app.state::<AppState>();
+    let notify = state.renderer_notify.clone();
+    let notified = notify.notified();
+    tokio::pin!(notified);
+    // A `Notified` only registers when first polled; `enable` does that up front
+    // without waiting on it.
+    let _ = notified.as_mut().enable();
     if state.renderer_ready.load(Ordering::Acquire) {
         return Ok(());
     }
-    let notify = state.renderer_notify.clone();
-    tokio::time::timeout(Duration::from_secs(20), notify.notified())
+    tokio::time::timeout(Duration::from_secs(20), notified)
         .await
         .map_err(|_| anyhow!("renderer never became ready"))?;
     Ok(())

@@ -16,10 +16,16 @@ use crate::tray;
 /// on every change. Mirrored field-for-field by `Status` in `src/types.ts`, so a
 /// field added here needs adding there too (and a `mark_status_dirty()` at whatever
 /// mutates it, or an open window won't see it).
+///
+/// `rename_all` rather than a per-field `rename`: nothing type-checks this contract
+/// across the IPC boundary, so a field whose hand-written rename was forgotten would
+/// arrive at the frontend as snake_case and read `undefined` there — and a
+/// `checked={undefined}` handed to a Radix `Switch` silently turns it into an
+/// *uncontrolled* one, which moves on click and then resets on the next remount.
 #[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Status {
     /// How the wallpaper is refreshed — the City-tab "How to update?" selector.
-    #[serde(rename = "updateMode")]
     pub update_mode: UpdateMode,
     /// The Customized-mode pin, or `None` until the user applies one.
     pub custom: Option<CustomCity>,
@@ -31,42 +37,30 @@ pub struct Status {
     pub city: City,
     pub date: String,
     pub theme: ThemeMode,
-    #[serde(rename = "effectiveTheme")]
     pub effective_theme: String,
     pub light: ColorPair,
     pub dark: ColorPair,
     pub style: StylePreset,
-    #[serde(rename = "updateCheck")]
     pub update_check: UpdateCheck,
     /// Whether detected updates are installed automatically (see config field).
-    #[serde(rename = "autoUpdate")]
     pub auto_update: bool,
     /// The version we can update to, or `None`. Single source of truth for the
     /// "update available" affordance — see `AppState::available_update`.
-    #[serde(rename = "updateAvailable")]
     pub update_available: Option<String>,
-    #[serde(rename = "showWater")]
     pub show_water: bool,
-    #[serde(rename = "showAirports")]
     pub show_airports: bool,
-    #[serde(rename = "showRailways")]
     pub show_railways: bool,
-    #[serde(rename = "showAerialways")]
     pub show_aerialways: bool,
     /// Which visual language the wallpaper is drawn in (issue #18). See
     /// `config::Config::variant`.
     pub variant: StyleVariant,
     /// Whether the hidden Dev Mode tab is unlocked (persisted). See
     /// `AppState::dev_mode`.
-    #[serde(rename = "devMode")]
     pub dev_mode: bool,
     /// Dev-only "bypass cache & CDN" toggle (in-memory, never persisted). See
     /// `AppState::bypass_cache`.
-    #[serde(rename = "bypassCache")]
     pub bypass_cache: bool,
-    #[serde(rename = "proxyEnabled")]
     pub proxy_enabled: bool,
-    #[serde(rename = "proxyUrl")]
     pub proxy_url: String,
 }
 
@@ -81,39 +75,55 @@ pub async fn build_status(app: &AppHandle) -> Status {
     // Wikipedia / Maps links.
     let city = pipeline::city_for_status(app, date);
     let running = *state.running.lock().await;
-    let theme = *state.theme.lock().unwrap();
     let effective = match pipeline::effective_theme(app) {
         EffectiveTheme::Light => "light",
         EffectiveTheme::Dark => "dark",
     };
-    // Bound to a local so the lock-guard temporaries in the literal drop before
-    // `state` (the function's tail expression would otherwise outlive it).
-    let status = Status {
-        update_mode: *state.update_mode.lock().unwrap(),
-        custom: *state.custom.lock().unwrap(),
+    // Every lock is read into a local *before* the literal, and the literal itself
+    // must stay free of `.lock()` calls. A guard created in a field initializer
+    // lives until the end of the whole `let` statement (struct fields are not
+    // temporary scopes), so a second acquisition further down the literal re-enters
+    // a non-reentrant `StdMutex` and hangs this task forever — which, since this is
+    // the only thing that feeds `status:changed`, silently freezes the entire UI.
+    // That is what the old `bypass_cache: state.effective_bypass_cache()` field did
+    // to the `update_mode` guard an earlier field in the same literal was holding.
+    let theme = *state.theme.lock().unwrap();
+    let update_mode = *state.update_mode.lock().unwrap();
+    let custom = *state.custom.lock().unwrap();
+    let light = state.light.lock().unwrap().clone();
+    let dark = state.dark.lock().unwrap().clone();
+    let style = *state.style.lock().unwrap();
+    let update_check = *state.update_check.lock().unwrap();
+    let update_available = state.available_update.lock().unwrap().clone();
+    let variant = *state.variant.lock().unwrap();
+    let proxy_url = state.proxy_url.lock().unwrap().clone();
+    Status {
+        update_mode,
+        custom,
         hide_tray: state.hide_tray.load(Ordering::Acquire),
         running,
         city,
         date: date.to_string(),
         theme,
         effective_theme: effective.into(),
-        light: state.light.lock().unwrap().clone(),
-        dark: state.dark.lock().unwrap().clone(),
-        style: *state.style.lock().unwrap(),
-        update_check: *state.update_check.lock().unwrap(),
+        light,
+        dark,
+        style,
+        update_check,
         auto_update: state.auto_update.load(Ordering::Acquire),
-        update_available: state.available_update.lock().unwrap().clone(),
+        update_available,
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
         show_railways: state.show_railways.load(Ordering::Acquire),
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
-        variant: *state.variant.lock().unwrap(),
+        variant,
         dev_mode: state.dev_mode.load(Ordering::Acquire),
-        bypass_cache: state.effective_bypass_cache(),
+        // Reuses the `update_mode` read above rather than taking the lock again, so
+        // the two fields can't contradict each other within one snapshot.
+        bypass_cache: state.bypass_cache_for(update_mode),
         proxy_enabled: state.proxy_enabled.load(Ordering::Acquire),
-        proxy_url: state.proxy_url.lock().unwrap().clone(),
-    };
-    status
+        proxy_url,
+    }
 }
 
 #[tauri::command]

@@ -75,11 +75,11 @@ export default function General({ status, refresh, onError }: Props) {
           <SettingRow
             label={t("general.hideTrayLabel")}
             description={
-              status.hide_tray
+              status.hideTray
                 ? t("general.hideTrayDescOn")
                 : t("general.hideTrayDescOff")
             }
-            control={<Switch checked={status.hide_tray} onCheckedChange={toggleHideTray} />}
+            control={<Switch checked={status.hideTray} onCheckedChange={toggleHideTray} />}
           />
           <Separator />
           <SettingRow

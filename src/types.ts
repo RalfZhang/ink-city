@@ -16,7 +16,7 @@ export type Status = {
   updateMode: UpdateMode;
   /** The Customized-mode pin, or null until the user applies one. */
   custom: { lat: number; lon: number } | null;
-  hide_tray: boolean;
+  hideTray: boolean;
   running: boolean;
   city: City;
   date: string;
