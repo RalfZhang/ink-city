@@ -54,6 +54,40 @@ Leaving the tag in place is deliberate: it keeps release-please's changelog
 anchor intact (see the `force-tag-creation` note in CLAUDE.md), so the next real
 release still computes correctly.
 
+## The macOS icon gate
+
+Two macOS-only steps in `release.yml` exist to stop a release shipping the wrong
+app icon. macOS 26 draws the icon from a compiled asset catalog
+(`Contents/Resources/Assets.car`, named by `CFBundleIconName`) built by `actool`
+from [src-tauri/icons/InkCity.icon](../src-tauri/icons/InkCity.icon). `actool`
+ships only inside full Xcode 26+; when it's missing or too old the bundler logs a
+single line and carries on, and the app falls back to the `.icns` — which macOS 26
+renders inside a grey rounded-rect plate. Nothing else fails, so without these
+steps a bad icon would sail through signing and publishing.
+
+- **"Select an Xcode whose actool can compile the icon catalog"** runs before the
+  build and `xcode-select`s the newest installed Xcode whose actool reports
+  `short-bundle-version` >= 26 — the same check tauri-bundler makes. It fails if
+  none qualifies. This is the step that will break first if a runner image ever
+  ships without an Xcode 26+.
+- **"Verify the macOS 26 icon was compiled into the bundle"** runs after and
+  asserts `Assets.car` exists and `CFBundleIconName` is set.
+
+If either goes red:
+
+1. Read the per-Xcode `actool <major>` lines the selection step prints. If the
+   best available is < 26, the runner image changed — that's the whole finding;
+   fix it there rather than working around it downstream.
+2. **A red build leaving a draft release behind is expected**, not a second bug.
+   The verification step runs after `tauri-action` has uploaded, so the draft
+   holds a bad build — but `publish` needs the job, so it never goes public and
+   the updater keeps resolving to the previous release. Re-running against the
+   same tag overwrites the assets; see *Recovering from a bad draft release*.
+
+`CFBundleIconName` is `Icon`, not `InkCity` — the bundler copies the `.icon`
+directory to `Icon.icon` and passes `--app-icon Icon` to `actool`, so the
+directory's name is for humans only. Don't "fix" it.
+
 ## Alternative: force a real release
 
 If the fix genuinely belongs in a release anyway, you don't need any of the

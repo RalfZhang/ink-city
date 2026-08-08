@@ -98,9 +98,11 @@
     "logsTitle": "記錄檔",
     "logsDesc": "InkCity 會保留記錄檔以便排查問題。回報問題時請附上記錄檔。",
     "openLogs": "開啟記錄檔",
-    "dataTitle": "資料來源與致謝",
+    "dataTitle": "資料來源",
     "osmAttribution": "道路地圖資料 © <0>OpenStreetMap</0> 貢獻者，依 <1>ODbL</1> 協議授權。",
-    "geonamesAttribution": "城市清單來自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授權。"
+    "geonamesAttribution": "城市清單來自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授權。",
+    "creditsTitle": "致謝",
+    "designCredit": "應用程式圖示與地圖視覺設計：{{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "提前預覽",

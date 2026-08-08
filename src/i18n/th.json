@@ -98,9 +98,11 @@
     "logsTitle": "บันทึก",
     "logsDesc": "InkCity เก็บไฟล์บันทึกไว้เพื่อช่วยวินิจฉัยปัญหา โปรดแนบไฟล์นี้เมื่อรายงานปัญหา",
     "openLogs": "เปิดบันทึก",
-    "dataTitle": "ข้อมูลและกิตติกรรมประกาศ",
+    "dataTitle": "แหล่งข้อมูล",
     "osmAttribution": "ข้อมูลแผนที่ถนน © ผู้มีส่วนร่วมของ <0>OpenStreetMap</0> อนุญาตภายใต้ <1>ODbL</1>",
-    "geonamesAttribution": "รายชื่อเมืองจาก <0>GeoNames</0> อนุญาตภายใต้ <1>CC BY 4.0</1>"
+    "geonamesAttribution": "รายชื่อเมืองจาก <0>GeoNames</0> อนุญาตภายใต้ <1>CC BY 4.0</1>",
+    "creditsTitle": "กิตติกรรมประกาศ",
+    "designCredit": "ไอคอนแอปและการออกแบบภาพของแผนที่โดย {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "ดูตัวอย่างล่วงหน้า",

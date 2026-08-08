@@ -117,6 +117,54 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: npx tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
 
+      # macOS 26 draws the app icon from a compiled asset catalog rather than the
+      # .icns (see the verification step after the build). The bundler gates that
+      # on `actool --version` reporting `short-bundle-version` >= 26, and actool
+      # ships only inside full Xcode — so the whole feature hangs off which Xcode
+      # the runner happens to default to. Don't inherit that: GitHub now cuts one
+      # image per major Xcode, and an Xcode 27 image is already in preview, so the
+      # default moves without warning. Pick the newest installed Xcode that
+      # satisfies the bundler's own check, and fail here — before anything is
+      # compiled, signed, or uploaded — if none does.
+      - name: Select an Xcode whose actool can compile the icon catalog
+        if: matrix.platform == 'macos-latest'
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          # Mirrors tauri-bundler's parse of
+          #   /* com.apple.actool.version */
+          #   bundle-version: 24411
+          #   short-bundle-version: 26.1
+          # `actool` is an xcrun shim, so DEVELOPER_DIR selects which one answers.
+          actool_major() {
+            DEVELOPER_DIR="$1" actool --version --output-format=human-readable-text 2>/dev/null \
+              | sed -n 's/^[[:space:]]*short-bundle-version:[[:space:]]*\([0-9][0-9]*\).*/\1/p' \
+              | head -1
+          }
+
+          best_dir=""
+          best_major=0
+          for dev in "$(xcode-select -p)" /Applications/Xcode*.app/Contents/Developer; do
+            [ -d "$dev" ] || continue
+            major="$(actool_major "$dev")" || continue
+            [ -n "$major" ] || continue
+            echo "  $dev -> actool $major"
+            if [ "$major" -gt "$best_major" ]; then
+              best_major="$major"
+              best_dir="$dev"
+            fi
+          done
+
+          if [ "$best_major" -lt 26 ]; then
+            echo "::error::no installed Xcode has actool >= 26 (best: ${best_major} at ${best_dir:-none}); the macOS 26 icon catalog cannot be compiled"
+            exit 1
+          fi
+
+          echo "Selecting $best_dir (actool $best_major)"
+          sudo xcode-select -s "$best_dir"
+
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:
@@ -130,6 +178,47 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # macOS 26 renders the app icon from a compiled asset catalog, not the
+      # .icns: the bundler runs `actool` over src-tauri/icons/InkCity.icon to
+      # produce Contents/Resources/Assets.car and names it in CFBundleIconName.
+      # When actool is missing or older than 26 the bundler logs one line and
+      # returns Ok(None) — build succeeds, gets signed, gets published, and the
+      # icon silently falls back to the .icns (which macOS 26 then parks in a
+      # grey rounded-rect plate). The step above is what prevents that; this one
+      # is the backstop, covering the ways the catalog can come out empty even
+      # with a new enough actool.
+      #
+      # Note this runs *after* tauri-action has already uploaded its assets, so a
+      # failure here leaves a draft release holding a bad build. That's the
+      # intended shape, not an oversight: `publish` needs this job, so the release
+      # stays a draft and the updater never sees it. Re-running the workflow
+      # against the same tag overwrites the assets in place.
+      - name: Verify the macOS 26 icon was compiled into the bundle
+        if: matrix.platform == 'macos-latest'
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          apps=(src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app)
+          if [ ${#apps[@]} -ne 1 ]; then
+            echo "::error::expected exactly one .app, found ${#apps[@]}"
+            exit 1
+          fi
+          app="${apps[0]}"
+          if [ ! -f "$app/Contents/Resources/Assets.car" ]; then
+            echo "::error::Assets.car missing from $app — actool was skipped (Xcode < 26?)"
+            actool --version --output-format=human-readable-text || true
+            exit 1
+          fi
+          plutil -extract CFBundleIconName raw -o - "$app/Contents/Info.plist" \
+            || { echo "::error::CFBundleIconName missing — macOS 26 would fall back to the .icns"; exit 1; }
+          # Informational, not a gate: InkCity.icon carries dark-appearance layer
+          # variants, so a healthy catalog lists NSAppearanceNameDarkAqua here.
+          # Not asserted because assetutil's output format isn't contractual and a
+          # false failure would block a release over formatting.
+          echo "--- appearances in Assets.car ---"
+          assetutil --info "$app/Contents/Resources/Assets.car" | grep -i appearance | sort -u || true
 
   # Flip the draft release to public + latest, but only after every matrix build
   # has succeeded and uploaded its assets. With fail-fast: false, a single

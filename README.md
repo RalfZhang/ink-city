@@ -34,6 +34,10 @@ Open https://github.com/RalfZhang/ink-city/releases/latest/
 
 These attributions are also shown in the app's **About** tab.
 
+## Credits
+
+- App icon and map visual design — **Jie Xu**
+
 ## Feedback
 
 Found a bug or have an idea? [Open an issue](https://github.com/RalfZhang/ink-city/issues). For bug reports, please include your OS version and, if relevant, the city/date that triggered the problem.

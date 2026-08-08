@@ -98,9 +98,11 @@
     "logsTitle": "Журнали",
     "logsDesc": "InkCity веде файл журналу, щоб допомогти діагностувати проблеми. Додайте його, повідомляючи про проблему.",
     "openLogs": "Відкрити журнали",
-    "dataTitle": "Дані та подяки",
+    "dataTitle": "Джерела даних",
     "osmAttribution": "Дані карти доріг © учасники <0>OpenStreetMap</0>, ліцензовано за <1>ODbL</1>.",
-    "geonamesAttribution": "Список міст від <0>GeoNames</0>, ліцензовано за <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Список міст від <0>GeoNames</0>, ліцензовано за <1>CC BY 4.0</1>.",
+    "creditsTitle": "Подяки",
+    "designCredit": "Значок застосунку та візуальний стиль карти — {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Попередній перегляд наперед",

@@ -98,9 +98,11 @@
     "logsTitle": "Günlükler",
     "logsDesc": "InkCity, sorunları teşhis etmeye yardımcı olmak için bir günlük dosyası tutar. Sorun bildirirken bunu ekleyin.",
     "openLogs": "Günlükleri aç",
-    "dataTitle": "Veriler ve Teşekkürler",
+    "dataTitle": "Veri kaynakları",
     "osmAttribution": "Yol haritası verileri © <0>OpenStreetMap</0> katkıda bulunanları, <1>ODbL</1> lisansı altındadır.",
-    "geonamesAttribution": "Şehir listesi <0>GeoNames</0> kaynaklıdır, <1>CC BY 4.0</1> lisansı altındadır."
+    "geonamesAttribution": "Şehir listesi <0>GeoNames</0> kaynaklıdır, <1>CC BY 4.0</1> lisansı altındadır.",
+    "creditsTitle": "Teşekkürler",
+    "designCredit": "Uygulama simgesi ve harita görsel tasarımı: {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Erken Önizleme",

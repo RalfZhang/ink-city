@@ -38,3 +38,5 @@ idea.md
 # render-map.ts output (local map previews)
 /test-out/
 .aider*
+
+/tmp-src/

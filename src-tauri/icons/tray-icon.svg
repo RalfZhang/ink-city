@@ -1,13 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <!-- macOS menu-bar template glyph: solid black on transparent, so macOS can
-       tint it for light/dark menu bars. A simplified road junction (no tile).
-       Regenerate src-tauri/icons/tray.png from this; see scripts note in tray.rs. -->
-  <g fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round">
-    <!-- grid streets -->
-    <path d="M72 196 H440" stroke-width="30"/>
-    <path d="M72 340 H440" stroke-width="30"/>
-    <path d="M214 72 V440" stroke-width="30"/>
-    <!-- bold highway -->
-    <path d="M96 440 L440 120" stroke-width="58"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- InkCity tray / menu bar glyph. Monochrome by design: on macOS this ships as a
+     template image (alpha only — the fill colour is discarded and the system tints
+     it for the light/dark menu bar), so the 30%-opacity group below renders as
+     30% ink rather than as grey. Windows does no such tinting, so the same glyph
+     is rasterised twice, once dark and once white — see tray_theme.rs.
+
+     The viewBox is the designer's spec size in points: 27x18, margins included.
+     Use it as delivered — do not re-crop. macOS sizes the menu bar image to 18pt
+     tall and derives the width, so this canvas maps 1:1 to points and the glyph
+     lands exactly where it was drawn to land.
+
+     Windows is the exception: the shell stretches the HICON into a square slot, so
+     there the 3:2 canvas is padded with equal transparent bands above and below —
+     without that it comes out distorted.
+
+     Regenerate (needs @resvg/resvg-js; nothing here can render SVG natively):
+       tray.png          216x144  (macOS template, 8x of 27x18pt)
+       tray-win-light.png  32x32  (dark glyph, for a LIGHT taskbar)
+       tray-win-dark.png   32x32  (white glyph, for a DARK taskbar) -->
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 27 18">
+  <defs>
+    <style>
+      .st0 {
+        opacity: .3;
+      }
+
+      .st1 {
+        fill: #242120;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="st1" d="M21.5,15.98H5.53c-.95,0-1.73-.78-1.73-1.73V3.61c0-.95.78-1.73,1.73-1.73h15.97c.95,0,1.73.78,1.73,1.73v10.64c0,.95-.78,1.73-1.73,1.73h0ZM5.53,3.22c-.21,0-.39.17-.39.39v10.64c0,.21.17.39.39.39h15.97c.21,0,.39-.17.39-.39V3.61c0-.21-.17-.39-.39-.39H5.53Z"/>
+    <rect class="st1" x=".7" y="14.23" width="25.64" height="2.07" rx="1.04" ry="1.04"/>
+  </g>
+  <g>
+    <path class="st1" d="M21.89,9.28v-2.74c-.46.42-.98.83-1.53,1.23.46.53.97,1.03,1.53,1.51Z"/>
+    <path class="st1" d="M16.19,8.59s.05.04.07.06c.74-.33,1.49-.72,2.22-1.18-.06-.08-.12-.16-.17-.24-.92-1.32-1.54-2.63-2.2-4,0-.01-.01-.03-.02-.04h-2.84c-.25,2.35.34,3.36,2.94,5.41h0Z"/>
+    <path class="st1" d="M19.56,6.76c.9-.65,1.71-1.35,2.33-2.03v-1.16c0-.21-.17-.39-.39-.39h-3.98c.55,1.14,1.1,2.23,1.85,3.31.06.09.12.18.19.26Z"/>
+    <path class="st1" d="M7.6,9.83c-.36-1.04-.57-2.01-.63-2.96-.07-1.08.12-2.51.33-3.69h-1.78c-.21,0-.39.17-.39.39v7.84c1-.4,1.9-.68,2.71-.89-.09-.23-.17-.45-.25-.68h0Z"/>
+    <path class="st1" d="M8.37,11.72c-1.05.26-2.11.61-3.22,1.08v1.42c0,.21.17.39.39.39h4.11c-.28-.73-.6-1.43-.92-2.11-.12-.25-.23-.51-.35-.77h0Z"/>
+    <path class="st1" d="M19.29,8.49c-.66.41-1.33.78-2,1.1,2.03,2.11,3.18,4.79,3.18,4.79,0,0-6.76.31-6.76,0s-.26-1.88-.73-3.11c-.04-.1-.08-.2-.13-.3-.42.07-.84.12-1.27.18-.61.08-1.24.17-1.92.29.08.17.15.34.23.51.39.84.79,1.71,1.12,2.65h10.49c.21,0,.39-.17.39-.39v-3.27c-1-.77-1.85-1.57-2.6-2.45h0Z"/>
+    <path class="st1" d="M8.26,6.79c.08,1.23.42,2.34.87,3.44.82-.16,1.56-.26,2.27-.35.27-.04.54-.07.8-.11-.58-1.01-1.25-2.16-1.47-3.19-.24-1.13-.05-2.62.08-3.4h-2.2c-.17.94-.42,2.54-.35,3.61h0Z"/>
+  </g>
+  <g class="st0">
+    <path class="st1" d="M12.21,9.77c.71-.1,1.4-.22,2.13-.42.63-.17,1.28-.41,1.93-.7h0s-.05-.04-.08-.06c-2.71-2.14-3.24-3.15-2.9-5.75-.91-.07-2.37-.18-2.37-.18,0,0-.52,2.32-.18,3.91.22,1.03.9,2.18,1.48,3.2M17.29,9.6c-.88.42-1.76.76-2.61.99-.63.17-1.23.29-1.83.39h0c.05.1.09.2.12.29.47,1.23.73,2.79.73,3.11s6.76,0,6.76,0c0,0-1.14-2.66-3.17-4.78"/>
   </g>
 </svg>

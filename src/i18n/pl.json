@@ -98,9 +98,11 @@
     "logsTitle": "Dzienniki",
     "logsDesc": "InkCity przechowuje plik dziennika, aby pomóc zdiagnozować problemy. Dołącz go podczas zgłaszania problemu.",
     "openLogs": "Otwórz dzienniki",
-    "dataTitle": "Dane i podziękowania",
+    "dataTitle": "Źródła danych",
     "osmAttribution": "Dane mapy drogowej © współtwórcy <0>OpenStreetMap</0>, na licencji <1>ODbL</1>.",
-    "geonamesAttribution": "Lista miast z <0>GeoNames</0>, na licencji <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Lista miast z <0>GeoNames</0>, na licencji <1>CC BY 4.0</1>.",
+    "creditsTitle": "Podziękowania",
+    "designCredit": "Ikona aplikacji i oprawa wizualna mapy: {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Podgląd z wyprzedzeniem",

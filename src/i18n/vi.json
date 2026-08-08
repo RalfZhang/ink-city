@@ -98,9 +98,11 @@
     "logsTitle": "Nhật ký",
     "logsDesc": "InkCity lưu giữ tệp nhật ký để giúp chẩn đoán sự cố. Hãy đính kèm khi báo cáo sự cố.",
     "openLogs": "Mở nhật ký",
-    "dataTitle": "Dữ liệu & Lời cảm ơn",
+    "dataTitle": "Nguồn dữ liệu",
     "osmAttribution": "Dữ liệu bản đồ đường phố © những người đóng góp cho <0>OpenStreetMap</0>, được cấp phép theo <1>ODbL</1>.",
-    "geonamesAttribution": "Danh sách thành phố từ <0>GeoNames</0>, được cấp phép theo <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Danh sách thành phố từ <0>GeoNames</0>, được cấp phép theo <1>CC BY 4.0</1>.",
+    "creditsTitle": "Lời cảm ơn",
+    "designCredit": "Biểu tượng ứng dụng và thiết kế hình ảnh bản đồ bởi {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Xem trước sớm",

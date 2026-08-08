@@ -11,4 +11,5 @@ export {
   ODBL_URL,
   GEONAMES_URL,
   CC_BY_URL,
+  VISUAL_DESIGNER,
 } from "./core";

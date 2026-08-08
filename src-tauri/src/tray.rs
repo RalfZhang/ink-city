@@ -68,19 +68,25 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
         .tooltip("InkCity")
         .menu(&menu);
 
-    // macOS menu bars want a monochrome template image that auto-tints for
-    // light/dark; other platforms use the full-color app icon. The template is
-    // embedded at compile time (path is relative to src-tauri/). Regenerate
-    // icons/tray.png from icons/tray-icon.svg:
-    //   pnpm tauri icon src-tauri/icons/tray-icon.svg -o /tmp/tray-out
-    //   sips -z 44 44 /tmp/tray-out/128x128.png --out src-tauri/icons/tray.png
+    // All icons are embedded at compile time (paths are relative to src-tauri/);
+    // see the header comment in icons/tray-icon.svg for how they're regenerated.
+    //
+    // macOS menu bars want a monochrome template image, which the system tints for
+    // the light/dark menu bar on its own. Windows does no such thing — it blits the
+    // bitmap as-is — so the same glyph ships in two colours and tray_theme swaps
+    // between them; the icon is set there rather than here to keep the choice in
+    // one place. Everything else falls back to the full-colour app icon.
     #[cfg(target_os = "macos")]
     {
         builder = builder
             .icon(tauri::include_image!("icons/tray.png"))
             .icon_as_template(true);
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "windows")]
+    {
+        builder = builder.icon(crate::tray_theme::current_icon());
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     {
         let icon = app
             .default_window_icon()
@@ -146,6 +152,11 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
             }
         })
         .build(app)?;
+
+    // Follow the taskbar for the rest of the session — the builder above only
+    // picked the glyph that was right at startup.
+    #[cfg(target_os = "windows")]
+    crate::tray_theme::spawn_watcher(app.clone());
 
     Ok(())
 }

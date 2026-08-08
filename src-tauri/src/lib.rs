@@ -27,6 +27,8 @@ mod pipeline;
 mod scheduler;
 mod state;
 mod tray;
+#[cfg(target_os = "windows")]
+mod tray_theme;
 mod updates;
 mod wallpaper_set;
 

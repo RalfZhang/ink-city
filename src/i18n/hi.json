@@ -98,9 +98,11 @@
     "logsTitle": "लॉग",
     "logsDesc": "समस्याओं का निदान करने में मदद के लिए InkCity एक लॉग फ़ाइल रखता है। समस्या की रिपोर्ट करते समय इसे संलग्न करें।",
     "openLogs": "लॉग खोलें",
-    "dataTitle": "डेटा और आभार",
+    "dataTitle": "डेटा स्रोत",
     "osmAttribution": "सड़क मानचित्र डेटा © <0>OpenStreetMap</0> योगदानकर्ता, <1>ODbL</1> के तहत लाइसेंस प्राप्त।",
-    "geonamesAttribution": "शहर सूची <0>GeoNames</0> से, <1>CC BY 4.0</1> के तहत लाइसेंस प्राप्त।"
+    "geonamesAttribution": "शहर सूची <0>GeoNames</0> से, <1>CC BY 4.0</1> के तहत लाइसेंस प्राप्त।",
+    "creditsTitle": "आभार",
+    "designCredit": "ऐप आइकन और मानचित्र विज़ुअल डिज़ाइन: {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "एडवांस प्रीव्यू",

@@ -98,9 +98,11 @@
     "logsTitle": "السجلّات",
     "logsDesc": "يحتفظ InkCity بملف سجلّ للمساعدة في تشخيص المشكلات. أرفقه عند الإبلاغ عن مشكلة.",
     "openLogs": "فتح السجلّات",
-    "dataTitle": "البيانات والشكر والتقدير",
+    "dataTitle": "مصادر البيانات",
     "osmAttribution": "بيانات خريطة الطرق © مساهمو <0>OpenStreetMap</0>، مرخّصة بموجب <1>ODbL</1>.",
-    "geonamesAttribution": "قائمة المدن من <0>GeoNames</0>، مرخّصة بموجب <1>CC BY 4.0</1>."
+    "geonamesAttribution": "قائمة المدن من <0>GeoNames</0>، مرخّصة بموجب <1>CC BY 4.0</1>.",
+    "creditsTitle": "الشكر والتقدير",
+    "designCredit": "أيقونة التطبيق والتصميم البصري للخريطة: {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "معاينة مسبقة",

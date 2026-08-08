@@ -98,9 +98,11 @@
     "logsTitle": "ログ",
     "logsDesc": "InkCityは不具合の診断に役立つログファイルを保持しています。不具合報告の際に添付してください。",
     "openLogs": "ログを開く",
-    "dataTitle": "データと謝辞",
+    "dataTitle": "データソース",
     "osmAttribution": "道路地図データ © <0>OpenStreetMap</0> の貢献者、<1>ODbL</1> の下でライセンスされています。",
-    "geonamesAttribution": "都市リストは <0>GeoNames</0> より、<1>CC BY 4.0</1> の下でライセンスされています。"
+    "geonamesAttribution": "都市リストは <0>GeoNames</0> より、<1>CC BY 4.0</1> の下でライセンスされています。",
+    "creditsTitle": "謝辞",
+    "designCredit": "アプリアイコンとマップのビジュアルデザイン：{{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "先行プレビュー",

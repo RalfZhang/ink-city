@@ -98,9 +98,11 @@
     "logsTitle": "로그",
     "logsDesc": "InkCity는 문제 진단을 돕기 위해 로그 파일을 보관합니다. 문제를 신고할 때 첨부해 주세요.",
     "openLogs": "로그 열기",
-    "dataTitle": "데이터 및 감사의 말",
+    "dataTitle": "데이터 출처",
     "osmAttribution": "도로 지도 데이터 © <0>OpenStreetMap</0> 기여자, <1>ODbL</1> 라이선스로 제공됩니다.",
-    "geonamesAttribution": "도시 목록 제공: <0>GeoNames</0>, <1>CC BY 4.0</1> 라이선스."
+    "geonamesAttribution": "도시 목록 제공: <0>GeoNames</0>, <1>CC BY 4.0</1> 라이선스.",
+    "creditsTitle": "감사의 말",
+    "designCredit": "앱 아이콘 및 지도 비주얼 디자인: {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "사전 미리보기",

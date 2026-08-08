@@ -98,9 +98,11 @@
     "logsTitle": "Log",
     "logsDesc": "InkCity menyimpan file log untuk membantu mendiagnosis masalah. Lampirkan file ini saat melaporkan masalah.",
     "openLogs": "Buka log",
-    "dataTitle": "Data & Ucapan Terima Kasih",
+    "dataTitle": "Sumber Data",
     "osmAttribution": "Data peta jalan © kontributor <0>OpenStreetMap</0>, dilisensikan di bawah <1>ODbL</1>.",
-    "geonamesAttribution": "Daftar kota dari <0>GeoNames</0>, dilisensikan di bawah <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Daftar kota dari <0>GeoNames</0>, dilisensikan di bawah <1>CC BY 4.0</1>.",
+    "creditsTitle": "Ucapan Terima Kasih",
+    "designCredit": "Ikon aplikasi dan desain visual peta oleh {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Pratinjau Lanjutan",

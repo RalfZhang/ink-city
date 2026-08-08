@@ -98,9 +98,11 @@
     "logsTitle": "Protokolle",
     "logsDesc": "InkCity führt eine Protokolldatei, um Probleme zu diagnostizieren. Fügen Sie sie einem Fehlerbericht bei.",
     "openLogs": "Protokolle öffnen",
-    "dataTitle": "Daten & Danksagungen",
+    "dataTitle": "Datenquellen",
     "osmAttribution": "Straßenkartendaten © <0>OpenStreetMap</0>-Mitwirkende, lizenziert unter <1>ODbL</1>.",
-    "geonamesAttribution": "Städteliste von <0>GeoNames</0>, lizenziert unter <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Städteliste von <0>GeoNames</0>, lizenziert unter <1>CC BY 4.0</1>.",
+    "creditsTitle": "Danksagungen",
+    "designCredit": "App-Symbol und visuelle Kartengestaltung von {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Vorausschau",

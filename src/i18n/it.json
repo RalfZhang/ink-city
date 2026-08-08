@@ -98,9 +98,11 @@
     "logsTitle": "Log",
     "logsDesc": "InkCity conserva un file di log per aiutare a diagnosticare i problemi. Allegalo quando segnali un problema.",
     "openLogs": "Apri log",
-    "dataTitle": "Dati e riconoscimenti",
+    "dataTitle": "Fonti dei dati",
     "osmAttribution": "Dati della mappa stradale © contributori di <0>OpenStreetMap</0>, concessi in licenza <1>ODbL</1>.",
-    "geonamesAttribution": "Elenco città da <0>GeoNames</0>, concesso in licenza <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Elenco città da <0>GeoNames</0>, concesso in licenza <1>CC BY 4.0</1>.",
+    "creditsTitle": "Riconoscimenti",
+    "designCredit": "Icona dell'app e design visivo della mappa di {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Anteprima avanzata",

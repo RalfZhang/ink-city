@@ -98,9 +98,11 @@
     "logsTitle": "Журналы",
     "logsDesc": "InkCity ведёт файл журнала для диагностики проблем. Прикрепите его при сообщении о проблеме.",
     "openLogs": "Открыть журналы",
-    "dataTitle": "Данные и благодарности",
+    "dataTitle": "Источники данных",
     "osmAttribution": "Данные дорожной карты © участники <0>OpenStreetMap</0>, лицензия <1>ODbL</1>.",
-    "geonamesAttribution": "Список городов от <0>GeoNames</0>, лицензия <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Список городов от <0>GeoNames</0>, лицензия <1>CC BY 4.0</1>.",
+    "creditsTitle": "Благодарности",
+    "designCredit": "Значок приложения и визуальный стиль карты — {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Предпросмотр наперёд",

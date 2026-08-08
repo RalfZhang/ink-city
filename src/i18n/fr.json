@@ -98,9 +98,11 @@
     "logsTitle": "Journaux",
     "logsDesc": "InkCity conserve un fichier journal pour aider à diagnostiquer les problèmes. Joignez-le lors d'un signalement de problème.",
     "openLogs": "Ouvrir les journaux",
-    "dataTitle": "Données et remerciements",
+    "dataTitle": "Sources de données",
     "osmAttribution": "Données cartographiques routières © les contributeurs d'<0>OpenStreetMap</0>, sous licence <1>ODbL</1>.",
-    "geonamesAttribution": "Liste des villes fournie par <0>GeoNames</0>, sous licence <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Liste des villes fournie par <0>GeoNames</0>, sous licence <1>CC BY 4.0</1>.",
+    "creditsTitle": "Remerciements",
+    "designCredit": "Icône de l'application et conception visuelle de la carte par {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Aperçu anticipé",

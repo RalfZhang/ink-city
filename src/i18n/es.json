@@ -98,9 +98,11 @@
     "logsTitle": "Registros",
     "logsDesc": "InkCity guarda un archivo de registro para ayudar a diagnosticar problemas. Adjúntalo al reportar un error.",
     "openLogs": "Abrir registros",
-    "dataTitle": "Datos y agradecimientos",
+    "dataTitle": "Fuentes de datos",
     "osmAttribution": "Datos del mapa de carreteras © colaboradores de <0>OpenStreetMap</0>, con licencia <1>ODbL</1>.",
-    "geonamesAttribution": "Lista de ciudades de <0>GeoNames</0>, con licencia <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Lista de ciudades de <0>GeoNames</0>, con licencia <1>CC BY 4.0</1>.",
+    "creditsTitle": "Agradecimientos",
+    "designCredit": "Icono de la aplicación y diseño visual del mapa por {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Vista previa anticipada",

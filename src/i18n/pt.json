@@ -98,9 +98,11 @@
     "logsTitle": "Registros",
     "logsDesc": "O InkCity mantém um arquivo de registro para ajudar a diagnosticar problemas. Anexe-o ao relatar um problema.",
     "openLogs": "Abrir registros",
-    "dataTitle": "Dados e agradecimentos",
+    "dataTitle": "Fontes de dados",
     "osmAttribution": "Dados do mapa de ruas © colaboradores do <0>OpenStreetMap</0>, licenciados sob <1>ODbL</1>.",
-    "geonamesAttribution": "Lista de cidades do <0>GeoNames</0>, licenciada sob <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Lista de cidades do <0>GeoNames</0>, licenciada sob <1>CC BY 4.0</1>.",
+    "creditsTitle": "Agradecimentos",
+    "designCredit": "Ícone do aplicativo e design visual do mapa por {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Pré-visualização antecipada",

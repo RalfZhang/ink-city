@@ -98,9 +98,11 @@
     "logsTitle": "Logboeken",
     "logsDesc": "InkCity houdt een logbestand bij om problemen te helpen diagnosticeren. Voeg dit toe bij het melden van een probleem.",
     "openLogs": "Logboeken openen",
-    "dataTitle": "Gegevens & Dankbetuigingen",
+    "dataTitle": "Gegevensbronnen",
     "osmAttribution": "Wegenkaartgegevens © <0>OpenStreetMap</0>-medewerkers, gelicentieerd onder <1>ODbL</1>.",
-    "geonamesAttribution": "Stedenlijst van <0>GeoNames</0>, gelicentieerd onder <1>CC BY 4.0</1>."
+    "geonamesAttribution": "Stedenlijst van <0>GeoNames</0>, gelicentieerd onder <1>CC BY 4.0</1>.",
+    "creditsTitle": "Dankbetuigingen",
+    "designCredit": "App-pictogram en visueel ontwerp van de kaart door {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Vooruitblik",

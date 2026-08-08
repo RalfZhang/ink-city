@@ -24,6 +24,7 @@ import {
   ODBL_URL,
   GEONAMES_URL,
   CC_BY_URL,
+  VISUAL_DESIGNER,
 } from "../constants";
 import type { Status, UpdateCheck } from "../types";
 
@@ -305,6 +306,15 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
                   </p>
                 </>
               }
+            />
+            <Separator />
+            {/* Deliberately its own row rather than a third line under the data
+                sources: those are licence obligations (ODbL / CC BY), this is a
+                person we're thanking. Names come from constants, not from the
+                locale files — see VISUAL_DESIGNER. */}
+            <SettingRow
+              label={t("about.creditsTitle")}
+              description={<p>{t("about.designCredit", { name: VISUAL_DESIGNER })}</p>}
             />
           </CardContent>
         </Card>

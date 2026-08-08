@@ -62,3 +62,15 @@ export const OSM_COPYRIGHT_URL = "https://www.openstreetmap.org/copyright";
 export const ODBL_URL = "https://opendatacommons.org/licenses/odbl/";
 export const GEONAMES_URL = "https://www.geonames.org/";
 export const CC_BY_URL = "https://creativecommons.org/licenses/by/4.0/";
+
+// Credits (voluntary thanks, kept separate from the attribution above, which is
+// a licence obligation). Names are interpolated into the localized string rather
+// than written into it: a personal name isn't translated, so holding it in one
+// place keeps it identical across all 20 locales and makes a correction — or a
+// second contributor — a one-line edit instead of 20.
+//
+// One person, both visual surfaces: the app icon and the look of the rendered
+// map (palettes, line weights, the ink-on-paper feel). Credited on one line
+// rather than two, so the person reads as a contributor rather than as two
+// unrelated line items.
+export const VISUAL_DESIGNER = "Jie Xu";

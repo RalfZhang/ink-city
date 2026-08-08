@@ -98,9 +98,11 @@
     "logsTitle": "Logs",
     "logsDesc": "InkCity keeps a log file to help diagnose problems. Attach it when reporting a bug.",
     "openLogs": "Open logs",
-    "dataTitle": "Data & Acknowledgements",
+    "dataTitle": "Data sources",
     "osmAttribution": "Road map data © <0>OpenStreetMap</0> contributors, licensed under <1>ODbL</1>.",
-    "geonamesAttribution": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>."
+    "geonamesAttribution": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>.",
+    "creditsTitle": "Credits",
+    "designCredit": "App icon and map visual design by {{name}}"
   },
   "devMode": {
     "advancePreviewTitle": "Advance Preview",
