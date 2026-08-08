@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/RalfZhang/ink-city/compare/v0.10.2...v0.10.3) (2026-08-08)
+
+
+### Bug Fixes
+
+* correct macOS icon catalog layer order ([b7b02f5](https://github.com/RalfZhang/ink-city/commit/b7b02f53a8174d5afeba8be3db510d272695607d))
+
 ## [0.10.2](https://github.com/RalfZhang/ink-city/compare/v0.10.1...v0.10.2) (2026-08-08)
 
 
