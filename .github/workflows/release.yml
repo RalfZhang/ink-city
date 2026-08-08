@@ -118,15 +118,25 @@ jobs:
         run: npx tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
 
       # macOS 26 draws the app icon from a compiled asset catalog rather than the
-      # .icns (see the verification step after the build). The bundler gates that
-      # on `actool --version` reporting `short-bundle-version` >= 26, and actool
-      # ships only inside full Xcode — so the whole feature hangs off which Xcode
-      # the runner happens to default to. Don't inherit that: GitHub now cuts one
-      # image per major Xcode, and an Xcode 27 image is already in preview, so the
-      # default moves without warning. Pick the newest installed Xcode that
-      # satisfies the bundler's own check, and fail here — before anything is
-      # compiled, signed, or uploaded — if none does.
-      - name: Select an Xcode whose actool can compile the icon catalog
+      # .icns (see the verification step after the build). Two separate things can
+      # go wrong there, and by default both only surface after a full Rust build:
+      #
+      #   1. actool ships only inside full Xcode, and tauri-bundler silently skips
+      #      the catalog when `short-bundle-version` < 26. The runner's default
+      #      Xcode moves with the image — GitHub now cuts one image per major
+      #      Xcode, and an Xcode 27 image is already in preview — so choose
+      #      explicitly rather than inheriting whatever the image ships.
+      #   2. actool can reject the catalog itself. tauri-bundler surfaces that as a
+      #      bare "failed to run actool"; actool's own diagnostics go through
+      #      log::debug!, so at normal log level they are lost entirely. That is
+      #      exactly how v0.10.0 failed, ~7 minutes into the build, with no clue
+      #      as to which part of icon.json actool disliked.
+      #
+      # So: select an Xcode, then dry-run the *same* actool invocation the bundler
+      # will make (it copies the .icon to `Icon.icon` and passes `--app-icon Icon`,
+      # so the stem matters) and let actool print for itself. Seconds, not minutes,
+      # and the error is actool's own.
+      - name: Select Xcode and dry-run actool on the icon catalog
         if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
@@ -164,6 +174,32 @@ jobs:
 
           echo "Selecting $best_dir (actool $best_major)"
           sudo xcode-select -s "$best_dir"
+
+          work="$(mktemp -d)"
+          cp -R src-tauri/icons/InkCity.icon "$work/Icon.icon"
+          mkdir -p "$work/out"
+
+          echo "--- actool dry run ---"
+          status=0
+          actool "$work/Icon.icon" \
+            --compile "$work/out" \
+            --output-format human-readable-text \
+            --notices \
+            --warnings \
+            --output-partial-info-plist "$work/out/assetcatalog_generated_info.plist" \
+            --app-icon Icon \
+            --include-all-app-icons \
+            --accent-color AccentColor \
+            --enable-on-demand-resources NO \
+            --development-region en \
+            --target-device mac \
+            --minimum-deployment-target 26.0 \
+            --platform macosx || status=$?
+
+          if [ "$status" -ne 0 ] || [ ! -f "$work/out/Assets.car" ]; then
+            echo "::error::actool cannot compile src-tauri/icons/InkCity.icon (exit $status) — its diagnostics are above; the build would fail with a bare 'failed to run actool'"
+            exit 1
+          fi
 
       - name: Build and release
         uses: tauri-apps/tauri-action@v0

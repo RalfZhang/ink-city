@@ -65,20 +65,30 @@ single line and carries on, and the app falls back to the `.icns` — which macO
 renders inside a grey rounded-rect plate. Nothing else fails, so without these
 steps a bad icon would sail through signing and publishing.
 
-- **"Select an Xcode whose actool can compile the icon catalog"** runs before the
-  build and `xcode-select`s the newest installed Xcode whose actool reports
-  `short-bundle-version` >= 26 — the same check tauri-bundler makes. It fails if
-  none qualifies. This is the step that will break first if a runner image ever
-  ships without an Xcode 26+.
+- **"Select Xcode and dry-run actool on the icon catalog"** runs before the build.
+  It `xcode-select`s the newest installed Xcode whose actool reports
+  `short-bundle-version` >= 26 (the same check tauri-bundler makes), then runs the
+  bundler's exact `actool` invocation against a temp copy of the `.icon`.
 - **"Verify the macOS 26 icon was compiled into the bundle"** runs after and
   asserts `Assets.car` exists and `CFBundleIconName` is set.
+
+Why the dry run exists: tauri-bundler reports an actool rejection as a bare
+`failed to bundle project: Failed to create app Assets.car: 'failed to run
+actool'`. actool's own diagnostics go through `log::debug!`, so at normal log
+level **they are lost entirely**. v0.10.0 failed exactly this way — seven minutes
+into the build, with nothing saying which part of `icon.json` was wrong. (If you
+ever need those diagnostics from the real build instead, add `--verbose` to the
+tauri-action `args`.) The cause was `supported-platforms.squares`: it takes the
+string `"shared"`, not a list of platform names.
 
 If either goes red:
 
 1. Read the per-Xcode `actool <major>` lines the selection step prints. If the
    best available is < 26, the runner image changed — that's the whole finding;
    fix it there rather than working around it downstream.
-2. **A red build leaving a draft release behind is expected**, not a second bug.
+2. If the dry run fails, actool's real error is printed directly above the
+   `::error::` line. Nothing has been built or uploaded yet at that point.
+3. **A red build leaving a draft release behind is expected**, not a second bug.
    The verification step runs after `tauri-action` has uploaded, so the draft
    holds a bad build — but `publish` needs the job, so it never goes public and
    the updater keeps resolving to the previous release. Re-running against the
