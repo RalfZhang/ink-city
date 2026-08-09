@@ -4,8 +4,8 @@
     "name": "Shanghai",
     "localName": "上海",
     "country": "CN",
-    "lat": 31.22222,
-    "lon": 121.45806,
+    "lat": 31.2323437,
+    "lon": 121.4691024,
     "population": 24874500
   },
   {
@@ -13,8 +13,8 @@
     "name": "Beijing",
     "localName": "北京",
     "country": "CN",
-    "lat": 39.9075,
-    "lon": 116.39723,
+    "lat": 39.9057136,
+    "lon": 116.3912972,
     "population": 18960744
   },
   {
@@ -22,8 +22,8 @@
     "name": "Kinshasa",
     "localName": "Kinshasa",
     "country": "CD",
-    "lat": -4.32758,
-    "lon": 15.31357,
+    "lat": -4.32171,
+    "lon": 15.3122511,
     "population": 16000000
   },
   {
@@ -31,8 +31,8 @@
     "name": "Istanbul",
     "localName": "İstanbul",
     "country": "TR",
-    "lat": 41.01384,
-    "lon": 28.94966,
+    "lat": 41.006381,
+    "lon": 28.9758715,
     "population": 15701602
   },
   {
@@ -40,8 +40,8 @@
     "name": "Lagos",
     "localName": "Lagos",
     "country": "NG",
-    "lat": 6.45407,
-    "lon": 3.39467,
+    "lat": 6.4550575,
+    "lon": 3.3941795,
     "population": 15388000
   },
   {
@@ -49,8 +49,8 @@
     "name": "Ho Chi Minh City",
     "localName": "Thành phố Hồ Chí Minh",
     "country": "VN",
-    "lat": 10.82302,
-    "lon": 106.62965,
+    "lat": 10.7737261,
+    "lon": 106.7166008,
     "population": 14002598
   },
   {
@@ -58,8 +58,8 @@
     "name": "Lahore",
     "localName": "لاھور",
     "country": "PK",
-    "lat": 31.558,
-    "lon": 74.35071,
+    "lat": 31.5656822,
+    "lon": 74.3141829,
     "population": 13004135
   },
   {
@@ -67,8 +67,8 @@
     "name": "Mumbai",
     "localName": "मुंबई",
     "country": "IN",
-    "lat": 19.07283,
-    "lon": 72.88261,
+    "lat": 19.054999,
+    "lon": 72.8692035,
     "population": 12691836
   },
   {
@@ -76,8 +76,8 @@
     "name": "Sao Paulo",
     "localName": "São Paulo",
     "country": "BR",
-    "lat": -23.5475,
-    "lon": -46.63611,
+    "lat": -23.5506507,
+    "lon": -46.6333824,
     "population": 12400232
   },
   {
@@ -85,8 +85,8 @@
     "name": "Mexico City",
     "localName": "Ciudad de México",
     "country": "MX",
-    "lat": 19.42847,
-    "lon": -99.12766,
+    "lat": 19.4326296,
+    "lon": -99.1331785,
     "population": 12294193
   },
   {
@@ -94,8 +94,8 @@
     "name": "Moscow",
     "localName": "Москва",
     "country": "RU",
-    "lat": 55.75204,
-    "lon": 37.61781,
+    "lat": 55.7505412,
+    "lon": 37.6174782,
     "population": 10381222
   },
   {
@@ -103,8 +103,8 @@
     "name": "Dhaka",
     "localName": "ঢাকা",
     "country": "BD",
-    "lat": 23.7104,
-    "lon": 90.40744,
+    "lat": 23.7643863,
+    "lon": 90.3890144,
     "population": 10356500
   },
   {
@@ -112,8 +112,8 @@
     "name": "Seoul",
     "localName": "서울특별시",
     "country": "KR",
-    "lat": 37.566,
-    "lon": 126.9784,
+    "lat": 37.5666791,
+    "lon": 126.9782914,
     "population": 10349312
   },
   {
@@ -121,8 +121,8 @@
     "name": "Tokyo",
     "localName": "東京",
     "country": "JP",
-    "lat": 35.6895,
-    "lon": 139.69171,
+    "lat": 35.6768601,
+    "lon": 139.7638947,
     "population": 9733276
   },
   {
@@ -130,8 +130,8 @@
     "name": "Cairo",
     "localName": "القاهرة",
     "country": "EG",
-    "lat": 30.06263,
-    "lon": 31.24967,
+    "lat": 30.0443879,
+    "lon": 31.2357257,
     "population": 9606916
   },
   {
@@ -139,8 +139,8 @@
     "name": "Johannesburg",
     "localName": "EGoli",
     "country": "ZA",
-    "lat": -26.20227,
-    "lon": 28.04363,
+    "lat": -26.205,
+    "lon": 28.049722,
     "population": 9418183
   },
   {
@@ -148,8 +148,8 @@
     "name": "London",
     "localName": "London",
     "country": "GB",
-    "lat": 51.50853,
-    "lon": -0.12574,
+    "lat": 51.5074456,
+    "lon": -0.1277653,
     "population": 8961989
   },
   {
@@ -157,8 +157,8 @@
     "name": "New York City",
     "localName": "New York",
     "country": "US",
-    "lat": 40.71427,
-    "lon": -74.00597,
+    "lat": 40.7127281,
+    "lon": -74.0060152,
     "population": 8804190
   },
   {
@@ -166,8 +166,8 @@
     "name": "Jakarta",
     "localName": "Jakarta",
     "country": "ID",
-    "lat": -6.21462,
-    "lon": 106.84513,
+    "lat": -6.1754049,
+    "lon": 106.827168,
     "population": 8540121
   },
   {
@@ -175,8 +175,8 @@
     "name": "Hanoi",
     "localName": "Hà Nội",
     "country": "VN",
-    "lat": 21.0245,
-    "lon": 105.84117,
+    "lat": 21.0283334,
+    "lon": 105.854041,
     "population": 8053663
   },
   {
@@ -184,8 +184,8 @@
     "name": "Taipei",
     "localName": "台北市",
     "country": "TW",
-    "lat": 25.05306,
-    "lon": 121.52639,
+    "lat": 25.0375198,
+    "lon": 121.5636796,
     "population": 7871900
   },
   {
@@ -193,8 +193,8 @@
     "name": "Lima",
     "localName": "Lima",
     "country": "PE",
-    "lat": -12.04318,
-    "lon": -77.02824,
+    "lat": -12.0459808,
+    "lon": -77.0305912,
     "population": 7737002
   },
   {
@@ -202,8 +202,8 @@
     "name": "Bogota",
     "localName": "Bogotá",
     "country": "CO",
-    "lat": 4.60971,
-    "lon": -74.08175,
+    "lat": 4.6533817,
+    "lon": -74.0836331,
     "population": 7674366
   },
   {
@@ -211,8 +211,8 @@
     "name": "Hong Kong",
     "localName": "香港",
     "country": "HK",
-    "lat": 22.27832,
-    "lon": 114.17469,
+    "lat": 22.2818333,
+    "lon": 114.1582831,
     "population": 7396076
   },
   {
@@ -220,8 +220,8 @@
     "name": "Baghdad",
     "localName": "بغداد",
     "country": "IQ",
-    "lat": 33.34058,
-    "lon": 44.40088,
+    "lat": 33.3061701,
+    "lon": 44.3872213,
     "population": 7216000
   },
   {
@@ -229,8 +229,8 @@
     "name": "Tehran",
     "localName": "تهران",
     "country": "IR",
-    "lat": 35.69439,
-    "lon": 51.42151,
+    "lat": 35.6892523,
+    "lon": 51.3896004,
     "population": 7153309
   },
   {
@@ -238,8 +238,8 @@
     "name": "Abidjan",
     "localName": "Abidjan",
     "country": "CI",
-    "lat": 5.35444,
-    "lon": -4.00167,
+    "lat": 5.320357,
+    "lon": -4.016107,
     "population": 6321017
   },
   {
@@ -247,8 +247,8 @@
     "name": "Singapore",
     "localName": "Singapore",
     "country": "SG",
-    "lat": 1.28967,
-    "lon": 103.85007,
+    "lat": 1.2899175,
+    "lon": 103.8519072,
     "population": 5638700
   },
   {
@@ -256,8 +256,8 @@
     "name": "Sydney",
     "localName": "Sydney",
     "country": "AU",
-    "lat": -33.86785,
-    "lon": 151.20732,
+    "lat": -33.8698439,
+    "lon": 151.2082848,
     "population": 5638830
   },
   {
@@ -265,8 +265,8 @@
     "name": "Dar es Salaam",
     "localName": "Dar es Salaam",
     "country": "TZ",
-    "lat": -6.82349,
-    "lon": 39.26951,
+    "lat": -6.8160837,
+    "lon": 39.2803583,
     "population": 5383728
   },
   {
@@ -274,8 +274,8 @@
     "name": "Bangkok",
     "localName": "กรุงเทพฯ",
     "country": "TH",
-    "lat": 13.75398,
-    "lon": 100.50144,
+    "lat": 13.7524938,
+    "lon": 100.4935089,
     "population": 5104476
   },
   {
@@ -283,8 +283,8 @@
     "name": "Santiago",
     "localName": "Santiago de Chile",
     "country": "CL",
-    "lat": -33.45694,
-    "lon": -70.64827,
+    "lat": -33.4376995,
+    "lon": -70.6510671,
     "population": 4837295
   },
   {
@@ -292,8 +292,8 @@
     "name": "Jeddah",
     "localName": "جدة",
     "country": "SA",
-    "lat": 21.49012,
-    "lon": 39.18624,
+    "lat": 21.5504432,
+    "lon": 39.1742363,
     "population": 4697000
   },
   {
@@ -301,8 +301,8 @@
     "name": "Yangon",
     "localName": "ရန်ကုန်မြို့",
     "country": "MM",
-    "lat": 16.80528,
-    "lon": 96.15611,
+    "lat": 16.7967129,
+    "lon": 96.1609916,
     "population": 4477638
   },
   {
@@ -310,8 +310,8 @@
     "name": "Kabul",
     "localName": "کابل",
     "country": "AF",
-    "lat": 34.52813,
-    "lon": 69.17233,
+    "lat": 34.5269503,
+    "lon": 69.1850584,
     "population": 4434550
   },
   {
@@ -319,8 +319,8 @@
     "name": "Nairobi",
     "localName": "Nairobi",
     "country": "KE",
-    "lat": -1.28333,
-    "lon": 36.81667,
+    "lat": -1.2890006,
+    "lon": 36.8172812,
     "population": 4397073
   },
   {
@@ -328,8 +328,8 @@
     "name": "Bamako",
     "localName": "Bamako",
     "country": "ML",
-    "lat": 12.60915,
-    "lon": -7.97522,
+    "lat": 12.649319,
+    "lon": -8.000337,
     "population": 4227569
   },
   {
@@ -337,8 +337,8 @@
     "name": "Riyadh",
     "localName": "الرياض",
     "country": "SA",
-    "lat": 24.68773,
-    "lon": 46.72185,
+    "lat": 24.638916,
+    "lon": 46.7160104,
     "population": 4205961
   },
   {
@@ -346,8 +346,8 @@
     "name": "Addis Ababa",
     "localName": "አዲስ አበባ",
     "country": "ET",
-    "lat": 9.02497,
-    "lon": 38.74689,
+    "lat": 9.0358119,
+    "lon": 38.7524315,
     "population": 3860000
   },
   {
@@ -355,8 +355,8 @@
     "name": "Dubai",
     "localName": "دبي",
     "country": "AE",
-    "lat": 25.07725,
-    "lon": 55.30927,
+    "lat": 25.2647227,
+    "lon": 55.2924146,
     "population": 3790000
   },
   {
@@ -364,8 +364,8 @@
     "name": "Casablanca",
     "localName": "الدار البيضاء",
     "country": "MA",
-    "lat": 33.58831,
-    "lon": -7.61138,
+    "lat": 33.5945144,
+    "lon": -7.6200284,
     "population": 3665954
   },
   {
@@ -373,8 +373,8 @@
     "name": "Ankara",
     "localName": "Ankara",
     "country": "TR",
-    "lat": 39.91987,
-    "lon": 32.85427,
+    "lat": 39.9207759,
+    "lon": 32.8540497,
     "population": 3517182
   },
   {
@@ -382,8 +382,8 @@
     "name": "Berlin",
     "localName": "Berlin",
     "country": "DE",
-    "lat": 52.52437,
-    "lon": 13.41053,
+    "lat": 52.5173885,
+    "lon": 13.3951309,
     "population": 3426354
   },
   {
@@ -391,8 +391,8 @@
     "name": "Madrid",
     "localName": "Madrid",
     "country": "ES",
-    "lat": 40.4165,
-    "lon": -3.70256,
+    "lat": 40.416782,
+    "lon": -3.703507,
     "population": 3255944
   },
   {
@@ -400,8 +400,8 @@
     "name": "Pyongyang",
     "localName": "평양직할시",
     "country": "KP",
-    "lat": 39.03385,
-    "lon": 125.75432,
+    "lat": 39.0167979,
+    "lon": 125.7473609,
     "population": 3222000
   },
   {
@@ -409,8 +409,8 @@
     "name": "Quezon City",
     "localName": "Quezon City",
     "country": "PH",
-    "lat": 14.6488,
-    "lon": 121.0509,
+    "lat": 14.6510546,
+    "lon": 121.0486254,
     "population": 3084270
   },
   {
@@ -418,8 +418,8 @@
     "name": "Caracas",
     "localName": "Caracas",
     "country": "VE",
-    "lat": 10.48801,
-    "lon": -66.87919,
+    "lat": 10.5060934,
+    "lon": -66.9146008,
     "population": 3000000
   },
   {
@@ -427,8 +427,8 @@
     "name": "Kyiv",
     "localName": "Київ",
     "country": "UA",
-    "lat": 50.45466,
-    "lon": 30.5238,
+    "lat": 50.4500336,
+    "lon": 30.5241361,
     "population": 2952301
   },
   {
@@ -436,8 +436,8 @@
     "name": "Buenos Aires",
     "localName": "Buenos Aires",
     "country": "AR",
-    "lat": -34.61315,
-    "lon": -58.37723,
+    "lat": -34.6095579,
+    "lon": -58.3887904,
     "population": 2891082
   },
   {
@@ -445,8 +445,8 @@
     "name": "Toronto",
     "localName": "Toronto",
     "country": "CA",
-    "lat": 43.70643,
-    "lon": -79.39864,
+    "lat": 43.6534817,
+    "lon": -79.3839347,
     "population": 2794356
   },
   {
@@ -454,8 +454,8 @@
     "name": "Quito",
     "localName": "Quito",
     "country": "EC",
-    "lat": -0.22985,
-    "lon": -78.52495,
+    "lat": -0.2201641,
+    "lon": -78.5123274,
     "population": 2781641
   },
   {
@@ -463,8 +463,8 @@
     "name": "Luanda",
     "localName": "Luanda",
     "country": "AO",
-    "lat": -8.83682,
-    "lon": 13.23432,
+    "lat": -8.8272699,
+    "lon": 13.2439512,
     "population": 2776168
   },
   {
@@ -472,8 +472,8 @@
     "name": "Abuja",
     "localName": "Abuja",
     "country": "NG",
-    "lat": 9.05785,
-    "lon": 7.49508,
+    "lat": 9.0643305,
+    "lon": 7.4892974,
     "population": 2690000
   },
   {
@@ -481,8 +481,8 @@
     "name": "Dakar",
     "localName": "Dakar",
     "country": "SN",
-    "lat": 14.6937,
-    "lon": -17.44406,
+    "lat": 14.693425,
+    "lon": -17.447938,
     "population": 2646503
   },
   {
@@ -490,8 +490,8 @@
     "name": "Mogadishu",
     "localName": "Muqdisho",
     "country": "SO",
-    "lat": 2.03711,
-    "lon": 45.34375,
+    "lat": 2.0349312,
+    "lon": 45.3419183,
     "population": 2587183
   },
   {
@@ -499,8 +499,8 @@
     "name": "Kumasi",
     "localName": "Kumasi",
     "country": "GH",
-    "lat": 6.68848,
-    "lon": -1.62443,
+    "lat": 6.6985605,
+    "lon": -1.6233086,
     "population": 2544530
   },
   {
@@ -508,8 +508,8 @@
     "name": "Ouagadougou",
     "localName": "Ouagadougou",
     "country": "BF",
-    "lat": 12.36566,
-    "lon": -1.53388,
+    "lat": 12.3681873,
+    "lon": -1.5270944,
     "population": 2415266
   },
   {
@@ -517,8 +517,8 @@
     "name": "Algiers",
     "localName": "الجزائر",
     "country": "DZ",
-    "lat": 36.73225,
-    "lon": 3.08746,
+    "lat": 36.7729333,
+    "lon": 3.0588445,
     "population": 2364230
   },
   {
@@ -526,8 +526,8 @@
     "name": "Baku",
     "localName": "Bakı",
     "country": "AZ",
-    "lat": 40.37767,
-    "lon": 49.89201,
+    "lat": 40.3755885,
+    "lon": 49.8328009,
     "population": 2351300
   },
   {
@@ -535,8 +535,8 @@
     "name": "Rome",
     "localName": "Roma",
     "country": "IT",
-    "lat": 41.89193,
-    "lon": 12.51133,
+    "lat": 41.8933203,
+    "lon": 12.4829321,
     "population": 2318895
   },
   {
@@ -544,8 +544,8 @@
     "name": "Lusaka",
     "localName": "Lusaka",
     "country": "ZM",
-    "lat": -15.40669,
-    "lon": 28.28713,
+    "lat": -15.4163395,
+    "lon": 28.2818414,
     "population": 2212301
   },
   {
@@ -553,8 +553,8 @@
     "name": "Brasilia",
     "localName": "Brasília",
     "country": "BR",
-    "lat": -15.77972,
-    "lon": -47.92972,
+    "lat": -15.7939869,
+    "lon": -47.8828,
     "population": 2207718
   },
   {
@@ -562,8 +562,8 @@
     "name": "Santo Domingo",
     "localName": "Santo Domingo",
     "country": "DO",
-    "lat": 18.47186,
-    "lon": -69.89232,
+    "lat": 18.4713858,
+    "lon": -69.8918436,
     "population": 2201941
   },
   {
@@ -571,8 +571,8 @@
     "name": "Lome",
     "localName": "Lomé",
     "country": "TG",
-    "lat": 6.12874,
-    "lon": 1.22154,
+    "lat": 6.130419,
+    "lon": 1.215829,
     "population": 2188376
   },
   {
@@ -580,8 +580,8 @@
     "name": "Havana",
     "localName": "La Habana",
     "country": "CU",
-    "lat": 23.13302,
-    "lon": -82.38304,
+    "lat": 23.135305,
+    "lon": -82.3589631,
     "population": 2163824
   },
   {
@@ -589,8 +589,8 @@
     "name": "Paris",
     "localName": "Paris",
     "country": "FR",
-    "lat": 48.85341,
-    "lon": 2.3488,
+    "lat": 48.8534951,
+    "lon": 2.3483915,
     "population": 2138551
   },
   {
@@ -598,8 +598,8 @@
     "name": "Pretoria",
     "localName": "IPitoli",
     "country": "ZA",
-    "lat": -25.74486,
-    "lon": 28.18783,
+    "lat": -25.7459277,
+    "lon": 28.1879101,
     "population": 2112693
   },
   {
@@ -607,8 +607,8 @@
     "name": "Aleppo",
     "localName": "حلب",
     "country": "SY",
-    "lat": 36.20124,
-    "lon": 37.16117,
+    "lat": 36.19924,
+    "lon": 37.1637253,
     "population": 2098210
   },
   {
@@ -616,8 +616,8 @@
     "name": "La Paz",
     "localName": "La Paz",
     "country": "BO",
-    "lat": -16.5,
-    "lon": -68.15,
+    "lat": -16.4955455,
+    "lon": -68.1336229,
     "population": 2004652
   },
   {
@@ -625,8 +625,8 @@
     "name": "Brazzaville",
     "localName": "Brazzaville",
     "country": "CG",
-    "lat": -4.26613,
-    "lon": 15.28318,
+    "lat": -4.2694407,
+    "lon": 15.2712256,
     "population": 1982000
   },
   {
@@ -634,8 +634,8 @@
     "name": "Tashkent",
     "localName": "Toshkent",
     "country": "UZ",
-    "lat": 41.26465,
-    "lon": 69.21627,
+    "lat": 41.3123363,
+    "lon": 69.2787079,
     "population": 1978028
   },
   {
@@ -643,8 +643,8 @@
     "name": "Almaty",
     "localName": "Almaty",
     "country": "KZ",
-    "lat": 43.25249,
-    "lon": 76.9115,
+    "lat": 43.2363924,
+    "lon": 76.9457275,
     "population": 1977011
   },
   {
@@ -652,8 +652,8 @@
     "name": "Khartoum",
     "localName": "خرطوم",
     "country": "SD",
-    "lat": 15.55177,
-    "lon": 32.53241,
+    "lat": 15.5635972,
+    "lon": 32.5349123,
     "population": 1974647
   },
   {
@@ -661,8 +661,8 @@
     "name": "Accra",
     "localName": "Accra",
     "country": "GH",
-    "lat": 5.55602,
-    "lon": -0.1969,
+    "lat": 5.5571096,
+    "lon": -0.2012376,
     "population": 1963264
   },
   {
@@ -670,8 +670,8 @@
     "name": "Sanaa",
     "localName": "صنعاء",
     "country": "YE",
-    "lat": 15.35452,
-    "lon": 44.20646,
+    "lat": 15.3538569,
+    "lon": 44.2058841,
     "population": 1937451
   },
   {
@@ -679,8 +679,8 @@
     "name": "Conakry",
     "localName": "Conakry",
     "country": "GN",
-    "lat": 9.53795,
-    "lon": -13.67729,
+    "lat": 9.5170602,
+    "lon": -13.6998434,
     "population": 1928389
   },
   {
@@ -688,8 +688,8 @@
     "name": "Beirut",
     "localName": "بيروت",
     "country": "LB",
-    "lat": 33.89332,
-    "lon": 35.50157,
+    "lat": 33.8959203,
+    "lon": 35.47843,
     "population": 1916100
   },
   {
@@ -697,8 +697,8 @@
     "name": "Bucharest",
     "localName": "București",
     "country": "RO",
-    "lat": 44.43225,
-    "lon": 26.10626,
+    "lat": 44.4361414,
+    "lon": 26.102684,
     "population": 1877155
   },
   {
@@ -706,8 +706,8 @@
     "name": "Abu Dhabi",
     "localName": "أبوظبي",
     "country": "AE",
-    "lat": 24.45118,
-    "lon": 54.39696,
+    "lat": 24.4538352,
+    "lon": 54.3774014,
     "population": 1807000
   },
   {
@@ -715,8 +715,8 @@
     "name": "Minsk",
     "localName": "Мінск",
     "country": "BY",
-    "lat": 53.90019,
-    "lon": 27.56653,
+    "lat": 53.9024716,
+    "lon": 27.5618225,
     "population": 1742124
   },
   {
@@ -724,8 +724,8 @@
     "name": "Budapest",
     "localName": "Budapest",
     "country": "HU",
-    "lat": 47.49835,
-    "lon": 19.04045,
+    "lat": 47.4978789,
+    "lon": 19.0402383,
     "population": 1741041
   },
   {
@@ -733,8 +733,8 @@
     "name": "Warsaw",
     "localName": "Warszawa",
     "country": "PL",
-    "lat": 52.22977,
-    "lon": 21.01178,
+    "lat": 52.2319581,
+    "lon": 21.0067249,
     "population": 1702139
   },
   {
@@ -742,8 +742,8 @@
     "name": "Vienna",
     "localName": "Wien",
     "country": "AT",
-    "lat": 48.20849,
-    "lon": 16.37208,
+    "lat": 48.2083537,
+    "lon": 16.3725042,
     "population": 1691468
   },
   {
@@ -751,8 +751,8 @@
     "name": "Kampala",
     "localName": "Kampala",
     "country": "UG",
-    "lat": 0.31628,
-    "lon": 32.58219,
+    "lat": 0.3177137,
+    "lon": 32.5813539,
     "population": 1680600
   },
   {
@@ -760,8 +760,8 @@
     "name": "Rabat",
     "localName": "رباط",
     "country": "MA",
-    "lat": 34.01325,
-    "lon": -6.83255,
+    "lat": 34.0218454,
+    "lon": -6.8408929,
     "population": 1655753
   },
   {
@@ -769,8 +769,8 @@
     "name": "Manila",
     "localName": "Maynila",
     "country": "PH",
-    "lat": 14.6042,
-    "lon": 120.9822,
+    "lat": 14.5904492,
+    "lon": 120.9803621,
     "population": 1600000
   },
   {
@@ -778,8 +778,8 @@
     "name": "Phnom Penh",
     "localName": "ភ្នំពេញ",
     "country": "KH",
-    "lat": 11.56245,
-    "lon": 104.91601,
+    "lat": 11.568271,
+    "lon": 104.9224426,
     "population": 1573544
   },
   {
@@ -787,8 +787,8 @@
     "name": "Damascus",
     "localName": "دمشق",
     "country": "SY",
-    "lat": 33.5102,
-    "lon": 36.29128,
+    "lat": 33.5130695,
+    "lon": 36.3095814,
     "population": 1569394
   },
   {
@@ -796,8 +796,8 @@
     "name": "Auckland",
     "localName": "Auckland",
     "country": "NZ",
-    "lat": -36.84853,
-    "lon": 174.76349,
+    "lat": -36.852095,
+    "lon": 174.7631803,
     "population": 1547200
   },
   {
@@ -805,8 +805,8 @@
     "name": "Harare",
     "localName": "Harare",
     "country": "ZW",
-    "lat": -17.82772,
-    "lon": 31.05337,
+    "lat": -17.831773,
+    "lon": 31.045686,
     "population": 1542813
   },
   {
@@ -814,8 +814,8 @@
     "name": "Monrovia",
     "localName": "Monrovia",
     "country": "LR",
-    "lat": 6.30054,
-    "lon": -10.7969,
+    "lat": 6.3203562,
+    "lon": -10.8060492,
     "population": 1542549
   },
   {
@@ -823,8 +823,8 @@
     "name": "Stockholm",
     "localName": "Stockholm",
     "country": "SE",
-    "lat": 59.32938,
-    "lon": 18.06871,
+    "lat": 59.3251172,
+    "lon": 18.0710935,
     "population": 1515017
   },
   {
@@ -832,8 +832,8 @@
     "name": "Asuncion",
     "localName": "Asunción",
     "country": "PY",
-    "lat": -25.28646,
-    "lon": -57.647,
+    "lat": -25.2800459,
+    "lon": -57.6343814,
     "population": 1482200
   },
   {
@@ -841,8 +841,8 @@
     "name": "Kuala Lumpur",
     "localName": "Kuala Lumpur",
     "country": "MY",
-    "lat": 3.1412,
-    "lon": 101.68653,
+    "lat": 3.1516964,
+    "lon": 101.6942371,
     "population": 1453975
   },
   {
@@ -850,8 +850,8 @@
     "name": "Kathmandu",
     "localName": "काठमाडौं",
     "country": "NP",
-    "lat": 27.70169,
-    "lon": 85.3206,
+    "lat": 27.708317,
+    "lon": 85.3205817,
     "population": 1442271
   },
   {
@@ -859,8 +859,8 @@
     "name": "N'Djamena",
     "localName": "نجامينا",
     "country": "TD",
-    "lat": 12.10672,
-    "lon": 15.0444,
+    "lat": 12.1191543,
+    "lon": 15.0502758,
     "population": 1359526
   },
   {
@@ -868,8 +868,8 @@
     "name": "Antananarivo",
     "localName": "Tananarive",
     "country": "MG",
-    "lat": -18.91368,
-    "lon": 47.53613,
+    "lat": -18.9100122,
+    "lon": 47.5255809,
     "population": 1349501
   },
   {
@@ -877,8 +877,8 @@
     "name": "Douala",
     "localName": "Douala",
     "country": "CM",
-    "lat": 4.04827,
-    "lon": 9.70428,
+    "lat": 4.0429389,
+    "lon": 9.7062018,
     "population": 1338082
   },
   {
@@ -886,8 +886,8 @@
     "name": "Niamey",
     "localName": "Niamey",
     "country": "NE",
-    "lat": 13.51366,
-    "lon": 2.1098,
+    "lat": 13.524834,
+    "lon": 2.109823,
     "population": 1323691
   },
   {
@@ -895,8 +895,8 @@
     "name": "Tripoli",
     "localName": "طرابلس",
     "country": "LY",
-    "lat": 32.88743,
-    "lon": 13.18733,
+    "lat": 32.896672,
+    "lon": 13.1777923,
     "population": 1302947
   },
   {
@@ -904,8 +904,8 @@
     "name": "Yaounde",
     "localName": "Yaoundé",
     "country": "CM",
-    "lat": 3.86667,
-    "lon": 11.51667,
+    "lat": 3.8689867,
+    "lon": 11.5213344,
     "population": 1299369
   },
   {
@@ -913,8 +913,8 @@
     "name": "Amman",
     "localName": "عمّان",
     "country": "JO",
-    "lat": 31.95522,
-    "lon": 35.94503,
+    "lat": 31.9515694,
+    "lon": 35.9239625,
     "population": 1275857
   },
   {
@@ -922,8 +922,8 @@
     "name": "Belgrade",
     "localName": "Beograd",
     "country": "RS",
-    "lat": 44.80401,
-    "lon": 20.46513,
+    "lat": 44.8178131,
+    "lon": 20.4568974,
     "population": 1273651
   },
   {
@@ -931,8 +931,8 @@
     "name": "Montevideo",
     "localName": "Montevideo",
     "country": "UY",
-    "lat": -34.90328,
-    "lon": -56.18816,
+    "lat": -34.9058916,
+    "lon": -56.1913095,
     "population": 1270737
   },
   {
@@ -940,8 +940,8 @@
     "name": "Maputo",
     "localName": "Maputo",
     "country": "MZ",
-    "lat": -25.96553,
-    "lon": 32.58322,
+    "lat": -25.966213,
+    "lon": 32.56745,
     "population": 1254837
   },
   {
@@ -949,8 +949,8 @@
     "name": "Port-au-Prince",
     "localName": "Pòtoprens",
     "country": "HT",
-    "lat": 18.54349,
-    "lon": -72.33881,
+    "lat": 18.547327,
+    "lon": -72.3395928,
     "population": 1234742
   },
   {
@@ -958,8 +958,8 @@
     "name": "Nouakchott",
     "localName": "نواكشوط",
     "country": "MR",
-    "lat": 18.08581,
-    "lon": -15.9785,
+    "lat": 18.0792379,
+    "lon": -15.9780071,
     "population": 1184530
   },
   {
@@ -967,8 +967,8 @@
     "name": "Prague",
     "localName": "Praha",
     "country": "CZ",
-    "lat": 50.08804,
-    "lon": 14.42076,
+    "lat": 50.0874654,
+    "lon": 14.4212535,
     "population": 1165581
   },
   {
@@ -976,8 +976,8 @@
     "name": "Copenhagen",
     "localName": "København",
     "country": "DK",
-    "lat": 55.67594,
-    "lon": 12.56553,
+    "lat": 55.6867243,
+    "lon": 12.5700724,
     "population": 1153615
   },
   {
@@ -985,8 +985,8 @@
     "name": "Sofia",
     "localName": "София",
     "country": "BG",
-    "lat": 42.69751,
-    "lon": 23.32415,
+    "lat": 42.6977028,
+    "lon": 23.3217359,
     "population": 1152556
   },
   {
@@ -994,8 +994,8 @@
     "name": "Yerevan",
     "localName": "Երևան",
     "country": "AM",
-    "lat": 40.17765,
-    "lon": 44.5126,
+    "lat": 40.1777112,
+    "lon": 44.5126233,
     "population": 1144700
   },
   {
@@ -1003,8 +1003,8 @@
     "name": "Kigali",
     "localName": "Kigali",
     "country": "RW",
-    "lat": -1.94995,
-    "lon": 30.05885,
+    "lat": -1.9534357,
+    "lon": 30.1140089,
     "population": 1132686
   },
   {
@@ -1012,8 +1012,8 @@
     "name": "Lilongwe",
     "localName": "Lilongwe",
     "country": "MW",
-    "lat": -13.96692,
-    "lon": 33.78725,
+    "lat": -13.9875107,
+    "lon": 33.768144,
     "population": 1115815
   },
   {
@@ -1021,8 +1021,8 @@
     "name": "Oslo",
     "localName": "Oslo",
     "country": "NO",
-    "lat": 59.91273,
-    "lon": 10.74609,
+    "lat": 59.9133301,
+    "lon": 10.7389701,
     "population": 1082575
   },
   {
@@ -1030,8 +1030,8 @@
     "name": "Tbilisi",
     "localName": "თბილისი",
     "country": "GE",
-    "lat": 41.69143,
-    "lon": 44.83412,
+    "lat": 41.6934591,
+    "lon": 44.8014495,
     "population": 1049498
   },
   {
@@ -1039,8 +1039,8 @@
     "name": "Ashgabat",
     "localName": "Aşgabat",
     "country": "TM",
-    "lat": 37.95,
-    "lon": 58.38333,
+    "lat": 37.9404648,
+    "lon": 58.3823487,
     "population": 1030063
   },
   {
@@ -1048,8 +1048,8 @@
     "name": "Dublin",
     "localName": "Dublin",
     "country": "IE",
-    "lat": 53.33306,
-    "lon": -6.24889,
+    "lat": 53.3493795,
+    "lon": -6.2605593,
     "population": 1024027
   },
   {
@@ -1057,8 +1057,8 @@
     "name": "Brussels",
     "localName": "Brussel",
     "country": "BE",
-    "lat": 50.85045,
-    "lon": 4.34878,
+    "lat": 50.8467372,
+    "lon": 4.352493,
     "population": 1019022
   },
   {
@@ -1066,8 +1066,8 @@
     "name": "Ottawa",
     "localName": "Ottawa",
     "country": "CA",
-    "lat": 45.41117,
-    "lon": -75.69812,
+    "lat": 45.4208777,
+    "lon": -75.6901106,
     "population": 1017449
   },
   {
@@ -1075,8 +1075,8 @@
     "name": "Guatemala City",
     "localName": "Guate",
     "country": "GT",
-    "lat": 14.64072,
-    "lon": -90.51327,
+    "lat": 14.6416142,
+    "lon": -90.5132836,
     "population": 994938
   },
   {
@@ -1084,8 +1084,8 @@
     "name": "Managua",
     "localName": "Managua",
     "country": "NI",
-    "lat": 12.13282,
-    "lon": -86.2504,
+    "lat": 12.1547116,
+    "lon": -86.273725,
     "population": 973087
   },
   {
@@ -1093,8 +1093,8 @@
     "name": "Jerusalem",
     "localName": "ירושלים",
     "country": "IL",
-    "lat": 31.76904,
-    "lon": 35.21633,
+    "lat": 31.7788472,
+    "lon": 35.2257856,
     "population": 971800
   },
   {
@@ -1102,8 +1102,8 @@
     "name": "Kingston",
     "localName": "Kingston",
     "country": "JM",
-    "lat": 17.99702,
-    "lon": -76.79358,
+    "lat": 17.9712148,
+    "lon": -76.7928128,
     "population": 937700
   },
   {
@@ -1111,8 +1111,8 @@
     "name": "Nay Pyi Taw",
     "localName": "Naypyidaw",
     "country": "MM",
-    "lat": 19.745,
-    "lon": 96.12972,
+    "lat": 19.7753289,
+    "lon": 96.1032552,
     "population": 925000
   },
   {
@@ -1120,8 +1120,8 @@
     "name": "Bishkek",
     "localName": "Бишкек",
     "country": "KG",
-    "lat": 42.87,
-    "lon": 74.59,
+    "lat": 42.8761424,
+    "lon": 74.6036724,
     "population": 900000
   },
   {
@@ -1129,8 +1129,8 @@
     "name": "Rotterdam",
     "localName": "Rotterdam",
     "country": "NL",
-    "lat": 51.9225,
-    "lon": 4.47917,
+    "lat": 51.9244424,
+    "lon": 4.47775,
     "population": 868135
   },
   {
@@ -1138,8 +1138,8 @@
     "name": "Tegucigalpa",
     "localName": "Tegucigalpa",
     "country": "HN",
-    "lat": 14.0818,
-    "lon": -87.20681,
+    "lat": 14.1058135,
+    "lon": -87.2047053,
     "population": 850848
   },
   {
@@ -1147,8 +1147,8 @@
     "name": "Libreville",
     "localName": "Libreville",
     "country": "GA",
-    "lat": 0.39241,
-    "lon": 9.45356,
+    "lat": 0.4086518,
+    "lon": 9.4418849,
     "population": 846090
   },
   {
@@ -1156,8 +1156,8 @@
     "name": "Ulan Bator",
     "localName": "ᠤᠯᠠᠭᠠᠨᠪᠠᠭᠠᠲᠤᠷ",
     "country": "MN",
-    "lat": 47.90771,
-    "lon": 106.88324,
+    "lat": 47.9184676,
+    "lon": 106.9177016,
     "population": 844818
   },
   {
@@ -1165,8 +1165,8 @@
     "name": "Vientiane",
     "localName": "ວຽງຈັນ",
     "country": "LA",
-    "lat": 17.96667,
-    "lon": 102.6,
+    "lat": 17.9640988,
+    "lon": 102.6133707,
     "population": 840940
   },
   {
@@ -1174,8 +1174,8 @@
     "name": "Bangui",
     "localName": "Bangui",
     "country": "CF",
-    "lat": 4.36122,
-    "lon": 18.55496,
+    "lat": 4.3635118,
+    "lon": 18.5835913,
     "population": 812407
   },
   {
@@ -1183,8 +1183,8 @@
     "name": "Freetown",
     "localName": "Freetown",
     "country": "SL",
-    "lat": 8.48714,
-    "lon": -13.2356,
+    "lat": 8.479004,
+    "lon": -13.26795,
     "population": 802639
   },
   {
@@ -1192,8 +1192,8 @@
     "name": "Muscat",
     "localName": "مسقط",
     "country": "OM",
-    "lat": 23.58413,
-    "lon": 58.40778,
+    "lat": 23.6123628,
+    "lon": 58.5938134,
     "population": 797000
   },
   {
@@ -1201,8 +1201,8 @@
     "name": "Bujumbura",
     "localName": "Bujumbura",
     "country": "BI",
-    "lat": -3.38193,
-    "lon": 29.36142,
+    "lat": -3.3638125,
+    "lon": 29.3675028,
     "population": 769317
   },
   {
@@ -1210,8 +1210,8 @@
     "name": "Dodoma",
     "localName": "Dodoma",
     "country": "TZ",
-    "lat": -6.17221,
-    "lon": 35.73947,
+    "lat": -6.1791181,
+    "lon": 35.7468174,
     "population": 765179
   },
   {
@@ -1219,8 +1219,8 @@
     "name": "Riga",
     "localName": "Rīga",
     "country": "LV",
-    "lat": 56.946,
-    "lon": 24.10589,
+    "lat": 56.9493977,
+    "lon": 24.1051846,
     "population": 742572
   },
   {
@@ -1228,8 +1228,8 @@
     "name": "Amsterdam",
     "localName": "Amsterdam",
     "country": "NL",
-    "lat": 52.37403,
-    "lon": 4.88969,
+    "lat": 52.3730796,
+    "lon": 4.8924534,
     "population": 741636
   },
   {
@@ -1237,8 +1237,8 @@
     "name": "Sarajevo",
     "localName": "Sarajevo",
     "country": "BA",
-    "lat": 43.84864,
-    "lon": 18.35644,
+    "lat": 43.8570713,
+    "lon": 18.4126147,
     "population": 696731
   },
   {
@@ -1246,8 +1246,8 @@
     "name": "Tunis",
     "localName": "تونس",
     "country": "TN",
-    "lat": 36.81897,
-    "lon": 10.16579,
+    "lat": 36.8002068,
+    "lon": 10.1857757,
     "population": 693210
   },
   {
@@ -1255,8 +1255,8 @@
     "name": "Washington",
     "localName": "Washington",
     "country": "US",
-    "lat": 38.89511,
-    "lon": -77.03637,
+    "lat": 38.8950982,
+    "lon": -77.0363849,
     "population": 689545
   },
   {
@@ -1264,8 +1264,8 @@
     "name": "Dushanbe",
     "localName": "Душанбе",
     "country": "TJ",
-    "lat": 38.53575,
-    "lon": 68.77905,
+    "lat": 38.5767045,
+    "lon": 68.785433,
     "population": 679400
   },
   {
@@ -1273,8 +1273,8 @@
     "name": "Cotonou",
     "localName": "Cotonou",
     "country": "BJ",
-    "lat": 6.36536,
-    "lon": 2.41833,
+    "lat": 6.3676953,
+    "lon": 2.4252507,
     "population": 679012
   },
   {
@@ -1282,8 +1282,8 @@
     "name": "Athens",
     "localName": "Αθήνα",
     "country": "GR",
-    "lat": 37.98376,
-    "lon": 23.72784,
+    "lat": 37.9755648,
+    "lon": 23.7348324,
     "population": 664046
   },
   {
@@ -1291,8 +1291,8 @@
     "name": "Zagreb",
     "localName": "Zagreb",
     "country": "HR",
-    "lat": 45.81444,
-    "lon": 15.97798,
+    "lat": 45.8130967,
+    "lon": 15.9772795,
     "population": 663592
   },
   {
@@ -1300,8 +1300,8 @@
     "name": "Helsinki",
     "localName": "Helsinki",
     "country": "FI",
-    "lat": 60.16952,
-    "lon": 24.93545,
+    "lat": 60.1666204,
+    "lon": 24.9435408,
     "population": 658864
   },
   {
@@ -1309,8 +1309,8 @@
     "name": "Macau",
     "localName": "澳门",
     "country": "MO",
-    "lat": 22.20056,
-    "lon": 113.54611,
+    "lat": 22.1899448,
+    "lon": 113.5380454,
     "population": 649335
   },
   {
@@ -1318,8 +1318,8 @@
     "name": "Colombo",
     "localName": "කොළඹ",
     "country": "LK",
-    "lat": 6.93548,
-    "lon": 79.84868,
+    "lat": 6.9388614,
+    "lon": 79.8542005,
     "population": 648034
   },
   {
@@ -1327,8 +1327,8 @@
     "name": "Al Ahmadi",
     "localName": "الاحمدي",
     "country": "KW",
-    "lat": 29.07694,
-    "lon": 48.08389,
+    "lat": 29.0890687,
+    "lon": 48.0610236,
     "population": 637411
   },
   {
@@ -1336,8 +1336,8 @@
     "name": "Chisinau",
     "localName": "Chișinău",
     "country": "MD",
-    "lat": 47.00902,
-    "lon": 28.85938,
+    "lat": 47.0245117,
+    "lon": 28.8322923,
     "population": 635994
   },
   {
@@ -1345,8 +1345,8 @@
     "name": "Djibouti",
     "localName": "جيبوتي",
     "country": "DJ",
-    "lat": 11.58901,
-    "lon": 43.14503,
+    "lat": 11.5936903,
+    "lon": 43.1472724,
     "population": 626512
   },
   {
@@ -1354,8 +1354,8 @@
     "name": "Islamabad",
     "localName": "اسلام آباد",
     "country": "PK",
-    "lat": 33.72148,
-    "lon": 73.04329,
+    "lat": 33.6938118,
+    "lon": 73.0651511,
     "population": 601600
   },
   {
@@ -1363,8 +1363,8 @@
     "name": "Asmara",
     "localName": "Asmara",
     "country": "ER",
-    "lat": 15.33805,
-    "lon": 38.93184,
+    "lat": 15.3389667,
+    "lon": 38.9326763,
     "population": 563930
   },
   {
@@ -1372,8 +1372,8 @@
     "name": "Pristina",
     "localName": "Prishtinë",
     "country": "XK",
-    "lat": 42.67272,
-    "lon": 21.16688,
+    "lat": 42.6638771,
+    "lon": 21.1640849,
     "population": 550000
   },
   {
@@ -1381,8 +1381,8 @@
     "name": "Vilnius",
     "localName": "Vilnius",
     "country": "LT",
-    "lat": 54.68916,
-    "lon": 25.2798,
+    "lat": 54.6870458,
+    "lon": 25.2829111,
     "population": 542366
   },
   {
@@ -1390,8 +1390,8 @@
     "name": "San Salvador",
     "localName": "San Salvador",
     "country": "SV",
-    "lat": 13.68935,
-    "lon": -89.18718,
+    "lat": 13.697629,
+    "lon": -89.191156,
     "population": 525990
   },
   {
@@ -1399,8 +1399,8 @@
     "name": "Lisbon",
     "localName": "Lisboa",
     "country": "PT",
-    "lat": 38.72509,
-    "lon": -9.1498,
+    "lat": 38.7077507,
+    "lon": -9.1365919,
     "population": 517802
   },
   {
@@ -1408,8 +1408,8 @@
     "name": "Skopje",
     "localName": "Скопје",
     "country": "MK",
-    "lat": 41.99646,
-    "lon": 21.43141,
+    "lat": 41.9962164,
+    "lon": 21.4318935,
     "population": 474889
   },
   {
@@ -1417,8 +1417,8 @@
     "name": "Juba",
     "localName": "Juba",
     "country": "SS",
-    "lat": 4.85165,
-    "lon": 31.58247,
+    "lat": 4.8459246,
+    "lon": 31.5959173,
     "population": 450000
   },
   {
@@ -1426,8 +1426,8 @@
     "name": "Bissau",
     "localName": "Bissau",
     "country": "GW",
-    "lat": 11.86357,
-    "lon": -15.59767,
+    "lat": 11.861324,
+    "lon": -15.583055,
     "population": 439704
   },
   {
@@ -1444,8 +1444,8 @@
     "name": "Bratislava",
     "localName": "Bratislava",
     "country": "SK",
-    "lat": 48.14816,
-    "lon": 17.10674,
+    "lat": 48.1516988,
+    "lon": 17.1093063,
     "population": 423737
   },
   {
@@ -1453,8 +1453,8 @@
     "name": "Tirana",
     "localName": "Tirana",
     "country": "AL",
-    "lat": 41.32744,
-    "lon": 19.81866,
+    "lat": 41.3281482,
+    "lon": 19.8184435,
     "population": 418495
   },
   {
@@ -1462,8 +1462,8 @@
     "name": "San Juan",
     "localName": "San Juan",
     "country": "PR",
-    "lat": 18.46633,
-    "lon": -66.10572,
+    "lat": 18.465299,
+    "lon": -66.116666,
     "population": 418140
   },
   {
@@ -1471,8 +1471,8 @@
     "name": "Zuerich",
     "localName": "Zürich",
     "country": "CH",
-    "lat": 47.36667,
-    "lon": 8.55,
+    "lat": 47.3744489,
+    "lon": 8.5410422,
     "population": 415367
   },
   {
@@ -1480,8 +1480,8 @@
     "name": "Panama City",
     "localName": "Panamá",
     "country": "PA",
-    "lat": 8.9936,
-    "lon": -79.51973,
+    "lat": 8.9714493,
+    "lon": -79.5341802,
     "population": 408168
   },
   {
@@ -1489,8 +1489,8 @@
     "name": "Tallinn",
     "localName": "Tallinn",
     "country": "EE",
-    "lat": 59.43696,
-    "lon": 24.75353,
+    "lat": 59.437242,
+    "lon": 24.7572693,
     "population": 394024
   },
   {
@@ -1498,8 +1498,8 @@
     "name": "Windhoek",
     "localName": "Windhoek",
     "country": "NA",
-    "lat": -22.55941,
-    "lon": 17.08323,
+    "lat": -22.5776104,
+    "lon": 17.0772739,
     "population": 386219
   },
   {
@@ -1507,8 +1507,8 @@
     "name": "Wellington",
     "localName": "Wellington",
     "country": "NZ",
-    "lat": -41.28664,
-    "lon": 174.77557,
+    "lat": -41.2887953,
+    "lon": 174.7772114,
     "population": 381900
   },
   {
@@ -1516,8 +1516,8 @@
     "name": "Canberra",
     "localName": "Canberra",
     "country": "AU",
-    "lat": -35.28346,
-    "lon": 149.12807,
+    "lat": -35.2975906,
+    "lon": 149.1012676,
     "population": 367752
   },
   {
@@ -1525,8 +1525,8 @@
     "name": "Maseru",
     "localName": "Maseru",
     "country": "LS",
-    "lat": -29.31667,
-    "lon": 27.48333,
+    "lat": -29.310054,
+    "lon": 27.478222,
     "population": 359753
   },
   {
@@ -1534,8 +1534,8 @@
     "name": "Astana",
     "localName": "Астана",
     "country": "KZ",
-    "lat": 51.1801,
-    "lon": 71.44598,
+    "lat": 51.1282205,
+    "lon": 71.4306682,
     "population": 1544142
   },
   {
@@ -1543,8 +1543,8 @@
     "name": "Doha",
     "localName": "الدوحة",
     "country": "QA",
-    "lat": 25.28545,
-    "lon": 51.53096,
+    "lat": 25.2856329,
+    "lon": 51.5264162,
     "population": 344939
   },
   {
@@ -1552,8 +1552,8 @@
     "name": "Serekunda",
     "localName": "Serrekunda",
     "country": "GM",
-    "lat": 13.43833,
-    "lon": -16.67806,
+    "lat": 13.438762,
+    "lon": -16.674807,
     "population": 340000
   },
   {
@@ -1561,8 +1561,8 @@
     "name": "San Jose",
     "localName": "San José",
     "country": "CR",
-    "lat": 9.93388,
-    "lon": -84.08489,
+    "lat": 9.9327707,
+    "lon": -84.0796144,
     "population": 335007
   },
   {
@@ -1570,8 +1570,8 @@
     "name": "New Delhi",
     "localName": "नई दिल्ली",
     "country": "IN",
-    "lat": 28.62137,
-    "lon": 77.2148,
+    "lat": 28.6138954,
+    "lon": 77.2090057,
     "population": 317797
   },
   {
@@ -1579,8 +1579,8 @@
     "name": "Port Moresby",
     "localName": "Port Moresby",
     "country": "PG",
-    "lat": -9.47723,
-    "lon": 147.15089,
+    "lat": -9.4743301,
+    "lon": 147.1599504,
     "population": 283733
   },
   {
@@ -1588,8 +1588,8 @@
     "name": "Yamoussoukro",
     "localName": "Yamoussoukro",
     "country": "CI",
-    "lat": 6.82055,
-    "lon": -5.27674,
+    "lat": 6.8200066,
+    "lon": -5.2776034,
     "population": 275686
   },
   {
@@ -1597,8 +1597,8 @@
     "name": "Ljubljana",
     "localName": "Ljubljana",
     "country": "SI",
-    "lat": 46.05108,
-    "lon": 14.50513,
+    "lat": 46.0500268,
+    "lon": 14.5069289,
     "population": 272220
   },
   {
@@ -1606,8 +1606,8 @@
     "name": "Porto-Novo",
     "localName": "Porto Novo",
     "country": "BJ",
-    "lat": 6.49646,
-    "lon": 2.60359,
+    "lat": 6.4990718,
+    "lon": 2.6253361,
     "population": 264320
   },
   {
@@ -1615,8 +1615,8 @@
     "name": "Gaborone",
     "localName": "Gaborone",
     "country": "BW",
-    "lat": -24.65451,
-    "lon": 25.90859,
+    "lat": -24.6581357,
+    "lon": 25.9088474,
     "population": 246325
   },
   {
@@ -1624,8 +1624,8 @@
     "name": "Podgorica",
     "localName": "Подгорица",
     "country": "ME",
-    "lat": 42.44124,
-    "lon": 19.26309,
+    "lat": 42.4415238,
+    "lon": 19.2621081,
     "population": 236852
   },
   {
@@ -1633,8 +1633,8 @@
     "name": "Georgetown",
     "localName": "Georgetown",
     "country": "GY",
-    "lat": 6.80448,
-    "lon": -58.15527,
+    "lat": 6.8032561,
+    "lon": -58.1455403,
     "population": 235017
   },
   {
@@ -1642,8 +1642,8 @@
     "name": "Nassau",
     "localName": "Nassau",
     "country": "BS",
-    "lat": 25.05823,
-    "lon": -77.34306,
+    "lat": 25.0782266,
+    "lon": -77.3383438,
     "population": 227940
   },
   {
@@ -1651,8 +1651,8 @@
     "name": "Sucre",
     "localName": "Sucre",
     "country": "BO",
-    "lat": -19.03332,
-    "lon": -65.26274,
+    "lat": -19.0477251,
+    "lon": -65.2594306,
     "population": 224838
   },
   {
@@ -1660,8 +1660,8 @@
     "name": "Paramaribo",
     "localName": "Paramaribo",
     "country": "SR",
-    "lat": 5.86638,
-    "lon": -55.16682,
+    "lat": 5.8247628,
+    "lon": -55.1703941,
     "population": 223757
   },
   {
@@ -1669,8 +1669,8 @@
     "name": "Nicosia",
     "localName": "Λευκωσία",
     "country": "CY",
-    "lat": 35.17284,
-    "lon": 33.35397,
+    "lat": 35.1746503,
+    "lon": 33.3638783,
     "population": 200452
   },
   {
@@ -1678,8 +1678,8 @@
     "name": "Laayoune",
     "localName": "العيون",
     "country": "EH",
-    "lat": 27.1418,
-    "lon": -13.18797,
+    "lat": 27.154512,
+    "lon": -13.1953921,
     "population": 196331
   },
   {
@@ -1687,8 +1687,8 @@
     "name": "Al Muharraq",
     "localName": "محرق",
     "country": "BH",
-    "lat": 26.25722,
-    "lon": 50.61194,
+    "lat": 26.2465946,
+    "lon": 50.6164127,
     "population": 176583
   },
   {
@@ -1696,8 +1696,8 @@
     "name": "Bata",
     "localName": "Bata",
     "country": "GQ",
-    "lat": 1.86391,
-    "lon": 9.76582,
+    "lat": 1.869189,
+    "lon": 9.7720137,
     "population": 173046
   },
   {
@@ -1705,8 +1705,8 @@
     "name": "Port Louis",
     "localName": "Port Louis",
     "country": "MU",
-    "lat": -20.16194,
-    "lon": 57.49889,
+    "lat": -20.1624522,
+    "lon": 57.5028044,
     "population": 155226
   },
   {
@@ -1714,8 +1714,8 @@
     "name": "Saint-Denis",
     "localName": "Saint-Denis",
     "country": "RE",
-    "lat": -20.88231,
-    "lon": 55.4504,
+    "lat": -20.8799889,
+    "lon": 55.448137,
     "population": 154765
   },
   {
@@ -1723,8 +1723,8 @@
     "name": "Dili",
     "localName": "Dili",
     "country": "TL",
-    "lat": -8.55861,
-    "lon": 125.57361,
+    "lat": -8.5536809,
+    "lon": 125.5784093,
     "population": 150000
   },
   {
@@ -1732,8 +1732,8 @@
     "name": "Manama",
     "localName": "المنامة",
     "country": "BH",
-    "lat": 26.22787,
-    "lon": 50.58565,
+    "lat": 26.2235041,
+    "lon": 50.5822436,
     "population": 147074
   },
   {
@@ -1741,8 +1741,8 @@
     "name": "Praia",
     "localName": "Cidade da Praia",
     "country": "CV",
-    "lat": 14.93152,
-    "lon": -23.51254,
+    "lat": 14.9162811,
+    "lon": -23.5095095,
     "population": 137868
   },
   {
@@ -1750,8 +1750,8 @@
     "name": "Willemstad",
     "localName": "Willemstad",
     "country": "CW",
-    "lat": 12.12246,
-    "lon": -68.88641,
+    "lat": 12.1066695,
+    "lon": -68.9351307,
     "population": 125000
   },
   {
@@ -1759,8 +1759,8 @@
     "name": "Bern",
     "localName": "Bern",
     "country": "CH",
-    "lat": 46.94809,
-    "lon": 7.44744,
+    "lat": 46.9484742,
+    "lon": 7.4521749,
     "population": 121631
   },
   {
@@ -1768,8 +1768,8 @@
     "name": "Reykjavik",
     "localName": "Reykjavík",
     "country": "IS",
-    "lat": 64.13548,
-    "lon": -21.89541,
+    "lat": 64.145981,
+    "lon": -21.9422367,
     "population": 118918
   },
   {
@@ -1777,8 +1777,8 @@
     "name": "Manzini",
     "localName": "Manzini",
     "country": "SZ",
-    "lat": -26.49884,
-    "lon": 31.38004,
+    "lat": -26.4976444,
+    "lon": 31.3750815,
     "population": 110537
   },
   {
@@ -1786,8 +1786,8 @@
     "name": "Male",
     "localName": "މާލެ",
     "country": "MV",
-    "lat": 4.17521,
-    "lon": 73.50916,
+    "lat": 4.1779879,
+    "lon": 73.5107387,
     "population": 103693
   },
   {
@@ -1795,8 +1795,8 @@
     "name": "Thimphu",
     "localName": "ཐིམ་ཕུ",
     "country": "BT",
-    "lat": 27.46609,
-    "lon": 89.64191,
+    "lat": 27.4713546,
+    "lon": 89.6336729,
     "population": 98676
   },
   {
@@ -1804,8 +1804,8 @@
     "name": "Bridgetown",
     "localName": "Bridgetown",
     "country": "BB",
-    "lat": 13.10732,
-    "lon": -59.62021,
+    "lat": 13.0977832,
+    "lon": -59.6184184,
     "population": 98511
   },
   {
@@ -1813,8 +1813,8 @@
     "name": "Noumea",
     "localName": "Nouméa",
     "country": "NC",
-    "lat": -22.27407,
-    "lon": 166.44884,
+    "lat": -22.2745264,
+    "lon": 166.442419,
     "population": 93060
   },
   {
@@ -1822,8 +1822,8 @@
     "name": "Fort-de-France",
     "localName": "Fort-de-France",
     "country": "MQ",
-    "lat": 14.60365,
-    "lon": -61.07418,
+    "lat": 14.6027962,
+    "lon": -61.0676724,
     "population": 89995
   },
   {
@@ -1831,8 +1831,8 @@
     "name": "Suva",
     "localName": "Suva",
     "country": "FJ",
-    "lat": -18.13683,
-    "lon": 178.42531,
+    "lat": -18.1415884,
+    "lon": 178.4421662,
     "population": 77366
   },
   {
@@ -1840,8 +1840,8 @@
     "name": "Luxembourg",
     "localName": "Lëtzebuerg",
     "country": "LU",
-    "lat": 49.60982,
-    "lon": 6.13268,
+    "lat": 49.6112768,
+    "lon": 6.129799,
     "population": 76684
   },
   {
@@ -1849,8 +1849,8 @@
     "name": "Mbabane",
     "localName": "Mbabane",
     "country": "SZ",
-    "lat": -26.31667,
-    "lon": 31.13333,
+    "lat": -26.325745,
+    "lon": 31.144663,
     "population": 76218
   },
   {
@@ -1858,8 +1858,8 @@
     "name": "Moroni",
     "localName": "موروني",
     "country": "KM",
-    "lat": -11.70216,
-    "lon": 43.25506,
+    "lat": -11.7040306,
+    "lon": 43.251909,
     "population": 74749
   },
   {
@@ -1867,8 +1867,8 @@
     "name": "Chaguanas",
     "localName": "Chaguanas",
     "country": "TT",
-    "lat": 10.51667,
-    "lon": -61.41667,
+    "lat": 10.5147394,
+    "lon": -61.4076757,
     "population": 67433
   },
   {
@@ -1876,8 +1876,8 @@
     "name": "Belize City",
     "localName": "Belize City",
     "country": "BZ",
-    "lat": 17.49952,
-    "lon": -88.19756,
+    "lat": 17.5002768,
+    "lon": -88.1988737,
     "population": 65222
   },
   {
@@ -1885,8 +1885,8 @@
     "name": "Gitega",
     "localName": "Gitega",
     "country": "BI",
-    "lat": -3.42708,
-    "lon": 29.92463,
+    "lat": -3.4284953,
+    "lon": 29.9249718,
     "population": 64904
   },
   {
@@ -1894,8 +1894,8 @@
     "name": "Bandar Seri Begawan",
     "localName": "Bandar Seri Begawan",
     "country": "BN",
-    "lat": 4.89035,
-    "lon": 114.94006,
+    "lat": 4.8895453,
+    "lon": 114.9417574,
     "population": 64409
   },
   {
@@ -1903,8 +1903,8 @@
     "name": "Cayenne",
     "localName": "Cayenne",
     "country": "GF",
-    "lat": 4.9381,
-    "lon": -52.33455,
+    "lat": 4.9371544,
+    "lon": -52.3258736,
     "population": 61550
   },
   {
@@ -1912,8 +1912,8 @@
     "name": "Kuwait City",
     "localName": "اَلْكُوَيْت",
     "country": "KW",
-    "lat": 29.367,
-    "lon": 47.97429,
+    "lat": 29.3796532,
+    "lon": 47.9734174,
     "population": 60064
   },
   {
@@ -1921,8 +1921,8 @@
     "name": "Honiara",
     "localName": "Honiara",
     "country": "SB",
-    "lat": -9.43333,
-    "lon": 159.95,
+    "lat": -9.4310769,
+    "lon": 159.9552552,
     "population": 56298
   },
   {
@@ -1930,8 +1930,8 @@
     "name": "Mamoudzou",
     "localName": "Mamoudzou",
     "country": "YT",
-    "lat": -12.78234,
-    "lon": 45.22878,
+    "lat": -12.7804136,
+    "lon": 45.2279761,
     "population": 54831
   },
   {
@@ -1939,8 +1939,8 @@
     "name": "Les Abymes",
     "localName": "Les Abymes",
     "country": "GP",
-    "lat": 16.273,
-    "lon": -61.50507,
+    "lat": 16.2706436,
+    "lon": -61.5057749,
     "population": 53514
   },
   {
@@ -1948,8 +1948,8 @@
     "name": "Sao Tome",
     "localName": "São Tomé",
     "country": "ST",
-    "lat": 0.33756,
-    "lon": 6.7299,
+    "lat": 0.3389242,
+    "lon": 6.7313031,
     "population": 53300
   },
   {
@@ -1957,8 +1957,8 @@
     "name": "Saint John's",
     "localName": "St John's",
     "country": "AG",
-    "lat": 17.12096,
-    "lon": -61.84329,
+    "lat": 17.1184569,
+    "lon": -61.8448509,
     "population": 51737
   },
   {
@@ -1975,8 +1975,8 @@
     "name": "Port of Spain",
     "localName": "Port of Spain",
     "country": "TT",
-    "lat": 10.66668,
-    "lon": -61.51889,
+    "lat": 10.6572678,
+    "lon": -61.5180173,
     "population": 49031
   },
   {
@@ -1993,8 +1993,8 @@
     "name": "Dededo Village",
     "localName": "Dededo Village",
     "country": "GU",
-    "lat": 13.51777,
-    "lon": 144.8391,
+    "lat": 13.5167272,
+    "lon": 144.8391381,
     "population": 44943
   },
   {
@@ -2002,8 +2002,8 @@
     "name": "Apia",
     "localName": "Apia",
     "country": "WS",
-    "lat": -13.83333,
-    "lon": -171.76666,
+    "lat": -13.8345235,
+    "lon": -171.7630955,
     "population": 40407
   },
   {
@@ -2011,8 +2011,8 @@
     "name": "Tarawa",
     "localName": "Tarawa",
     "country": "KI",
-    "lat": 1.3278,
-    "lon": 172.97696,
+    "lat": 1.3490778,
+    "lon": 173.0386512,
     "population": 40311
   },
   {
@@ -2020,8 +2020,8 @@
     "name": "Banjul",
     "localName": "Banjul",
     "country": "GM",
-    "lat": 13.45274,
-    "lon": -16.57803,
+    "lat": 13.45535,
+    "lon": -16.575646,
     "population": 37274
   },
   {
@@ -2029,8 +2029,8 @@
     "name": "Port-Vila",
     "localName": "Port Vila",
     "country": "VU",
-    "lat": -17.73648,
-    "lon": 168.31366,
+    "lat": -17.7414972,
+    "lon": 168.3150163,
     "population": 35901
   },
   {
@@ -2038,8 +2038,8 @@
     "name": "Monaco",
     "localName": "Monaco",
     "country": "MC",
-    "lat": 43.73718,
-    "lon": 7.42145,
+    "lat": 43.7310164,
+    "lon": 7.4209592,
     "population": 32965
   },
   {
@@ -2047,8 +2047,8 @@
     "name": "Oranjestad",
     "localName": "Oranjestad",
     "country": "AW",
-    "lat": 12.52398,
-    "lon": -70.02703,
+    "lat": 12.5201024,
+    "lon": -70.0371329,
     "population": 29998
   },
   {
@@ -2056,8 +2056,8 @@
     "name": "George Town",
     "localName": "George Town",
     "country": "KY",
-    "lat": 19.2866,
-    "lon": -81.37436,
+    "lat": 19.2953549,
+    "lon": -81.3807776,
     "population": 29370
   },
   {
@@ -2065,8 +2065,8 @@
     "name": "Saint Helier",
     "localName": "Saint Helier",
     "country": "JE",
-    "lat": 49.18804,
-    "lon": -2.10491,
+    "lat": 49.1856637,
+    "lon": -2.1102277,
     "population": 28000
   },
   {
@@ -2074,8 +2074,8 @@
     "name": "Gibraltar",
     "localName": "Gibraltar",
     "country": "GI",
-    "lat": 36.14474,
-    "lon": -5.35257,
+    "lat": 36.140807,
+    "lon": -5.3541295,
     "population": 26544
   },
   {
@@ -2083,8 +2083,8 @@
     "name": "Papeete",
     "localName": "Papeete",
     "country": "PF",
-    "lat": -17.5347,
-    "lon": -149.56843,
+    "lat": -17.5373835,
+    "lon": -149.5659964,
     "population": 26357
   },
   {
@@ -2092,8 +2092,8 @@
     "name": "Douglas",
     "localName": "Douglas",
     "country": "IM",
-    "lat": 54.15,
-    "lon": -4.48333,
+    "lat": 54.149774,
+    "lon": -4.4779021,
     "population": 26218
   },
   {
@@ -2101,8 +2101,8 @@
     "name": "Majuro",
     "localName": "Majuro",
     "country": "MH",
-    "lat": 7.08971,
-    "lon": 171.38027,
+    "lat": 7.0909924,
+    "lon": 171.3816354,
     "population": 25400
   },
   {
@@ -2110,8 +2110,8 @@
     "name": "Kingstown",
     "localName": "Kingstown",
     "country": "VC",
-    "lat": 13.15527,
-    "lon": -61.22742,
+    "lat": 13.1561864,
+    "lon": -61.2279621,
     "population": 24518
   },
   {
@@ -2119,8 +2119,8 @@
     "name": "Providenciales",
     "localName": "Providenciales",
     "country": "TC",
-    "lat": 21.78254,
-    "lon": -72.25206,
+    "lat": 21.7778015,
+    "lon": -72.2611584,
     "population": 23769
   },
   {
@@ -2128,8 +2128,8 @@
     "name": "Victoria",
     "localName": "Victoria",
     "country": "SC",
-    "lat": -4.62001,
-    "lon": 55.45501,
+    "lat": -4.6232085,
+    "lon": 55.452359,
     "population": 22881
   },
   {
@@ -2137,8 +2137,8 @@
     "name": "Nuku'alofa",
     "localName": "Nukuʻalofa",
     "country": "TO",
-    "lat": -21.13683,
-    "lon": -175.20114,
+    "lat": -21.1343401,
+    "lon": -175.201808,
     "population": 22400
   },
   {
@@ -2146,8 +2146,8 @@
     "name": "Andorra la Vella",
     "localName": "Andorra la Vella",
     "country": "AD",
-    "lat": 42.50779,
-    "lon": 1.52109,
+    "lat": 42.5069391,
+    "lon": 1.5212467,
     "population": 20430
   },
   {
@@ -2155,8 +2155,8 @@
     "name": "Castries",
     "localName": "Castries",
     "country": "LC",
-    "lat": 13.9957,
-    "lon": -61.00614,
+    "lat": 14.0095966,
+    "lon": -60.9902359,
     "population": 20000
   },
   {
@@ -2164,8 +2164,8 @@
     "name": "Charlotte Amalie",
     "localName": "Charlotte Amalie",
     "country": "VI",
-    "lat": 18.3419,
-    "lon": -64.9307,
+    "lat": 18.3414575,
+    "lon": -64.9335173,
     "population": 20000
   },
   {
@@ -2173,8 +2173,8 @@
     "name": "Roseau",
     "localName": "Roseau",
     "country": "DM",
-    "lat": 15.30174,
-    "lon": -61.38808,
+    "lat": 15.2991923,
+    "lon": -61.3872868,
     "population": 16571
   },
   {
@@ -2182,8 +2182,8 @@
     "name": "Saint Peter Port",
     "localName": "St Peter Port",
     "country": "GG",
-    "lat": 49.45981,
-    "lon": -2.53527,
+    "lat": 49.4568142,
+    "lon": -2.5389979,
     "population": 16488
   },
   {
@@ -2191,8 +2191,8 @@
     "name": "Nuuk",
     "localName": "Nuuk",
     "country": "GL",
-    "lat": 64.18347,
-    "lon": -51.72157,
+    "lat": 64.1767049,
+    "lon": -51.7361444,
     "population": 14798
   },
   {
@@ -2200,8 +2200,8 @@
     "name": "Koror",
     "localName": "Koror",
     "country": "PW",
-    "lat": 7.33978,
-    "lon": 134.47326,
+    "lat": 7.343275,
+    "lon": 134.4766767,
     "population": 14000
   },
   {
@@ -2218,8 +2218,8 @@
     "name": "Belmopan",
     "localName": "Belmopan",
     "country": "BZ",
-    "lat": 17.25376,
-    "lon": -88.76401,
+    "lat": 17.250199,
+    "lon": -88.770018,
     "population": 13381
   },
   {
@@ -2227,8 +2227,8 @@
     "name": "Avarua",
     "localName": "Avarua",
     "country": "CK",
-    "lat": -21.2075,
-    "lon": -159.77546,
+    "lat": -21.2074736,
+    "lon": -159.7708145,
     "population": 13373
   },
   {
@@ -2236,8 +2236,8 @@
     "name": "Torshavn",
     "localName": "Tórshavn",
     "country": "FO",
-    "lat": 62.00973,
-    "lon": -6.77164,
+    "lat": 62.0101396,
+    "lon": -6.7715709,
     "population": 13200
   },
   {
@@ -2245,8 +2245,8 @@
     "name": "Basseterre",
     "localName": "Basseterre",
     "country": "KN",
-    "lat": 17.2955,
-    "lon": -62.72499,
+    "lat": 17.2960919,
+    "lon": -62.722301,
     "population": 12920
   },
   {
@@ -2254,8 +2254,8 @@
     "name": "Pago Pago",
     "localName": "Pago Pago",
     "country": "AS",
-    "lat": -14.27806,
-    "lon": -170.7025,
+    "lat": -14.2754786,
+    "lon": -170.7048298,
     "population": 11500
   },
   {
@@ -2263,8 +2263,8 @@
     "name": "Basse-Terre",
     "localName": "Basse-Terre",
     "country": "GP",
-    "lat": 15.99714,
-    "lon": -61.73214,
+    "lat": 16.0000778,
+    "lon": -61.7333373,
     "population": 11472
   },
   {
@@ -2281,8 +2281,8 @@
     "name": "Mariehamn",
     "localName": "Mariehamn",
     "country": "AX",
-    "lat": 60.09726,
-    "lon": 19.93481,
+    "lat": 60.102423,
+    "lon": 19.94126,
     "population": 10682
   },
   {
@@ -2290,8 +2290,8 @@
     "name": "Kralendijk",
     "localName": "Kralendijk",
     "country": "BQ",
-    "lat": 12.15,
-    "lon": -68.26667,
+    "lat": 12.1472869,
+    "lon": -68.2740206,
     "population": 10620
   },
   {
@@ -2299,8 +2299,8 @@
     "name": "Road Town",
     "localName": "Road Town",
     "country": "VG",
-    "lat": 18.42693,
-    "lon": -64.62079,
+    "lat": 18.425766,
+    "lon": -64.6230914,
     "population": 8449
   },
   {
@@ -2308,8 +2308,8 @@
     "name": "Saint George's",
     "localName": "St. George's",
     "country": "GD",
-    "lat": 12.05288,
-    "lon": -61.75226,
+    "lat": 12.0535331,
+    "lon": -61.751805,
     "population": 7500
   },
   {
@@ -2317,8 +2317,8 @@
     "name": "Palikir",
     "localName": "Palikir",
     "country": "FM",
-    "lat": 6.92477,
-    "lon": 158.16109,
+    "lat": 6.920744,
+    "lon": 158.1627143,
     "population": 6942
   },
   {
@@ -2326,8 +2326,8 @@
     "name": "Valletta",
     "localName": "Valletta",
     "country": "MT",
-    "lat": 35.89968,
-    "lon": 14.5148,
+    "lat": 35.8989979,
+    "lon": 14.5136607,
     "population": 6794
   },
   {
@@ -2335,8 +2335,8 @@
     "name": "Funafuti",
     "localName": "Funafuti",
     "country": "TV",
-    "lat": -8.52425,
-    "lon": 179.19417,
+    "lat": -8.5199633,
+    "lon": 179.1982548,
     "population": 6320
   },
   {
@@ -2344,8 +2344,8 @@
     "name": "Saint-Pierre",
     "localName": "Saint-Pierre",
     "country": "PM",
-    "lat": 46.77914,
-    "lon": -56.1773,
+    "lat": 46.7775497,
+    "lon": -56.1768672,
     "population": 6200
   },
   {
@@ -2353,8 +2353,8 @@
     "name": "Gustavia",
     "localName": "Gustavia",
     "country": "BL",
-    "lat": 17.89618,
-    "lon": -62.84978,
+    "lat": 17.8957043,
+    "lon": -62.8508372,
     "population": 5988
   },
   {
@@ -2362,8 +2362,8 @@
     "name": "Marigot",
     "localName": "Marigot",
     "country": "MF",
-    "lat": 18.06819,
-    "lon": -63.08302,
+    "lat": 18.0668544,
+    "lon": -63.0848869,
     "population": 5700
   },
   {
@@ -2371,8 +2371,8 @@
     "name": "Vaduz",
     "localName": "Vaduz",
     "country": "LI",
-    "lat": 47.14151,
-    "lon": 9.52154,
+    "lat": 47.1392862,
+    "lon": 9.5227962,
     "population": 5197
   },
   {
@@ -2380,8 +2380,8 @@
     "name": "Georgetown",
     "localName": "Georgetown",
     "country": "SH",
-    "lat": -7.92861,
-    "lon": -14.41194,
+    "lat": -7.9289722,
+    "lon": -14.4133993,
     "population": 5012
   },
   {
@@ -2389,8 +2389,8 @@
     "name": "San Marino",
     "localName": "San Marino",
     "country": "SM",
-    "lat": 43.93667,
-    "lon": 12.44639,
+    "lat": 43.9363996,
+    "lon": 12.4466991,
     "population": 4500
   },
   {
@@ -2398,8 +2398,8 @@
     "name": "Cockburn Town",
     "localName": "Cockburn Town",
     "country": "TC",
-    "lat": 21.46122,
-    "lon": -71.14188,
+    "lat": 21.4607723,
+    "lon": -71.1399956,
     "population": 3720
   },
   {
@@ -2407,8 +2407,8 @@
     "name": "Longyearbyen",
     "localName": "Longyearbyen",
     "country": "SJ",
-    "lat": 78.22334,
-    "lon": 15.64689,
+    "lat": 78.2231558,
+    "lon": 15.6463656,
     "population": 2368
   },
   {
@@ -2416,8 +2416,8 @@
     "name": "Stanley",
     "localName": "Stanley",
     "country": "FK",
-    "lat": -51.69382,
-    "lon": -57.85701,
+    "lat": -51.6930616,
+    "lon": -57.856525,
     "population": 2213
   },
   {
@@ -2425,8 +2425,8 @@
     "name": "The Valley",
     "localName": "The Valley",
     "country": "AI",
-    "lat": 18.21704,
-    "lon": -63.05783,
+    "lat": 18.2145861,
+    "lon": -63.0517759,
     "population": 2035
   },
   {
@@ -2434,8 +2434,8 @@
     "name": "Ciudad de la Paz",
     "localName": "Ciudad de la Paz",
     "country": "GQ",
-    "lat": 1.5925,
-    "lon": 10.82361,
+    "lat": 1.5994535,
+    "lon": 10.8268276,
     "population": 2000
   },
   {
@@ -2443,8 +2443,8 @@
     "name": "Philipsburg",
     "localName": "Philipsburg",
     "country": "SX",
-    "lat": 18.026,
-    "lon": -63.04582,
+    "lat": 18.0250713,
+    "lon": -63.0483073,
     "population": 1400
   },
   {
@@ -2452,8 +2452,8 @@
     "name": "Mata-Utu",
     "localName": "Matāʻutu",
     "country": "WF",
-    "lat": -13.28163,
-    "lon": -176.17453,
+    "lat": -13.2820419,
+    "lon": -176.1740224,
     "population": 1200
   },
   {
@@ -2461,8 +2461,8 @@
     "name": "Yaren",
     "localName": "Yaren",
     "country": "NR",
-    "lat": -0.55085,
-    "lon": 166.9252,
+    "lat": -0.5471064,
+    "lon": 166.9163479,
     "population": 1100
   },
   {
@@ -2470,8 +2470,8 @@
     "name": "Brades",
     "localName": "Brades",
     "country": "MS",
-    "lat": 16.79183,
-    "lon": -62.21058,
+    "lat": 16.7898749,
+    "lon": -62.2099434,
     "population": 1000
   },
   {
@@ -2479,8 +2479,8 @@
     "name": "Kingston",
     "localName": "Kingston",
     "country": "NF",
-    "lat": -29.05459,
-    "lon": 167.96628,
+    "lat": -29.0563564,
+    "lon": 167.9595733,
     "population": 880
   },
   {
@@ -2488,8 +2488,8 @@
     "name": "Vatican City",
     "localName": "Vatican City",
     "country": "VA",
-    "lat": 41.90268,
-    "lon": 12.45414,
+    "lat": 41.9034912,
+    "lon": 12.4528349,
     "population": 829
   },
   {
@@ -2497,8 +2497,8 @@
     "name": "Jamestown",
     "localName": "Jamestown",
     "country": "SH",
-    "lat": -15.92488,
-    "lon": -5.71816,
+    "lat": -15.9277296,
+    "lon": -5.7160872,
     "population": 637
   },
   {
@@ -2506,8 +2506,8 @@
     "name": "Alofi",
     "localName": "Alofi",
     "country": "NU",
-    "lat": -19.05294,
-    "lon": -169.91957,
+    "lat": -19.0534159,
+    "lon": -169.919199,
     "population": 624
   },
   {
@@ -2515,8 +2515,8 @@
     "name": "Nukunonu",
     "localName": "Nukunonu",
     "country": "TK",
-    "lat": -9.20045,
-    "lon": -171.84804,
+    "lat": -9.2004722,
+    "lon": -171.8479453,
     "population": 531
   },
   {
@@ -2524,8 +2524,8 @@
     "name": "Flying Fish Cove",
     "localName": "Flying Fish Cove",
     "country": "CX",
-    "lat": -10.42172,
-    "lon": 105.67912,
+    "lat": -10.4213344,
+    "lon": 105.674413,
     "population": 500
   },
   {
@@ -2533,8 +2533,8 @@
     "name": "West Island",
     "localName": "West Island",
     "country": "CC",
-    "lat": -12.15681,
-    "lon": 96.82251,
+    "lat": -12.1898479,
+    "lon": 96.8304486,
     "population": 120
   },
   {
@@ -2542,8 +2542,8 @@
     "name": "Adamstown",
     "localName": "Adamstown",
     "country": "PN",
-    "lat": -25.06597,
-    "lon": -130.10147,
+    "lat": -25.066667,
+    "lon": -130.100205,
     "population": 46
   },
   {
@@ -2551,8 +2551,8 @@
     "name": "Ngerulmud",
     "localName": "Ngerulmud",
     "country": "PW",
-    "lat": 7.50077,
-    "lon": 134.6238,
+    "lat": 7.5006446,
+    "lon": 134.6242864,
     "population": 0
   }
 ]
