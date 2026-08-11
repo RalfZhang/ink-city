@@ -6,7 +6,8 @@ use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
 use crate::config::{
-    self, ColorPair, CustomCity, StylePreset, StyleVariant, ThemeMode, UpdateCheck, UpdateMode,
+    self, ColorPair, CustomCity, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateCheck,
+    UpdateMode,
 };
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
@@ -49,7 +50,9 @@ pub struct Status {
     pub update_available: Option<String>,
     pub show_water: bool,
     pub show_airports: bool,
-    pub show_railways: bool,
+    /// Which symbol the railway layer is drawn in, or `Off`. See
+    /// `config::RailwayStyle`.
+    pub railway_style: RailwayStyle,
     pub show_aerialways: bool,
     /// Which visual language the wallpaper is drawn in (issue #18). See
     /// `config::Config::variant`.
@@ -96,6 +99,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
     let update_check = *state.update_check.lock().unwrap();
     let update_available = state.available_update.lock().unwrap().clone();
     let variant = *state.variant.lock().unwrap();
+    let railway_style = *state.railway_style.lock().unwrap();
     let proxy_url = state.proxy_url.lock().unwrap().clone();
     Status {
         update_mode,
@@ -114,7 +118,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         update_available,
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
-        show_railways: state.show_railways.load(Ordering::Acquire),
+        railway_style,
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
         variant,
         dev_mode: state.dev_mode.load(Ordering::Acquire),
@@ -297,7 +301,7 @@ pub fn apply_style_settings(
 pub struct LabSettings {
     pub show_airports: bool,
     pub show_water: bool,
-    pub show_railways: bool,
+    pub railway_style: RailwayStyle,
     pub show_aerialways: bool,
     pub variant: StyleVariant,
 }
@@ -307,7 +311,7 @@ fn lab_settings(state: &AppState) -> LabSettings {
     LabSettings {
         show_airports: state.show_airports.load(Ordering::Acquire),
         show_water: state.show_water.load(Ordering::Acquire),
-        show_railways: state.show_railways.load(Ordering::Acquire),
+        railway_style: *state.railway_style.lock().unwrap(),
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
         variant: *state.variant.lock().unwrap(),
     }
@@ -322,14 +326,14 @@ pub fn apply_lab_settings(app: AppHandle, settings: LabSettings) -> Result<Apply
     let LabSettings {
         show_airports,
         show_water,
-        show_railways,
+        railway_style,
         show_aerialways,
         variant,
     } = settings;
 
     state.show_airports.store(show_airports, Ordering::Release);
     state.show_water.store(show_water, Ordering::Release);
-    state.show_railways.store(show_railways, Ordering::Release);
+    *state.railway_style.lock().unwrap() = railway_style;
     state.show_aerialways.store(show_aerialways, Ordering::Release);
     *state.variant.lock().unwrap() = variant;
     persist(&app)?;
@@ -582,7 +586,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         auto_update: s.auto_update.load(Ordering::Acquire),
         show_water: s.show_water.load(Ordering::Acquire),
         show_airports: s.show_airports.load(Ordering::Acquire),
-        show_railways: s.show_railways.load(Ordering::Acquire),
+        railway_style: *s.railway_style.lock().unwrap(),
         show_aerialways: s.show_aerialways.load(Ordering::Acquire),
         variant: *s.variant.lock().unwrap(),
         dev_mode: s.dev_mode.load(Ordering::Acquire),

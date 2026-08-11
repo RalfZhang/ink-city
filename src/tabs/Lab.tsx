@@ -1,13 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
+import type { ParseKeys } from "i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import SettingRow from "@/components/SettingRow";
-import type { Status, StyleVariant } from "../types";
+import { RAILWAY_STYLES } from "@/core";
+import type { RailwayStyle, Status, StyleVariant } from "../types";
+
+// The railway row is a selector rather than a switch: "don't draw" is one of the
+// symbol choices, not a separate dimension (see RailwayStyle). Each option's own
+// weights and opacity live in `RAILWAY_MODES` in core/render.ts.
+//
+// A `Record` over the union, iterated in `RAILWAY_STYLES` order, rather than
+// Style.tsx's hand-ordered `{ id, labelKey }[]`: this one has to stay in step with
+// the renderer, so a mode added to `RailwayStyle` should be a missing-key error
+// here — with a list, it would just be silently absent from the selector. Order
+// stays in core so the CLI's `--rail` and this row can't disagree. `ParseKeys` is
+// what makes a mistyped locale key fail here rather than fall back to the raw key
+// in the UI.
+const RAILWAY_LABELS: Record<RailwayStyle, ParseKeys> = {
+  off: "lab.railwayOff",
+  plain: "lab.railwayPlain",
+  banded: "lab.railwayBanded",
+  ties: "lab.railwayTies",
+};
 
 type Props = {
   status: Status;
@@ -27,7 +54,7 @@ export default function Lab({ status, busy, onError }: Props) {
   // Seeded from `status` on first mount only — see the same note in Style.tsx.
   const [showAirports, setShowAirports] = useState<boolean>(status.showAirports);
   const [showWater, setShowWater] = useState<boolean>(status.showWater);
-  const [showRailways, setShowRailways] = useState<boolean>(status.showRailways);
+  const [railwayStyle, setRailwayStyle] = useState<RailwayStyle>(status.railwayStyle);
   const [showAerialways, setShowAerialways] = useState<boolean>(status.showAerialways);
   const [variant, setVariant] = useState<StyleVariant>(status.variant);
   const [saving, setSaving] = useState(false);
@@ -56,7 +83,7 @@ export default function Lab({ status, busy, onError }: Props) {
   const dirty =
     showAirports !== status.showAirports ||
     showWater !== status.showWater ||
-    showRailways !== status.showRailways ||
+    railwayStyle !== status.railwayStyle ||
     showAerialways !== status.showAerialways ||
     variant !== status.variant;
 
@@ -65,7 +92,7 @@ export default function Lab({ status, busy, onError }: Props) {
     sawBusy.current = false;
     try {
       const result = await invoke<{ regenStarted: boolean }>("apply_lab_settings", {
-        settings: { showAirports, showWater, showRailways, showAerialways, variant },
+        settings: { showAirports, showWater, railwayStyle, showAerialways, variant },
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -98,10 +125,25 @@ export default function Lab({ status, busy, onError }: Props) {
         <Separator />
 
         <SettingRow
-          label={t("lab.showRailways")}
+          label={t("lab.railwayStyle")}
           description={t("lab.railwaysHint")}
           control={
-            <Switch checked={showRailways} onCheckedChange={setShowRailways} disabled={saving} />
+            <Select
+              value={railwayStyle}
+              onValueChange={(v) => setRailwayStyle(v as RailwayStyle)}
+              disabled={saving}
+            >
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {RAILWAY_STYLES.map((id) => (
+                  <SelectItem key={id} value={id}>
+                    {t(RAILWAY_LABELS[id])}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           }
         />
 

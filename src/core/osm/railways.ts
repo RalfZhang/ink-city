@@ -5,7 +5,10 @@ import { dedupeAdjacent, roundPts } from "../geom";
 // PRECACHE/FETCH time (Node/Deno/Bun), never on the client.
 //
 // Scope: surface heavy/light rail only — railway=rail | light_rail |
-// narrow_gauge, all rendered as one dashed centerline. Deliberately excluded:
+// narrow_gauge. All three are collected as one undifferentiated centerline: no kind
+// tag is carried through, because the renderer draws the whole layer in a single
+// user-chosen symbol (see RailwayStyle / RAILWAY_MODES) and has nothing to vary per
+// kind. Deliberately excluded:
 //   • subway  — underground; the wallpaper shows above-ground features only.
 //   • tram    — runs in the street, so it would just retrace the road network.
 //   • service tracks — any `service=*` (yard, siding, spur, crossover, …), the
