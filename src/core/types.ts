@@ -1,6 +1,11 @@
 // Portable type definitions shared across the desktop client, the CI
 // pre-cache script, and the (separate-repo) marketing website. Keep this layer
 // free of Tauri / React / DOM-specific imports so it stays reusable.
+//
+// Types, with one exception: a string union that consumers must also *enumerate*
+// at runtime is written as a const tuple with the type derived from it, so the
+// list and the type can't drift (see RAILWAY_STYLES, and LAYER_IDS in
+// osm/layers.ts for the same pattern).
 
 export type City = {
   id: number;
@@ -26,6 +31,31 @@ export type StylePreset = "minimal" | "standard" | "bold";
  */
 export type StyleVariant = "ink" | "mondrian";
 
+/**
+ * How the railway layer is drawn — one dimension rather than a boolean plus a
+ * separate style flag, so "hidden" and "which symbol" can never contradict each
+ * other:
+ *   • `off`    — don't draw the layer at all.
+ *   • `plain`  — one solid stroke, no pattern.
+ *   • `banded` — ink band with paper blocks cut into it (the openstreetmap-carto
+ *                `railway=rail` symbol).
+ *   • `ties`   — thin rail with perpendicular sleeper ticks.
+ * The drawable modes are dispatched through `RAILWAY_MODES` in core/render.ts, and
+ * each one's weights and own opacity live in its `RAILWAY_PLAIN` / `RAILWAY_BANDED`
+ * / `RAILWAY_TIES` block there.
+ * Replaces the old `showRailways: boolean`; persisted configs are migrated in
+ * `parse_config` (src-tauri/src/config.rs).
+ *
+ * Listed as a const tuple with the type derived from it (the `LAYER_IDS` pattern
+ * in osm/layers.ts) because three places have to enumerate the union: `RAILWAY_MODES`
+ * in core/render.ts, the Lab-tab selector, and `pnpm render --rail`'s validation.
+ * Deriving means adding a mode here is a *compile error* in each of them until it's
+ * handled, rather than a mode the renderer knows and the UI silently never offers.
+ * Order is off-first then increasing detail, and is what the selector shows.
+ */
+export const RAILWAY_STYLES = ["off", "plain", "banded", "ties"] as const;
+export type RailwayStyle = (typeof RAILWAY_STYLES)[number];
+
 export type ColorPair = {
   background: string;
   foreground: string;
@@ -40,8 +70,8 @@ export type Style = {
   showWater?: boolean;
   /** Whether to draw the airport layer. Absent ⇒ off (matches the config default). */
   showAirports?: boolean;
-  /** Whether to draw the railway layer. Absent ⇒ off (matches the config default). */
-  showRailways?: boolean;
+  /** How to draw the railway layer (see {@link RailwayStyle}). Absent ⇒ `"off"`. */
+  railwayStyle?: RailwayStyle;
   /** Whether to draw the aerialway (cable car / ropeway) layer. Absent ⇒ off. */
   showAerialways?: boolean;
   /**

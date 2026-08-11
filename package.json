@@ -17,7 +17,8 @@
     "icon:car": "bash scripts/build-icon-car.sh",
     "render": "tsx scripts/render.ts",
     "schedule-test": "tsx scripts/schedule-test.ts",
-    "coords-test": "tsx scripts/coords-test.ts"
+    "coords-test": "tsx scripts/coords-test.ts",
+    "railway-test": "tsx scripts/railway-test.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

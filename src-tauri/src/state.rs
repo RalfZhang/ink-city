@@ -13,7 +13,8 @@ use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::{oneshot, Mutex, Notify};
 
 use crate::config::{
-    ColorPair, CustomCity, StylePreset, StyleVariant, ThemeMode, UpdateCheck, UpdateMode,
+    ColorPair, CustomCity, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateCheck,
+    UpdateMode,
 };
 use crate::updates::UpdateStrings;
 
@@ -58,7 +59,10 @@ pub struct AppState {
     pub update_installing: AtomicBool,
     pub show_water: AtomicBool,
     pub show_airports: AtomicBool,
-    pub show_railways: AtomicBool,
+    /// Which symbol the railway layer is drawn in, `Off` included — a mode rather
+    /// than a bool, so it's a mutex like `variant` and not an `AtomicBool` like
+    /// its neighbours. See `config::RailwayStyle`.
+    pub railway_style: StdMutex<RailwayStyle>,
     pub show_aerialways: AtomicBool,
     /// Which visual language the map is drawn in (issue #18). See
     /// `config::Config::variant`.
@@ -127,7 +131,7 @@ impl AppState {
             update_installing: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
             show_airports: AtomicBool::new(cfg.show_airports),
-            show_railways: AtomicBool::new(cfg.show_railways),
+            railway_style: StdMutex::new(cfg.railway_style),
             show_aerialways: AtomicBool::new(cfg.show_aerialways),
             variant: StdMutex::new(cfg.variant),
             dev_mode: AtomicBool::new(cfg.dev_mode),

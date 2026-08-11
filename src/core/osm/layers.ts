@@ -6,8 +6,11 @@
 // fallback go through fetch-city.ts.
 //
 // The Rust side has no mirror of this list — it never fetches a layer itself, and
-// tracks the user's per-layer toggles as independent `show_*` fields
-// (config.rs / state.rs / commands.rs), which must each gain a field by hand.
+// tracks the user's per-layer settings as independent fields (config.rs / state.rs /
+// commands.rs) that must each be added by hand. Most are a `show_*` bool; `railways`
+// is a `railway_style` enum instead, because the user picks a symbol there and "don't
+// draw" is one of the choices (see config::RailwayStyle). So "one layer, one bool" is
+// the common case here, not a rule — a new layer is free to be a mode too.
 
 export const LAYER_IDS = ["water", "airports", "railways", "aerialways"] as const;
 export type LayerId = (typeof LAYER_IDS)[number];

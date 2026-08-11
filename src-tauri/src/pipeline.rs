@@ -12,7 +12,7 @@ use tokio::sync::oneshot;
 use crate::bbox::{bbox_for_screen, Bbox};
 use crate::cdn;
 use crate::city;
-use crate::config::{ColorPair, StylePreset, StyleVariant, ThemeMode, UpdateMode};
+use crate::config::{ColorPair, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateMode};
 use crate::events::FrontendEvent;
 use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
@@ -37,8 +37,8 @@ struct Style {
     show_water: bool,
     #[serde(rename = "showAirports")]
     show_airports: bool,
-    #[serde(rename = "showRailways")]
-    show_railways: bool,
+    #[serde(rename = "railwayStyle")]
+    railway_style: RailwayStyle,
     #[serde(rename = "showAerialways")]
     show_aerialways: bool,
     variant: StyleVariant,
@@ -670,7 +670,7 @@ async fn render_bytes_for(
     let preset = *app.state::<AppState>().style.lock().unwrap();
     let show_water = app.state::<AppState>().show_water.load(Ordering::Acquire);
     let show_airports = app.state::<AppState>().show_airports.load(Ordering::Acquire);
-    let show_railways = app.state::<AppState>().show_railways.load(Ordering::Acquire);
+    let railway_style = *app.state::<AppState>().railway_style.lock().unwrap();
     let show_aerialways = app.state::<AppState>().show_aerialways.load(Ordering::Acquire);
     let variant = *app.state::<AppState>().variant.lock().unwrap();
     let style = Style {
@@ -679,7 +679,7 @@ async fn render_bytes_for(
         preset,
         show_water,
         show_airports,
-        show_railways,
+        railway_style,
         show_aerialways,
         variant,
     };
@@ -960,6 +960,47 @@ pub fn spawn_force_regen(app: AppHandle) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The renderer's `Style` payload is the one place with hand-written
+    /// `#[serde(rename)]`s, and nothing type-checks it across the IPC boundary: a
+    /// forgotten rename would arrive at `drawScene` as snake_case, read as
+    /// `undefined`, and silently render as if the layer were off. So pin the
+    /// camelCase key names and the railway mode's wire values, which must match
+    /// `Style` / `RailwayStyle` in src/core/types.ts.
+    #[test]
+    fn style_payload_uses_the_keys_the_renderer_reads() {
+        let style = Style {
+            background: "#eee8d6".into(),
+            foreground: "#2d2d2d".into(),
+            preset: StylePreset::Standard,
+            show_water: true,
+            show_airports: false,
+            railway_style: RailwayStyle::Ties,
+            show_aerialways: true,
+            variant: StyleVariant::Ink,
+        };
+        let v = serde_json::to_value(&style).unwrap();
+        let obj = v.as_object().unwrap();
+        assert_eq!(obj["showWater"], serde_json::json!(true));
+        assert_eq!(obj["showAirports"], serde_json::json!(false));
+        assert_eq!(obj["showAerialways"], serde_json::json!(true));
+        assert_eq!(obj["railwayStyle"], serde_json::json!("ties"));
+        assert_eq!(obj["variant"], serde_json::json!("ink"));
+        // No stale boolean left behind for the renderer to prefer.
+        assert!(!obj.contains_key("showRailways"), "showRailways must be gone");
+    }
+
+    #[test]
+    fn every_railway_mode_serializes_to_its_wire_value() {
+        for (mode, wire) in [
+            (RailwayStyle::Off, "off"),
+            (RailwayStyle::Plain, "plain"),
+            (RailwayStyle::Banded, "banded"),
+            (RailwayStyle::Ties, "ties"),
+        ] {
+            assert_eq!(serde_json::to_value(mode).unwrap(), serde_json::json!(wire));
+        }
+    }
 
     // `city_envelope` decides whether a cached day keeps the city it was rendered
     // from or silently falls back to the rotation pick, so all three shapes a day

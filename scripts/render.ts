@@ -18,6 +18,7 @@
 //   -t, --type <png|svg|both>             output format(s)  (default both)
 //   -s, --size <WxH>                       pixel size        (default 2560x1664)
 //   -p, --preset <minimal|standard|bold>  road weights      (default standard)
+//       --rail <off|plain|banded|ties>    railway symbol    (default banded)
 //       --theme <light|dark|both>         which themes      (default both)
 //       --mondrian                         Mondrian style (issue #18). Overrides
 //                                          the theme colors, so it renders once
@@ -49,9 +50,11 @@ import {
   drawScene,
   bboxForScreen,
   LAYER_IDS,
+  RAILWAY_STYLES,
   type Bbox,
   type LayerId,
   type Osm,
+  type RailwayStyle,
   type Style,
   type StylePreset,
 } from "../src/core/index.ts";
@@ -81,13 +84,18 @@ const FILENAME_COORD_RE = /^(-?\d+(?:\.\d+)?)_(-?\d+(?:\.\d+)?)(?:_.*)?$/;
 
 type CityWrapper = { lat: number; lon: number; bbox?: Bbox; osm: Osm };
 
-/** Every optional layer switched on, as `{ showWater: true, ... }`. Derived
- *  from LAYER_IDS so a newly-added layer turns on here with no edit. */
-function allLayersOn(): Pick<Style, `show${Capitalize<LayerId>}`> {
+/** The optional layers that are plain on/off, switched on — `{ showWater: true, ... }`.
+ *  Derived from LAYER_IDS so a newly-added boolean layer turns on here with no
+ *  edit. `railways` is excluded: it's a mode, not a flag (see `--rail`). */
+const BOOLEAN_LAYERS = LAYER_IDS.filter((id) => id !== "railways");
+type BooleanLayer = Exclude<LayerId, "railways">;
+
+function allLayersOn(): Pick<Style, `show${Capitalize<BooleanLayer>}`> {
   return Object.fromEntries(
-    LAYER_IDS.map((id) => [`show${id[0].toUpperCase()}${id.slice(1)}`, true]),
-  ) as Pick<Style, `show${Capitalize<LayerId>}`>;
+    BOOLEAN_LAYERS.map((id) => [`show${id[0].toUpperCase()}${id.slice(1)}`, true]),
+  ) as Pick<Style, `show${Capitalize<BooleanLayer>}`>;
 }
+
 
 /** Flags that take no value — present ⇒ "true", and the next argv is left alone. */
 const BOOL_FLAGS = new Set(["mondrian"]);
@@ -120,7 +128,7 @@ function parseArgs(argv: string[]): { positionals: string[]; flags: Record<strin
 function fail(msg: string): never {
   console.error(`error: ${msg}\n`);
   console.error(
-    "usage: pnpm render <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--theme light|dark|both] [--mondrian] [-o dir]",
+    "usage: pnpm render <lat/lon | city.json> [-t png|svg|both] [-s WxH] [-p preset] [--rail off|plain|banded|ties] [--theme light|dark|both] [--mondrian] [-o dir]",
   );
   process.exit(1);
 }
@@ -148,6 +156,9 @@ async function main() {
 
   const preset = (flags.preset ?? "standard") as StylePreset;
   if (!PRESETS.includes(preset)) fail(`--preset must be one of ${PRESETS.join("/")}`);
+
+  const rail = (flags.rail ?? "banded") as RailwayStyle;
+  if (!RAILWAY_STYLES.includes(rail)) fail(`--rail must be one of ${RAILWAY_STYLES.join("/")}`);
 
   const themeArg = (flags.theme ?? "both").toLowerCase();
   if (!["light", "dark", "both"].includes(themeArg)) fail(`--theme must be light/dark/both`);
@@ -227,6 +238,7 @@ async function main() {
           foreground: theme.foreground,
           preset,
           ...allLayersOn(),
+          railwayStyle: rail,
           variant: mondrian ? "mondrian" : "ink",
         },
         osm,

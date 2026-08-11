@@ -10,11 +10,8 @@ export const WATER_ALPHA = 0.3;
 // `@aeroway-fill` serves both the line and the polygon rules.
 export const RUNWAY_ALPHA = 0.6;
 
-// Opacity of the railway centerlines, baked into an opaque color like the
-// others (see mixColor). Railways are drawn as a dashed line on top of the
-// roads; a slightly-under-full tint keeps them clearly present without competing
-// with the major roads.
-export const RAILWAY_ALPHA = 0.7;
+// (The railway layer has no alpha here on purpose: it has three drawing modes and
+// each keeps its own opacity next to its own weights — `RAILWAY_MODES` in render.ts.)
 
 // Schema version stamped on the OSM payload
 // (`{ v, elements, water, airports, railways, aerialways }`), whether precached to
