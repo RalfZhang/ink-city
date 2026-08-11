@@ -149,8 +149,8 @@ const RAILWAY_TIES = {
 const AERIALWAY = {
   lineAlpha: 0.5,
   lineWidth: 0.6,
-  dotAlpha: 0.7,
-  dotRadius: 1.1,
+  dotAlpha: 0.5,
+  dotRadius: 0.9,
   dotSpacing: 12,
 } as const;
 
