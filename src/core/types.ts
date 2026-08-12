@@ -4,8 +4,8 @@
 //
 // Types, with one exception: a string union that consumers must also *enumerate*
 // at runtime is written as a const tuple with the type derived from it, so the
-// list and the type can't drift (see RAILWAY_STYLES, and LAYER_IDS in
-// osm/layers.ts for the same pattern).
+// list and the type can't drift (see STYLE_PRESETS and RAILWAY_STYLES below, and
+// LAYER_IDS in osm/layers.ts for the same pattern).
 
 export type City = {
   id: number;
@@ -20,7 +20,23 @@ export type City = {
 export type Bbox = { south: number; west: number; north: number; east: number };
 
 export type ThemeMode = "light" | "dark" | "system";
-export type StylePreset = "minimal" | "standard" | "bold";
+
+/**
+ * How heavily the road network is inked — which `highway` classes get drawn and
+ * at what weight. The per-class weight tables are `ROAD_WEIGHTS` /
+ * `ROAD_WEIGHT_DEFAULT` in core/render.ts, both keyed `Record<StylePreset, …>`,
+ * so a preset added here is a missing-key error there until it has weights.
+ *
+ * A const tuple with the type derived from it (the `LAYER_IDS` pattern in
+ * osm/layers.ts, same as {@link RAILWAY_STYLES}) because two places have to
+ * enumerate the union at runtime: the Style tab's toggle group and
+ * `pnpm render --preset`'s validation. Deriving keeps a hand-copied list from
+ * quietly going short — a preset missing from a copy is one the UI never offers
+ * or the CLI rejects, and nothing type-checks a plain `StylePreset[]` for
+ * completeness. Order is lightest → heaviest, and is the order the Style tab shows.
+ */
+export const STYLE_PRESETS = ["minimal", "standard", "bold"] as const;
+export type StylePreset = (typeof STYLE_PRESETS)[number];
 
 /**
  * Which visual language the map is drawn in — one dimension, not a set of

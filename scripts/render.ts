@@ -51,6 +51,7 @@ import {
   bboxForScreen,
   LAYER_IDS,
   RAILWAY_STYLES,
+  STYLE_PRESETS,
   type Bbox,
   type LayerId,
   type Osm,
@@ -66,8 +67,6 @@ const COORD_PRECISION = 5;
 /** Half-width (km) of the rendered square; bboxForScreen crops a screen-aspect
  *  rectangle from it — matches the wallpaper pipeline's precached 20km area. */
 const RENDER_RADIUS_KM = 10;
-
-const PRESETS: StylePreset[] = ["minimal", "standard", "bold"];
 
 type ThemeName = "light" | "dark";
 const THEMES: Record<ThemeName, { background: string; foreground: string }> = {
@@ -155,7 +154,7 @@ async function main() {
   const height = Number(sm[2]);
 
   const preset = (flags.preset ?? "standard") as StylePreset;
-  if (!PRESETS.includes(preset)) fail(`--preset must be one of ${PRESETS.join("/")}`);
+  if (!STYLE_PRESETS.includes(preset)) fail(`--preset must be one of ${STYLE_PRESETS.join("/")}`);
 
   const rail = (flags.rail ?? "banded") as RailwayStyle;
   if (!RAILWAY_STYLES.includes(rail)) fail(`--rail must be one of ${RAILWAY_STYLES.join("/")}`);
