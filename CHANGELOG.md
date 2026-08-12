@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/RalfZhang/ink-city/compare/v0.10.4...v0.11.0) (2026-08-12)
+
+
+### Features
+
+* 3 railway styles ([382a43d](https://github.com/RalfZhang/ink-city/commit/382a43d36b9d4527bbca97ccb5a6c6ab4d4cb8bc))
+
+
+### Bug Fixes
+
+* better lat & lon for cities-*.json ([4b59bb9](https://github.com/RalfZhang/ink-city/commit/4b59bb9114d096e9b030eb7801a8c69b184e7975))
+* Redesign aeriaway ([a868721](https://github.com/RalfZhang/ink-city/commit/a8687214c4a5506eb84504bcf8237603fa63d4d2))
+
 ## [0.10.4](https://github.com/RalfZhang/ink-city/compare/v0.10.3...v0.10.4) (2026-08-08)
 
 
