@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { STYLE_PRESETS } from "@/core";
 import type { ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
@@ -24,11 +25,18 @@ const THEMES: { id: ThemeMode; labelKey: ParseKeys }[] = [
   { id: "system", labelKey: "style.themeSystem" },
 ];
 
-const PRESETS: { id: StylePreset; labelKey: ParseKeys; hintKey: ParseKeys }[] = [
-  { id: "minimal", labelKey: "style.presetMinimal", hintKey: "style.hintMinimal" },
-  { id: "standard", labelKey: "style.presetStandard", hintKey: "style.hintStandard" },
-  { id: "bold", labelKey: "style.presetBold", hintKey: "style.hintBold" },
-];
+// A `Record` over the union, iterated in `STYLE_PRESETS` order, rather than a
+// hand-ordered list like `THEMES` above: a preset added to `StylePreset` should be
+// a missing-key error here — in a list it would just be silently absent from the
+// toggle group. Order stays in core so the CLI's `--preset` and this row can't
+// disagree. (Same shape and reasoning as `RAILWAY_LABELS` in Lab.tsx.) `THEMES`
+// stays a plain list because this toggle group is the only place that enumerates
+// `ThemeMode` at runtime — there's no second copy for it to drift against.
+const PRESET_LABELS: Record<StylePreset, { labelKey: ParseKeys; hintKey: ParseKeys }> = {
+  minimal: { labelKey: "style.presetMinimal", hintKey: "style.hintMinimal" },
+  standard: { labelKey: "style.presetStandard", hintKey: "style.hintStandard" },
+  bold: { labelKey: "style.presetBold", hintKey: "style.hintBold" },
+};
 
 export default function Style({ status, busy, onError }: Props) {
   const { t } = useTranslation();
@@ -95,8 +103,6 @@ export default function Style({ status, busy, onError }: Props) {
     }
   };
 
-  const activeHintKey = PRESETS.find((p) => p.id === preset)?.hintKey;
-
   return (
     <Card className="max-w-2xl">
       <CardContent className="space-y-4">
@@ -119,7 +125,7 @@ export default function Style({ status, busy, onError }: Props) {
 
         <Separator />
 
-        <Section label={t("style.mapStyle")} hint={activeHintKey ? t(activeHintKey) : undefined}>
+        <Section label={t("style.mapStyle")} hint={t(PRESET_LABELS[preset].hintKey)}>
           <ToggleGroup
             type="single"
             value={preset}
@@ -128,9 +134,9 @@ export default function Style({ status, busy, onError }: Props) {
             size="sm"
             disabled={saving}
           >
-            {PRESETS.map((p) => (
-              <ToggleGroupItem key={p.id} value={p.id}>
-                {t(p.labelKey)}
+            {STYLE_PRESETS.map((id) => (
+              <ToggleGroupItem key={id} value={id}>
+                {t(PRESET_LABELS[id].labelKey)}
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
