@@ -66,13 +66,8 @@ async fn reconcile(app: &AppHandle) {
     let Some(desired) = pipeline::desired_signature(app) else {
         return; // updates disabled, or Customized with no pin
     };
-    let up_to_date = app
-        .state::<AppState>()
-        .last_applied
-        .lock()
-        .unwrap()
-        .as_deref()
-        == Some(desired.as_str());
+    let up_to_date =
+        app.state::<AppState>().last_applied.lock().unwrap().as_deref() == Some(desired.as_str());
     if up_to_date {
         return;
     }

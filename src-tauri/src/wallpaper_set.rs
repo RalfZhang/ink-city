@@ -81,9 +81,7 @@ for (let i = 0; i < screens.count; i++) {{
         escaped
     );
 
-    let out = Command::new("osascript")
-        .args(["-l", "JavaScript", "-e", &script])
-        .output()?;
+    let out = Command::new("osascript").args(["-l", "JavaScript", "-e", &script]).output()?;
 
     if !out.status.success() {
         let err = String::from_utf8_lossy(&out.stderr);

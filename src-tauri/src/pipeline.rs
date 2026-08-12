@@ -94,7 +94,6 @@ fn custom_dir(app: &AppHandle) -> Result<PathBuf> {
     Ok(wallpaper_dir(app)?.join("customized"))
 }
 
-
 pub fn effective_theme(app: &AppHandle) -> EffectiveTheme {
     let mode = *app.state::<AppState>().theme.lock().unwrap();
     match mode {
@@ -370,12 +369,9 @@ fn pin_city(lat: f64, lon: f64) -> city::City {
 /// city and deliberately doesn't touch that memo.
 async fn resolve_and_record(app: &AppHandle, target: &Target) -> Resolved {
     match target.kind {
-        TargetKind::Custom { lat, lon, .. } => Resolved {
-            city: pin_city(lat, lon),
-            cdn_id: None,
-            osm: None,
-            stamp: None,
-        },
+        TargetKind::Custom { lat, lon, .. } => {
+            Resolved { city: pin_city(lat, lon), cdn_id: None, osm: None, stamp: None }
+        }
         TargetKind::Daily(date) => {
             let resolved = resolve_daily(app, date, &target.osm_path).await;
             let state = app.state::<AppState>();
@@ -440,7 +436,11 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
                 stamp(city)
             }
             Err(e) => {
-                log::warn!("[pipeline] bypass on: no schedule city for {} ({}); using rotation", date, e);
+                log::warn!(
+                    "[pipeline] bypass on: no schedule city for {} ({}); using rotation",
+                    date,
+                    e
+                );
                 // Still no CDN — with bypass on, the id-keyed pre-cache is exactly
                 // what we're avoiding.
                 Resolved { cdn_id: None, ..rotation_fallback(date, None) }
@@ -466,7 +466,12 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
     if let Some(v) = cached_osm_at(osm_path) {
         return match city_envelope(&v) {
             Some(city) => {
-                log::info!("[pipeline] city for {} from cache: {} ({})", date, city.name, city.country);
+                log::info!(
+                    "[pipeline] city for {} from cache: {} ({})",
+                    date,
+                    city.name,
+                    city.country
+                );
                 let cdn_id = Some(city.id);
                 Resolved { city, cdn_id, osm: Some(DayOsm::Cached(v)), stamp: Some(date) }
             }
@@ -484,7 +489,9 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
         // `info`, not `warn`: rung 3 still yields the *scheduled* city, so a missing
         // manifest costs an Overpass fetch, not correctness. Warning here would cry
         // wolf over the one rung that recovers on its own.
-        Err(e) => log::info!("[pipeline] no manifest for {} ({}); trying the schedule state", date, e),
+        Err(e) => {
+            log::info!("[pipeline] no manifest for {} ({}); trying the schedule state", date, e)
+        }
     }
 
     // Rung 3.
@@ -653,7 +660,9 @@ async fn render_bytes_for(
                     }
                 },
                 None => {
-                    log::info!("[pipeline] fetching osm live from sidecar (no CDN for this render)");
+                    log::info!(
+                        "[pipeline] fetching osm live from sidecar (no CDN for this render)"
+                    );
                     osm_sidecar::fetch(app, bbox).await?
                 }
             };
@@ -691,14 +700,7 @@ async fn render_bytes_for(
         *g = Some(PendingJob { date: job_id.to_string(), tx });
     }
 
-    let req = RenderRequest {
-        date: job_id.to_string(),
-        bbox,
-        width: w,
-        height: h,
-        style,
-        osm,
-    };
+    let req = RenderRequest { date: job_id.to_string(), bbox, width: w, height: h, style, osm };
     renderer.emit("render-request", &req)?;
 
     tokio::time::timeout(Duration::from_secs(120), rx)
@@ -1022,14 +1024,16 @@ mod tests {
     // caller must fall back to the rotation pick for the name.
     #[test]
     fn city_envelope_absent_on_an_unstamped_payload() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"v":4,"elements":[{"type":"way"}]}"#).unwrap();
+        let v: serde_json::Value =
+            serde_json::from_str(r#"{"v":4,"elements":[{"type":"way"}]}"#).unwrap();
         assert!(city_envelope(&v).is_none());
     }
 
     // Half-written: treated as absent rather than deserialized into a partial city.
     #[test]
     fn city_envelope_absent_on_a_partial_city() {
-        let v: serde_json::Value = serde_json::from_str(r#"{"city":{"lat":22.5,"lon":114.0}}"#).unwrap();
+        let v: serde_json::Value =
+            serde_json::from_str(r#"{"city":{"lat":22.5,"lon":114.0}}"#).unwrap();
         assert!(city_envelope(&v).is_none());
     }
 

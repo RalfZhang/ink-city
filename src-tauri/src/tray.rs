@@ -8,7 +8,10 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
 
-use tauri::menu::{CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuItem, MenuItemBuilder, PredefinedMenuItem};
+use tauri::menu::{
+    CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuItem, MenuItemBuilder,
+    PredefinedMenuItem,
+};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry};
 
@@ -32,8 +35,7 @@ static UPDATE_SEP: OnceLock<PredefinedMenuItem<Wry>> = OnceLock::new();
 static UPDATE_SHOWN: AtomicBool = AtomicBool::new(false);
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
-    let initial_daily =
-        *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
+    let initial_daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
 
     let open_item = MenuItemBuilder::with_id("open", "Open Settings").build(app)?;
     let toggle_item = CheckMenuItemBuilder::with_id("toggle_enabled", "Daily Updates")
@@ -64,9 +66,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     let _ = UPDATE_SEP.set(update_sep);
     let _ = MENU.set(menu.clone());
 
-    let mut builder = TrayIconBuilder::with_id(TRAY_ID)
-        .tooltip("InkCity")
-        .menu(&menu);
+    let mut builder = TrayIconBuilder::with_id(TRAY_ID).tooltip("InkCity").menu(&menu);
 
     // All icons are embedded at compile time (paths are relative to src-tauri/);
     // see the header comment in icons/tray-icon.svg for how they're regenerated.
@@ -78,9 +78,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     // one place. Everything else falls back to the full-colour app icon.
     #[cfg(target_os = "macos")]
     {
-        builder = builder
-            .icon(tauri::include_image!("icons/tray.png"))
-            .icon_as_template(true);
+        builder = builder.icon(tauri::include_image!("icons/tray.png")).icon_as_template(true);
     }
     #[cfg(target_os = "windows")]
     {
@@ -120,7 +118,11 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
                     let now_daily = {
                         let state = app.state::<AppState>();
                         let mut m = state.update_mode.lock().unwrap();
-                        *m = if *m == UpdateMode::Daily { UpdateMode::Disable } else { UpdateMode::Daily };
+                        *m = if *m == UpdateMode::Daily {
+                            UpdateMode::Disable
+                        } else {
+                            UpdateMode::Daily
+                        };
                         *m == UpdateMode::Daily
                     };
                     sync_mode_to_tray(&app);
@@ -182,8 +184,7 @@ pub fn show_update_available(_app: &AppHandle) {
     if UPDATE_SHOWN.swap(true, Ordering::AcqRel) {
         return;
     }
-    let (Some(menu), Some(item), Some(sep)) =
-        (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
+    let (Some(menu), Some(item), Some(sep)) = (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
     else {
         return;
     };
@@ -199,8 +200,7 @@ pub fn hide_update_available(_app: &AppHandle) {
     if !UPDATE_SHOWN.swap(false, Ordering::AcqRel) {
         return;
     }
-    let (Some(menu), Some(item), Some(sep)) =
-        (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
+    let (Some(menu), Some(item), Some(sep)) = (MENU.get(), UPDATE_ITEM.get(), UPDATE_SEP.get())
     else {
         return;
     };

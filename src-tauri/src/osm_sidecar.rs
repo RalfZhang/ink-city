@@ -50,9 +50,8 @@ pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
         }
     }
 
-    let (mut rx, _child) = cmd
-        .spawn()
-        .map_err(|e| anyhow!("failed to spawn osm-cli sidecar: {}", e))?;
+    let (mut rx, _child) =
+        cmd.spawn().map_err(|e| anyhow!("failed to spawn osm-cli sidecar: {}", e))?;
 
     let mut stdout = Vec::new();
     let mut stderr_msg = String::new();
@@ -74,5 +73,6 @@ pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
         }
     }
 
-    serde_json::from_slice(&stdout).map_err(|e| anyhow!("osm-cli sidecar produced invalid JSON: {}", e))
+    serde_json::from_slice(&stdout)
+        .map_err(|e| anyhow!("osm-cli sidecar produced invalid JSON: {}", e))
 }

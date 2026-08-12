@@ -103,9 +103,7 @@ fn scheduled_city(v: &serde_json::Value) -> Result<city::City> {
 }
 
 fn require_city(v: &serde_json::Value, url: &str) -> Result<()> {
-    scheduled_city(v)
-        .map(|_| ())
-        .map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))
+    scheduled_city(v).map(|_| ()).map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))
 }
 
 /// A date-keyed manifest must be usable as *both* map data and a city — validate
@@ -213,19 +211,14 @@ async fn fetch_json(
 fn decode_gz_json(bytes: &[u8], url: &str) -> Result<serde_json::Value> {
     let mut decoder = GzDecoder::new(bytes);
     let mut s = String::new();
-    decoder
-        .read_to_string(&mut s)
-        .map_err(|e| anyhow!("gunzip failed ({url}): {e}"))?;
+    decoder.read_to_string(&mut s).map_err(|e| anyhow!("gunzip failed ({url}): {e}"))?;
     Ok(serde_json::from_str(&s)?)
 }
 
 // Validate before trusting it, so a truncated/garbage response falls back to
 // the osm-cli sidecar instead of producing an empty wallpaper.
 fn validate_osm(v: &serde_json::Value, url: &str) -> Result<()> {
-    let has_roads = v
-        .get("elements")
-        .and_then(|e| e.as_array())
-        .is_some_and(|a| !a.is_empty());
+    let has_roads = v.get("elements").and_then(|e| e.as_array()).is_some_and(|a| !a.is_empty());
     if !has_roads {
         return Err(anyhow!("CDN payload has no road elements ({url})"));
     }

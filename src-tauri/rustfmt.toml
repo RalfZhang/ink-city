@@ -1,0 +1,15 @@
+# rustfmt had never been run on this crate, so its defaults disagreed with the
+# hand-written style in ~74 places. This one setting closes half of that gap.
+#
+# `Max` raises rustfmt's *sub-width* heuristics — `fn_call_width` (default 60),
+# `struct_lit_width` (18), `chain_width` (60), etc. — to `max_width`. Those low
+# defaults are what force a short call or struct literal onto four lines even
+# when it fits comfortably on one, and this codebase consistently writes them on
+# one (`Bbox { south, west, north, east }`, single-line `assert_eq!`s, method
+# chains). Without `Max`, running `cargo fmt` would explode all of them.
+#
+# `max_width` deliberately stays at the default 100. Raising it is counter-
+# intuitively *worse*: measured against this tree, 110 and 120 both produce more
+# churn than 100, because a wider budget lets rustfmt start collapsing blocks
+# that are deliberately split for readability. 100 is the local minimum.
+use_small_heuristics = "Max"
