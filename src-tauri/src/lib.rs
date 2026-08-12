@@ -87,10 +87,7 @@ mod tests {
 
     #[test]
     fn flag_check_ignores_other_args() {
-        let argv = vec![
-            "/path/to/InkCity".to_string(),
-            "--some-other-flag".to_string(),
-        ];
+        let argv = vec!["/path/to/InkCity".to_string(), "--some-other-flag".to_string()];
         assert!(!args_have_autostart_flag(argv));
     }
 }
@@ -230,7 +227,7 @@ pub fn run() {
                 }
                 #[cfg(target_os = "windows")]
                 {
-                    use window_vibrancy::{apply_mica, apply_acrylic};
+                    use window_vibrancy::{apply_acrylic, apply_mica};
                     // Prefer Mica (Win11). Fall back to Acrylic if Mica is unsupported (Win10).
                     if apply_mica(&main, None).is_err() {
                         let _ = apply_acrylic(&main, None);

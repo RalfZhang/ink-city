@@ -151,10 +151,7 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
         return Ok(None);
     }
 
-    let update = updater(app)?
-        .check()
-        .await
-        .map_err(|e| anyhow!("update check failed: {e}"))?;
+    let update = updater(app)?.check().await.map_err(|e| anyhow!("update check failed: {e}"))?;
 
     // Record the attempt regardless of result so the cadence advances even
     // when we're already up to date or the endpoint was unreachable.
@@ -221,10 +218,7 @@ pub fn restore_pending(app: &AppHandle) {
 /// affordance and report `Ok(false)` ("already up to date"). On success this calls
 /// `app.restart()` and never returns.
 async fn perform_install(app: &AppHandle) -> Result<bool> {
-    let update = updater(app)?
-        .check()
-        .await
-        .map_err(|e| anyhow!("update check failed: {e}"))?;
+    let update = updater(app)?.check().await.map_err(|e| anyhow!("update check failed: {e}"))?;
 
     let Some(update) = update else {
         // Nothing to install — clear any stale affordance.
@@ -259,11 +253,7 @@ pub fn spawn_auto_install(app: AppHandle) {
 }
 
 fn spawn_install_impl(app: AppHandle, quiet: bool) {
-    if app
-        .state::<AppState>()
-        .update_installing
-        .swap(true, Ordering::AcqRel)
-    {
+    if app.state::<AppState>().update_installing.swap(true, Ordering::AcqRel) {
         return; // an install is already in flight
     }
 
@@ -274,9 +264,7 @@ fn spawn_install_impl(app: AppHandle, quiet: bool) {
         notify_installing(&app);
 
         let res = perform_install(&app).await;
-        app.state::<AppState>()
-            .update_installing
-            .store(false, Ordering::Release);
+        app.state::<AppState>().update_installing.store(false, Ordering::Release);
 
         match res {
             Ok(true) => { /* unreachable: perform_install relaunched */ }
@@ -305,21 +293,14 @@ pub async fn install_now(app: &AppHandle) -> Result<bool> {
         return Ok(false); // an install is already running elsewhere
     }
     let res = perform_install(app).await;
-    app.state::<AppState>()
-        .update_installing
-        .store(false, Ordering::Release);
+    app.state::<AppState>().update_installing.store(false, Ordering::Release);
     res
 }
 
 /// Ask the user (native dialog, no main window) whether to update now, and
 /// install on confirmation. Shared by the tray entry and the notification path.
 pub fn prompt_and_install(app: &AppHandle) {
-    let version = app
-        .state::<AppState>()
-        .available_update
-        .lock()
-        .unwrap()
-        .clone();
+    let version = app.state::<AppState>().available_update.lock().unwrap().clone();
     let Some(version) = version else { return };
 
     let s = strings(app);
@@ -441,9 +422,5 @@ fn notify_installing(app: &AppHandle) {
 
 /// A simple OK info dialog (no main window needed).
 fn info_dialog(app: &AppHandle, body: String) {
-    app.dialog()
-        .message(body)
-        .title(TITLE)
-        .kind(MessageDialogKind::Info)
-        .show(|_| {});
+    app.dialog().message(body).title(TITLE).kind(MessageDialogKind::Info).show(|_| {});
 }

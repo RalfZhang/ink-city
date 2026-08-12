@@ -109,7 +109,9 @@ pub fn spawn_watcher(app: AppHandle) {
             )
         };
         if status != ERROR_SUCCESS {
-            log::warn!("tray theme: cannot open Personalize key ({status}); icon won't follow the taskbar");
+            log::warn!(
+                "tray theme: cannot open Personalize key ({status}); icon won't follow the taskbar"
+            );
             return;
         }
 

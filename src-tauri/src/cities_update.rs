@@ -84,16 +84,8 @@ async fn check_update(app: &AppHandle) -> Result<()> {
     Err(last_err.unwrap_or_else(|| anyhow!("no remote hosts configured")))
 }
 
-async fn apply_update(
-    app: &AppHandle,
-    meta: &mut CacheMeta,
-    res: reqwest::Response,
-) -> Result<()> {
-    let new_etag = res
-        .headers()
-        .get("etag")
-        .and_then(|v| v.to_str().ok())
-        .map(String::from);
+async fn apply_update(app: &AppHandle, meta: &mut CacheMeta, res: reqwest::Response) -> Result<()> {
+    let new_etag = res.headers().get("etag").and_then(|v| v.to_str().ok()).map(String::from);
     let body = res.text().await?;
 
     // Validate before overwriting cache.

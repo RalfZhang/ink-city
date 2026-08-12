@@ -5,18 +5,13 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ThemeMode {
     Light,
     Dark,
+    #[default]
     System,
-}
-
-impl Default for ThemeMode {
-    fn default() -> Self {
-        ThemeMode::System
-    }
 }
 
 /// How the wallpaper is refreshed — the "How to update?" selector in the City
@@ -24,18 +19,13 @@ impl Default for ThemeMode {
 /// behavior); `Customized` pins the wallpaper to a user-entered location and
 /// never rotates; `Disable` turns automatic updates off entirely (the wallpaper
 /// stays whatever it currently is).
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum UpdateMode {
     Disable,
+    #[default]
     Daily,
     Customized,
-}
-
-impl Default for UpdateMode {
-    fn default() -> Self {
-        UpdateMode::Daily
-    }
 }
 
 /// A user-pinned location for `UpdateMode::Customized` (issue #11). No GeoNames
@@ -50,19 +40,14 @@ pub struct CustomCity {
 /// How often the background scheduler checks GitHub for a new release.
 /// `Never` disables automatic checks entirely (the user can still check
 /// manually from the About tab).
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum UpdateCheck {
+    #[default]
     Daily,
     Weekly,
     Monthly,
     Never,
-}
-
-impl Default for UpdateCheck {
-    fn default() -> Self {
-        UpdateCheck::Daily
-    }
 }
 
 impl UpdateCheck {
@@ -77,18 +62,13 @@ impl UpdateCheck {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StylePreset {
     Minimal,
+    #[default]
     Standard,
     Bold,
-}
-
-impl Default for StylePreset {
-    fn default() -> Self {
-        StylePreset::Standard
-    }
 }
 
 /// Which visual language the map is drawn in — one dimension rather than a set
@@ -98,17 +78,12 @@ impl Default for StylePreset {
 /// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18).
 /// Mirrors `StyleVariant` in src/core/types.ts and is serialized straight into
 /// the renderer's `Style` payload.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StyleVariant {
+    #[default]
     Ink,
     Mondrian,
-}
-
-impl Default for StyleVariant {
-    fn default() -> Self {
-        StyleVariant::Ink
-    }
 }
 
 /// How the railway layer is drawn — the Lab-tab selector. One dimension rather
@@ -120,19 +95,14 @@ impl Default for StyleVariant {
 /// weights and opacity live too.
 ///
 /// Replaces the legacy `show_railways: bool`, which `parse_config` migrates.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum RailwayStyle {
+    #[default]
     Off,
     Plain,
     Banded,
     Ties,
-}
-
-impl Default for RailwayStyle {
-    fn default() -> Self {
-        RailwayStyle::Off
-    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -358,10 +328,7 @@ mod tests {
         // Plain, not Banded/Ties: no mode reproduces the old dashed line, so Plain
         // is the nearest survivor and the only one that isn't a deliberate new
         // symbol — an upgrade must not opt the user into a look they never chose.
-        assert_eq!(
-            parse_config(r#"{"show_railways": true}"#).railway_style,
-            RailwayStyle::Plain
-        );
+        assert_eq!(parse_config(r#"{"show_railways": true}"#).railway_style, RailwayStyle::Plain);
     }
 
     #[test]

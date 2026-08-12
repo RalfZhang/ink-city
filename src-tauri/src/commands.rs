@@ -217,18 +217,14 @@ pub fn set_auto_update(app: AppHandle, on: bool) -> Result<(), String> {
 /// (tray entry + General affordance) as a side effect.
 #[tauri::command]
 pub async fn check_for_update(app: AppHandle) -> Result<Option<String>, String> {
-    crate::updates::do_check(&app, true)
-        .await
-        .map_err(|e| e.to_string())
+    crate::updates::do_check(&app, true).await.map_err(|e| e.to_string())
 }
 
 /// Install the available update and relaunch. On success this never returns
 /// (the app restarts). Returns `Ok(false)` when there's nothing to install.
 #[tauri::command]
 pub async fn install_update(app: AppHandle) -> Result<bool, String> {
-    crate::updates::install_now(&app)
-        .await
-        .map_err(|e| e.to_string())
+    crate::updates::install_now(&app).await.map_err(|e| e.to_string())
 }
 
 /// Push the localized strings for the windowless update flows (notification +
@@ -323,13 +319,8 @@ fn lab_settings(state: &AppState) -> LabSettings {
 pub fn apply_lab_settings(app: AppHandle, settings: LabSettings) -> Result<ApplyResult, String> {
     let state = app.state::<AppState>();
     let before = lab_settings(&state);
-    let LabSettings {
-        show_airports,
-        show_water,
-        railway_style,
-        show_aerialways,
-        variant,
-    } = settings;
+    let LabSettings { show_airports, show_water, railway_style, show_aerialways, variant } =
+        settings;
 
     state.show_airports.store(show_airports, Ordering::Release);
     state.show_water.store(show_water, Ordering::Release);
@@ -403,10 +394,7 @@ pub fn apply_proxy_settings(
 
 #[tauri::command]
 pub fn get_color_defaults() -> ColorDefaults {
-    ColorDefaults {
-        light: ColorPair::light_default(),
-        dark: ColorPair::dark_default(),
-    }
+    ColorDefaults { light: ColorPair::light_default(), dark: ColorPair::dark_default() }
 }
 
 fn current_effective_colors(app: &AppHandle) -> ColorPair {
@@ -492,13 +480,7 @@ pub fn update_tray_labels(
     quit: String,
     update_available: String,
 ) -> Result<(), String> {
-    tray::update_labels(
-        &open_settings,
-        &daily_updates,
-        &regenerate_now,
-        &quit,
-        &update_available,
-    );
+    tray::update_labels(&open_settings, &daily_updates, &regenerate_now, &quit, &update_available);
     Ok(())
 }
 
