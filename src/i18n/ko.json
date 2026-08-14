@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "오늘",
+    "resolving": "오늘의 도시를 가져오는 중…",
+    "unresolved": "도시 일정에 연결할 수 없습니다. 1분마다 다시 시도합니다.",
     "population": "인구 {{value}}",
     "regenerate": "다시 생성",
     "regenerating": "생성 중…",

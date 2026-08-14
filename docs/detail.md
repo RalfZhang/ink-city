@@ -1,14 +1,14 @@
 ## How the daily city is chosen
 
-A GitHub Action draws each day's city at random from `src/data/cities-*.json` (~1055 cities) under no-repeat cooldowns — no city within 30 days, no country within 5 — and **persists the result** to `osm-v2/city-list.json` on the `data` branch. The client reads that, so the pick is not a formula it can recompute; the tradeoff is that a stored schedule can be steered by hand, which a seeded one can't. [random-city-strategy.md](random-city-strategy.md) is the full account, including the hand-edit workflow and the four-rung client fallback.
+A GitHub Action draws each day's city at random from `src/data/cities-*.json` (~1055 cities) under no-repeat cooldowns — no city within 30 days, no country within 5 — and **persists the result** to `osm-v2/city-list.json` on the `data` branch. The client reads that, so the pick is not a formula it can recompute; the tradeoff is that a stored schedule can be steered by hand, which a seeded one can't. [random-city-strategy.md](random-city-strategy.md) is the full account, including the hand-edit workflow and the three-rung client ladder.
 
-**The population rotation is now only the last-resort fallback**, reached when no host serves either schedule file:
+**The population rotation is gone from the client.** It was the last-resort fallback during the migration — reached when no host served either schedule file — and picked a city with:
 
 ```
 index = (days_since_2023-03-03 * 379) % N
 ```
 
-`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` can stay population-sorted and append-only. The formula is ported in both `src-tauri/src/city.rs` and `src/core/city.ts` and the two must stay equivalent. The website still computes it directly and so will name the rotation city until it reads the manifests too.
+`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` can stay population-sorted and append-only. The Rust port is deleted; `src/core/city.ts` keeps the formula for the CI pre-cacher, which still publishes the id-keyed `osm/<id>.json` payloads for clients shipped before the removal (recommended removal after 2026-11-01). A day the schedule can't name is now simply not painted: the previous wallpaper stays up, the City tab says why, and the 60s poll retries. The formula is not a source of truth for any client any more — the future website will read the manifests rather than recompute it, since a random stored pick has no formula to recompute.
 
 ## Architecture
 

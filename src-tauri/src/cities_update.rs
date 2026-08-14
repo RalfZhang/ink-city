@@ -7,10 +7,13 @@ use tauri::{AppHandle, Manager};
 
 use crate::github_mirror;
 
-/// Remote canonical cities list. ETag-based conditional GETs avoid
-/// re-downloading unchanged content, but only against the primary host
-/// below (see `check_update`) — jsDelivr's 12h edge-cache propagation is
-/// fine for our daily-check cadence.
+/// Remote canonical cities list — the search index `city.rs` loads (it no longer
+/// feeds a daily rotation; the schedule does that). Refreshing it out of band means
+/// a city added to `main` becomes searchable without shipping a new build.
+///
+/// ETag-based conditional GETs avoid re-downloading unchanged content, but only
+/// against the primary host below (see `check_update`) — jsDelivr's 12h edge-cache
+/// propagation is fine for our daily-check cadence.
 ///
 /// See `github_mirror` for the mirrored-host fallback order and rationale.
 /// Update `GIT_REF` / `REMOTE_PATH` if the repo / branch moves.

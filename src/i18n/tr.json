@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Bugün",
+    "resolving": "Bugünün şehri alınıyor…",
+    "unresolved": "Şehir takvimine ulaşılamıyor — her dakika yeniden denenir.",
     "population": "nüfus {{value}}",
     "regenerate": "Yeniden oluştur",
     "regenerating": "Oluşturuluyor…",

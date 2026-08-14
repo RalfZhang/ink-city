@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "今日",
+    "resolving": "今日の都市を取得中…",
+    "unresolved": "都市スケジュールに接続できません。1 分ごとに再試行します。",
     "population": "人口 {{value}}",
     "regenerate": "再生成",
     "regenerating": "生成中…",

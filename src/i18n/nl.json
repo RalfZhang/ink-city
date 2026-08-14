@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Vandaag",
+    "resolving": "Stad van vandaag ophalen…",
+    "unresolved": "Stedenschema niet bereikbaar — elke minuut opnieuw geprobeerd.",
     "population": "inw. {{value}}",
     "regenerate": "Opnieuw genereren",
     "regenerating": "Genereren…",

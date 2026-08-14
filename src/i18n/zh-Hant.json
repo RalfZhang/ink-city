@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "今日",
+    "resolving": "正在取得今日城市…",
+    "unresolved": "無法連線城市排程，每分鐘重試一次。",
     "population": "人口 {{value}}",
     "regenerate": "重新生成",
     "regenerating": "生成中…",

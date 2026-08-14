@@ -9,16 +9,33 @@ deserializes anywhere the others do.
 
 | File | Pins | What it is |
 |---|---|---|
-| `cities.json` | 1000 | Top cities by population (GeoNames). **The only one wired into the app.** |
-| `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). |
-| `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. |
+| `cities.json` | 1000 | Top cities by population (GeoNames). **The only one the desktop binary loads.** |
+| `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). **What the schedule draws from.** |
+| `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. **Ditto.** |
 
 Only `cities.json` is loaded at runtime — it's hardcoded in
 [`src-tauri/src/city.rs`](../../src-tauri/src/city.rs) (`include_str!` + cache
-filename) and the jsDelivr hot-update URL in `cities_update.rs`. The other two are
-**standalone assets awaiting a multi-list selector feature** — they are *not* dead
-files. The rotation logic is list-length-agnostic, so wiring one in only needs a
-list-selection setting + parameterizing that hardcoded filename/URL.
+filename) and the jsDelivr hot-update URL in `cities_update.rs`. Its one job there is
+the **Customized-mode name search**: it used to also *be* the daily city (a
+population-ordered rotation), but the client now takes that from the CI-authored
+schedule, which draws from the two `cities-*.json` pools instead — see
+[random-city-strategy.md](../../docs/random-city-strategy.md). `cities.json` also
+still drives the deprecated id-keyed precache flow in CI (removal recommended after
+2026-11-01).
+
+"Loaded by the desktop binary" is narrower than "used by the app", and the gap is
+the point. The other two pools are **not** dead files and are not waiting to be
+wired in: the CI schedule already draws from both, so they decide every daily city
+the app paints — it just receives those picks over the CDN instead of computing
+them from a bundled file.
+
+What's still single-pool is the **Customized-mode name search**, which remains
+`cities.json` alone. *That* is the part awaiting a multi-list selector: a
+list-selection setting plus parameterizing the filename/URL hardcoded above.
+
+Worth keeping the two roles apart, because they pull in opposite directions — a
+search index wants whatever pool the user is most likely to type a name from, while
+the schedule wants whichever makes the best wallpapers.
 
 ## How these are built / regenerated
 

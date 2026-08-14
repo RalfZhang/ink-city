@@ -95,15 +95,45 @@ pub struct AppState {
     /// string (rather than a typed tuple) so it can key both the Daily rotation
     /// (by date + theme) and a Customized pin (by coordinates + theme) uniformly.
     pub last_applied: StdMutex<Option<String>>,
-    /// The city the pipeline actually resolved for a date — the schedule
-    /// manifest's pick when the CDN served one, else the rotation fallback.
-    /// `Status` reads it through `pipeline::city_for_status` rather than calling
-    /// `city::pick_for_date` itself, which would name a different city than the
-    /// wallpaper on every day the schedule was used. In-memory only; see
-    /// `city_for_status` for how a restart onto an already-rendered day recovers
-    /// it from that day's cached payload. Only the Daily flow writes it — a
-    /// Customized pin isn't a city and must not overwrite the day's answer.
-    pub resolved_city: StdMutex<Option<(chrono::NaiveDate, crate::city::City)>>,
+    /// What a date resolved to, once anything has looked: `Some(city)` for the
+    /// schedule manifest's pick when a host served one, else the schedule state
+    /// file's — and **`None` for "looked, and nothing can name this day"**. `Status`
+    /// reads it through `pipeline::city_for_status`, which is the only way to name
+    /// the day at all now that the client computes no rotation of its own.
+    ///
+    /// The inner `Option` is what keeps the negative answer memoized too. Its cost
+    /// is asymmetric: a day whose cached payload predates the `city` envelope reads
+    /// and parses tens of MB to learn nothing, and `Status` is rebuilt on every
+    /// settings change — so a miss that isn't remembered is re-paid indefinitely.
+    /// A negative entry can't go stale: the only way an answer appears later is a
+    /// render, and every render goes through `pipeline::resolve_and_record`, which
+    /// overwrites this with the city it resolved.
+    ///
+    /// In-memory only; see `city_for_status` for how a restart onto an
+    /// already-rendered day recovers the answer from that day's cached payload.
+    /// Only the Daily flow writes it — a Customized pin isn't a city and must not
+    /// overwrite the day's answer.
+    pub resolved_city: StdMutex<Option<(chrono::NaiveDate, Option<crate::city::City>)>>,
+    /// Why the Daily render for a date failed, or `None` once one succeeds. The
+    /// counterpart to `resolved_city`: that field says which city a day resolved
+    /// to, this one says why it couldn't.
+    ///
+    /// It has to be state rather than a command's return value because **every**
+    /// caller of `pipeline::run_now` is detached — `spawn_apply`,
+    /// `spawn_force_regen` (which is what `regenerate_now` invokes) and the
+    /// scheduler's `reconcile` all spawn and drop the `Result`. So a failure has no
+    /// awaited `Result` to travel back on, and before this existed the only trace
+    /// was a log line the user never sees. Since the rotation was retired an
+    /// unresolvable day paints nothing and names nothing, so that trace had to
+    /// become user-visible (see `Status::last_error`).
+    ///
+    /// Carries the date, and only the Daily flow writes it (see
+    /// `pipeline::run_now_inner`). Both halves of that are load-bearing: a
+    /// Customized pin's failure recorded here would be shown as the reason the
+    /// *schedule* has no city for the day — reachable, since applying a pin and
+    /// switching back to Daily are adjacent actions — and an undated one would
+    /// survive midnight and indict a day nothing had tried yet.
+    pub last_error: StdMutex<Option<(chrono::NaiveDate, String)>>,
     /// Signal that some `Status`-affecting state changed. The status-emitter task
     /// waits on it and pushes a fresh snapshot to the frontend. Mutation sites only
     /// signal (`mark_status_dirty`); the snapshot is built in one place.
@@ -143,6 +173,7 @@ impl AppState {
             quitting: AtomicBool::new(false),
             last_applied: StdMutex::new(None),
             resolved_city: StdMutex::new(None),
+            last_error: StdMutex::new(None),
             status_dirty: Arc::new(Notify::new()),
         }
     }

@@ -11,7 +11,9 @@
 //!     renderer window → `wallpaper_set` it. The core of the app.
 //!   - `cdn` / `github_mirror` / `osm_sidecar` — where OSM data comes from, in
 //!     fallback order. `cities_update` refreshes the bundled city list the same way.
-//!   - `city` / `bbox` — ports of `src/core/{city,bbox}.ts`; keep them in sync.
+//!   - `city` — the bundled city list, for the Customized-mode name search (the
+//!     daily city comes from the published schedule, not from here). `bbox` is a
+//!     port of `src/core/bbox.ts`; keep the two in sync.
 //!   - `config` (persisted) vs `state` (live). `tray`, `updates` — the windowless
 //!     surfaces, whose user-facing strings are pushed in from the frontend's i18n.
 mod bbox;
@@ -170,8 +172,8 @@ pub fn run() {
                 let _ = config::mark_initialized(handle);
             }
 
-            // Initialize the cities list (cache → bundled fallback) before the
-            // scheduler picks today's city.
+            // Load the cities list (cache → bundled fallback) that backs the
+            // Customized-mode name search.
             city::initialize(handle);
 
             // Hidden renderer window — built up front so it's ready for the first run.

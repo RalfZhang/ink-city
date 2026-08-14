@@ -33,9 +33,30 @@ pub struct Status {
     pub hide_tray: bool,
     pub running: bool,
     /// The city today's Daily wallpaper depicts, per `pipeline::city_for_status` —
-    /// what was actually rendered, not a second rotation pick. Informational when
+    /// what was actually rendered, never a locally recomputed pick. `None` until the
+    /// day has been resolved (first launch of a day, a render in flight, or one that
+    /// couldn't reach the schedule): there's no client-side rotation to name a day
+    /// with any more, so the City tab shows a placeholder. Informational when
     /// `update_mode` isn't `Daily`; a Customized pin is reported by `custom`.
-    pub city: City,
+    pub city: Option<City>,
+    /// Why today's Daily render failed, or `None` when it succeeded or hasn't run
+    /// yet. Read together with `city`, it separates two states that look identical
+    /// otherwise and call for opposite responses from the user:
+    ///
+    ///   - `city: None`, `last_error: None` — the day is still resolving (first
+    ///     launch of a day, a render in flight). Wait.
+    ///   - `city: None`, `last_error: Some(_)` — the day can't be resolved. Not
+    ///     transient; the poll will keep retrying and keep failing until the
+    ///     network changes.
+    ///
+    /// The second state is new: while the client still had the population rotation
+    /// as its last rung it could always name a day locally, so an unnameable day
+    /// wasn't representable and needed no explanation.
+    ///
+    /// Scoped to the Daily flow and to *today* — see `AppState::last_error` for why
+    /// both matter. A Customized pin reports its own failures through `custom`'s
+    /// panel.
+    pub last_error: Option<String>,
     pub date: String,
     pub theme: ThemeMode,
     pub effective_theme: String,
@@ -67,15 +88,30 @@ pub struct Status {
     pub proxy_url: String,
 }
 
+/// `Status::last_error` from `AppState::last_error`: the stored message, but only
+/// while it belongs to `today`.
+///
+/// The date gate is what keeps a failure from outliving the day it happened on.
+/// `scheduler::spawn` pushes a fresh snapshot the moment the date rolls over and
+/// only *then* reconciles, so for up to one poll the new day has been attempted
+/// zero times — and yesterday's message, shown next to a `city: None` that just
+/// means "not started", would read as the new day having already failed.
+fn error_for_today(
+    stored: Option<&(chrono::NaiveDate, String)>,
+    today: chrono::NaiveDate,
+) -> Option<String> {
+    stored.filter(|(d, _)| *d == today).map(|(_, e)| e.clone())
+}
+
 /// Build the current `Status` snapshot. Shared by the `get_status` command
 /// (initial mount fetch) and the status-emitter task (push on every change).
 pub async fn build_status(app: &AppHandle) -> Status {
     let state = app.state::<AppState>();
     let date = city::today();
-    // The city the pipeline actually rendered, not a second, independent
-    // rotation pick — those disagree on every day served from the schedule
-    // (issue #1), and this one drives the City tab's name, coordinates and
-    // Wikipedia / Maps links.
+    // The city the pipeline actually rendered — `None` until it has resolved one
+    // (see `city_for_status`). Deliberately not a second, independent pick: that
+    // would disagree with the schedule on every day served from it (issue #1), and
+    // this drives the City tab's name, coordinates and Wikipedia / Maps links.
     let city = pipeline::city_for_status(app, date);
     let running = *state.running.lock().await;
     let effective = match pipeline::effective_theme(app) {
@@ -101,12 +137,14 @@ pub async fn build_status(app: &AppHandle) -> Status {
     let variant = *state.variant.lock().unwrap();
     let railway_style = *state.railway_style.lock().unwrap();
     let proxy_url = state.proxy_url.lock().unwrap().clone();
+    let last_error = error_for_today(state.last_error.lock().unwrap().as_ref(), date);
     Status {
         update_mode,
         custom,
         hide_tray: state.hide_tray.load(Ordering::Acquire),
         running,
         city,
+        last_error,
         date: date.to_string(),
         theme,
         effective_theme: effective.into(),
@@ -576,4 +614,41 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         proxy_url: s.proxy_url.lock().unwrap().clone(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+
+    fn d(y: i32, m: u32, day: u32) -> NaiveDate {
+        NaiveDate::from_ymd_opt(y, m, day).unwrap()
+    }
+
+    // `Status::city` is `None` both while a day is still resolving and when it
+    // can't be resolved at all; `last_error` is the only thing that tells those
+    // apart (see the field's docs). So the two states it has to produce are pinned
+    // here, along with the date gate that stops one day's failure from being read
+    // as the next day's — the scheduler pushes a snapshot on the rollover before it
+    // has retried even once.
+
+    #[test]
+    fn error_for_today_surfaces_todays_failure() {
+        let stored = (d(2026, 8, 13), "no manifest and no schedule state".to_string());
+        assert_eq!(
+            error_for_today(Some(&stored), d(2026, 8, 13)).as_deref(),
+            Some("no manifest and no schedule state")
+        );
+    }
+
+    #[test]
+    fn error_for_today_drops_a_failure_from_another_day() {
+        let stored = (d(2026, 8, 12), "no manifest and no schedule state".to_string());
+        assert_eq!(error_for_today(Some(&stored), d(2026, 8, 13)), None);
+    }
+
+    #[test]
+    fn error_for_today_is_none_when_nothing_has_failed() {
+        assert_eq!(error_for_today(None, d(2026, 8, 13)), None);
+    }
 }

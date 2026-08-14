@@ -12,6 +12,21 @@ name: Precache OSM
 # with `content-encoding: br`) — it's to stay under jsDelivr's 20 MB *per-file* cap,
 # which large/dense cities' plain JSON can exceed, and which the wire encoding does
 # not help with. The client asks for the .gz first and falls back to the plain .json.
+#
+# TWO FLOWS ARE PUBLISHED, and only one is still read:
+#
+#   osm-v2/  the date-keyed schedule + its state file — what every current client
+#            reads (src-tauri/src/cdn.rs).
+#   osm/     the legacy id-keyed rotation, driven by src/data/cities.json.
+#            DEPRECATED: current clients dropped the cities.json rotation fallback,
+#            so nothing reads these; they're published only for clients shipped
+#            before that change. RECOMMENDED REMOVAL AFTER 2026-11-01 — drop the
+#            precache step's id-keyed half (see scripts/osm-cli.ts, which lists what
+#            goes with it), the `data-out/osm/*.json` gzip glob below, osm/ from
+#            the publish guard, and the "Flag the deprecated id-keyed flow" step
+#            that exists to nag about exactly this. Past the date that step warns
+#            on every run, so the deadline announces itself rather than waiting to
+#            be rediscovered here.
 
 on:
   schedule:
@@ -85,6 +100,25 @@ jobs:
       - name: Pre-cache upcoming cities
         run: npx -y tsx@4 scripts/osm-cli.ts precache data-out/osm 7
 
+      # The legacy id-keyed flow's removal date (see the header) otherwise lives
+      # only in comments — and a deprecation nothing announces is one that gets
+      # renewed by inertia until someone happens to reread the file. Past the date,
+      # every run says so on the job summary.
+      #
+      # A warning, never a failure: the flow still works, it's just spending an
+      # Overpass fetch per day on clients nobody ships to any more, so there's no
+      # date at which the *right* move is to break the schedule's publish. Runs
+      # under `if: always()` because the reminder is independent of whether this
+      # run's fetches went through. Delete this step along with the flow.
+      - name: Flag the deprecated id-keyed flow past its removal date
+        if: always()
+        run: |
+          cutoff=2026-11-01
+          # ISO-8601 dates sort chronologically as plain strings, so no date math.
+          if [ "$(date -u +%F)" \> "$cutoff" ]; then
+            echo "::warning::The legacy id-keyed osm/ flow is past its recommended removal date ($cutoff) — it is still fetching from Overpass for pre-removal clients only. This workflow's header and scripts/osm-cli.ts list everything that goes with it."
+          fi
+
       # Gzip every cached payload alongside the original so large cities land
       # under jsDelivr's 20 MB per-file cap (the .json itself is kept for older
       # clients / as a fallback — see cdn.rs). `if: always()` so cities fetched
@@ -96,8 +130,9 @@ jobs:
         if: always()
         run: |
           shopt -s nullglob
-          # Both the id-keyed osm/ payloads and the date-keyed osm-v2/data/
-          # manifests (issue #1); nullglob drops either if empty/absent.
+          # Both the id-keyed osm/ payloads (deprecated — remove this glob after
+          # 2026-11-01, see the header) and the date-keyed osm-v2/data/ manifests
+          # (issue #1); nullglob drops either if empty/absent.
           # osm-v2/city-list.json is deliberately outside data/, so this glob
           # can't reach it: it's the schedule's state file, read by the next CI
           # run (and edited by hand) rather than fetched by the client, so a .gz
@@ -128,8 +163,9 @@ jobs:
           # this did before osm-v2/ existed) would silently discard a successful
           # schedule run — and still report the job green, since a run that
           # fetched schedule days but no rotation cities isn't a failure. It
-          # would also stop publishing entirely if the legacy osm/ flow is ever
-          # retired.
+          # would also stop publishing entirely once the legacy osm/ flow is
+          # retired (recommended after 2026-11-01 — see the header), which is
+          # when the osm/ half of this condition goes too.
           #
           # Note this is now a *narrow* guard, not the safety net it reads as. Any
           # run that reached the schedule leaves osm-v2/city-list.json behind even

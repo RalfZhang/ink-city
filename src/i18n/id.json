@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Hari ini",
+    "resolving": "Mengambil kota hari ini…",
+    "unresolved": "Tidak dapat menghubungi jadwal kota — dicoba lagi setiap menit.",
     "population": "Penduduk {{value}}",
     "regenerate": "Buat ulang",
     "regenerating": "Membuat…",

@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Today",
+    "resolving": "Fetching today's city…",
+    "unresolved": "Can't reach the city schedule — retrying every minute.",
     "population": "pop {{value}}",
     "regenerate": "Regenerate",
     "regenerating": "Generating…",

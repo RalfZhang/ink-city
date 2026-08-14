@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Hoy",
+    "resolving": "Obteniendo la ciudad de hoy…",
+    "unresolved": "No se puede acceder al calendario de ciudades; se reintenta cada minuto.",
     "population": "pob. {{value}}",
     "regenerate": "Regenerar",
     "regenerating": "Generando…",

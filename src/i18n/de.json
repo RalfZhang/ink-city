@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Heute",
+    "resolving": "Heutige Stadt wird abgerufen…",
+    "unresolved": "Städte-Zeitplan nicht erreichbar – neuer Versuch jede Minute.",
     "population": "Einw. {{value}}",
     "regenerate": "Neu generieren",
     "regenerating": "Wird generiert…",

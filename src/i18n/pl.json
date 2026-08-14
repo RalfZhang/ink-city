@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Dziś",
+    "resolving": "Pobieranie dzisiejszego miasta…",
+    "unresolved": "Brak połączenia z harmonogramem miast — ponawianie co minutę.",
     "population": "ludność {{value}}",
     "regenerate": "Wygeneruj ponownie",
     "regenerating": "Generowanie…",

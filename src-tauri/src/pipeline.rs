@@ -256,8 +256,33 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
     let date = city::today();
     let theme = effective_theme(app);
     let Some(target) = resolve_target(app, date, theme)? else {
-        return Ok(()); // updates disabled, or Customized with no pin yet
+        // Nothing to render (disabled / no pin). Not an outcome either way, so the
+        // memo below is left exactly as it was.
+        return Ok(());
     };
+    let r = apply_target(app, &target).await;
+    // Record the Daily outcome for `Status::last_error` — the one path by which a
+    // failure reaches the UI, since every caller of `run_now` is detached and drops
+    // the `Result` (see `AppState::last_error`). Success clears it, so a day that
+    // recovers stops reporting.
+    //
+    // Only the Daily flow, because `Status::city`/`last_error` describe that flow
+    // alone: a pin's failure recorded here would surface as the reason the
+    // *schedule* couldn't name the day, and "apply a pin, then switch back to
+    // Daily" is an ordinary pair of actions. The date is stamped for the same
+    // reason across midnight — see `commands::build_status`.
+    if let TargetKind::Daily(d) = target.kind {
+        *app.state::<AppState>().last_error.lock().unwrap() =
+            r.as_ref().err().map(|e| (d, e.to_string()));
+    }
+    r
+}
+
+/// Everything `run_now_inner` does once it knows *what* to render: reapply the
+/// cached PNG if there is one, else resolve + render + cache it, then set it as the
+/// wallpaper. Split out from its caller only so the outcome can be recorded against
+/// `target.kind` without wrapping this whole body in a closure.
+async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
     let live = wallpaper_dir(app)?;
 
     // Fast path: the render for this exact target is already on disk — just
@@ -281,7 +306,7 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
         }
     }
 
-    let (city, _png) = render_and_cache(app, &target).await?;
+    let (city, _png) = render_and_cache(app, target).await?;
     wallpaper_set::set(&target.png_path, &live)?;
     mark_applied(app, &target.signature);
 
@@ -300,7 +325,7 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
 /// `run_now_inner` and Dev Mode's Advance Preview can share one path and can't
 /// drift apart. Returns the city drawn plus the PNG bytes.
 async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::City, Vec<u8>)> {
-    let resolved = resolve_and_record(app, target).await;
+    let resolved = resolve_and_record(app, target).await?;
     let city = resolved.city.clone();
     let bytes = render_bytes_for(app, &target.signature, &target.osm_path, resolved).await?;
     if let Some(parent) = target.png_path.parent() {
@@ -330,12 +355,6 @@ enum DayOsm {
 /// it already produced (the two must be resolved together — see `resolve_daily`).
 struct Resolved {
     city: city::City,
-    /// `Some(id)` ⇒ the legacy id-keyed jsDelivr pre-cache may hold this city's
-    /// map data and is worth a try; `None` ⇒ sidecar only. `None` covers both a
-    /// Customized pin (arbitrary coordinates, never precached) and Dev Mode's
-    /// "bypass cache & CDN" — which is the single place that switch is read, so
-    /// `render_bytes_for` needs no second look at it.
-    cdn_id: Option<u64>,
     osm: Option<DayOsm>,
     /// `Some(date)` ⇒ a payload fetched live from the sidecar gets `{ date, city }`
     /// spliced onto it before it's cached, reproducing exactly what the published
@@ -349,8 +368,7 @@ struct Resolved {
 
 /// The synthetic `City` a Customized pin renders as. Not a real place — there's
 /// no GeoNames id or name for arbitrary coordinates — so it carries the formatted
-/// coordinates as its name for logging and gets `id: 0` to keep it out of the
-/// id-keyed CDN path.
+/// coordinates as its name for logging and gets `id: 0`.
 fn pin_city(lat: f64, lon: f64) -> city::City {
     city::City {
         id: 0,
@@ -365,22 +383,22 @@ fn pin_city(lat: f64, lon: f64) -> city::City {
 
 /// Resolve what `kind` depicts, recording a Daily resolution in
 /// `AppState::resolved_city` so `Status` names the city that was actually
-/// rendered instead of recomputing the rotation pick. A Customized pin isn't a
-/// city and deliberately doesn't touch that memo.
-async fn resolve_and_record(app: &AppHandle, target: &Target) -> Resolved {
+/// rendered. A Customized pin isn't a city and deliberately doesn't touch that
+/// memo.
+async fn resolve_and_record(app: &AppHandle, target: &Target) -> Result<Resolved> {
     match target.kind {
         TargetKind::Custom { lat, lon, .. } => {
-            Resolved { city: pin_city(lat, lon), cdn_id: None, osm: None, stamp: None }
+            Ok(Resolved { city: pin_city(lat, lon), osm: None, stamp: None })
         }
         TargetKind::Daily(date) => {
-            let resolved = resolve_daily(app, date, &target.osm_path).await;
+            let resolved = resolve_daily(app, date, &target.osm_path).await?;
             let state = app.state::<AppState>();
-            *state.resolved_city.lock().unwrap() = Some((date, resolved.city.clone()));
+            *state.resolved_city.lock().unwrap() = Some((date, Some(resolved.city.clone())));
             // Push the name to an open window now rather than at the end of the
             // render: the CDN round trip is over, but the renderer still has work
             // to do.
             state.mark_status_dirty();
-            resolved
+            Ok(resolved)
         }
     }
 }
@@ -401,22 +419,20 @@ async fn resolve_and_record(app: &AppHandle, target: &Target) -> Resolved {
 ///     city, fetch its map data live from Overpass, and splice `{ date, city }`
 ///     back on — yielding byte-for-byte the shape rung 2 would have delivered, so
 ///     the day cache and `city_for_status` can't tell the difference.
-///  4. **The legacy rotation** (`city::pick_for_date` + the id-keyed pre-cache →
-///     sidecar). Only reachable when not one host served either schedule file; on
-///     its way out, kept so a total CDN outage still paints something.
+///
+/// There is no rung below that any more. The client used to end on the
+/// `src/data/cities.json` population rotation (`(days * 379) % N` + the id-keyed
+/// `osm/<id>.json` pre-cache), which let a total CDN outage still paint *some*
+/// city — a different one than the schedule had for that day. Rung 3 is now the
+/// fallback: it needs only a few KB of the state file, so the case the rotation
+/// covered had narrowed to "GitHub and every CDN edge unreachable, but Overpass
+/// reachable". When even that misses, the day is unresolvable and this returns
+/// `Err` — the caller leaves yesterday's wallpaper up and the scheduler retries on
+/// its next poll, rather than painting a city nothing else agrees on.
 ///
 /// Dev Mode's "bypass cache & CDN" jumps straight to rung 3 — see below.
-async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Resolved {
-    let stamp = |city: city::City| Resolved {
-        city,
-        // No CDN for this render: rung 3 is defined as live Overpass data, and the
-        // id-keyed pre-cache is keyed off the *rotation* list anyway, so a
-        // scheduled city often isn't in it. `None` routes `render_bytes_for`
-        // straight to the sidecar.
-        cdn_id: None,
-        osm: None,
-        stamp: Some(date),
-    };
+async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Result<Resolved> {
+    let stamp = |city: city::City| Resolved { city, osm: None, stamp: Some(date) };
 
     // Dev Mode's "bypass cache & CDN". The switch is about the *map data*, not
     // about which city the day is — so the local cache and every published
@@ -425,27 +441,16 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
     // edge (`Hosts::GithubOnly`), since a cached copy of it is precisely what the
     // switch is meant to rule out.
     if app.state::<AppState>().effective_bypass_cache() {
-        return match cdn::fetch_schedule_city(&date.to_string(), cdn::Hosts::GithubOnly).await {
-            Ok(city) => {
-                log::info!(
-                    "[pipeline] bypass on: schedule (github) says {} is {} ({}); osm live from overpass",
-                    date,
-                    city.name,
-                    city.country
-                );
-                stamp(city)
-            }
-            Err(e) => {
-                log::warn!(
-                    "[pipeline] bypass on: no schedule city for {} ({}); using rotation",
-                    date,
-                    e
-                );
-                // Still no CDN — with bypass on, the id-keyed pre-cache is exactly
-                // what we're avoiding.
-                Resolved { cdn_id: None, ..rotation_fallback(date, None) }
-            }
-        };
+        let city = cdn::fetch_schedule_city(&date.to_string(), cdn::Hosts::GithubOnly)
+            .await
+            .map_err(|e| anyhow!("bypass on: no schedule city for {date}: {e}"))?;
+        log::info!(
+            "[pipeline] bypass on: schedule (github) says {} is {} ({}); osm live from overpass",
+            date,
+            city.name,
+            city.country
+        );
+        return Ok(stamp(city));
     }
 
     // Rung 1. The cache comes before *any* network. Whatever is cached for `date`
@@ -461,10 +466,20 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
     //     under a PNG still cached for the other theme. The PNG cache key is
     //     date+theme, not city, so once a day is rendered it must keep its city.
     //
-    // An envelope-less payload predates the `city` stamp, so the rotation is the
-    // right name for it — every flow that writes one now stamps it (see `stamp`).
+    // An envelope-less payload predates the `city` stamp — every flow that writes
+    // one now stamps it (see `stamp`). Nothing on disk says which city such a
+    // payload depicts, and the rotation that used to name it is gone, so it reads
+    // as a miss: pairing it with a city resolved further down would draw one city's
+    // map under another's name.
+    //
+    // It's deleted rather than left for the answering rung to overwrite, because
+    // the rungs below can *fail* (no host, or Overpass down after the state file
+    // named the day) and then nothing overwrites anything. The file would sit there
+    // unusable while every 60s poll re-read and re-parsed it — tens of MB — only to
+    // discard it again. Deleting costs nothing: the payload is regenerable, and it
+    // is provably unnameable, so there is no future in which we'd want it back.
     if let Some(v) = cached_osm_at(osm_path) {
-        return match city_envelope(&v) {
+        match city_envelope(&v) {
             Some(city) => {
                 log::info!(
                     "[pipeline] city for {} from cache: {} ({})",
@@ -472,19 +487,37 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
                     city.name,
                     city.country
                 );
-                let cdn_id = Some(city.id);
-                Resolved { city, cdn_id, osm: Some(DayOsm::Cached(v)), stamp: Some(date) }
+                return Ok(Resolved { city, osm: Some(DayOsm::Cached(v)), stamp: Some(date) });
             }
-            None => rotation_fallback(date, Some(DayOsm::Cached(v))),
-        };
+            None => match fs::remove_file(osm_path) {
+                Ok(()) => log::info!(
+                    "[pipeline] dropped the cached payload for {}: no city envelope, so nothing \
+                     can name it; re-resolving the day",
+                    date
+                ),
+                // Worth its own line rather than a swallowed `let _`: a delete that
+                // didn't happen is a file re-read and re-parsed on every 60s poll —
+                // tens of MB, to reach this same branch again — which is precisely
+                // the cost the delete exists to avoid. Not hypothetical on Windows,
+                // where an indexer, AV scanner or sync client holding a handle
+                // denies the unlink. The day still resolves either way, so this
+                // doesn't abort the ladder.
+                Err(e) => log::warn!(
+                    "[pipeline] couldn't drop the unnameable cached payload for {} ({}); \
+                     re-resolving the day anyway, but it will be re-read every poll \
+                     until it goes",
+                    date,
+                    e
+                ),
+            },
+        }
     }
 
     // Rung 2.
     match cdn::fetch_scheduled(&date.to_string()).await {
         Ok((city, v)) => {
             log::info!("[pipeline] scheduled city for {}: {} ({})", date, city.name, city.country);
-            let cdn_id = Some(city.id);
-            return Resolved { city, cdn_id, osm: Some(DayOsm::Fetched(v)), stamp: Some(date) };
+            return Ok(Resolved { city, osm: Some(DayOsm::Fetched(v)), stamp: Some(date) });
         }
         // `info`, not `warn`: rung 3 still yields the *scheduled* city, so a missing
         // manifest costs an Overpass fetch, not correctness. Warning here would cry
@@ -503,41 +536,23 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
                 city.name,
                 city.country
             );
-            stamp(city)
+            Ok(stamp(city))
         }
-        // Rung 4.
-        Err(e) => {
-            // The one rung worth a `warn`: getting here means no host served
-            // *either* schedule file, so the schedule is bypassed entirely and the
-            // day silently reverts to the legacy rotation. The fallback is seamless
-            // by design — nothing else surfaces it — so this line is the only
-            // signal that the CI→CDN→client path has broken.
-            //
-            // Self-limiting in the case worth catching (published schedule broken,
-            // network fine): the render that follows writes the OSM cache, so rung 1
-            // short-circuits every later resolution that day and this fires once.
-            // A plain offline machine repeats it per poll, but that state is already
-            // logging a scheduler `error!` per poll.
-            log::warn!(
-                "[pipeline] no manifest and no schedule state for {} ({}); falling back to the legacy rotation",
-                date,
-                e
-            );
-            rotation_fallback(date, None)
-        }
+        // Bottom of the ladder: no host served *either* schedule file, so there is
+        // nothing that can name this day. Propagating the error (rather than the
+        // rotation pick this used to fall back to) is what keeps "one city per day"
+        // true — a locally invented city would disagree with the schedule, and the
+        // day cache would then pin that disagreement for the rest of the day.
+        //
+        // The caller logs it: `scheduler::reconcile` at `error!` on each poll it
+        // can't paint, Dev Mode's Advance Preview as an inline error. An offline
+        // machine is the common cause and would have failed at the Overpass fetch
+        // one step later anyway.
+        Err(e) => Err(anyhow!("no manifest and no schedule state for {date}: {e}")),
     }
 }
 
-/// The legacy client-side rotation pick — the last rung, whenever no published
-/// schedule file could be read at all. `osm` carries a cached payload that was
-/// already read back, if any.
-fn rotation_fallback(date: NaiveDate, osm: Option<DayOsm>) -> Resolved {
-    let city = city::pick_for_date(date);
-    let cdn_id = Some(city.id);
-    Resolved { city, cdn_id, osm, stamp: Some(date) }
-}
-
-/// The city `date`'s wallpaper shows, for `Status`. Three sources, in order:
+/// The city `date`'s wallpaper shows, for `Status`. Two sources, in order:
 ///
 ///  1. `AppState::resolved_city`, set by every Daily `resolve_and_record` — the
 ///     authoritative answer once the pipeline has run this session.
@@ -546,25 +561,38 @@ fn rotation_fallback(date: NaiveDate, osm: Option<DayOsm>) -> Resolved {
 ///     already-rendered day (1) is empty; the cached payload carries the `city`
 ///     envelope both published flows now stamp on, so it says exactly what was
 ///     rendered.
-///  3. The rotation pick — correct for the days that fell back to it, including
-///     every payload fetched live from the sidecar (no envelope) and every day
-///     not yet rendered at all.
 ///
-/// The answer is memoized under (1) either way: these payloads run to tens of MB,
-/// and `Status` is rebuilt on every settings change. A later pipeline run
-/// overwrites the memo, so a day that starts on the rotation and later resolves
-/// to a scheduled city still corrects itself.
+/// `None` when neither has an answer — the day hasn't been rendered yet (first
+/// launch of a day, a render still in flight or one that couldn't reach the
+/// schedule), or its cached payload predates the `city` envelope. There is
+/// deliberately no third source: naming the day from a local formula is exactly
+/// what the retired rotation did, and it would report a city the wallpaper doesn't
+/// show. The City tab renders the gap as a placeholder.
 ///
-/// Describes the *Daily* rotation only, which is what `Status::city` reports —
-/// a Customized pin is shown by its own City-tab panel from `Status::custom`.
-pub fn city_for_status(app: &AppHandle, date: NaiveDate) -> city::City {
+/// The answer is memoized under (1) **whether or not there was one** — (2) is the
+/// expensive source and its miss is the expensive miss: an envelope-less payload
+/// is read and parsed in full, tens of MB, only to yield nothing. `Status` is
+/// rebuilt on every settings change, so a miss that isn't remembered is re-paid on
+/// each one, all day. That combination is reachable rather than theoretical: a day
+/// already rendered by a build that predates the `city` envelope keeps its payload,
+/// because `apply_target` short-circuits on the existing PNG and never reaches the
+/// `resolve_daily` rung that would delete it.
+///
+/// A memoized `None` can't go stale. The only way this day acquires an answer later
+/// is a render, `render_bytes_for` is the only writer of `<date>.osm.json`, and it
+/// is reachable only through `render_and_cache` — which calls `resolve_and_record`
+/// first, overwriting the memo with the city it resolved.
+///
+/// Describes the *Daily* flow only, which is what `Status::city` reports — a
+/// Customized pin is shown by its own City-tab panel from `Status::custom`.
+pub fn city_for_status(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
     let state = app.state::<AppState>();
     if let Some((d, c)) = state.resolved_city.lock().unwrap().as_ref() {
         if *d == date {
             return c.clone();
         }
     }
-    let city = cached_day_city(app, date).unwrap_or_else(|| city::pick_for_date(date));
+    let city = cached_day_city(app, date);
     *state.resolved_city.lock().unwrap() = Some((date, city.clone()));
     city
 }
@@ -618,20 +646,17 @@ async fn render_bytes_for(
     // 10km half = 20km long side. MUST match MAX_HALF_KM in scripts/osm-cli.ts:
     // the precached square (aspect=1) is the superset every screen-aspect
     // rectangle here must fit inside, so the CDN data always covers the wallpaper.
-    let Resolved { city, cdn_id, osm: preloaded, stamp } = resolved;
+    let Resolved { city, osm: preloaded, stamp } = resolved;
     let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
 
-    // The back half of the acquisition ladder `resolve_daily` documents: its two
-    // rungs (cache, schedule manifest) arrive here already resolved as `preloaded`,
-    // because they also decide *which city* this is. What's left is the id-keyed
-    // pre-cache and then the live sidecar.
+    // The back half of the acquisition ladder `resolve_daily` documents: its first
+    // two rungs (cache, schedule manifest) arrive here already resolved as
+    // `preloaded`, because they also decide *which city* this is. What's left is the
+    // live sidecar — which honors the proxy, important for mainland-China users.
     //
-    // The CDN square is a superset of `bbox`, so the renderer projects within `bbox`
-    // and clips the rest; the sidecar fetches exactly `bbox` to save bandwidth.
-    //
-    // `cdn_id: None` means no CDN for this render at all (a Customized pin, or Dev
-    // Mode's bypass) and routes straight to the sidecar — which honors the proxy,
-    // important for mainland-China users.
+    // The published square is a superset of `bbox`, so the renderer projects within
+    // `bbox` and clips the rest; the sidecar fetches exactly `bbox` to save
+    // bandwidth.
     let osm: serde_json::Value = match preloaded {
         // Fetched from the date-keyed schedule manifest (issue #1): authoritative
         // for the scheduled city, so cache + use it directly (overwriting any
@@ -643,29 +668,13 @@ async fn render_bytes_for(
         // Already the contents of `osm_path` — writing it back would just burn a
         // multi-MB write.
         Some(DayOsm::Cached(v)) => v,
-        // Nothing preloaded: either no usable cache and no manifest, or a flow
-        // that refuses the CDN outright (`cdn_id: None` — a Customized pin, or
-        // Dev Mode's bypass). Written back afterwards, so a bypassed fetch
-        // overwrites the stale local data as documented.
+        // Nothing preloaded: a Customized pin (arbitrary coordinates, never
+        // published), the reconstruction rung, or Dev Mode's bypass. Written back
+        // afterwards, so a bypassed fetch overwrites the stale local data as
+        // documented.
         None => {
-            let mut v = match cdn_id {
-                Some(id) => match cdn::fetch_cached_osm(id).await {
-                    Ok(v) => {
-                        log::info!("[pipeline] osm from CDN ({id})");
-                        v
-                    }
-                    Err(e) => {
-                        log::warn!("[pipeline] CDN miss ({id}), falling back to sidecar: {e}");
-                        osm_sidecar::fetch(app, bbox).await?
-                    }
-                },
-                None => {
-                    log::info!(
-                        "[pipeline] fetching osm live from sidecar (no CDN for this render)"
-                    );
-                    osm_sidecar::fetch(app, bbox).await?
-                }
-            };
+            log::info!("[pipeline] fetching osm live from sidecar");
+            let mut v = osm_sidecar::fetch(app, bbox).await?;
             if let Some(date) = stamp {
                 stamp_manifest_envelope(&mut v, date, &city);
             }
@@ -1005,7 +1014,7 @@ mod tests {
     }
 
     // `city_envelope` decides whether a cached day keeps the city it was rendered
-    // from or silently falls back to the rotation pick, so all three shapes a day
+    // from or has to be re-resolved from the network, so all three shapes a day
     // cache can actually hold are pinned here.
 
     #[test]
@@ -1020,8 +1029,8 @@ mod tests {
         assert_eq!(city.local_name, "深圳");
     }
 
-    // A live sidecar fetch, or anything cached before the envelope existed: the
-    // caller must fall back to the rotation pick for the name.
+    // Anything cached before the envelope existed: unnameable, so `resolve_daily`
+    // treats it as a cache miss and `city_for_status` reports `None`.
     #[test]
     fn city_envelope_absent_on_an_unstamped_payload() {
         let v: serde_json::Value =

@@ -1,3 +1,14 @@
+//! The bundled city list. Its one job is the City tab's "Customized" name lookup
+//! (issue #11) — `search` below — plus `today()`, the app's single definition of
+//! the current date.
+//!
+//! It used to also *be* the daily city: a `(days * 379) % N` permutation over the
+//! population-sorted list, computed offline and mirrored in `src/core/city.ts`.
+//! That rotation is gone from the client. The daily city now comes from the
+//! CI-authored schedule and nothing else, with `osm-v2/city-list.json` as its own
+//! last rung (see `pipeline::resolve_daily` and docs/random-city-strategy.md) —
+//! so no local formula can name a day the schedule didn't, and none tries to.
+
 use std::fs;
 use std::sync::OnceLock;
 
@@ -7,25 +18,6 @@ use tauri::{AppHandle, Manager};
 
 const BUNDLED_CITIES: &str = include_str!("../../src/data/cities.json");
 const CACHE_FILE: &str = "cities.json";
-const EPOCH: (i32, u32, u32) = (2023, 3, 3);
-/// Day-to-city index uses `(days * MULTIPLIER) % N`. A prime coprime to N
-/// makes this a permutation of 0..N-1, so cities.json can stay sorted by
-/// population while the daily sequence still feels random and never repeats
-/// within an N-day cycle. 379 is prime, so it stays coprime to most N as the
-/// list grows.
-///
-/// MUST stay equivalent to the TS port in `src/core/city.ts` (the website / CI
-/// pick the same city there); if they diverge the website shows a different
-/// city than the user's wallpaper.
-///
-/// Since issue #1 this rotation is the *fallback*, not the daily city: the
-/// wallpaper prefers the CI-authored schedule manifest, which no formula can
-/// reproduce (see `docs/random-city-strategy.md`). So in-process, nothing but
-/// `pipeline::resolve_city_and_osm` may call `pick_for_date` — everything else
-/// goes through `pipeline::city_for_status` to get the city actually rendered.
-/// The website still recomputes it and will name the rotation city until it
-/// reads the manifests too.
-const MULTIPLIER: i64 = 379;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct City {
@@ -43,8 +35,8 @@ static CITIES: OnceLock<Vec<City>> = OnceLock::new();
 
 /// Load the cities list once at startup. Prefers the hot-updatable cache file
 /// in `app_data_dir`; falls back to the bundled JSON if missing/corrupt/empty.
-/// Subsequent remote updates land in the cache but only take effect on the
-/// next launch — avoiding mid-session city switches.
+/// Subsequent remote updates (`cities_update`) land in the cache but only take
+/// effect on the next launch — the list is read once and kept in memory.
 pub fn initialize(app: &AppHandle) {
     let cities = load_from_cache_or_bundled(app);
     let _ = CITIES.set(cities);
@@ -71,17 +63,7 @@ fn load_from_cache(app: &AppHandle) -> Option<Vec<City>> {
 }
 
 fn cities() -> &'static [City] {
-    CITIES.get().expect("city::initialize must run before pick_for_date")
-}
-
-pub fn pick_for_date(date: NaiveDate) -> City {
-    let all = cities();
-    let epoch = NaiveDate::from_ymd_opt(EPOCH.0, EPOCH.1, EPOCH.2).unwrap();
-    let days = (date - epoch).num_days();
-    let n = all.len() as i64;
-    let raw = ((days % n) + n) % n;
-    let idx = (raw * MULTIPLIER) % n;
-    all[idx as usize].clone()
+    CITIES.get().expect("city::initialize must run before search")
 }
 
 pub fn today() -> NaiveDate {

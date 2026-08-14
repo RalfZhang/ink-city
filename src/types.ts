@@ -18,7 +18,19 @@ export type Status = {
   custom: { lat: number; lon: number } | null;
   hideTray: boolean;
   running: boolean;
-  city: City;
+  /**
+   * The city today's Daily wallpaper depicts — null until the backend has resolved
+   * one (see `pipeline::city_for_status`). Nothing recomputes it here.
+   */
+  city: City | null;
+  /**
+   * Why today's Daily render failed, or null if it succeeded / hasn't run yet.
+   * Only meaningful next to `city`: both null means "still resolving", while
+   * `city: null` + a message means the day can't be resolved at all. See the Rust
+   * `Status::last_error` — it's scoped to the Daily flow and to today, so it can't
+   * be a Customized pin's failure or yesterday's.
+   */
+  lastError: string | null;
   date: string;
   theme: ThemeMode;
   effectiveTheme: "light" | "dark";

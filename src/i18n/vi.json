@@ -38,6 +38,8 @@
   },
   "city": {
     "today": "Hôm nay",
+    "resolving": "Đang lấy thành phố hôm nay…",
+    "unresolved": "Không kết nối được lịch thành phố — thử lại mỗi phút.",
     "population": "dân số {{value}}",
     "regenerate": "Tạo lại",
     "regenerating": "Đang tạo…",

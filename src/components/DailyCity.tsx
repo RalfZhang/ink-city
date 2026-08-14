@@ -17,10 +17,28 @@ type Props = {
  * a manual Regenerate. Rendered by the City tab when `updateMode === "daily"`.
  * `status.city` is whatever the backend actually rendered, not a pick recomputed
  * here — see `pipeline::city_for_status`.
+ *
+ * It's null while the day is still unresolved, and there is no local rotation to
+ * guess with, so the name line holds an em dash and the lookup links are disabled.
+ *
+ * `status.lastError` is what makes that gap legible: on its own an em dash can't
+ * say whether the day is still arriving or can never arrive, and those want
+ * opposite things from the user (wait vs. check the network). So the coordinate
+ * line — already a muted one-liner — carries the reason instead of coordinates
+ * while `city` is null. It stays one line either way, so nothing shifts when the
+ * city lands. Regenerate stays live throughout: it's how the user retries.
+ *
+ * Note the failure it reports is never shown in the global error banner: unlike a
+ * command rejection, this one is re-recorded by every 60s poll, so a dismissable
+ * banner would keep reappearing and could never be cleared.
  */
 export default function DailyCity({ status, onError }: Props) {
   const { t } = useTranslation();
   const city = status.city;
+  // A resolution that has failed, as opposed to one still in flight. Both show as
+  // no city; only this one is worth explaining, and only it isn't going to clear
+  // itself on the next poll.
+  const unresolvable = !city && status.lastError !== null;
 
   const regenerate = async () => {
     try {
@@ -37,23 +55,33 @@ export default function DailyCity({ status, onError }: Props) {
           {t("city.today")} · {status.date}
         </div>
         <div className="text-xl font-semibold">
-          {city.name}, {city.country}
+          {city ? `${city.name}, ${city.country}` : "—"}
         </div>
-        {city.localName !== city.name && (
+        {city && city.localName !== city.name && (
           <div className="text-sm text-muted-foreground">{city.localName}</div>
         )}
         <div className="text-xs text-muted-foreground mt-1">
-          {city.lat.toFixed(4)}, {city.lon.toFixed(4)}
+          {city
+            ? `${city.lat.toFixed(4)}, ${city.lon.toFixed(4)}`
+            : unresolvable
+              ? t("city.unresolved")
+              : t("city.resolving")}
         </div>
       </CardContent>
       <CardFooter className="justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => openUrl(wikipediaUrl(city.name))}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!city}
+          onClick={() => city && openUrl(wikipediaUrl(city.name))}
+        >
           {t("city.wikipedia")}
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => openUrl(googleMapsUrl(city.lat, city.lon))}
+          disabled={!city}
+          onClick={() => city && openUrl(googleMapsUrl(city.lat, city.lon))}
         >
           {t("city.googleMaps")}
         </Button>

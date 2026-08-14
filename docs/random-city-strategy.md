@@ -2,32 +2,50 @@
 
 The daily city moves from a stateless client-side permutation to a **CI-authored,
 date-keyed schedule** with no-repeat constraints, published to the CDN and read
-by the client, with a graceful fallback to the legacy strategy.
+by the client. The legacy permutation was kept as a fallback during the migration
+and has since been **removed from the client** — see
+[Retiring the rotation](#retiring-the-rotation).
 
-## Status — implemented (last verified 2026-07-31)
+## Status — implemented
+
+Two different claims live in this section, and they age differently, so the dates
+are per-row rather than one date on the heading. **Implemented** means the code is
+in and its tests pass — true as of each row. **Verified** means the live
+CI→CDN→client path was actually observed working end to end, which is a claim about
+a particular day and can only be renewed by going and looking again (the blockquote
+below records the last time anyone did).
 
 | Part | State |
 |---|---|
 | Schedule state + cooldowns (`src/core/schedule.ts`) | ✅ + tested (`pnpm schedule-test`) |
 | Pre-cache advances the schedule and emits manifests (`scripts/osm-cli.ts`) | ✅ (additive to `osm/<id>.json`) |
 | Workflow gzips + publishes `osm-v2/` (`.github/workflows/precache.yml`) | ✅ |
-| Client fetch-by-date + fallback (`cdn.rs` + `pipeline.rs`) | ✅ (fallback-guarded) |
-| `Status` names the rendered city, not a second rotation pick (`pipeline::city_for_status`) | ✅ |
+| Client fetch-by-date + reconstruction (`cdn.rs` + `pipeline.rs`) | ✅ |
+| `Status` names the rendered city and nothing else (`pipeline::city_for_status`) | ✅ |
 | Dev Mode reads the schedule, not the rotation (`render_preview`, bypass) | ✅ |
+| Client-side rotation fallback removed | ✅ code + tests (CI still publishes `osm/` until 2026-11-01) — **not** re-verified against the live path |
+| Unresolvable day surfaced in the UI (`Status::last_error`) | ✅ + tested (`error_for_today`) |
 
 > **The whole path is live, verified end to end** — CI publishes, jsDelivr serves,
 > and the client consumes. `osm-v2/city-list.json` and the
 > `osm-v2/data/<date>.json[.gz]` manifests are on the `data` branch (checked
 > 2026-07-28: the schedule held 7 days, today…today+6, every manifest fetched 200;
 > client consumption confirmed 2026-07-31). The schedule logic itself is covered by
-> `pnpm schedule-test`. Every rung stays fallback-guarded regardless, so a miss
-> degrades to the previous behavior rather than failing.
+> `pnpm schedule-test`. Each rung still degrades into the next; what changed is
+> where the ladder ends — the bottom is now the schedule state file, not a local
+> formula.
+>
+> That observation predates the rotation's removal, and it only ever exercised the
+> path where the schedule *is* reachable — which the removal didn't touch. What it
+> has never covered is the new failure end: no host serving either schedule file.
+> Reproducing that against the live CDN means blocking seven hosts, so it's pinned
+> by unit tests instead, and the end-to-end column above stays honest about it.
 
 ## Published layout (`data` branch)
 
 ```
-osm/                        legacy id-keyed rotation — unchanged
-  <id>.json
+osm/                        legacy id-keyed rotation — DEPRECATED, published for
+  <id>.json                 pre-removal clients only; remove after 2026-11-01
   <id>.json.gz
 osm-v2/
   city-list.json            the schedule itself (CI + humans; the client reads it
@@ -62,7 +80,8 @@ recomputed, only remembered.
 **Pool** — every `src/data/cities-*.json` (currently `cities-famous.json` +
 `cities-countries.json`), merged and **deduped by `id`**, with later files
 winning: ~1055 cities from 1276 rows. `cities.json` is excluded on purpose (the
-hyphen in the glob) — it belongs to the legacy rotation. The two pools share ids
+hyphen in the glob) — it belongs to the legacy rotation, and is now only the desktop
+Customized-mode search index plus that deprecated CI flow's list. The two pools share ids
 for the 221 cities they both list but differ in coordinate precision and in how
 they spell names (`Bogotá` vs `Bogota`); `cities-famous.json` wins those by glob
 order. `country` is **not** one of the divergences — all pools carry the same ISO
@@ -115,11 +134,14 @@ their own window and pick something else. Two things it can't do: editing a day
 hand** can still conflict with each other, since nothing re-rolls an existing
 entry.
 
-Because only `today+6` is ever filled, a day that has no entry stays empty — the
-client falls back to the rotation for it. That's deliberate (re-rolling a day the
-calendar has nearly reached would fight the hand-edits this file exists to carry),
-but it does mean a gap has to come from somewhere unusual: a hand-deletion, a
-`parseState` rejection, or CI not running for more than a day.
+Because only `today+6` is ever filled, a day that has no entry stays empty. Not
+re-rolling nearer days is deliberate — it would fight the hand-edits this file exists
+to carry — and a gap therefore has to come from somewhere unusual: a hand-deletion, a
+`parseState` rejection, or CI not running for more than a day. **A gap now costs
+more than it used to**: with the rotation removed there is nothing below the schedule,
+so a day with no entry and no manifest can't be painted at all (the previous
+wallpaper stays up and the poll keeps retrying). Filling gaps by hand in
+`city-list.json` is the fix.
 
 **Client** (`src-tauri`) — `pipeline::resolve_daily` resolves the day's city and
 its map data *together*, walking one ladder and stopping at the first rung that
@@ -138,18 +160,15 @@ answers:
    cache — and `city_for_status` after a restart — can't tell the two apart. The
    state file is never cached locally: it's small, and it's the hand-edit override
    point, so a stale copy would be worse than a refetch.
-4. **The legacy rotation** — `city::pick_for_date` plus the id-keyed `osm/<id>.json`
-   → sidecar chain. Only reachable when not one host served *either* schedule file.
-   On its way out; kept so a total CDN outage still paints something.
 
-Rungs 1–3 log at `info`; **rung 4 logs a `warn`**, and it's the only signal that the
-CI→CDN→client path has broken. Reaching it means the schedule was bypassed entirely
-and the day reverted to the rotation — which is seamless by design, so nothing in the
-UI gives it away. It fires once per day in the case worth catching (the render that
-follows writes the day cache, and rung 1 short-circuits from then on); an offline
-machine repeats it per poll, alongside the scheduler's own `error!`.
+**There is no rung 4.** When rung 3 misses too, `resolve_daily` returns an error: the
+day is unresolvable, the previous wallpaper stays up, and `scheduler::reconcile`
+retries on its next 60s poll (logging `error!` each time it can't paint). Advance
+Preview surfaces the same failure inline. See
+[Retiring the rotation](#retiring-the-rotation) for what used to be here and why it
+went.
 
-The client never computes a schedule pick, so there is no Rust port to keep in
+The client never computes a pick of any kind, so there is no Rust port to keep in
 lockstep — and with random picks there couldn't be one.
 
 Step 1 is load-bearing, not just a saving. `spawn_force_regen` (theme switch,
@@ -163,27 +182,82 @@ the city and the OSM in one place is the other half of it: the two can't
 disagree if nothing resolves them separately.
 
 **One city per day, everywhere.** Because the pick is no longer a pure function of
-the date, nothing may recompute it: `city::pick_for_date` is the *fallback*, not a
-second source of truth. `Status` (the City tab's name, coordinates and Wikipedia /
-Maps links) therefore reads `pipeline::city_for_status`, which returns what the
-pipeline resolved — from `AppState::resolved_city`, else the `city` envelope on
-that day's cached `<date>.osm.json` (which is how it survives a restart onto an
-already-rendered day), else the rotation pick. The same caveat applies to the
-website, which computes `pickCityForDate` client-side and has no access to the
-schedule: it will name the rotation city until it reads the manifests too.
+the date, nothing may recompute it — and now nothing *can*. `Status` (the City tab's
+name, coordinates and Wikipedia / Maps links) reads `pipeline::city_for_status`,
+which returns what the pipeline resolved: `AppState::resolved_city`, else the `city`
+envelope on that day's cached `<date>.osm.json` (which is how it survives a restart
+onto an already-rendered day), else **`None`** — the City tab then holds an em dash
+where the name goes and disables the two lookup links until the day resolves.
 
-**Both flows now carry `city`.** The legacy `osm/<id>.json` payloads get the same
+`None` alone is ambiguous, though, and the two cases behind it want opposite things
+from the user: a day still arriving wants patience, a day that can't arrive wants
+the network looked at. So `Status::last_error` carries the reason (Daily-only, and
+gated to *today* so a failure can't outlive the day it happened on), and the City
+tab spends its coordinate line on it — "fetching…" versus "can't reach the
+schedule" — rather than a second em dash. It's one muted line either way, so
+nothing shifts when the city lands. That error never reaches the global banner:
+every 60s poll re-records it, so a dismissable banner could never stay dismissed.
+
+`last_error` has to be state rather than a returned `Result` because every caller
+of `run_now` is detached and drops it — including `regenerate_now`, which is the
+button the user is most likely to press while looking at the gap.
+
+A **future** website (see [detail.md](detail.md)) will read the manifests, not
+`pickCityForDate`. That's the only thing that keeps it consistent with the desktop
+app: the pick is random and stored, so a website recomputing the retired formula
+locally would name a different city every single day, with no code path left that
+could make the two agree.
+
+**Both flows carry `city`.** The legacy `osm/<id>.json` payloads get the same
 envelope (backfilled into already-cached files without re-fetching). Additive and
 ignored by existing clients. A payload fetched live from the sidecar has no
 envelope of its own, so the client stamps one on before caching it
 (`pipeline::stamp_manifest_envelope`) — otherwise a day rendered from a live fetch
-would revert to the rotation name after a restart.
+would have no name at all after a restart. A cached payload from *before* the
+envelope existed is unnameable for exactly that reason, so `resolve_daily` **deletes
+it** and re-resolves the day rather than pairing one city's map data with another's
+name. Deleting beats leaving it for the answering rung to overwrite, because the
+rungs below can fail — and then a file nothing can use would be re-read and
+re-parsed, tens of MB, on every 60s poll.
+
+## Retiring the rotation
+
+The client's last rung used to be the legacy population rotation:
+`city::pick_for_date` — `(days_since_2023-03-03 * 379) % N` over the
+population-sorted `src/data/cities.json` — plus the id-keyed `osm/<id>.json`
+pre-cache for its map data. It existed so a total CDN outage still painted
+*something*, and it logged a `warn` (the only signal that the CI→CDN→client path had
+broken).
+
+**It's gone from the client**, for two reasons. The case it covered had shrunk to
+almost nothing once rung 3 landed: rung 3 needs only a few KB of `city-list.json`
+from any of the CDN edges *or* GitHub raw, so reaching the rotation meant "every one
+of those hosts unreachable, but Overpass reachable" — while the far more common
+cause, an offline machine, would have failed one step later at the Overpass fetch
+anyway. And what it painted was *a different city than the schedule had for that
+day*, which the day cache then pinned for the rest of the day (the PNG cache key is
+date+theme, not city). A day nobody can name is now simply not painted, and the
+poll retries.
+
+What went with it: `city::pick_for_date` and its `EPOCH`/`MULTIPLIER`,
+`pipeline::rotation_fallback`, `Resolved::cdn_id`, and `cdn::fetch_cached_osm` —
+the client no longer reads `osm/` at all. `city.rs` still loads
+`src/data/cities.json` (bundled + hot-updated by `cities_update`), but only as the
+index behind the City tab's Customized-mode name search; `src/core/city.ts` keeps
+`pickCityForDate` for CI.
+
+**CI still publishes `osm/`**, unchanged, for clients shipped before this change —
+they have no other last rung. **Recommended removal after 2026-11-01**, by which
+point anything still reading it is ~3 months stale. `scripts/osm-cli.ts`'s header
+lists everything that goes at once (including re-deriving `MIN_NEEDED_TO_ALARM`,
+whose "two fetches per day" premise halves), and `.github/workflows/precache.yml`
+marks the two spots in the workflow.
 
 ## Dev Mode
 
-Both Dev Mode affordances follow the schedule, not the rotation — the rotation is
-on its way out, and a dev tool that quietly showed a different city than the
-product would be worse than useless. Both are **disabled while the City tab is on
+Both Dev Mode affordances follow the schedule — they were written that way while the
+rotation was still around, because a dev tool that quietly showed a different city
+than the product would be worse than useless. Both are **disabled while the City tab is on
 `Customized`** (backend-enforced, not just greyed out): there's no daily schedule
 to look ahead at, and a pin already fetches live from Overpass, so there's nothing
 left to bypass.
@@ -216,10 +290,11 @@ scheduled for.
 
 ## CI failure policy
 
-A city that fails to fetch is a **`::warning::` annotation**, not a job failure:
-the client falls back to the live sidecar for anything missing from the CDN, and
-the job retries in 6 hours — letting one stubborn city turn the run red forever
-would just train us to ignore it. The job fails on two conditions:
+A city that fails to fetch is a **`::warning::` annotation**, not a job failure: a
+missing *manifest* still leaves the client rung 3 (the state file names the day and
+Overpass supplies the map), and the job retries in 6 hours — letting one stubborn city
+turn the run red forever would just train us to ignore it. The job fails on two
+conditions:
 
 - **Systemic fetch failure** — we needed to fetch **at least two** cities across
   both flows and every attempt failed (Overpass unreachable, a schema change, a
@@ -240,6 +315,10 @@ day, as each new day adds another city and schedule day to the backlog.
 > when today's or tomorrow's rotation city was uncached. That case is now a
 > warning.
 
+> **Re-derive the threshold when the id-keyed flow is removed** (after 2026-11-01):
+> steady state drops to ~one fetch per day, so `needed` will usually sit *below* 2
+> and a real outage will take two days rather than one to escalate.
+
 ## Known edge cases / follow-ups
 
 - `osm-v2/city-list.json` is the schedule's only storage, so deleting or resetting
@@ -248,14 +327,15 @@ day, as each new day adds another city and schedule day to the backlog.
   its previous copy — but it does throw away that run's work, which is why the
   publish guard checks `osm-v2/` as well as `osm/`.
 - Because a run only ever fills `today+6`, a reset branch comes back **empty and
-  fills forward one day at a time**: `today … today+5` have no entry and the client
-  falls back to the rotation for them, with the schedule taking over on day 6.
-  The same applies after CI misses more than a full day — the days that were
-  skipped are not back-filled. Both are recoverable by hand (add the days to
-  `city-list.json`) and neither fails the job.
+  fills forward one day at a time**: `today … today+5` have no entry, with the
+  schedule taking over on day 6. The same applies after CI misses more than a full
+  day — the days that were skipped are not back-filled. Neither fails the job, and
+  both are recoverable by hand (add the days to `city-list.json`) — which is now the
+  *only* recovery, since the rotation that used to cover those days is gone and the
+  client simply won't paint one it can't name.
 - The PNG cache key is date+theme, not city, so **a day keeps the city it first
-  rendered with** — a schedule manifest that lands after the day already fell back
-  to the rotation only takes effect tomorrow. That's the day cache's job (step 1
+  rendered with** — a manifest that lands after the day was already reconstructed
+  from the state file only takes effect tomorrow. That's the day cache's job (step 1
   above): it pins city *and* OSM together, so a mid-day CDN change can't pair one
   day's city with another's map data, and a CDN failure after a PNG clear can't
   rename the day either.

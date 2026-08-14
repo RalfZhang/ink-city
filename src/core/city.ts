@@ -1,9 +1,15 @@
 import type { City } from "./types";
 
-// Daily city selection. This MUST stay byte-for-byte equivalent to the Rust
-// implementation in `src-tauri/src/city.rs` (the desktop daemon picks the city
-// in Rust; the website / CI pick it here). If they diverge, the website would
-// show a different city than the user's wallpaper.
+// The legacy population rotation — a date → index permutation over a
+// population-sorted list (`src/data/cities.json`).
+//
+// DEPRECATED, and no longer mirrored anywhere: the Rust port in
+// `src-tauri/src/city.rs` is gone, because the desktop client no longer picks the
+// daily city at all — it reads the CI-authored schedule, whose picks are random and
+// stored, so no formula can reproduce them (docs/random-city-strategy.md). The one
+// live consumer left is `scripts/osm-cli.ts`, which still publishes the id-keyed
+// `osm/<id>.json` payloads for already-shipped clients. Recommended removal after
+// 2026-11-01, together with that flow.
 
 /** Epoch day 0 of the rotation: 2023-03-03 (UTC). */
 export const EPOCH_UTC = Date.UTC(2023, 2, 3);
@@ -12,7 +18,7 @@ const MS_PER_DAY = 86_400_000;
 // A prime coprime to N makes `(days * MULTIPLIER) % N` a permutation of
 // 0..N-1, so the population-sorted cities list yields a random-feeling,
 // non-repeating daily sequence. 379 is prime, so it stays coprime to most N as
-// the list grows. Keep in sync with MULTIPLIER in src-tauri/src/city.rs.
+// the list grows.
 export const MULTIPLIER = 379;
 
 /** Whole days from the epoch to `date` (UTC, can be negative). */

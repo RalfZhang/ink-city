@@ -61,7 +61,8 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
 
 /**
  * Which `src/data/*.json` city pools the schedule draws from. The hyphen keeps
- * `cities.json` — the legacy population rotation's list — out on purpose.
+ * `cities.json` — the legacy population rotation's list, now only the desktop
+ * name-search index — out on purpose.
  * Shared so the precache script and its test agree on one definition.
  */
 export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;

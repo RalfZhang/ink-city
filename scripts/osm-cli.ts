@@ -13,9 +13,25 @@
 // `precache` mode publishes TWO flows side by side to the `data` branch:
 //
 //   osm/<city.id>.json — the legacy population rotation (src/data/cities.json,
-//     the same pick_for_date the desktop client computes offline). For the next
-//     N days it fetches a 20km square, slimmed for size. Already-present cities
-//     are skipped; cities no longer in the window are removed.
+//     the same pick_for_date the desktop client used to compute offline). For the
+//     next N days it fetches a 20km square, slimmed for size. Already-present
+//     cities are skipped; cities no longer in the window are removed.
+//
+//     DEPRECATED — published for already-shipped clients only. Current clients
+//     dropped the cities.json rotation entirely: their last rung is now
+//     osm-v2/city-list.json (see src-tauri/src/pipeline.rs `resolve_daily`), and
+//     src-tauri/src/cdn.rs no longer reads osm/ at all. RECOMMENDED REMOVAL AFTER
+//     2026-11-01, by which point anything still reading this flow is ~3 months
+//     behind. What goes with it: `loadCities`, `windowCities`, `existingIds`,
+//     `backfillCity`, the id-keyed half of `runPrecache` (and `imminentMissing`),
+//     `pickCityForDate` in src/core/city.ts, the data-out/osm glob + publish guard
+//     in .github/workflows/precache.yml, and — once nothing reads it —
+//     src/data/cities.json's role as a rotation list (the desktop Customized-mode
+//     name search still loads it; see src/data/README.md).
+//
+//     NOT `readCachedMeta` — despite being written for this flow, it's shared:
+//     `runScheduleCache` calls it to decide which date-keyed manifests it can
+//     reuse. Deleting it takes the surviving flow's reconciliation with it.
 //
 //   osm-v2/data/<YYYY-MM-DD>.json — the date-keyed schedule (issue #1): the
 //     day's city *and* its map data in one payload, so the client needs no
@@ -85,6 +101,10 @@ function warn(msg: string): void {
   console.log(IN_GHA ? `::warning::${msg}` : `[warn] ${msg}`);
 }
 
+/**
+ * The legacy rotation list. DEPRECATED with the whole id-keyed flow — no client
+ * reads it any more; recommended removal after 2026-11-01 (see the header).
+ */
 function loadCities(): City[] {
   const raw = readFileSync(join(DATA_DIR, "cities.json"), "utf8");
   return JSON.parse(raw) as City[];
@@ -132,7 +152,11 @@ async function runFetch(args: string[]): Promise<void> {
 
 // ---- precache mode: batch over the rotation window, publish to outDir ----
 
-/** Unique city ids the client will need over the next `days` days. */
+/**
+ * Unique city ids the rotation covers over the next `days` days. DEPRECATED with
+ * the id-keyed flow — no current client needs these; recommended removal after
+ * 2026-11-01 (see the header).
+ */
 function windowCities(cities: City[], days: number): Map<number, City> {
   const out = new Map<number, City>();
   const today = new Date();
@@ -171,6 +195,10 @@ type CachedMeta = { v: number | undefined; city: { id?: unknown; name?: unknown 
  * A missing/unreadable file (and a `v` that isn't a number) is treated as stale
  * by every caller → re-fetch, which is what we want: a version-less file
  * predates the `v` stamp entirely, and a corrupt one shouldn't be trusted.
+ *
+ * **Survives the id-keyed flow's removal** (see the header): `runScheduleCache`
+ * calls it too, to decide which date-keyed manifests it can reuse. It reads like a
+ * rotation helper because that's what it was written for — it isn't one any more.
  */
 function readCachedMeta(path: string): CachedMeta | undefined {
   try {
@@ -194,6 +222,10 @@ function readCachedMeta(path: string): CachedMeta | undefined {
  * city-less, so this is a one-time migration per file, not a per-run cost. The
  * gzip step re-runs with `-f` every run, so the .gz sibling can't drift out of
  * sync with the rewrite.
+ *
+ * DEPRECATED with the whole id-keyed flow — the date-keyed manifests are written
+ * with their envelope from the start and never need backfilling. Recommended
+ * removal after 2026-11-01 (see the header).
  */
 function backfillCity(path: string, city: City): void {
   try {
@@ -243,6 +275,13 @@ async function runPrecache(args: string[]): Promise<void> {
   const OUT_DIR = args[0] ?? join(ROOT, "data", "osm");
   const DAYS = Number(args[1] ?? 7);
 
+  // ── the id-keyed rotation flow (DEPRECATED, remove after 2026-11-01) ──
+  // Kept running verbatim so clients shipped before the rotation fallback was
+  // removed keep finding their osm/<id>.json. Nothing current reads it, so its
+  // fetches cost Overpass budget that only benefits old versions — that's the
+  // whole reason it has an expiry date rather than staying indefinitely. Deleting
+  // it means dropping everything from here to the `[precache] done` log, plus its
+  // share of the alarm accounting below (see the header for the full list).
   const cities = loadCities();
   const wanted = windowCities(cities, DAYS);
   mkdirSync(OUT_DIR, { recursive: true });
@@ -312,9 +351,11 @@ async function runPrecache(args: string[]): Promise<void> {
   );
 
   console.log(`[precache] done — ${wanted.size} in window, ${fetched} newly fetched, ${failed} failed`);
+  // ── end of the deprecated id-keyed flow ──
 
-  // Also advance + publish the date-keyed schedule (issue #1) into osm-v2/, a
-  // sibling of the id-keyed osm/ dir, so the same publish step ships both.
+  // Advance + publish the date-keyed schedule (issue #1) into osm-v2/, a sibling of
+  // the id-keyed osm/ dir, so the same publish step ships both. This is the flow
+  // every current client actually reads.
   const schedule = await runScheduleCache(join(dirname(OUT_DIR), SCHEDULE_ROOT));
 
   // Decide whether this run should fail the CI job (→ GitHub emails on a failed
@@ -338,14 +379,19 @@ async function runPrecache(args: string[]): Promise<void> {
   // would satisfy "all attempts failed" and turn every remaining run red. A real
   // outage escalates past the threshold on its own within a day, as each new day
   // adds another unfetched city and schedule day to the backlog.
+  //
+  // Retiring the id-keyed flow (after 2026-11-01) halves that steady state to one
+  // fetch per day, so `needed` will usually sit *below* the threshold and a real
+  // outage will take a second day to escalate. Re-derive the threshold then rather
+  // than carrying 2 across by inertia.
   const MIN_NEEDED_TO_ALARM = 2;
   const needed = fetched + failed + schedule.fetched + schedule.failed;
   const totalFetched = fetched + schedule.fetched;
   const totalFailed = failed + schedule.failed;
 
-  // The day the client renders today or tomorrow being uncached is the case
-  // precache exists to prevent — worth an annotation, but the schedule/sidecar
-  // fallbacks still cover it, so it doesn't fail the job on its own.
+  // Today's or tomorrow's *rotation* city being uncached — only pre-removal clients
+  // can still be affected, and the sidecar covers them, so it's an annotation and
+  // never a job failure. Goes with the id-keyed flow after 2026-11-01.
   const imminentMissing: City[] = [];
   const today = new Date();
   for (let k = 0; k < Math.min(2, DAYS); k++) {

@@ -1,8 +1,13 @@
 //! Reads of the pre-cached map data the GitHub Actions workflow
 //! (.github/workflows/precache.yml) publishes to the `data` branch and jsDelivr
-//! serves. Two flows live there: the date-keyed schedule manifests (`osm-v2/`) and
-//! the legacy id-keyed rotation payloads (`osm/`), each a slimmed 20km-square OSM
-//! response carrying every layer (see scripts/osm-cli.ts).
+//! serves: the date-keyed schedule manifests under `osm-v2/`, each a slimmed
+//! 20km-square OSM response carrying every layer, plus the schedule state file
+//! that names the day (see scripts/osm-cli.ts).
+//!
+//! The workflow also still publishes the legacy id-keyed rotation payloads
+//! (`osm/<id>.json`) for already-shipped clients, but nothing here reads them any
+//! more — the client dropped the `src/data/cities.json` rotation, so a day it can't
+//! resolve from `osm-v2/` isn't a day it could look up by city id either.
 //!
 //! Tried before the live osm-cli sidecar because jsDelivr is reliably reachable
 //! from mainland China and the slim payload is small. Any miss (404 / not yet
@@ -20,7 +25,6 @@ use crate::city;
 use crate::github_mirror;
 
 const GIT_REF: &str = "data";
-const PATH: &str = "osm";
 /// The date-keyed manifests.
 ///
 /// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `src/core/schedule.ts`,
@@ -41,7 +45,8 @@ const SCHEDULE_STATE_STEM: &str = "city-list";
 /// `osm-v2/data/<date>.json[.gz]` = `{ v, elements, …, date, city }`, so one
 /// request yields both the day's city and its map data. A miss (not yet
 /// published, an older client's window, or a network error) is expected and lets
-/// the caller fall back to the legacy id-keyed rotation.
+/// the caller reconstruct the day from the schedule state file instead
+/// (`fetch_schedule_city` + a live Overpass fetch).
 ///
 /// Returns the day's `City` already deserialized, and rejects a payload whose
 /// `city` won't deserialize as part of validation — so a host serving a
@@ -88,11 +93,6 @@ pub async fn fetch_schedule_city(date: &str, hosts: Hosts) -> Result<city::City>
     };
     let v = fetch_from_mirrors(bases, SCHEDULE_STATE_STEM, Gz::Skip, validate_state).await?;
     schedule_entry(&v, date)
-}
-
-pub async fn fetch_cached_osm(city_id: u64) -> Result<serde_json::Value> {
-    let bases = github_mirror::mirror_urls(GIT_REF, PATH);
-    fetch_from_mirrors(bases, &city_id.to_string(), Gz::Prefer, validate_osm).await
 }
 
 /// The manifest's `city` envelope as a `City`. The id-keyed flow's payloads carry
@@ -148,8 +148,8 @@ enum Gz {
 
 /// Fetch `{base}/{stem}.json` from the first of `bases` that serves a payload
 /// `validate` accepts. Shared by every published read — they differ only in the
-/// host list, the file stem (city id / date / `city-list`), whether a `.gz`
-/// sibling exists, and what "usable" means for that file.
+/// host list, the file stem (date / `city-list`), whether a `.gz` sibling exists,
+/// and what "usable" means for that file.
 ///
 /// `bases` is already ordered by the caller (see `github_mirror::mirror_urls`):
 /// every CDN edge first, GitHub's raw origin last. Combined with the per-host
@@ -278,7 +278,8 @@ mod tests {
         assert!(require_city(&json(&format!(r#"{{"city":{CITY}}}"#)), "test://x").is_ok());
     }
 
-    // The id-keyed flow's payload: valid OSM, but nothing naming the day's city.
+    // Valid OSM, but nothing naming the day's city — e.g. a payload cached before
+    // the envelope existed.
     #[test]
     fn require_city_rejects_a_payload_without_one() {
         assert!(require_city(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_err());
