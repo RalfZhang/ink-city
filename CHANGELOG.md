@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/RalfZhang/ink-city/compare/v0.11.0...v0.11.1) (2026-08-18)
+
+
+### Bug Fixes
+
+* remove old random city strategy from app ([59ae099](https://github.com/RalfZhang/ink-city/commit/59ae099e23463fe7a638bfa4925a2991a1e829a4))
+
 ## [0.11.0](https://github.com/RalfZhang/ink-city/compare/v0.10.4...v0.11.0) (2026-08-12)
 
 
