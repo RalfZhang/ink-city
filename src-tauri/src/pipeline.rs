@@ -18,9 +18,20 @@ use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
 
-/// How many days of Daily artifacts (`<date>.osm.json` + its per-theme PNGs) the
-/// cache keeps. Everything older is swept by `cleanup_daily` after each render.
+/// How many days of rendered Daily PNGs (`<date>-<theme>.png`) the cache keeps.
+/// Everything older is swept by `cleanup_daily` after each render.
 const KEEP_DAYS: i64 = 7;
+
+/// How many days *back* a day's downloaded OSM payload (`<date>.osm.json`) is
+/// kept. Retention is split from `KEEP_DAYS` because the two artifacts have
+/// wildly different costs and lifetimes: a rendered PNG is a few MB and stays
+/// useful (a previewed future day is reapplied verbatim when it arrives), while
+/// an `.osm.json` runs to tens of MB — big city days hit 20 MB — and is only
+/// ever re-read to re-render *the day it belongs to*, on a theme flip or a
+/// style edit. Past days are never re-rendered, so keeping a week of them was
+/// ~85 MB of pure dead weight. One day back covers the timezone/midnight edge
+/// where "today" has just rolled over but the wallpaper hasn't caught up.
+const KEEP_OSM_DAYS: i64 = 1;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum EffectiveTheme {
@@ -62,9 +73,9 @@ struct RenderRequest {
 //                                 with a fresh timestamp on every apply so the
 //                                 platform reliably re-reads it (macOS caches the
 //                                 desktop image by URL). See wallpaper_set::set.
-//     daily/                    ← the Daily rotation cache; pruned to KEEP_DAYS.
-//       <date>-<theme>.png
-//       <date>.osm.json
+//     daily/                    ← the Daily rotation cache, swept by cleanup_daily.
+//       <date>-<theme>.png        ← kept KEEP_DAYS back (and any future preview).
+//       <date>.osm.json           ← kept only KEEP_OSM_DAYS back; it's the heavy half.
 //     customized/               ← the Customized-pin cache. Writing a new
 //                                 coordinate wipes every other coordinate's
 //                                 files, so only the active pin is kept.
@@ -312,7 +323,7 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
 
     if let TargetKind::Daily(_) = target.kind {
         if let Ok(dir) = daily_dir(app) {
-            let _ = cleanup_daily(&dir, KEEP_DAYS);
+            let _ = cleanup_daily(&dir, city::today());
         }
     }
     log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
@@ -785,7 +796,7 @@ pub async fn render_preview(
         Ok(target) => {
             let out = render_and_cache(app, &target).await;
             if let Ok(dir) = daily_dir(app) {
-                let _ = cleanup_daily(&dir, KEEP_DAYS);
+                let _ = cleanup_daily(&dir, city::today());
             }
             out.map(|(city, bytes)| (city, bytes, target.png_path))
         }
@@ -869,10 +880,28 @@ fn for_each_daily_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDat
     Ok(())
 }
 
-fn cleanup_daily(dir: &Path, keep_days: i64) -> Result<()> {
-    let today = city::today();
+/// Sweep the Daily cache, applying `KEEP_DAYS` to rendered PNGs and the much
+/// tighter `KEEP_OSM_DAYS` to the `.osm.json` payloads.
+///
+/// The asymmetry at the *future* end is deliberate too. Dev Mode's advance
+/// preview renders up to five days out and the pipeline reapplies that PNG
+/// verbatim when the day arrives, so a future-dated PNG is a cache hit worth
+/// keeping (it ages out normally once its day passes). Its payload isn't:
+/// re-previewing the same day forces a fresh render anyway, which re-resolves
+/// through the CDN. So a future date fails the `0..=KEEP_OSM_DAYS` window and
+/// its payload goes.
+///
+/// `today` is a parameter rather than a `city::today()` call so the windows are
+/// testable without moving the clock.
+fn cleanup_daily(dir: &Path, today: NaiveDate) -> Result<()> {
     for_each_daily_artifact(dir, |entry, d| {
-        if (today - d).num_days() > keep_days {
+        let age = (today - d).num_days();
+        let keep = if entry.file_name().to_string_lossy().ends_with(".osm.json") {
+            (0..=KEEP_OSM_DAYS).contains(&age)
+        } else {
+            age <= KEEP_DAYS
+        };
+        if !keep {
             let _ = fs::remove_file(entry.path());
         }
     })
@@ -1168,6 +1197,55 @@ mod tests {
         }
         for f in drop {
             assert!(!dir.join(f).exists(), "{f} should have been pruned");
+        }
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    /// The whole point of splitting the retention: a week of `.osm.json` was
+    /// tens of MB of payload nothing re-reads, while the PNGs it shared a window
+    /// with are cheap and stay useful — including the future-dated ones Dev
+    /// Mode's advance preview writes, which the pipeline reapplies on the day.
+    #[test]
+    fn cleanup_daily_keeps_pngs_a_week_but_payloads_a_day() {
+        let dir = std::env::temp_dir().join(format!("inkcity-daily-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+
+        let today = NaiveDate::from_ymd_opt(2026, 8, 31).unwrap();
+        let day = |n: i64| (today + chrono::Duration::days(n)).to_string();
+
+        let keep = [
+            // Today and yesterday: both halves live.
+            format!("{}.osm.json", day(0)),
+            format!("{}-light.png", day(0)),
+            format!("{}.osm.json", day(-1)),
+            format!("{}-dark.png", day(-1)),
+            // Still inside the PNG window.
+            format!("{}-light.png", day(-7)),
+            // An advance preview five days out — reapplied verbatim when it lands.
+            format!("{}-light.png", day(5)),
+            // Not ours: no leading ISO date, so nothing should touch it.
+            "notes.txt".to_string(),
+        ];
+        let drop = [
+            // Two days back: the payload is dead weight, its PNG is not.
+            format!("{}.osm.json", day(-2)),
+            format!("{}.osm.json", day(-7)),
+            format!("{}-light.png", day(-8)),
+            // A future preview's payload: re-previewing re-resolves anyway.
+            format!("{}.osm.json", day(5)),
+        ];
+        for f in keep.iter().chain(drop.iter()) {
+            fs::write(dir.join(f), b"x").unwrap();
+        }
+
+        cleanup_daily(&dir, today).unwrap();
+
+        for f in &keep {
+            assert!(dir.join(f).exists(), "{f} should have been kept");
+        }
+        for f in &drop {
+            assert!(!dir.join(f).exists(), "{f} should have been swept");
         }
         let _ = fs::remove_dir_all(&dir);
     }
