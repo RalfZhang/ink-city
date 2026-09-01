@@ -29,7 +29,7 @@
 // `-universal-apple-darwin` name to embed in the app.
 
 import { execFileSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -64,6 +64,19 @@ function hostTriple(): string {
   }
 }
 
+/** `bun build --compile` scatters temp files named `.<hash>-00000000.bun-build`
+ * into its cwd and only removes them on a clean exit — an interrupted or failed
+ * compile leaves them behind, and they pile up in the repo root forever (they're
+ * gitignored, so nothing ever complains). Sweep them ourselves, before and
+ * after, so a crashed run cleans up on the next one too. */
+function sweepBunBuildTemps(dir: string) {
+  for (const name of readdirSync(dir)) {
+    if (name.startsWith(".") && name.endsWith(".bun-build")) {
+      rmSync(join(dir, name), { force: true, recursive: true });
+    }
+  }
+}
+
 function main() {
   const flags = parseFlags(process.argv.slice(2));
   const triple = flags.triple ?? hostTriple();
@@ -78,6 +91,7 @@ function main() {
   args.push(join(ROOT, "scripts", "osm-cli.ts"), "--outfile", outfile);
 
   console.log(`[build-sidecar] bun ${args.join(" ")}`);
+  sweepBunBuildTemps(ROOT);
   try {
     execFileSync("bun", args, { stdio: "inherit", cwd: ROOT });
   } catch (e) {
@@ -89,6 +103,8 @@ function main() {
       process.exit(1);
     }
     throw e;
+  } finally {
+    sweepBunBuildTemps(ROOT);
   }
   console.log(`[build-sidecar] wrote ${outfile}`);
 }

@@ -75,3 +75,65 @@ pnpm precache data/osm 7
 ```
 
 Script arguments are passed directly, with no `--` separator. pnpm forwards `--` through to the script rather than stripping it (npm strips it), so both `osm-cli.ts` and `render.ts` drop a bare `--` from their argv — `pnpm precache -- data/osm 7` works too, it just isn't the idiomatic form.
+
+## Reclaiming disk space
+
+Local development leaks caches in three places, none of them tracked:
+
+| What | Why it grows | Mitigation |
+| --- | --- | --- |
+| `.<hash>-00000000.bun-build` in the repo root | `bun build --compile` temp files, only cleaned up on a clean exit — an interrupted `pnpm build:sidecar` leaves them behind | `build-sidecar.ts` now sweeps them before *and* after every compile, so they no longer accumulate |
+| `src-tauri/target` (was multi-GB) | cargo debug artifacts | `[profile.dev]` in `src-tauri/Cargo.toml` drops dependency debuginfo and keeps only line tables for our own code (~3-4x smaller); `pnpm clean --rust` wipes it |
+| `.git` | the CI-owned `data` branch — see below | `pnpm clean --git`, plus the config below to stop fetching it |
+
+```bash
+pnpm clean            # bun temps, dist/, test-out/ — safe and instant
+pnpm clean --rust     # also cargo clean (next `tauri dev` recompiles from scratch)
+pnpm clean --git      # also expire the origin/data reflog + git gc --prune=now
+pnpm clean --all
+```
+
+### Why `.git` grows, and why plain `git gc` doesn't shrink it
+
+This repo's actual source history is **~9 MB** — `main`, `dev` and every tag
+combined. Everything above that is the `data` branch:
+
+- `precache.yml` republishes it as a **single orphan commit** every 6 hours and
+  force-pushes. Consecutive tips therefore share *no* history, so every tip you
+  fetch is a complete fresh ~130 MB tree of OSM JSON (~31 MB packed).
+- Deleting the branch or moving the ref frees nothing. `refs/remotes/origin/data`
+  keeps **its own reflog, one entry per fetch**, and each entry pins that
+  fetch's entire tree. `git gc` counts reflog entries as reachable, so even
+  `--prune=now` leaves them all on disk until `gc.reflogExpireUnreachable`
+  (30 days) — and every fetch in the meantime adds another snapshot.
+
+That's the whole mechanism: 42 fetches had accumulated 42 pinned snapshots,
+≈190 MB that no amount of `git gc` would touch. `pnpm clean --git` expires that
+one reflog before packing, which is why it can reclaim what a bare gc can't.
+It only ever discards `origin/data` history — CI output that lives on the remote
+and reaches the app over jsDelivr, never local work.
+
+A dev clone never reads that branch locally — the app gets it from jsDelivr, and
+the precache workflow clones it separately into `data-out/`. So the durable fix
+is to stop fetching it, which **`pnpm install` now does for you**: the `prepare`
+script runs `pnpm clean --setup-git`, which is idempotent and does four things:
+
+| | |
+| --- | --- |
+| `git config --add remote.origin.fetch '^refs/heads/data'` | a *negative* refspec — excludes the branch from every `git fetch` / `git pull` / `git fetch --all` while leaving `+refs/heads/*:refs/remotes/origin/*` in place for everything else |
+| `git config gc.'refs/remotes/origin/data'.reflogExpire now` | drop that reflog on gc instead of holding it 90 days |
+| `git config gc.'…'.reflogExpireUnreachable now` | same for entries whose commits are already unreachable — normally 30 days. These two are the safety net for an explicit `git fetch origin data`, which *overrides* a negative refspec |
+| `git reflog expire … && git update-ref -d refs/remotes/origin/data && git gc --prune=now` | drop the snapshot(s) already on disk. Deleting the ref removes its reflog too |
+
+Set `INKCITY_SKIP_GIT_SETUP=1` to opt out; it is also skipped under `CI`. To undo,
+`git config --unset` those four keys and fetch normally.
+
+Note that no amount of git config prevents the **initial** clone from pulling
+`data` down once: `git clone`'s first fetch ignores negative refspecs (verified
+with both `init.templateDir` and `includeIf "hasconfig:remote.*.url:…"`, which do
+apply the config — the clone just doesn't honour it). That one ~31 MB tip is what
+the first `pnpm install` throws away. To avoid even that, clone narrowly:
+
+```bash
+git clone --single-branch -b main <url>   # then `git remote set-branches --add origin dev`
+```

@@ -52,3 +52,14 @@ windows-sys = { version = "0.59", features = [
     "Win32_System_Registry",
 ] }
 
+
+# Local dev builds only — `[profile.release]` (used by CI and `tauri build`)
+# is deliberately left at Cargo's defaults. Full debuginfo is what makes
+# src-tauri/target grow into the multi-GB range; line tables still give
+# readable panic backtraces for our own code, and dependencies get none at
+# all since we never step through them. Cuts the debug dir by roughly 3-4x.
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false
