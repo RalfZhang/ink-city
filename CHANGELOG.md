@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/RalfZhang/ink-city/compare/v0.11.1...v0.11.2) (2026-09-01)
+
+
+### Bug Fixes
+
+* Update app cache strategy ([3950e64](https://github.com/RalfZhang/ink-city/commit/3950e645f5278028d0502d2598983cc4dc36aefc))
+
 ## [0.11.1](https://github.com/RalfZhang/ink-city/compare/v0.11.0...v0.11.1) (2026-08-18)
 
 
