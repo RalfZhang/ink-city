@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/RalfZhang/ink-city/compare/v0.11.2...v0.12.0) (2026-09-02)
+
+
+### Features
+
+* Map button for various services ([b8bb97e](https://github.com/RalfZhang/ink-city/commit/b8bb97e5d58e81e5fef5da63a6dcc338b87d643a))
+
 ## [0.11.2](https://github.com/RalfZhang/ink-city/compare/v0.11.1...v0.11.2) (2026-09-01)
 
 
