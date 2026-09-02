@@ -15,7 +15,8 @@ import {
 import SettingRow from "@/components/SettingRow";
 import ProxySetting from "@/components/ProxySetting";
 import { getLocaleChoice, setLocaleChoice, LOCALES, type LocaleChoice } from "../i18n";
-import type { Status } from "../types";
+import { MAP_PROVIDERS } from "../constants";
+import type { MapProvider, Status } from "../types";
 
 type Props = {
   status: Status;
@@ -46,6 +47,14 @@ export default function General({ status, refresh, onError }: Props) {
       if (on) await enable();
       else await disable();
       setAutostart(on);
+    } catch (e) {
+      onError(e);
+    }
+  };
+
+  const pickMapProvider = async (provider: MapProvider) => {
+    try {
+      await invoke("set_map_provider", { provider });
     } catch (e) {
       onError(e);
     }
@@ -86,7 +95,7 @@ export default function General({ status, refresh, onError }: Props) {
             label={t("general.languageLabel")}
             control={
               <Select value={locale} onValueChange={(v) => pickLocale(v as LocaleChoice)}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="min-w-[150px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -94,6 +103,28 @@ export default function General({ status, refresh, onError }: Props) {
                   {LOCALES.map((l) => (
                     <SelectItem key={l.code} value={l.code}>
                       {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+          />
+          <Separator />
+          <SettingRow
+            label={t("general.mapServiceLabel")}
+            description={t("general.mapServiceDesc", { tab: t("sidebar.city") })}
+            control={
+              <Select
+                value={status.mapProvider}
+                onValueChange={(v) => pickMapProvider(v as MapProvider)}
+              >
+                <SelectTrigger className="min-w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAP_PROVIDERS.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {t(p.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>

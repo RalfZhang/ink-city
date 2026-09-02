@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Status } from "../types";
-import { wikipediaUrl, googleMapsUrl } from "../constants";
+import { wikipediaUrl, mapUrl } from "../constants";
 
 type Props = {
   status: Status;
@@ -81,9 +81,9 @@ export default function DailyCity({ status, onError }: Props) {
           variant="outline"
           size="sm"
           disabled={!city}
-          onClick={() => city && openUrl(googleMapsUrl(city.lat, city.lon))}
+          onClick={() => city && openUrl(mapUrl(status.mapProvider, city.lat, city.lon))}
         >
-          {t("city.googleMaps")}
+          {t("city.openMap")}
         </Button>
         <Button className="min-w-32" onClick={regenerate} disabled={status.running} size="sm">
           {status.running && <Loader2 className="animate-spin size-3.5 me-1.5" />}

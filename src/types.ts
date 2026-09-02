@@ -1,9 +1,25 @@
 // Shared primitives live in the portable core; re-export them so existing
 // `../types` imports keep working. `Status` is desktop-specific (it mirrors the
 // Rust `get_status` command output), so it stays here.
-export type { City, ColorPair, RailwayStyle, StylePreset, StyleVariant, ThemeMode } from "./core";
+export type {
+  City,
+  ColorPair,
+  MapProvider,
+  RailwayStyle,
+  StylePreset,
+  StyleVariant,
+  ThemeMode,
+} from "./core";
 
-import type { City, ColorPair, RailwayStyle, StylePreset, StyleVariant, ThemeMode } from "./core";
+import type {
+  City,
+  ColorPair,
+  MapProvider,
+  RailwayStyle,
+  StylePreset,
+  StyleVariant,
+  ThemeMode,
+} from "./core";
 
 export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 
@@ -55,4 +71,5 @@ export type Status = {
   bypassCache: boolean;
   proxyEnabled: boolean;
   proxyUrl: string;
+  mapProvider: MapProvider;
 };

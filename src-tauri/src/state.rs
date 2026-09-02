@@ -13,8 +13,8 @@ use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::{oneshot, Mutex, Notify};
 
 use crate::config::{
-    ColorPair, CustomCity, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateCheck,
-    UpdateMode,
+    ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant, ThemeMode,
+    UpdateCheck, UpdateMode,
 };
 use crate::updates::UpdateStrings;
 
@@ -83,6 +83,7 @@ pub struct AppState {
     pub bypass_cache: AtomicBool,
     pub proxy_enabled: AtomicBool,
     pub proxy_url: StdMutex<String>,
+    pub map_provider: StdMutex<MapProvider>,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
@@ -168,6 +169,7 @@ impl AppState {
             bypass_cache: AtomicBool::new(false),
             proxy_enabled: AtomicBool::new(cfg.proxy_enabled),
             proxy_url: StdMutex::new(cfg.proxy_url.clone()),
+            map_provider: StdMutex::new(cfg.map_provider),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
             quitting: AtomicBool::new(false),

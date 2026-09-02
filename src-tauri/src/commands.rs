@@ -6,8 +6,8 @@ use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
 use crate::config::{
-    self, ColorPair, CustomCity, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateCheck,
-    UpdateMode,
+    self, ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant, ThemeMode,
+    UpdateCheck, UpdateMode,
 };
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
@@ -86,6 +86,7 @@ pub struct Status {
     pub bypass_cache: bool,
     pub proxy_enabled: bool,
     pub proxy_url: String,
+    pub map_provider: MapProvider,
 }
 
 /// `Status::last_error` from `AppState::last_error`: the stored message, but only
@@ -137,6 +138,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
     let variant = *state.variant.lock().unwrap();
     let railway_style = *state.railway_style.lock().unwrap();
     let proxy_url = state.proxy_url.lock().unwrap().clone();
+    let map_provider = *state.map_provider.lock().unwrap();
     let last_error = error_for_today(state.last_error.lock().unwrap().as_ref(), date);
     Status {
         update_mode,
@@ -165,6 +167,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         bypass_cache: state.bypass_cache_for(update_mode),
         proxy_enabled: state.proxy_enabled.load(Ordering::Acquire),
         proxy_url,
+        map_provider,
     }
 }
 
@@ -224,6 +227,16 @@ pub fn set_hide_tray(app: AppHandle, hide: bool) -> Result<(), String> {
     app.state::<AppState>().hide_tray.store(hide, Ordering::Release);
     tray::apply_hide_tray(&app, hide);
     app.state::<AppState>().mark_status_dirty();
+    persist(&app)
+}
+
+/// Purely a UI preference, so nothing re-renders — the wallpaper is drawn from
+/// OpenStreetMap data whichever service is picked.
+#[tauri::command]
+pub fn set_map_provider(app: AppHandle, provider: MapProvider) -> Result<(), String> {
+    let state = app.state::<AppState>();
+    *state.map_provider.lock().unwrap() = provider;
+    state.mark_status_dirty();
     persist(&app)
 }
 
@@ -612,6 +625,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         dev_mode: s.dev_mode.load(Ordering::Acquire),
         proxy_enabled: s.proxy_enabled.load(Ordering::Acquire),
         proxy_url: s.proxy_url.lock().unwrap().clone(),
+        map_provider: *s.map_provider.lock().unwrap(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

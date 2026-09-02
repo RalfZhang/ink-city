@@ -105,6 +105,19 @@ pub enum RailwayStyle {
     Ties,
 }
 
+/// Which map service the City tab's map button opens. Mirrors `MAP_PROVIDERS` in
+/// src/core/constants.ts, which holds each service's label key and URL template.
+///
+/// `Osm` by default.
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum MapProvider {
+    #[default]
+    Osm,
+    Here,
+    Google,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ColorPair {
     pub background: String,
@@ -184,6 +197,7 @@ pub struct Config {
     /// Proxy URL, e.g. `http://127.0.0.1:7890` or `socks5://127.0.0.1:1080`.
     /// Only used when `proxy_enabled`.
     pub proxy_url: String,
+    pub map_provider: MapProvider,
 }
 
 impl Default for Config {
@@ -206,6 +220,7 @@ impl Default for Config {
             dev_mode: false,
             proxy_enabled: false,
             proxy_url: String::new(),
+            map_provider: MapProvider::default(),
         }
     }
 }
@@ -410,6 +425,25 @@ mod tests {
         assert_eq!(cfg.custom, Some(CustomCity { lat: 36.44297, lon: 28.22868 }));
         assert!(cfg.dev_mode && cfg.show_water && cfg.show_airports && cfg.show_aerialways);
         assert_eq!(cfg.theme, ThemeMode::System);
+    }
+
+    #[test]
+    fn a_config_predating_the_map_provider_field_reads_as_osm() {
+        assert_eq!(parse_config(r#"{"update_mode":"daily"}"#).map_provider, MapProvider::Osm);
+        assert_eq!(Config::default().map_provider, MapProvider::Osm);
+    }
+
+    #[test]
+    fn every_map_provider_round_trips() {
+        for (json, expected) in [
+            ("osm", MapProvider::Osm),
+            ("here", MapProvider::Here),
+            ("google", MapProvider::Google),
+        ] {
+            let cfg = parse_config(&format!(r#"{{"map_provider":"{json}"}}"#));
+            assert_eq!(cfg.map_provider, expected, "parsing {json}");
+            assert_eq!(serde_json::to_string(&cfg.map_provider).unwrap(), format!(r#""{json}""#));
+        }
     }
 
     #[test]

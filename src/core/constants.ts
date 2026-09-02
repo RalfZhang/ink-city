@@ -46,11 +46,40 @@ export function wikipediaUrl(cityName: string): string {
   return WIKIPEDIA_BASE + encodeURIComponent(cityName.replace(/ /g, "_"));
 }
 
-export const GOOGLE_MAPS_BASE = "https://www.google.com/maps/@";
-const GOOGLE_MAPS_ZOOM = "13";
+const MAP_ZOOM = 13;
 
-export function googleMapsUrl(lat: number, lon: number): string {
-  return `${GOOGLE_MAPS_BASE}${lat},${lon},${GOOGLE_MAPS_ZOOM}z`;
+/**
+ * `id` doubles as the persisted value, so these must match the serde names of
+ * `MapProvider` in src-tauri/src/config.rs. `osm` is the default: it's the data
+ * the wallpaper is drawn from, and unlike Google Maps it's reachable everywhere
+ * InkCity ships.
+ */
+export const MAP_PROVIDERS = [
+  {
+    id: "osm",
+    labelKey: "general.mapOsm",
+    url: (lat: number, lon: number) =>
+      `https://www.openstreetmap.org/#map=${MAP_ZOOM}/${lat}/${lon}`,
+  },
+  {
+    id: "here",
+    labelKey: "general.mapHere",
+    url: (lat: number, lon: number) =>
+      `https://wego.here.com/?map=${lat},${lon},${MAP_ZOOM},normal`,
+  },
+  {
+    id: "google",
+    labelKey: "general.mapGoogle",
+    url: (lat: number, lon: number) => `https://www.google.com/maps/@${lat},${lon},${MAP_ZOOM}z`,
+  },
+] as const;
+
+export type MapProvider = (typeof MAP_PROVIDERS)[number]["id"];
+
+export function mapUrl(provider: MapProvider, lat: number, lon: number): string {
+  // Falls back to OpenStreetMap so a hand-edited config still opens a map.
+  const entry = MAP_PROVIDERS.find((p) => p.id === provider) ?? MAP_PROVIDERS[0];
+  return entry.url(lat, lon);
 }
 
 // Data-source attribution (legal obligation; also used by the website). Road

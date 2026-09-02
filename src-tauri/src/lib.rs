@@ -309,6 +309,7 @@ pub fn run() {
             commands::apply_custom_city,
             commands::search_cities,
             commands::set_hide_tray,
+            commands::set_map_provider,
             commands::set_update_check,
             commands::set_auto_update,
             commands::check_for_update,

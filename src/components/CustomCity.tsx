@@ -10,7 +10,7 @@ import { parseLatLon } from "@/core";
 import type { City } from "@/core";
 import { logWarn } from "@/lib/log";
 import type { Status } from "../types";
-import { googleMapsUrl } from "../constants";
+import { mapUrl } from "../constants";
 
 type Props = {
   status: Status;
@@ -156,9 +156,9 @@ export default function CustomCity({ status, onError }: Props) {
           variant="outline"
           size="sm"
           disabled={!parsed}
-          onClick={() => parsed && openUrl(googleMapsUrl(parsed.lat, parsed.lon))}
+          onClick={() => parsed && openUrl(mapUrl(status.mapProvider, parsed.lat, parsed.lon))}
         >
-          {t("city.googleMaps")}
+          {t("city.openMap")}
         </Button>
         <Button
           className="min-w-24"
