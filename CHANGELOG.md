@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/RalfZhang/ink-city/compare/v0.12.0...v0.12.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* linux support ([5f8337a](https://github.com/RalfZhang/ink-city/commit/5f8337a24211f69c87306e408efdc79a478503f3))
+
 ## [0.12.0](https://github.com/RalfZhang/ink-city/compare/v0.11.2...v0.12.0) (2026-09-02)
 
 
