@@ -57,6 +57,35 @@ fn strings(app: &AppHandle) -> UpdateStrings {
 /// Dialog/notification title is the product name — not translated.
 const TITLE: &str = "InkCity";
 
+/// Whether the in-app updater can actually apply an update to *this* install.
+///
+/// macOS and Windows: yes. One shipped bundle format each, and the updater knows
+/// how to replace it.
+///
+/// Linux: no, as things stand. Tauri's updater can only replace an AppImage, and
+/// we ship .deb + .rpm — a package-manager-owned install isn't ours to overwrite,
+/// and the AppImage that would carry self-updates is blocked on the bundler (the
+/// reason is written up in `.github/workflows/release.yml`). The check is a probe
+/// for `$APPIMAGE` — which the AppImage runtime sets itself — rather than a flat
+/// `false`, so this stays correct for anyone running a self-built AppImage and
+/// lights up on its own if we ever ship one, with no second place to remember.
+///
+/// Gating on this rather than letting the check run and fail: an unsupported
+/// install would otherwise check on its cadence, hit "AppImage not found" every
+/// time, and show the user a permanent "Update check failed" they can do nothing
+/// about. `Status::updater_supported` carries the same answer to the frontend,
+/// which hides the update controls outright.
+pub fn supported() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        std::env::var_os("APPIMAGE").is_some()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        true
+    }
+}
+
 /// Persisted across launches so the weekly/monthly cadence survives restarts
 /// (the app is a long-lived menu-bar process, but users do quit it), so we only
 /// notify once per new version instead of nagging on every check, and so the
@@ -146,6 +175,15 @@ fn updater(app: &AppHandle) -> Result<Updater> {
 /// available version string, or `None` when already up to date / the check was
 /// skipped by the cadence gate.
 pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
+    // Ahead of the cadence gate and of `force`, so the manual "Check now" path
+    // can't reach the updater either — on a .deb/.rpm install there is nothing
+    // this could offer to install. The frontend hides the button that gets here,
+    // so in practice this covers the tray/scheduler paths and anything a future
+    // caller adds.
+    if !supported() {
+        return Ok(None);
+    }
+
     let mut meta = load_meta(app);
     if !force && !is_due(app, &meta) {
         return Ok(None);
@@ -191,6 +229,9 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
 /// when the persisted version is genuinely newer than the running version
 /// (handles "user quit and reinstalled the latest build by hand").
 pub fn restore_pending(app: &AppHandle) {
+    if !supported() {
+        return;
+    }
     let mut meta = load_meta(app);
     let Some(v) = meta.available_version.clone() else { return };
 

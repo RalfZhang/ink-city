@@ -69,6 +69,13 @@ pub struct Status {
     /// The version we can update to, or `None`. Single source of truth for the
     /// "update available" affordance — see `AppState::available_update`.
     pub update_available: Option<String>,
+    /// Whether the in-app updater can apply an update to this install at all —
+    /// false only for a Linux .deb/.rpm, whose updates belong to the system
+    /// package manager. See `updates::supported`; the About tab hides its whole
+    /// update section when this is false rather than offering a check that is
+    /// guaranteed to fail. Not persisted: it's a property of how the running
+    /// binary was installed, so it's recomputed every snapshot.
+    pub updater_supported: bool,
     pub show_water: bool,
     pub show_airports: bool,
     /// Which symbol the railway layer is drawn in, or `Off`. See
@@ -156,6 +163,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         update_check,
         auto_update: state.auto_update.load(Ordering::Acquire),
         update_available,
+        updater_supported: crate::updates::supported(),
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
         railway_style,

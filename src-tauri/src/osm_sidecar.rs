@@ -9,8 +9,8 @@ use tauri_plugin_shell::ShellExt;
 use crate::bbox::Bbox;
 use crate::state::AppState;
 
-/// Fetch OSM data for `b` by invoking the bundled `osm-cli` sidecar in single-shot
-/// "fetch" mode — the same TypeScript implementation
+/// Fetch OSM data for `b` by invoking the bundled `ink-city-osm-cli` sidecar in
+/// single-shot "fetch" mode — the same TypeScript implementation
 /// (`scripts/osm-cli.ts` → `src/core/osm/fetch-city.ts`) that produces the precached
 /// CDN payload, run live. Reached whenever CDN-cached data isn't available: a CDN
 /// miss on a Daily render, a Customized pin (arbitrary coordinates are never
@@ -19,7 +19,7 @@ use crate::state::AppState;
 pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
     let sidecar = app
         .shell()
-        .sidecar("osm-cli")
+        .sidecar("ink-city-osm-cli")
         .map_err(|e| anyhow!("osm-cli sidecar not available: {}", e))?;
 
     let mut cmd = sidecar.args([

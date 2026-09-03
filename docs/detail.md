@@ -23,7 +23,9 @@ src/                React + TypeScript settings UI (Vite).
 src/renderer/       Hidden WebView that draws the map to a canvas → PNG.
 src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting, tray,
                     config, CDN fetch, and the osm-cli sidecar invocation. See
-                    the module map at the top of src-tauri/src/lib.rs.
+                    the module map at the top of src-tauri/src/lib.rs. The
+                    per-OS modules are wallpaper_linux, tray_linux (Linux) and
+                    tray_theme (Windows).
 scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mode
                     and the app's live single-fetch sidecar mode), build-sidecar,
                     build-cities, render, and the check-i18n / *-test guards.
@@ -44,7 +46,7 @@ scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mod
 - [Node.js](https://nodejs.org/) 20+
 - [pnpm](https://pnpm.io/installation) — the project's package manager, pinned by `packageManager` in `package.json`. Use it rather than npm: the lockfile is `pnpm-lock.yaml` and CI installs with `pnpm install --frozen-lockfile`.
 - [Rust](https://www.rust-lang.org/tools/install) (stable)
-- Platform toolchain for Tauri — see [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Xcode Command Line Tools on macOS; the WebView2 runtime + MSVC build tools on Windows)
+- Platform toolchain for Tauri — see [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Xcode Command Line Tools on macOS; the WebView2 runtime + MSVC build tools on Windows; on Debian/Ubuntu, `libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf libxdo-dev xdg-utils libgtk-3-dev build-essential` — the same set [release.yml](../.github/workflows/release.yml) installs)
 - [Bun](https://bun.sh) — build-time only, to compile the `osm-cli` sidecar. Not needed at app runtime.
 
 **Develop**
@@ -54,7 +56,7 @@ pnpm install
 pnpm tauri dev
 ```
 
-`pnpm tauri dev`/`build` always compiles the `osm-cli` sidecar for your machine first (the `pretauri` script runs `build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `pnpm build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
+`pnpm tauri dev`/`build` always compiles the sidecar (`ink-city-osm-cli`, built from `scripts/osm-cli.ts`) for your machine first (the `pretauri` script runs `build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `pnpm build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
 
 **Build a release bundle**
 

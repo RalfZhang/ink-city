@@ -199,6 +199,13 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
           </CardFooter>
         </Card>
 
+        {/* Hidden outright on an install the updater can't act on — a Linux
+            .deb/.rpm, whose updates come from the system package manager (see
+            the Rust `updates::supported`). Hiding rather than disabling: a
+            greyed-out cadence selector invites the user to work out what would
+            re-enable it, and nothing would. The GitHub button above stays the
+            way to find a newer release by hand. */}
+        {status.updaterSupported && (
         <Card className='mb-4'>
           <CardContent className="space-y-4">
               <SettingRow
@@ -265,6 +272,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
             )}
           </CardFooter>
         </Card>
+        )}
 
         <Card className='mb-4'>
           <CardContent className="space-y-4">

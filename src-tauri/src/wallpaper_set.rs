@@ -1,6 +1,7 @@
 //! Handing a rendered PNG to the OS as the desktop wallpaper — the one module that
-//! talks to the platform's desktop APIs (osascript/JXA on macOS, the `wallpaper`
-//! crate elsewhere).
+//! talks to the platform's desktop APIs: osascript/JXA on macOS, the `wallpaper`
+//! crate on Windows, and `wallpaper_linux`'s per-desktop dispatch on Linux (see
+//! that module for why the crate isn't used there).
 
 use anyhow::{anyhow, Result};
 use std::path::{Path, PathBuf};
@@ -13,7 +14,10 @@ use std::path::{Path, PathBuf};
 /// macOS — NSWorkspace.setDesktopImageURL caches by URL equality, so re-setting
 /// the same path (even after the content changed) is a silent no-op — and it's
 /// harmless on Windows, which copies the image into its own store on set, so the
-/// source file can be replaced next time without disturbing the live desktop.
+/// source file can be replaced next time without disturbing the live desktop. On
+/// Linux it's load-bearing again for the same reason as macOS: GNOME and Plasma
+/// both key their wallpaper cache on the path, so a re-set of an unchanged
+/// filename shows the previous image.
 pub fn set(src: &Path, live_dir: &Path) -> Result<()> {
     std::fs::create_dir_all(live_dir)?;
     let live = fresh_live_path(live_dir);
@@ -52,7 +56,12 @@ fn set_os(path: &Path) -> Result<()> {
     set_macos(path.to_str().ok_or_else(|| anyhow!("non-utf8 live path"))?)
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os = "linux")]
+fn set_os(path: &Path) -> Result<()> {
+    crate::wallpaper_linux::set(path.to_str().ok_or_else(|| anyhow!("non-utf8 live path"))?)
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "linux")))]
 fn set_os(path: &Path) -> Result<()> {
     let p = path.to_str().ok_or_else(|| anyhow!("non-utf8 path"))?;
     wallpaper::set_from_path(p).map_err(|e| anyhow!("set wallpaper: {}", e))?;

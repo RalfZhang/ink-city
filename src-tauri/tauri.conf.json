@@ -32,7 +32,7 @@
     "targets": "all",
     "createUpdaterArtifacts": true,
     "externalBin": [
-      "binaries/osm-cli"
+      "binaries/ink-city-osm-cli"
     ],
     "icon": [
       "icons/32x32.png",

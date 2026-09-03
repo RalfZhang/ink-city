@@ -1,9 +1,9 @@
 #!/usr/bin/env -S npx tsx
 // Compiles scripts/osm-cli.ts into the Tauri sidecar binary, named per
-// Tauri's externalBin convention: src-tauri/binaries/osm-cli-<target-triple>
-// (+ ".exe" on Windows). Requires `bun` (https://bun.sh) at *build* time
-// only — the compiled binary is a standalone executable; nothing at app
-// runtime needs a JS engine.
+// Tauri's externalBin convention: src-tauri/binaries/ink-city-osm-cli-<target-triple>
+// (+ ".exe" on Windows; see BIN below for why the basename is prefixed).
+// Requires `bun` (https://bun.sh) at *build* time only — the compiled binary is
+// a standalone executable; nothing at app runtime needs a JS engine.
 //
 // Runs automatically (host triple) before every `pnpm tauri ...` via the
 // "pretauri" script hook, so a fresh clone just needs bun installed — no separate
@@ -16,11 +16,16 @@
 //   tsx scripts/build-sidecar.ts --bun-target=bun-darwin-x64 --triple=x86_64-apple-darwin
 //   tsx scripts/build-sidecar.ts --bun-target=bun-darwin-arm64 --triple=aarch64-apple-darwin
 //   tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
+//   tsx scripts/build-sidecar.ts --bun-target=bun-linux-x64 --triple=x86_64-unknown-linux-gnu
+//
+// bun cross-compiles, so any of those can be produced from any host — handy for
+// checking a Linux or Windows build without leaving your machine.
 //
 // macOS universal builds need a fat binary, which `bun build --compile` can't
 // produce directly: build the two arch-specific binaries above, then
-//   lipo -create -output src-tauri/binaries/osm-cli-universal-apple-darwin \
-//     src-tauri/binaries/osm-cli-aarch64-apple-darwin src-tauri/binaries/osm-cli-x86_64-apple-darwin
+//   lipo -create -output src-tauri/binaries/ink-city-osm-cli-universal-apple-darwin \
+//     src-tauri/binaries/ink-city-osm-cli-aarch64-apple-darwin \
+//     src-tauri/binaries/ink-city-osm-cli-x86_64-apple-darwin
 // Keep all three files — don't delete the arch-specific ones afterward.
 // `tauri build --target universal-apple-darwin` needs both: build.rs runs
 // once per real arch (cargo has no literal "universal" target) and looks up
@@ -36,6 +41,17 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const OUT_DIR = join(ROOT, "src-tauri", "binaries");
+
+/** Basename of the compiled sidecar, prefixed with the product name while the
+ * TypeScript source it's built from stays `scripts/osm-cli.ts`. The prefix is
+ * for Linux: the .deb/.rpm install external binaries into the shared
+ * `/usr/bin`, next to the app's own `/usr/bin/ink-city`, so a bare `osm-cli`
+ * there would be squatting a very general name in a namespace other packages
+ * share. macOS and Windows keep theirs inside the app bundle / install dir, so
+ * the name only has to be unique to us — but it's one binary, so it's one name.
+ * Must match `bundle.externalBin` in tauri.conf.json, the sidecar entry in
+ * capabilities/default.json, and the `.sidecar()` call in osm_sidecar.rs. */
+const BIN = "ink-city-osm-cli";
 
 function parseFlags(args: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -84,7 +100,7 @@ function main() {
 
   mkdirSync(OUT_DIR, { recursive: true });
   const exe = triple.includes("windows") ? ".exe" : "";
-  const outfile = join(OUT_DIR, `osm-cli-${triple}${exe}`);
+  const outfile = join(OUT_DIR, `${BIN}-${triple}${exe}`);
 
   const args = ["build", "--compile"];
   if (bunTarget) args.push(`--target=${bunTarget}`);

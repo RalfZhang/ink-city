@@ -58,6 +58,13 @@ export type Status = {
   autoUpdate: boolean;
   /** Version we can update to, or null. Source of truth for the update prompt. */
   updateAvailable: string | null;
+  /**
+   * Whether the in-app updater can apply an update to this install. False only
+   * for a Linux .deb/.rpm, where updates come from the system package manager —
+   * see the Rust `updates::supported`. The About tab hides its update section
+   * entirely when false, rather than offering a check that always fails.
+   */
+  updaterSupported: boolean;
   showWater: boolean;
   showAirports: boolean;
   /** Which symbol the railway layer is drawn in, or `"off"`. */

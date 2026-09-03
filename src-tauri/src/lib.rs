@@ -29,9 +29,13 @@ mod pipeline;
 mod scheduler;
 mod state;
 mod tray;
+#[cfg(target_os = "linux")]
+mod tray_linux;
 #[cfg(target_os = "windows")]
 mod tray_theme;
 mod updates;
+#[cfg(target_os = "linux")]
+mod wallpaper_linux;
 mod wallpaper_set;
 
 use std::sync::atomic::Ordering;
@@ -49,6 +53,31 @@ const AUTOSTART_FLAG: &str = "--autostart";
 
 fn launched_by_autostart() -> bool {
     args_have_autostart_flag(std::env::args())
+}
+
+/// Whether the settings window must be surfaced even on an autostart launch,
+/// because the tray it would otherwise hide behind isn't going to appear.
+///
+/// Only Linux can answer anything but `false`: the tray is not part of the
+/// platform there, and GNOME 45+ ships no `StatusNotifierItem` host unless the
+/// user installed the AppIndicator extension. With no Dock icon, no taskbar
+/// entry and no tray, an autostart launch would otherwise leave a process the
+/// user has no way to reach — see `tray_linux`.
+#[cfg(target_os = "linux")]
+fn tray_would_be_invisible() -> bool {
+    let missing = !tray_linux::status_notifier_available();
+    if missing {
+        log::warn!(
+            "[tray] no StatusNotifierItem host on the session bus; showing the settings \
+             window instead of hiding in a tray that won't appear"
+        );
+    }
+    missing
+}
+
+#[cfg(not(target_os = "linux"))]
+fn tray_would_be_invisible() -> bool {
+    false
 }
 
 fn args_have_autostart_flag(args: impl IntoIterator<Item = String>) -> bool {
@@ -236,6 +265,15 @@ pub fn run() {
                     }
                 }
 
+                // Keep the taskbar entry on Linux, where `skipTaskbar` in
+                // tauri.conf.json would be actively harmful: the tray it assumes
+                // as the way back into the app is optional on this platform (see
+                // `tray_would_be_invisible`), so the taskbar is the one surface
+                // that is always there. macOS and Windows both have a reliable
+                // tray, and there the config value stands.
+                #[cfg(target_os = "linux")]
+                let _ = main.set_skip_taskbar(false);
+
                 let app_handle = handle.clone();
                 let main_clone = main.clone();
                 main.on_window_event(move |event| match event {
@@ -262,8 +300,9 @@ pub fn run() {
 
                 // The window starts hidden (config `visible: false`). Surface it
                 // only when the user launched the app; an autostart (login)
-                // launch stays silent in the background.
-                if !launched_by_autostart() {
+                // launch stays silent in the background — unless there is no
+                // tray to be silent *in*, which would leave the app unreachable.
+                if !launched_by_autostart() || tray_would_be_invisible() {
                     let _ = main.show();
                     let _ = main.set_focus();
                 }

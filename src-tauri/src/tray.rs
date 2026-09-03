@@ -84,7 +84,18 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     {
         builder = builder.icon(crate::tray_theme::current_icon());
     }
-    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    // Linux gets the full-colour app icon: appindicator hosts render the bitmap
+    // as given (no template tinting like macOS) but sit on panels of any colour,
+    // so a monochrome glyph would be the one thing guaranteed to disappear
+    // somewhere. Embedded at compile time rather than read from
+    // `default_window_icon()` — that returns an `Option`, and the previous
+    // `ok_or_else(...)?` here would have turned a missing icon into a failed
+    // `setup()`, i.e. an app that doesn't start at all, over a 32×32 png.
+    #[cfg(target_os = "linux")]
+    {
+        builder = builder.icon(tauri::include_image!("icons/32x32.png"));
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
     {
         let icon = app
             .default_window_icon()

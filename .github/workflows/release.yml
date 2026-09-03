@@ -1,17 +1,31 @@
 name: Release
 
-# Builds signed desktop bundles for macOS (universal) and Windows on a version
-# tag, publishes them to a GitHub Release, and generates the signed updater
-# manifest (latest.json) that the in-app updater reads. See src-tauri's
+# Builds signed desktop bundles for macOS (universal), Windows and Linux (x86_64)
+# on a version tag, publishes them to a GitHub Release, and generates the signed
+# updater manifest (latest.json) that the in-app updater reads. See src-tauri's
 # plugins.updater config and src/tabs/About.tsx.
+#
+# Linux ships .deb + .rpm and deliberately NOT an AppImage, so it contributes no
+# updater artifacts — `updates::supported()` reports false on Linux and the About
+# tab hides its update section (a package-manager-owned install isn't ours to
+# replace). `bundle.targets` is "all", so `--bundles` is what does the excluding.
+#
+# The AppImage is not a preference, it's blocked: linuxdeploy rpath-patches every
+# ELF in the AppDir's usr/bin to `$ORIGIN/../lib`, including our bun-compiled
+# ink-city-osm-cli sidecar, and with that RUNPATH in place `ldd` on it exits 1 —
+# which aborts linuxdeploy's gtk plugin and fails the bundle *after* the release
+# build has compiled. patchelf can't undo it either: rewriting the ELF shifts the
+# offsets bun uses to find its embedded payload and the binary segfaults. The way
+# to an AppImage is to stop shipping the sidecar as an `externalBin` in usr/bin
+# (a resource spawned by path instead), which is its own change.
 #
 # Draft-then-publish: release-please creates the GitHub Release as a *draft*
 # (see release-please-config.json `draft: true`). A draft is excluded from
 # `releases/latest`, so the updater endpoint keeps resolving to the previous
 # fully-built release while these matrix builds run — no window where `latest`
 # points at a release that has no latest.json yet. The `publish` job below
-# flips the release to public+latest only after BOTH platforms finish uploading,
-# so assets and "latest" status switch over atomically.
+# flips the release to public+latest only after ALL THREE platforms finish
+# uploading, so assets and "latest" status switch over atomically.
 #
 # To cut a release: bump the version in package.json + src-tauri/tauri.conf.json,
 # commit, then push a matching tag, e.g.:
@@ -57,6 +71,22 @@ jobs:
             args: "--target universal-apple-darwin --verbose"
           - platform: windows-latest
             args: ""
+          # Pinned, not `ubuntu-latest`. An AppImage links against the glibc of
+          # the machine that built it and refuses to start on anything older, so
+          # this label *is* our minimum supported distribution — letting it move
+          # with `latest` would raise that floor on whatever day GitHub reassigns
+          # the label, breaking users with no commit to point at.
+          #
+          # 24.04 (glibc 2.39) rather than the 22.04 (glibc 2.35) that would
+          # reach further back: the Ubuntu 22 images begin deprecation on
+          # 2026-09-17 and go fully unsupported by 2027-04-17
+          # (actions/runner-images#14254), so pinning there buys a few months of
+          # extra reach and then fails the release. If Debian 12 / Ubuntu 22.04
+          # users need the AppImage later, the fix is to build in an
+          # `ubuntu:22.04` *container* on a supported runner, which decouples the
+          # glibc floor from the runner lifecycle entirely.
+          - platform: ubuntu-24.04
+            args: "--bundles deb,rpm"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -67,6 +97,29 @@ jobs:
           # to the `tag` input — so we always build the tagged commit, never
           # whatever branch the dispatch happened from.
           ref: ${{ inputs.tag || github.ref_name }}
+
+      # Tauri's Linux prerequisites. webkit2gtk-4.1 is the webview (4.0 is the
+      # Tauri v1 one and won't do); libayatana-appindicator3 is what the tray
+      # icon is published through; libxdo is what makes the predefined menu items
+      # work; librsvg2, patchelf, file and xdg-utils are bundler-side.
+      #
+      # The list is deliberately the full Tauri set rather than the subset the
+      # deb/rpm bundlers strictly need, so it also stands on its own for a
+      # minimal Debian (see docs/detail.md's prerequisites) and doesn't have to
+      # be revisited if the AppImage is ever unblocked.
+      - name: Install Linux build dependencies
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libxdo-dev \
+            xdg-utils \
+            build-essential \
+            curl wget file libssl-dev libgtk-3-dev
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -115,13 +168,19 @@ jobs:
           npx tsx scripts/build-sidecar.ts --bun-target=bun-darwin-arm64 --triple=aarch64-apple-darwin
           npx tsx scripts/build-sidecar.ts --bun-target=bun-darwin-x64 --triple=x86_64-apple-darwin
           lipo -create \
-            src-tauri/binaries/osm-cli-aarch64-apple-darwin \
-            src-tauri/binaries/osm-cli-x86_64-apple-darwin \
-            -output src-tauri/binaries/osm-cli-universal-apple-darwin
+            src-tauri/binaries/ink-city-osm-cli-aarch64-apple-darwin \
+            src-tauri/binaries/ink-city-osm-cli-x86_64-apple-darwin \
+            -output src-tauri/binaries/ink-city-osm-cli-universal-apple-darwin
 
       - name: Build osm-cli sidecar (Windows)
         if: matrix.platform == 'windows-latest'
         run: npx tsx scripts/build-sidecar.ts --bun-target=bun-windows-x64 --triple=x86_64-pc-windows-msvc
+
+      # glibc build (`bun-linux-x64`, not `-musl`): it has to run on the same
+      # systems the bundles target, and deb/rpm/AppImage are all glibc.
+      - name: Build osm-cli sidecar (Linux)
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: npx tsx scripts/build-sidecar.ts --bun-target=bun-linux-x64 --triple=x86_64-unknown-linux-gnu
 
       # macOS 26 draws the app icon from a compiled asset catalog rather than the
       # .icns (see the verification step after the build), and `actool` — which
@@ -246,7 +305,8 @@ jobs:
   # Flip the draft release to public + latest, but only after every matrix build
   # has succeeded and uploaded its assets. With fail-fast: false, a single
   # platform failure leaves the release as a draft (invisible to the updater),
-  # so users never see a half-built release.
+  # so users never see a half-built release — and since `needs` waits on the whole
+  # matrix, adding a platform extends that guarantee with no change here.
   publish:
     needs: release
     runs-on: ubuntu-latest

@@ -137,4 +137,15 @@
     background: transparent;
     @apply font-sans;
   }
+  /* Linux has no vibrancy to show through: window-vibrancy covers macOS
+     (Sidebar) and Windows (Mica/Acrylic) only, so the transparent window that
+     tauri.conf.json asks for would be backed by nothing — the sidebar and tab
+     strip would show the desktop straight through, or render black on a
+     compositor that doesn't blend. Paint the theme background instead. The
+     `data-os` attribute is set in index.html before this stylesheet's first
+     paint; see the comment there. */
+  html[data-os="linux"],
+  html[data-os="linux"] body {
+    background: var(--background);
+  }
 }

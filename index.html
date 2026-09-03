@@ -5,6 +5,26 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri + React + Typescript</title>
+    <!--
+      Tag the document with the host OS so CSS can branch on it — currently just
+      the window background, which must be opaque on Linux (no vibrancy backs the
+      transparent window there) and must stay transparent on macOS/Windows.
+
+      Inline and ahead of the stylesheet on purpose. The alternatives both flash:
+      asking Rust over IPC, or reading it in main.tsx, would both land after the
+      first paint, so the window would come up transparent for a frame or two.
+      The webview's own UA is enough to tell the three apart (WebKitGTK reports
+      Linux, WKWebView Macintosh, WebView2 Windows NT) and costs no round trip.
+    -->
+    <script>
+      document.documentElement.dataset.os = /Windows/.test(navigator.userAgent)
+        ? "windows"
+        : /Macintosh|Mac OS X/.test(navigator.userAgent)
+          ? "macos"
+          : /Linux|X11/.test(navigator.userAgent)
+            ? "linux"
+            : "unknown";
+    </script>
   </head>
 
   <body>

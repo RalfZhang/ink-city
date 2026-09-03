@@ -857,8 +857,29 @@ async fn wait_renderer_ready(app: &AppHandle) -> Result<()> {
     Ok(())
 }
 
+/// The pixel size the wallpaper has to be drawn at.
+///
+/// Three rungs, because "the primary monitor" is not a concept every display
+/// server has. Wayland has no primary at all: tao maps `primary_monitor()`
+/// straight onto `gdk_display_get_primary_monitor()`, whose Wayland backend
+/// answers NULL — so on a Wayland session (the default on current GNOME and
+/// Plasma) the first rung is unconditionally `None`, and taking that for "no
+/// monitor" would fail every single render.
+///
+/// `current_monitor` is second rather than first so a multi-monitor X11 desktop
+/// keeps sizing to the monitor the user calls primary, not to wherever the
+/// hidden renderer window happens to have been placed. It can itself come back
+/// `None` here — GTK has no monitor for a window it hasn't realized, and the
+/// renderer window is deliberately never shown — hence the third rung, which
+/// goes through `gdk_display_get_n_monitors` and so answers on Wayland too.
 fn primary_size(win: &WebviewWindow) -> Result<(u32, u32)> {
-    let m = win.primary_monitor()?.ok_or_else(|| anyhow!("no monitor"))?;
+    let m = match win.primary_monitor()? {
+        Some(m) => m,
+        None => win
+            .current_monitor()?
+            .or_else(|| win.available_monitors().ok()?.into_iter().next())
+            .ok_or_else(|| anyhow!("no monitor"))?,
+    };
     let s = m.size();
     Ok((s.width, s.height))
 }

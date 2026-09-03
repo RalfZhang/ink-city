@@ -20,7 +20,7 @@
     "log:default",
     {
       "identifier": "shell:allow-execute",
-      "allow": [{ "name": "binaries/osm-cli", "sidecar": true }]
+      "allow": [{ "name": "binaries/ink-city-osm-cli", "sidecar": true }]
     }
   ]
 }
