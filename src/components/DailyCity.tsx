@@ -57,9 +57,9 @@ export default function DailyCity({ status, onError }: Props) {
         <div className="text-xl font-semibold">
           {city ? `${city.name}, ${city.country}` : "—"}
         </div>
-        {city && city.localName !== city.name && (
-          <div className="text-sm text-muted-foreground">{city.localName}</div>
-        )}
+        <div className="text-sm text-muted-foreground">
+          {city ? city.localName : "-"}
+        </div>
         <div className="text-xs text-muted-foreground mt-1">
           {city
             ? `${city.lat.toFixed(4)}, ${city.lon.toFixed(4)}`
