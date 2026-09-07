@@ -27,6 +27,7 @@
     "updateAvailable": "Versión {{version}} disponible",
     "installRestart": "Instalar y reiniciar",
     "installing": "Descargando…",
+    "cancel": "Cancelar",
     "updateError": "Error al buscar actualizaciones",
     "updateUnavailable": "Servidor de actualizaciones no disponible, inténtalo más tarde",
     "languageLabel": "Idioma",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
-    "proxyDesc": "Enruta las solicitudes de datos del mapa a través de un proxy, para redes donde OpenStreetMap no es accesible directamente. Admite URL http:// y socks5://.",
+    "proxyDesc": "Enruta las solicitudes de datos del mapa y de actualizaciones de la aplicación a través de un proxy, para redes donde OpenStreetMap o GitHub no son accesibles directamente. Admite URL http:// y socks5://.",
     "quit": "Salir",
     "closeWindow": "Cerrar ventana"
   },

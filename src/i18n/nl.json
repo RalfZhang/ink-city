@@ -27,6 +27,7 @@
     "updateAvailable": "Versie {{version}} beschikbaar",
     "installRestart": "Installeren & herstarten",
     "installing": "Downloaden…",
+    "cancel": "Annuleren",
     "updateError": "Controleren op updates mislukt",
     "updateUnavailable": "Updateserver niet beschikbaar, probeer het later opnieuw",
     "languageLabel": "Taal",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
-    "proxyDesc": "Stuurt kaartgegevensverzoeken via een proxy, voor netwerken waar OpenStreetMap niet rechtstreeks bereikbaar is. Ondersteunt http:// en socks5:// URL's.",
+    "proxyDesc": "Stuurt kaartgegevens- en app-updateverzoeken via een proxy, voor netwerken waar OpenStreetMap of GitHub niet rechtstreeks bereikbaar is. Ondersteunt http:// en socks5:// URL's.",
     "quit": "Afsluiten",
     "closeWindow": "Venster sluiten"
   },

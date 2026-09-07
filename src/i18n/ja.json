@@ -27,6 +27,7 @@
     "updateAvailable": "バージョン {{version}} が利用可能です",
     "installRestart": "インストールして再起動",
     "installing": "ダウンロード中…",
+    "cancel": "キャンセル",
     "updateError": "更新の確認に失敗しました",
     "updateUnavailable": "更新サーバーに接続できません。しばらくしてから再試行してください",
     "languageLabel": "言語",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google マップ",
     "proxyLabel": "プロキシ",
-    "proxyDesc": "OpenStreetMapに直接アクセスできないネットワーク向けに、地図データのリクエストをプロキシ経由で送信します。http:// と socks5:// のURLに対応しています。",
+    "proxyDesc": "OpenStreetMapやGitHubに直接アクセスできないネットワーク向けに、地図データとアプリ更新のリクエストをプロキシ経由で送信します。http:// と socks5:// のURLに対応しています。",
     "quit": "終了",
     "closeWindow": "ウィンドウを閉じる"
   },

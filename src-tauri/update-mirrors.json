@@ -1,0 +1,38 @@
+{
+  "v": 1,
+  "note": [
+    "Relays for GitHub release downloads, used by the in-app updater when the",
+    "release origin itself can't be reached — see src-tauri/src/github_mirror.rs.",
+    "",
+    "This file has two roles and is one source of truth for both: it is compiled",
+    "into the app as the default list (include_str!), and the copy of it on `main`",
+    "is what installed clients re-read over jsDelivr. So editing it here and",
+    "merging re-points every client that is already out there, without shipping a",
+    "release — which matters because a broken update path is exactly the situation",
+    "where an update can't carry the fix. jsDelivr caches a branch path for about",
+    "12 hours, so allow that long to propagate.",
+    "",
+    "Rules the client enforces on whatever it reads (see parse_mirror_list):",
+    "  - https only, and a host that parses; anything else is dropped",
+    "  - order is the order they're tried, after the origin",
+    "  - a list that ends up empty is refused, and the previous one stays in force",
+    "",
+    "Only *relays* live here. The release origin is compiled in separately and is",
+    "always tried first, so nothing in this file can redirect the primary route,",
+    "and every download is verified against the app's minisign pubkey regardless.",
+    "",
+    "Each host takes a whole GitHub URL appended to it:",
+    "  https://<host>/https://github.com/<owner>/<repo>/releases/download/...",
+    "A candidate has to follow the redirect to release-assets.githubusercontent.com",
+    "server-side and honour Range, or resuming breaks. Verified 2026-09-06 against",
+    "v0.12.1: byte-identical sha256 over the full 35 MB .exe, no size cap at 70 MB,",
+    "206 with a Content-Range naming the total."
+  ],
+  "hosts": [
+    "https://gh-proxy.com",
+    "https://gh.llkk.cc",
+    "https://ghfast.top",
+    "https://ghproxy.imciel.com",
+    "https://ghproxy.net"
+  ]
+}

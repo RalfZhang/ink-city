@@ -27,6 +27,7 @@
     "updateAvailable": "有新版本 {{version}}",
     "installRestart": "安裝並重啟",
     "installing": "下載中…",
+    "cancel": "取消",
     "updateError": "檢查更新失敗",
     "updateUnavailable": "暫時無法連線更新伺服器，請稍後再試",
     "languageLabel": "語言",
@@ -37,7 +38,7 @@
     "mapHere": "HERE 地圖",
     "mapGoogle": "Google 地圖",
     "proxyLabel": "代理",
-    "proxyDesc": "透過代理連線地圖資料伺服器，適用於無法直連 OpenStreetMap 的網路。支援 http:// 與 socks5:// 位址。",
+    "proxyDesc": "透過代理請求地圖資料與應用程式更新，適用於無法直連 OpenStreetMap 或 GitHub 的網路。支援 http:// 與 socks5:// 位址。",
     "quit": "結束",
     "closeWindow": "關閉視窗"
   },

@@ -39,6 +39,10 @@ flate2 = "1"
 tauri-plugin-log = "2"
 log = "0.4"
 base64 = "0.22"
+# Verifying the update bundle ourselves, since the check lived inside the
+# plugin `download` that `update_bundle` replaces. Same crate and same version
+# tauri-plugin-updater already pulls in, so this adds no new dependency.
+minisign-verify = "0.2"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5"

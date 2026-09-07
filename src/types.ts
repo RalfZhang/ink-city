@@ -59,6 +59,21 @@ export type Status = {
   /** Version we can update to, or null. Source of truth for the update prompt. */
   updateAvailable: string | null;
   /**
+   * Percent complete of an in-flight update download. Null outside a download,
+   * and also during one whose total size the serving host didn't report — the
+   * About tab then falls back to a bare "Downloading…". Bundles are tens of MB
+   * and a blocked route can take twenty minutes, so without this the spinner is
+   * indistinguishable from a hang.
+   */
+  updateProgress: number | null;
+  /**
+   * Whether a download/install is in flight, from any path — the tray entry and
+   * auto-update both start one with no window involved. The About tab draws its
+   * progress from this rather than from its own click, so an install it didn't
+   * start still reads as one.
+   */
+  updateInstalling: boolean;
+  /**
    * Whether the in-app updater can apply an update to this install. False only
    * for a Linux .deb/.rpm, where updates come from the system package manager —
    * see the Rust `updates::supported`. The About tab hides its update section

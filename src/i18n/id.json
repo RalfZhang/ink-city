@@ -27,6 +27,7 @@
     "updateAvailable": "Versi {{version}} tersedia",
     "installRestart": "Instal & mulai ulang",
     "installing": "Mengunduh…",
+    "cancel": "Batal",
     "updateError": "Pemeriksaan pembaruan gagal",
     "updateUnavailable": "Server pembaruan tidak tersedia, coba lagi nanti",
     "languageLabel": "Bahasa",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proksi",
-    "proxyDesc": "Merutekan permintaan data peta melalui proksi, untuk jaringan yang tidak dapat mengakses OpenStreetMap secara langsung. Mendukung URL http:// dan socks5://.",
+    "proxyDesc": "Merutekan permintaan data peta dan pembaruan aplikasi melalui proksi, untuk jaringan yang tidak dapat mengakses OpenStreetMap atau GitHub secara langsung. Mendukung URL http:// dan socks5://.",
     "quit": "Keluar",
     "closeWindow": "Tutup jendela"
   },

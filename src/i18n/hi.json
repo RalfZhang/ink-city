@@ -27,6 +27,7 @@
     "updateAvailable": "संस्करण {{version}} उपलब्ध है",
     "installRestart": "इंस्टॉल करें और पुनः आरंभ करें",
     "installing": "डाउनलोड हो रहा है…",
+    "cancel": "रद्द करें",
     "updateError": "अपडेट जाँच विफल रही",
     "updateUnavailable": "अपडेट सर्वर उपलब्ध नहीं है, बाद में पुनः प्रयास करें",
     "languageLabel": "भाषा",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "प्रॉक्सी",
-    "proxyDesc": "उन नेटवर्क के लिए जहाँ OpenStreetMap सीधे उपलब्ध नहीं है, मानचित्र डेटा अनुरोधों को प्रॉक्सी के माध्यम से भेजता है। http:// और socks5:// URL समर्थित हैं।",
+    "proxyDesc": "उन नेटवर्क के लिए जहाँ OpenStreetMap या GitHub सीधे उपलब्ध नहीं है, मानचित्र डेटा और ऐप अपडेट अनुरोधों को प्रॉक्सी के माध्यम से भेजता है। http:// और socks5:// URL समर्थित हैं।",
     "quit": "बंद करें",
     "closeWindow": "विंडो बंद करें"
   },

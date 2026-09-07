@@ -57,6 +57,16 @@ pub struct AppState {
     /// Guards against concurrent/duplicate installs (tray + General + repeated
     /// clicks can all race to trigger an install).
     pub update_installing: AtomicBool,
+    /// Percent complete of an in-flight update download, or `None` when nothing
+    /// is downloading *or* the serving host never told us the total. Written by
+    /// `updates::set_download_progress`, which only publishes on a change, so
+    /// this is already throttled to at most a hundred writes per download.
+    pub update_progress: StdMutex<Option<u8>>,
+    /// Set by `updates::cancel` to ask the in-flight download to stop, and
+    /// cleared by `claim_install` at the start of every install — a cancel is
+    /// only ever meaningful for the transfer running when it arrives, so one
+    /// that lands after a download has already finished must not kill the next.
+    pub update_cancel: AtomicBool,
     pub show_water: AtomicBool,
     pub show_airports: AtomicBool,
     /// Which symbol the railway layer is drawn in, `Off` included — a mode rather
@@ -160,6 +170,8 @@ impl AppState {
             auto_update: AtomicBool::new(cfg.auto_update),
             available_update: StdMutex::new(None),
             update_installing: AtomicBool::new(false),
+            update_progress: StdMutex::new(None),
+            update_cancel: AtomicBool::new(false),
             show_water: AtomicBool::new(cfg.show_water),
             show_airports: AtomicBool::new(cfg.show_airports),
             railway_style: StdMutex::new(cfg.railway_style),

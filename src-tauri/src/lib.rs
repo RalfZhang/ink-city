@@ -33,6 +33,7 @@ mod tray;
 mod tray_linux;
 #[cfg(target_os = "windows")]
 mod tray_theme;
+mod update_bundle;
 mod updates;
 #[cfg(target_os = "linux")]
 mod wallpaper_linux;
@@ -316,6 +317,11 @@ pub fn run() {
             // a version comparison so an out-of-band upgrade clears it instead.
             updates::restore_pending(handle);
 
+            // Likewise offline: the last relay list we fetched, in force before
+            // any check or install can want it. Falls back to the list compiled
+            // into this build (see github_mirror::release_proxy_hosts).
+            updates::load_cached_mirrors(handle);
+
             // Settle notification permission up front so the first "update
             // available" notification isn't lost racing the OS prompt. macOS
             // prompts only on the first ever launch; later launches are no-ops.
@@ -353,6 +359,7 @@ pub fn run() {
             commands::set_auto_update,
             commands::check_for_update,
             commands::install_update,
+            commands::cancel_update,
             commands::set_update_strings,
             commands::apply_style_settings,
             commands::apply_lab_settings,

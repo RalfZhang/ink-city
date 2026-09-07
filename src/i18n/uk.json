@@ -27,6 +27,7 @@
     "updateAvailable": "Доступна версія {{version}}",
     "installRestart": "Встановити й перезапустити",
     "installing": "Завантаження…",
+    "cancel": "Скасувати",
     "updateError": "Не вдалося перевірити оновлення",
     "updateUnavailable": "Сервер оновлень недоступний, спробуйте пізніше",
     "languageLabel": "Мова",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "Проксі",
-    "proxyDesc": "Спрямовує запити даних карти через проксі — для мереж, де OpenStreetMap недоступний напряму. Підтримує URL-адреси http:// та socks5://.",
+    "proxyDesc": "Спрямовує запити даних карти та оновлень програми через проксі — для мереж, де OpenStreetMap або GitHub недоступні напряму. Підтримує URL-адреси http:// та socks5://.",
     "quit": "Вийти",
     "closeWindow": "Закрити вікно"
   },

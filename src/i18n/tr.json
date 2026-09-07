@@ -27,6 +27,7 @@
     "updateAvailable": "{{version}} sürümü kullanılabilir",
     "installRestart": "Yükle ve yeniden başlat",
     "installing": "İndiriliyor…",
+    "cancel": "İptal",
     "updateError": "Güncelleme kontrolü başarısız oldu",
     "updateUnavailable": "Güncelleme sunucusuna ulaşılamıyor, daha sonra tekrar deneyin",
     "languageLabel": "Dil",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
-    "proxyDesc": "OpenStreetMap'e doğrudan erişilemeyen ağlar için harita verisi isteklerini bir proxy üzerinden yönlendirir. http:// ve socks5:// URL'lerini destekler.",
+    "proxyDesc": "OpenStreetMap veya GitHub'a doğrudan erişilemeyen ağlar için harita verisi ve uygulama güncellemesi isteklerini bir proxy üzerinden yönlendirir. http:// ve socks5:// URL'lerini destekler.",
     "quit": "Çık",
     "closeWindow": "Pencereyi kapat"
   },

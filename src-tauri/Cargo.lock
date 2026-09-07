@@ -1948,6 +1948,7 @@ dependencies = [
  "chrono",
  "flate2",
  "log",
+ "minisign-verify",
  "objc2 0.5.2",
  "reqwest 0.12.28",
  "semver",

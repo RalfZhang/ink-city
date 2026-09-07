@@ -27,6 +27,7 @@
     "updateAvailable": "الإصدار {{version}} متاح",
     "installRestart": "تثبيت وإعادة التشغيل",
     "installing": "جارٍ التنزيل…",
+    "cancel": "إلغاء",
     "updateError": "فشل التحقق من التحديث",
     "updateUnavailable": "خادم التحديث غير متاح، يرجى المحاولة لاحقًا",
     "languageLabel": "اللغة",
@@ -37,7 +38,7 @@
     "mapHere": "HERE WeGo",
     "mapGoogle": "خرائط Google",
     "proxyLabel": "الوكيل",
-    "proxyDesc": "توجيه طلبات بيانات الخرائط عبر وكيل، للشبكات التي يتعذّر فيها الوصول إلى OpenStreetMap مباشرة. يدعم روابط http:// و socks5://.",
+    "proxyDesc": "توجيه طلبات بيانات الخرائط وتحديثات التطبيق عبر وكيل، للشبكات التي يتعذّر فيها الوصول إلى OpenStreetMap أو GitHub مباشرة. يدعم روابط http:// و socks5://.",
     "quit": "إنهاء",
     "closeWindow": "إغلاق النافذة"
   },

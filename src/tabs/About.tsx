@@ -96,6 +96,15 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
   const [version, setVersion] = useState("");
   const [updateState, setUpdateState] = useState<UpdateState>("idle");
   const versionClicks = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+  // A cancel and an "already up to date" both come back as `false` from
+  // `install_update`; only the click that asked can tell them apart.
+  const cancelRequested = useRef(false);
+
+  // The backend flag, not our own click: the tray entry and auto-update start
+  // downloads with no window involved, and a tab that keyed off its own click
+  // showed "version X available" beside a running one.
+  const installing = status.updateInstalling || updateState === "installing";
+  const updateBusy = updateState === "checking" || installing;
 
   useEffect(() => {
     getVersion().then(setVersion).catch(() => {});
@@ -139,6 +148,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
   };
 
   const installUpdate = async () => {
+    cancelRequested.current = false;
     setUpdateState("installing");
     try {
       // Rust re-checks, downloads, installs, then relaunches — so on success
@@ -146,11 +156,30 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
       const installed = await invoke<boolean>("install_update");
       if (!installed) {
         await refresh();
-        setUpdateState("uptodate");
+        setUpdateState(cancelRequested.current ? "idle" : "uptodate");
       }
     } catch (e) {
+      // Our own cancel surfaces as a failed download; reporting it back to the
+      // user who just pressed the button would read as a bug.
+      if (cancelRequested.current) {
+        setUpdateState("idle");
+        return;
+      }
       logError("[updater] install failed", e);
       setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
+    }
+  };
+
+  // Downloads are tens of MB and a blocked route can take twenty minutes, with
+  // the bytes buffered in memory — so quitting the app was the only way out of
+  // one the user had changed their mind about. Fire-and-forget: Rust picks the
+  // flag up between chunks, and `updateInstalling` clearing is the feedback.
+  const cancelUpdate = async () => {
+    cancelRequested.current = true;
+    try {
+      await invoke("cancel_update");
+    } catch (e) {
+      onError(e);
     }
   };
 
@@ -170,7 +199,7 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
       // version goes straight to download → install → restart, mirroring the
       // background path. When the user has turned auto-update off, fall back to
       // surfacing the explicit "Install & restart" button (`idle`).
-      if (status.autoUpdate) {
+      if (status.autoUpdate && !installing) {
         await installUpdate();
       } else {
         setUpdateState("idle");
@@ -180,8 +209,6 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
       setUpdateState(isBenignUpdateError(e) ? "unavailable" : "error");
     }
   };
-
-  const updateBusy = updateState === "checking" || updateState === "installing";
 
   return (
     <div className="min-h-full space-y-4 max-w-2xl flex flex-col justify-between">
@@ -242,21 +269,44 @@ export default function About({ status, refresh, onError, onToggleDevMode }: Pro
               />
           </CardContent>
           <CardFooter className="justify-end gap-2">
-            <span className="text-xs text-muted-foreground">
-              {status.updateAvailable
-                ? t("general.updateAvailable", { version: status.updateAvailable })
-                : updateState === "uptodate"
-                  ? t("general.upToDate")
-                  : updateState === "unavailable"
-                    ? t("general.updateUnavailable")
-                    : updateState === "error"
-                      ? t("general.updateError")
-                      : null}
+            {/* Progress goes in the label, never the button: the button is
+                what the user aims at, so its width must not wobble as the
+                digits change, and nothing here may push it sideways either.
+                Downloads are tens of MB and a blocked route can take twenty
+                minutes, so a bare spinner reads as a hang. During one this
+                outranks "version X available", which the user already acted on.
+                `tabular-nums` keeps the digits from shifting width as they
+                tick; the percent falls back to "Downloading…" for a host that
+                never reported a total. */}
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground tabular-nums">
+              {installing ? (
+                <>
+                  <Loader2 className="size-3 animate-spin" />
+                  {status.updateProgress === null
+                    ? t("general.installing")
+                    : `${status.updateProgress}%`}
+                </>
+              ) : status.updateAvailable ? (
+                t("general.updateAvailable", { version: status.updateAvailable })
+              ) : updateState === "uptodate" ? (
+                t("general.upToDate")
+              ) : updateState === "unavailable" ? (
+                t("general.updateUnavailable")
+              ) : updateState === "error" ? (
+                t("general.updateError")
+              ) : null}
             </span>
-            {status.updateAvailable || updateState === "installing" ? (
+            {/* One slot, one action. A download used to leave a disabled
+                "Downloading…" button here, which is a dead control in the one
+                place the user has something to say — so it carries the cancel
+                instead, and the spinner moves to the label. */}
+            {installing ? (
+              <Button className="min-w-28" variant="outline" size="sm" onClick={cancelUpdate}>
+                {t("general.cancel")}
+              </Button>
+            ) : status.updateAvailable ? (
               <Button className="min-w-28" size="sm" onClick={installUpdate} disabled={updateBusy}>
-                {updateState === "installing" && <Loader2 className="animate-spin" />}
-                {t(updateState === "installing" ? "general.installing" : "general.installRestart")}
+                {t("general.installRestart")}
               </Button>
             ) : (
               <Button

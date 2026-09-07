@@ -69,6 +69,21 @@ pub struct Status {
     /// The version we can update to, or `None`. Single source of truth for the
     /// "update available" affordance — see `AppState::available_update`.
     pub update_available: Option<String>,
+    /// Percent complete of an in-flight update download. `None` outside a
+    /// download, and also during one whose total size the host didn't report —
+    /// the About tab then shows a bare "Downloading…" rather than a made-up
+    /// number. Bundles are tens of MB and a blocked route can take twenty
+    /// minutes, so without this the spinner is indistinguishable from a hang.
+    pub update_progress: Option<u8>,
+    /// Whether a download/install is in flight, from *any* path — the tray
+    /// entry and auto-update both start one without a window involved.
+    ///
+    /// Here rather than left to the About tab's own click state, which is what
+    /// it used to be: a tab that keyed off its own click showed "version X
+    /// available" beside a running download and offered an "Install & restart"
+    /// button whose only effect was to hit the concurrency guard and come back
+    /// "up to date". Single source of truth, like `update_available`.
+    pub update_installing: bool,
     /// Whether the in-app updater can apply an update to this install at all —
     /// false only for a Linux .deb/.rpm, whose updates belong to the system
     /// package manager. See `updates::supported`; the About tab hides its whole
@@ -142,6 +157,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
     let style = *state.style.lock().unwrap();
     let update_check = *state.update_check.lock().unwrap();
     let update_available = state.available_update.lock().unwrap().clone();
+    let update_progress = *state.update_progress.lock().unwrap();
     let variant = *state.variant.lock().unwrap();
     let railway_style = *state.railway_style.lock().unwrap();
     let proxy_url = state.proxy_url.lock().unwrap().clone();
@@ -163,6 +179,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
         update_check,
         auto_update: state.auto_update.load(Ordering::Acquire),
         update_available,
+        update_progress,
+        update_installing: state.update_installing.load(Ordering::Acquire),
         updater_supported: crate::updates::supported(),
         show_water: state.show_water.load(Ordering::Acquire),
         show_airports: state.show_airports.load(Ordering::Acquire),
@@ -284,6 +302,15 @@ pub async fn check_for_update(app: AppHandle) -> Result<Option<String>, String> 
 #[tauri::command]
 pub async fn install_update(app: AppHandle) -> Result<bool, String> {
     crate::updates::install_now(&app).await.map_err(|e| e.to_string())
+}
+
+/// Ask the in-flight update download to stop. Always `Ok`: there is nothing to
+/// fail, and nothing to report — a cancel that finds no download running has
+/// already got what the user wanted.
+#[tauri::command]
+pub fn cancel_update(app: AppHandle) -> Result<(), String> {
+    crate::updates::cancel(&app);
+    Ok(())
 }
 
 /// Push the localized strings for the windowless update flows (notification +
