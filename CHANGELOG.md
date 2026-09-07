@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/RalfZhang/ink-city/compare/v0.12.1...v0.12.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* CDN resource and resume for download new version ([0d8f417](https://github.com/RalfZhang/ink-city/commit/0d8f41728af628b26d626fc997a8494407afef88))
+
 ## [0.12.1](https://github.com/RalfZhang/ink-city/compare/v0.12.0...v0.12.1) (2026-09-03)
 
 
