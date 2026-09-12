@@ -11,8 +11,6 @@
   </div>
 </div>
 
----
-
 InkCity is a small cross-platform (macOS + Windows + Linux) desktop app. Every day at midnight it picks a city, renders its road network as an ink-on-paper map sized to your screen, and sets it as your wallpaper.
 
 ## Screenshots
