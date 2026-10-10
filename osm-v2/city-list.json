@@ -1,0 +1,301 @@
+{
+  "list": {
+    "2026-09-17": {
+      "id": 99532,
+      "wikiId": 48195,
+      "name": "Basra",
+      "localName": "البصرة",
+      "country": "IQ",
+      "lat": 30.4952371,
+      "lon": 47.8090981,
+      "population": 1326564
+    },
+    "2026-09-18": {
+      "id": 6167865,
+      "wikiId": 172,
+      "name": "Toronto",
+      "localName": "Toronto",
+      "country": "CA",
+      "lat": 43.6534817,
+      "lon": -79.3839347,
+      "population": 2794356
+    },
+    "2026-09-19": {
+      "id": 285839,
+      "name": "Al Ahmadi",
+      "localName": "الاحمدي",
+      "country": "KW",
+      "lat": 29.0890687,
+      "lon": 48.0610236,
+      "population": 637411
+    },
+    "2026-09-20": {
+      "id": 3176959,
+      "wikiId": 2044,
+      "name": "Florence",
+      "localName": "Firenze",
+      "country": "IT",
+      "lat": 43.7697955,
+      "lon": 11.2556404,
+      "population": 360930
+    },
+    "2026-09-21": {
+      "id": 4931972,
+      "wikiId": 49111,
+      "name": "Cambridge",
+      "localName": "Cambridge",
+      "country": "US",
+      "lat": 42.3656347,
+      "lon": -71.1040018,
+      "population": 118403
+    },
+    "2026-09-22": {
+      "id": 1859307,
+      "wikiId": 188806,
+      "name": "Kitakyūshū",
+      "localName": "北九州",
+      "country": "JP",
+      "lat": 33.8829996,
+      "lon": 130.8749015,
+      "population": 935084
+    },
+    "2026-09-23": {
+      "id": 1717512,
+      "wikiId": 1467,
+      "name": "Cebu City",
+      "localName": "Cebu City",
+      "country": "PH",
+      "lat": 10.2934946,
+      "lon": 123.9018183,
+      "population": 965332
+    },
+    "2026-09-24": {
+      "id": 2886946,
+      "wikiId": 3104,
+      "name": "Koblenz",
+      "localName": "Koblenz",
+      "country": "DE",
+      "lat": 50.3533278,
+      "lon": 7.5943951,
+      "population": 115298
+    },
+    "2026-09-25": {
+      "id": 3583361,
+      "wikiId": 3110,
+      "name": "San Salvador",
+      "localName": "San Salvador",
+      "country": "SV",
+      "lat": 13.697629,
+      "lon": -89.191156,
+      "population": 330543
+    },
+    "2026-09-26": {
+      "id": 1581298,
+      "wikiId": 72818,
+      "name": "Haiphong",
+      "localName": "Hải Phòng",
+      "country": "VN",
+      "lat": 20.8830967,
+      "lon": 106.6790381,
+      "population": 2124500
+    },
+    "2026-09-27": {
+      "id": 726050,
+      "wikiId": 6506,
+      "name": "Varna",
+      "localName": "Варна",
+      "country": "BG",
+      "lat": 43.2073873,
+      "lon": 27.9166653,
+      "population": 322683
+    },
+    "2026-09-28": {
+      "id": 1018725,
+      "wikiId": 37701,
+      "name": "Bloemfontein",
+      "localName": "IBloemfontein",
+      "country": "ZA",
+      "lat": -29.116395,
+      "lon": 26.215496,
+      "population": 256185
+    },
+    "2026-09-29": {
+      "id": 3378644,
+      "wikiId": 10717,
+      "name": "Georgetown",
+      "localName": "Georgetown",
+      "country": "GY",
+      "lat": 6.8032561,
+      "lon": -58.1455403,
+      "population": 235017
+    },
+    "2026-09-30": {
+      "id": 3652462,
+      "wikiId": 2900,
+      "name": "Quito",
+      "localName": "Quito",
+      "country": "EC",
+      "lat": -0.2201641,
+      "lon": -78.5123274,
+      "population": 1763275
+    },
+    "2026-10-01": {
+      "id": 2660646,
+      "wikiId": 71,
+      "name": "Geneva",
+      "localName": "Genève",
+      "country": "CH",
+      "lat": 46.2017559,
+      "lon": 6.1466014,
+      "population": 209061
+    },
+    "2026-10-02": {
+      "id": 3467747,
+      "wikiId": 168929,
+      "name": "Campo Grande",
+      "localName": "Campo Grande",
+      "country": "BR",
+      "lat": -20.4640173,
+      "lon": -54.6162947,
+      "population": 962883
+    },
+    "2026-10-03": {
+      "id": 1518980,
+      "wikiId": 485496,
+      "name": "Shymkent",
+      "localName": "Шымкент",
+      "country": "KZ",
+      "lat": 42.3146962,
+      "lon": 69.5883282,
+      "population": 1191877
+    },
+    "2026-10-04": {
+      "id": 2907911,
+      "wikiId": 2966,
+      "name": "Heidelberg",
+      "localName": "Heidelberg",
+      "country": "DE",
+      "lat": 49.4093582,
+      "lon": 8.694724,
+      "population": 162960
+    },
+    "2026-10-05": {
+      "id": 484907,
+      "wikiId": 170513,
+      "name": "Taganrog",
+      "localName": "Таганрог",
+      "country": "RU",
+      "lat": 47.215495,
+      "lon": 38.928362,
+      "population": 240055
+    },
+    "2026-10-06": {
+      "id": 3904906,
+      "wikiId": 170688,
+      "name": "Santa Cruz de la Sierra",
+      "localName": "Santa Cruz",
+      "country": "BO",
+      "lat": -17.7834217,
+      "lon": -63.1820853,
+      "population": 3122605
+    },
+    "2026-10-07": {
+      "id": 620127,
+      "wikiId": 102217,
+      "name": "Vitebsk",
+      "localName": "Віцебск",
+      "country": "BY",
+      "lat": 55.1930197,
+      "lon": 30.2070437,
+      "population": 357899
+    },
+    "2026-10-08": {
+      "id": 8063361,
+      "name": "Ngerulmud",
+      "localName": "Ngerulmud",
+      "country": "PW",
+      "lat": 7.5006446,
+      "lon": 134.6242864,
+      "population": 0
+    },
+    "2026-10-09": {
+      "id": 1007311,
+      "wikiId": 5468,
+      "name": "Durban",
+      "localName": "ITheku",
+      "country": "ZA",
+      "lat": -29.8618145,
+      "lon": 31.009909,
+      "population": 595061
+    },
+    "2026-10-10": {
+      "id": 787657,
+      "wikiId": 129259,
+      "name": "Niš",
+      "localName": "Ниш",
+      "country": "RS",
+      "lat": 43.3211301,
+      "lon": 21.8959232,
+      "population": 183164
+    },
+    "2026-10-11": {
+      "id": 934154,
+      "wikiId": 3929,
+      "name": "Port Louis",
+      "localName": "Port Louis",
+      "country": "MU",
+      "lat": -20.1624522,
+      "lon": 57.5028044,
+      "population": 149194
+    },
+    "2026-10-12": {
+      "id": 2992166,
+      "wikiId": 6441,
+      "name": "Montpellier",
+      "localName": "Montpellier",
+      "country": "FR",
+      "lat": 43.6112422,
+      "lon": 3.8767337,
+      "population": 310240
+    },
+    "2026-10-13": {
+      "id": 3183875,
+      "wikiId": 19689,
+      "name": "Tirana",
+      "localName": "Tirana",
+      "country": "AL",
+      "lat": 41.3281482,
+      "lon": 19.8184435,
+      "population": 389323
+    },
+    "2026-10-14": {
+      "id": 3513392,
+      "name": "Philipsburg",
+      "localName": "Philipsburg",
+      "country": "SX",
+      "lat": 18.0250713,
+      "lon": -63.0483073,
+      "population": 1400
+    },
+    "2026-10-15": {
+      "id": 146268,
+      "wikiId": 3856,
+      "name": "Nicosia",
+      "localName": "Λευκωσία",
+      "country": "CY",
+      "lat": 35.1746503,
+      "lon": 33.3638783,
+      "population": 56848
+    },
+    "2026-10-16": {
+      "id": 5099836,
+      "wikiId": 26339,
+      "name": "Jersey City",
+      "localName": "Jersey City",
+      "country": "US",
+      "lat": 40.7215682,
+      "lon": -74.047455,
+      "population": 292449
+    }
+  }
+}
