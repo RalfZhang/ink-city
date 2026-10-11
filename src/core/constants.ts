@@ -35,7 +35,11 @@ export const RUNWAY_ALPHA = 0.6;
 // osm/airports.ts). A v5 payload isn't wrong, just lossy — a closed runway way in
 // it was recorded as a `line` and draws as a fat outlined ring — so the bump is
 // what makes already-cached cities re-fetch and pick the areas up.
-export const OSM_SCHEMA_VERSION = 6;
+//
+// Version 7 drops area-mapped highways (pedestrian squares, service areas, …)
+// from `elements` (why: osm/roads.ts). A v6 payload still carries them and
+// strokes each one's outline, so again the bump is what re-fetches cached cities.
+export const OSM_SCHEMA_VERSION = 7;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;

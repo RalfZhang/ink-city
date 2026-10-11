@@ -18,6 +18,11 @@ export function bboxForScreen(lat: number, lon: number, maxHalfKm: number, aspec
   return { south: lat - dLat, west: lon - dLon, north: lat + dLat, east: lon + dLon };
 }
 
+/** Ground height (km) of `b` — how much north-south distance the crop covers. */
+export function groundHeightKm(b: Bbox): number {
+  return (b.north - b.south) * KM_PER_DEG_LAT;
+}
+
 /** Project a lat/lon onto canvas pixel coordinates within `b`. */
 export function project(lat: number, lon: number, b: Bbox, width: number, height: number): [number, number] {
   const x = ((lon - b.west) / (b.east - b.west)) * width;

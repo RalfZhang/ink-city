@@ -18,6 +18,8 @@
     "prepare": "tsx scripts/clean.ts --setup-git",
     "icon:car": "bash scripts/build-icon-car.sh",
     "render": "tsx scripts/render.ts",
+    "road:render": "tsx scripts/render.ts road-test/json -o road-test/png -t png -s 8000x8000 --theme light -p all --no-stamp --rail plain",
+    "road:fetch": "tsx scripts/render.ts --fetch-only -o road-test/json",
     "schedule-test": "tsx scripts/schedule-test.ts",
     "coords-test": "tsx scripts/coords-test.ts",
     "railway-test": "tsx scripts/railway-test.ts"

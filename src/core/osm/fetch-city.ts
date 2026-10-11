@@ -50,7 +50,7 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
     `);out geom;`;
   const raw = await fetchOverpass(query);
 
-  const elements = slimRoads(raw as Osm, precision).elements ?? [];
+  const elements = slimRoads(raw as Parameters<typeof slimRoads>[0], precision).elements ?? [];
   return {
     v: OSM_SCHEMA_VERSION,
     elements,

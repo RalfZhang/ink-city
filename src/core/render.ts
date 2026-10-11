@@ -1,6 +1,6 @@
 import type { AirportKind, Bbox, Geom, Osm, RailwayStyle, Style, StylePreset, Way } from "./types";
 import type { LayerId } from "./osm/layers";
-import { project } from "./bbox";
+import { groundHeightKm, project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA } from "./constants";
 import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./mondrian";
 
@@ -13,31 +13,47 @@ import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./
 // ─────────────────────────────────────────────────────────────────────────────
 // Visual design tokens — the whole visual language as plain data, tunable in one
 // place instead of across five drawing functions. Every value is a *weight* in
-// "px at 1000px tall": multiply by `strokeScale(height)` at draw time so strokes
-// read the same at any canvas size. Layer opacities the Lab-tab UI also reads
-// live in constants.ts; the aerialway ones are render-only and stay here.
+// units of {@link METERS_PER_WEIGHT} metres of ground: multiply by `strokeScale`
+// at draw time so strokes cover the same ground at any canvas size. Layer
+// opacities the Lab-tab UI also reads live in constants.ts; the aerialway ones
+// are render-only and stay here.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Ground width (m) one unit of stroke weight covers — the scale of the ink, the
+ * one number that converts every weight below into pixels. At 12 the road table
+ * reads as real carriageway widths (`standard` motorway 2.5 → 30m, residential
+ * 0.7 → 8.4m), which is what those weights were tuned to look like.
+ */
+const METERS_PER_WEIGHT = 12;
 
 /**
  * Road stroke weight per OSM `highway` class, per preset — the road hierarchy as
  * pure design data. `null` = don't draw that class. A class not listed falls
  * back to {@link ROAD_WEIGHT_DEFAULT} for the preset (for `minimal` that default
  * is `null`, i.e. minimal draws *only* the majors listed here).
+ *
+ * The pedestrian network (footway, path, steps, corridor) is skipped as a group.
+ * `steps` and `corridor` have to be listed to be skipped, or they'd take the
+ * default and draw each flight of steps as an orphan dot once the footways it
+ * joins are gone.
  */
 const ROAD_WEIGHTS: Record<StylePreset, Partial<Record<string, number | null>>> = {
   minimal: {
-    motorway: 1.4, trunk: 1.4, primary: 1.4, secondary: 1.4, tertiary: 1.4,
+    motorway: 0.7, trunk: 0.7, primary: 0.7, secondary: 0.7, tertiary: 0.7,
   },
   standard: {
-    motorway: 2.5, trunk: 2.0, primary: 1.5, secondary: 1.2, tertiary: 1.0,
-    residential: 0.7, living_street: 0.7, service: 0.5, pedestrian: 0.4,
-    footway: 0.3, cycleway: 0.3, path: 0.3,
+    motorway: 1.8, trunk: 1.5, primary: 1.2, secondary: 1.1, tertiary: 1,
+    residential: 0.9, unclassified: 0.9, track: 0.8, road: 0.8, living_street: 0.8,
+    service: 0.7, pedestrian: 0.7,
+    footway: null, cycleway: 0.6, path: null, steps: null, corridor: null,
     proposed: null, construction: null,
   },
   bold: {
-    motorway: 4.0, trunk: 3.5, primary: 2.5, secondary: 1.8, tertiary: 1.2,
-    residential: 0.5, living_street: 0.5, service: 0.3,
-    footway: 0.2, cycleway: 0.2, path: 0.2,
+    motorway: 3, trunk: 3, primary: 2.4, secondary: 2.2, tertiary: 2,
+    residential: 1.5, unclassified: 1.5, track: 1.2, road: 1.2, living_street: 1.2,
+    service: 0.9, pedestrian: 0.9,
+    footway: null, cycleway: 0.8, path: null, steps: null, corridor: null,
     proposed: null, construction: null,
   },
 };
@@ -45,8 +61,8 @@ const ROAD_WEIGHTS: Record<StylePreset, Partial<Record<string, number | null>>> 
 /** Weight for a `highway` class not listed in {@link ROAD_WEIGHTS} for the preset. */
 const ROAD_WEIGHT_DEFAULT: Record<StylePreset, number | null> = {
   minimal: null, // minimal draws only the majors it lists explicitly
-  standard: 0.4,
-  bold: 0.25,
+  standard: null,
+  bold: 0.8,
 };
 
 /** Linear-waterway stroke weight per class; unlisted classes (stream/drain/ditch) use the default. */
@@ -69,12 +85,12 @@ const AIRPORT_WIDTHS = { taxiway: 1.5, runway: 5 } as const;
 // plus ticks, `plain` on a single stroke — so a tint that balances one is not
 // guaranteed to balance the next. They all happen to sit at 0.6 today; the knob
 // is per-mode so that retuning one can't drag the other two with it. Every other
-// value is a weight in "px at 1000px tall", scaled by {@link strokeScale}.
+// value is a weight in ground units, scaled by {@link strokeScale}.
 //
-// A useful yardstick when tuning any of them: in `standard` at 1664px tall the
-// widest roads are motorway 4.16px and trunk 3.33px. A railway wider than those
-// takes the map over — that is a width problem, not a color one, and lowering
-// alpha barely touches it.
+// A useful yardstick when tuning any of them: in `standard` on a 2560px-wide
+// canvas the widest roads are motorway 3.84px and trunk 3.07px. A railway wider
+// than those takes the map over — that is a width problem, not a color one, and
+// lowering alpha barely touches it.
 
 /**
  * `plain` — one solid stroke, no pattern. The quiet option: reads as "a line that
@@ -155,16 +171,20 @@ const AERIALWAY = {
 } as const;
 
 /**
- * DPR-style stroke scale: ~1.0 at 1000px tall, floored at 1 so small canvases
- * keep legible strokes. Every layer multiplies its px-at-1000 weight by this.
+ * Stroke scale: pixels per unit of weight, read off the bbox's own ground scale
+ * so a stroke covers the same ground whatever the canvas. Scaling off the canvas
+ * height instead would tie every width to the screen's aspect ratio, since that
+ * is what decides how much ground the crop keeps vertically — a 21:9 monitor
+ * would land a third thinner than a 16:10 one from the same weight.
  */
-function strokeScale(height: number): number {
-  return Math.max(1, height / 1000);
+function strokeScale(bbox: Bbox, height: number): number {
+  const pxPerKm = height / groundHeightKm(bbox);
+  return (METERS_PER_WEIGHT / 1000) * pxPerKm;
 }
 
 /**
  * Stroke width (in canvas pixels) for an OSM `highway` tag under `preset`.
- * `null` skips drawing. `scale` is a DPR-style factor (see {@link strokeScale}).
+ * `null` skips drawing. `scale` comes from {@link strokeScale}.
  * Looks the class up in the {@link ROAD_WEIGHTS} table; `_link` ramps are
  * normalized to their base class first.
  */
@@ -281,7 +301,7 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   }
 
   // Linear waterways, grouped by width so we set lineWidth once per bucket.
-  const scale = strokeScale(height);
+  const scale = strokeScale(bbox, height);
   ctx.strokeStyle = color;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -327,7 +347,7 @@ export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): numbe
   if (!req.style.showAirports || !airports || airports.length === 0) return 0;
   const { bbox, width, height, style } = req;
   const inkColor = mixColor(style.foreground, style.background, RUNWAY_ALPHA);
-  const scale = strokeScale(height);
+  const scale = strokeScale(bbox, height);
 
   ctx.fillStyle = inkColor;
   const fillKind = (kind: AirportKind): number => {
@@ -495,7 +515,7 @@ type RailPaint = {
   ink: string;
   /** The page color, for the blocks `banded` cuts out of its band. */
   paper: string;
-  /** Stroke scale for this canvas height ({@link strokeScale}). */
+  /** Stroke scale for this canvas ({@link strokeScale}). */
   scale: number;
 };
 
@@ -644,7 +664,7 @@ export function drawRailways(ctx: CanvasRenderingContext2D, req: DrawReq): numbe
     lines,
     ink: mixColor(style.foreground, style.background, alpha),
     paper: style.background,
-    scale: strokeScale(height),
+    scale: strokeScale(bbox, height),
   });
 
   ctx.setLineDash([]); // don't leak the dash into later layers
@@ -666,7 +686,7 @@ export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): num
   const { bbox, width, height, style } = req;
   const lineColor = mixColor(style.foreground, style.background, AERIALWAY.lineAlpha);
   const dotColor = mixColor(style.foreground, style.background, AERIALWAY.dotAlpha);
-  const scale = strokeScale(height);
+  const scale = strokeScale(bbox, height);
   const dotRadius = scale * AERIALWAY.dotRadius;
   const dotSpacing = scale * AERIALWAY.dotSpacing;
 
@@ -712,7 +732,7 @@ export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
-  const scale = strokeScale(height);
+  const scale = strokeScale(bbox, height);
 
   const buckets = new Map<number, Way[]>();
   for (const el of osm.elements ?? []) {
