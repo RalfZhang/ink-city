@@ -39,7 +39,14 @@ export const RUNWAY_ALPHA = 0.6;
 // Version 7 drops area-mapped highways (pedestrian squares, service areas, …)
 // from `elements` (why: osm/roads.ts). A v6 payload still carries them and
 // strokes each one's outline, so again the bump is what re-fetches cached cities.
-export const OSM_SCHEMA_VERSION = 7;
+//
+// Version 8 keeps, on each `elements` way, the tags openstreetmap-carto reads to
+// place a road within its class — service, leisure, access, foot, bicycle, horse,
+// construction (why: osm/roads.ts). Additive inside the element: clients up to v7
+// read only `tags.highway` and ignore the rest, and a newer client reads a missing
+// tag as untagged. So, as with an additive layer, the bump is only what backfills
+// the tags into already-cached cities.
+export const OSM_SCHEMA_VERSION = 8;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;

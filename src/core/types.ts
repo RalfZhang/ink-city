@@ -102,7 +102,25 @@ export type Style = {
 // --- OSM Overpass shapes (only the fields we read) ---
 
 export type Geom = { lat: number; lon: number };
-export type Way = { type: "way"; geometry?: Geom[]; tags?: { highway?: string } };
+export type Way = { type: "way"; geometry?: Geom[]; tags?: WayTags };
+
+/**
+ * A road way's tags. `highway` is the only one clients up to schema v7 read; the
+ * rest arrived in v8 and are what openstreetmap-carto reads to place a way within
+ * its class (why: ROAD_TAGS in osm/roads.ts). Each is present only when the way
+ * carries it, and an older payload has none of them, so a missing tag has to read
+ * as untagged — as carto reads a NULL column.
+ */
+export type WayTags = {
+  highway?: string;
+  service?: string;
+  leisure?: string;
+  access?: string;
+  foot?: string;
+  bicycle?: string;
+  horse?: string;
+  construction?: string;
+};
 
 // --- Water layer ---
 // Pre-assembled at precache time (the heavy stitching lives in

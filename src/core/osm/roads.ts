@@ -1,4 +1,4 @@
-import type { Bbox, Geom, Osm } from "../types";
+import type { Bbox, Geom, Osm, WayTags } from "../types";
 import { isClosed } from "../geom";
 
 // The road network — the always-present base layer every city has (unlike the
@@ -20,6 +20,11 @@ import { isClosed } from "../geom";
 // `is_area()`, not just `area=yes`: highway=services is a polygon by value and
 // is mostly mapped without `area=yes`. A closed way that isn't an area (a
 // roundabout, a loop road) is still a line.
+//
+// Besides `highway`, each way keeps the few tags carto reads to decide whether a
+// way of a given class is drawn yet at a zoom (ROAD_TAGS below). They stay raw,
+// as osm2pgsql stores them: carto interprets them at render time, in its layer
+// SQL and .mss, and so does our renderer.
 
 type RawWay = { type: string; tags?: Record<string, string>; geometry?: Geom[] };
 type RawOsm = { elements?: RawWay[] };
@@ -62,6 +67,36 @@ function isAreaTags(tags: Record<string, string>): boolean {
   return false;
 }
 
+/**
+ * The tags kept besides `highway`: what openstreetmap-carto reads to place a way
+ * *within* its class, which for several classes is the line between drawn at z14
+ * and held back to z15+. Each is its own planet_osm_line column in carto
+ * (openstreetmap-carto-flex.lua), read by project.mml's roads_sql and
+ * functions.sql:
+ *
+ * - `service`, `leisure`: `service=parking_aisle|drive-through|driveway` or
+ *   `leisure=slipway` make a minor service road — z16, where the rest are z14.
+ * - `access`, `foot`, `bicycle`, `horse`: `carto_highway_int_access()`. A
+ *   footway/path/steps/cycleway/bridleway/track it rates `no` waits for z15; and
+ *   `bicycle`/`horse=designated` promote a highway=path to cycleway/bridleway
+ *   (z13 instead of z14).
+ * - `construction`: the class a highway=construction is becoming, which sets when
+ *   it starts — z12 for a future motorway, z15 for a future footway.
+ *
+ * The vehicle access tags (motorcar/motor_vehicle/vehicle) are left out: carto
+ * reads them only for its z15+ access marking, which never hides a road.
+ */
+const ROAD_TAGS = [
+  "service", "leisure", "access", "foot", "bicycle", "horse", "construction",
+] as const satisfies readonly (keyof WayTags)[];
+
+/** `highway` plus whichever {@link ROAD_TAGS} the way carries, values verbatim. */
+function roadTags(tags: Record<string, string>): WayTags {
+  const out: WayTags = { highway: tags.highway };
+  for (const k of ROAD_TAGS) if (tags[k] !== undefined) out[k] = tags[k];
+  return out;
+}
+
 /** Union-query fragment selecting the road network — composed by fetch-city.ts. */
 export function roadsSelector(b: Bbox): string {
   return `way[highway](${b.south},${b.west},${b.north},${b.east});`;
@@ -70,7 +105,8 @@ export function roadsSelector(b: Bbox): string {
 /**
  * Strip an Overpass response down to only what the renderer reads: `way`
  * elements with a `highway` tag and a 2+ point geometry, minus area-mapped ones
- * (see the header). Drops node ids, bounds and every other tag. Optionally
+ * (see the header). Drops node ids, bounds and every tag but `highway` and
+ * {@link ROAD_TAGS} — an untagged way costs no more than it did. Optionally
  * rounds coordinates to `coordPrecision` decimals (5 ≈ 1m, sub-pixel at our 20km
  * scale) to shrink the payload further. Used to keep the CDN-served cache small
  * for slow/blocked networks.
@@ -92,7 +128,7 @@ export function slimRoads(osm: RawOsm, coordPrecision?: number): Osm {
     .map((el) => ({
       type: "way" as const,
       geometry: el.geometry!.map((g) => ({ lat: round(g.lat), lon: round(g.lon) })),
-      tags: { highway: el.tags!.highway },
+      tags: roadTags(el.tags!),
     }));
   return { elements };
 }
