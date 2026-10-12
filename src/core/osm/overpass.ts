@@ -22,13 +22,31 @@ export type FetchOptions = {
 };
 
 /**
+ * The runtime error an Overpass response reports in-band, or `undefined`. A query
+ * that hits its `[timeout:]` or memory limit still answers HTTP 200 with valid
+ * JSON (Overpass's web_output.cc sends every runtime error with status 200); the
+ * failure shows only in a `remark` written after `elements` — which is empty if
+ * the query died while running and cut short if it died while printing. Taken at
+ * face value, that payload gets cached as a city with no roads, or half of them.
+ *
+ * `remark` is every message of the run concatenated (output_json.cc), so look for
+ * "runtime error" anywhere in it; a "runtime remark" on its own is informational.
+ */
+function runtimeError(json: unknown): string | undefined {
+  const remark = (json as { remark?: unknown } | null)?.remark;
+  return typeof remark === "string" && remark.includes("runtime error") ? remark : undefined;
+}
+
+/**
  * POST an Overpass QL `query` to the mirrors, trying each in turn. Overpass
  * returns 429 ("rate limited — slow down") and 504 ("no free slot") under load,
  * especially from shared IPs like CI runners, so when a whole round of mirrors
- * fails on those we wait and retry rather than giving up. Honors the server's
- * `Retry-After` header when present, otherwise uses exponential backoff with
- * jitter. Throws only after all retries are exhausted. Returns the parsed JSON
- * untyped — callers shape it (roads, water, …).
+ * fails on those we wait and retry rather than giving up. A query that ran out of
+ * time or memory counts as a failed mirror too, though it arrives as HTTP 200
+ * (see {@link runtimeError}). Honors the server's `Retry-After` header when
+ * present, otherwise uses exponential backoff with jitter. Throws only after all
+ * retries are exhausted. Returns the parsed JSON untyped — callers shape it
+ * (roads, water, …).
  */
 export async function fetchOverpass(
   query: string,
@@ -61,7 +79,10 @@ export async function fetchOverpass(
           continue; // overloaded — try the next mirror, then back off
         }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
+        const json: unknown = await res.json();
+        const err = runtimeError(json);
+        if (err !== undefined) throw new Error(err); // another mirror (or round) may finish it
+        return json;
       } catch (e) {
         lastErr = e;
       }
