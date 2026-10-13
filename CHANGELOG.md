@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.12.3](https://github.com/RalfZhang/ink-city/compare/v0.12.2...v0.12.3) (2026-10-13)
+
+
+### Bug Fixes
+
+* download detailed data to align osm-carto ([d675682](https://github.com/RalfZhang/ink-city/commit/d6756828961de06645a9f6968409edd196076ec1))
+* overpass error catch ([66f934d](https://github.com/RalfZhang/ink-city/commit/66f934d4fad875e627b7ab63609e134d1e7ab3d4))
+* redesign road wide ([88b0917](https://github.com/RalfZhang/ink-city/commit/88b0917c228fb90dd94cffc6b8320b77516645ad))
+* waterway in Montpellier ([c32dd32](https://github.com/RalfZhang/ink-city/commit/c32dd323cb7f2571cb0059759b0002e904c2a774))
+
 ## [0.12.2](https://github.com/RalfZhang/ink-city/compare/v0.12.1...v0.12.2) (2026-09-07)
 
 
