@@ -342,6 +342,20 @@ const isAreaTagged = (tags?: Record<string, string>) =>
   !!tags && AREA_TAGS.some(([k, v]) => tags[k] !== undefined && (v === null || tags[k] === v));
 
 /**
+ * Relation types that can be an area: the ones openstreetmap-carto's
+ * `process_relation` (openstreetmap-carto-flex.lua) builds a polygon from via
+ * `as_multipolygon()` — boundary and route too, beside their line, though those
+ * only yield one when their members close into rings (see the check in
+ * slimWater). Any other type says its members are something else, so a water tag
+ * on it doesn't make it a body of water: the Canal Philippe-Lamour east of
+ * Montpellier is a `type=waterway` relation carrying natural=water + water=canal,
+ * whose members are the canal's centerline — stitched as an outer ring, the
+ * renderer closes that with a straight chord and fills a wedge of farmland tens of
+ * km long. `type=site` is the other common case; carto ignores both.
+ */
+const AREA_RELATION_TYPES = new Set(["multipolygon", "boundary", "route"]);
+
+/**
  * Assemble a raw water/coastline/waterway Overpass response into slim,
  * render-ready features. `roadCount` feeds the no-coastline sea heuristic.
  * Coordinates are rounded to `coordPrecision` decimals at the end (after
@@ -349,29 +363,32 @@ const isAreaTagged = (tags?: Record<string, string>) =>
  */
 export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecision?: number): WaterFeature[] {
   const elements = raw.elements ?? [];
-
-  const memberIds = new Set<number>();
-  const relations: RawRel[] = [];
-  for (const el of elements) {
-    if (el.type === "relation" && isAreaTagged(el.tags)) {
-      relations.push(el);
-      for (const m of el.members ?? []) if (m.type === "way" && m.ref !== undefined) memberIds.add(m.ref);
-    }
-  }
-
   const features: WaterFeature[] = [];
 
-  // Multipolygon relations → outer rings with holes.
-  for (const rel of relations) {
+  // Area relations → outer rings with holes. Their member ways are recorded so
+  // the standalone pass below doesn't draw them again — but only for a relation
+  // we assemble: one we skip leaves its members to their own tags, as in carto
+  // (the Canal Philippe-Lamour's centerline ways then draw as canal lines).
+  const memberIds = new Set<number>();
+  for (const el of elements) {
+    if (el.type !== "relation" || !AREA_RELATION_TYPES.has(el.tags?.type ?? "") || !isAreaTagged(el.tags)) continue;
     const outers: RawGeom[][] = [];
     const inners: RawGeom[][] = [];
-    for (const m of rel.members ?? []) {
+    for (const m of el.members ?? []) {
       if (m.type !== "way" || !m.geometry || m.geometry.length < 2) continue;
       (m.role === "inner" ? inners : outers).push(m.geometry);
     }
-    for (const poly of assemblePolygons(stitch(outers, false), stitch(inners, false))) {
+    const outerRings = stitch(outers, false);
+    const innerRings = stitch(inners, false);
+    // Every ring must close. `out geom` carries each member's full geometry, so an
+    // open one means the relation is broken (a member gone) or never was rings (a
+    // route); osm2pgsql's as_multipolygon() builds nothing then and carto draws
+    // nothing — while filling it here would close the gap with a straight chord.
+    if (!outerRings.every(isClosed) || !innerRings.every(isClosed)) continue;
+    for (const poly of assemblePolygons(outerRings, innerRings)) {
       features.push({ kind: "area", polygon: poly });
     }
+    for (const m of el.members ?? []) if (m.type === "way" && m.ref !== undefined) memberIds.add(m.ref);
   }
 
   // Standalone ways: coastline, closed area polygons, and linear waterways.

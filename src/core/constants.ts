@@ -46,6 +46,12 @@ export const RUNWAY_ALPHA = 0.6;
 // read only `tags.highway` and ignore the rest, and a newer client reads a missing
 // tag as untagged. So, as with an additive layer, the bump is only what backfills
 // the tags into already-cached cities.
+//
+// Version 8 also stops `water` from filling relations that aren't areas — a
+// `type=waterway` relation tagged natural=water had its centerline filled as a
+// wedge of land — and multipolygons whose rings don't close (why: osm/water.ts).
+// That one does change what clients draw, so the bump is what clears it from
+// already-cached cities; it rides on 8 because 8 hadn't shipped yet.
 export const OSM_SCHEMA_VERSION = 8;
 
 export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
