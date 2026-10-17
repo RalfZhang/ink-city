@@ -74,7 +74,7 @@ const WATER_LINE_WEIGHT_DEFAULT = 0.7;
  * drawAirports). Area-mapped runways/taxiways carry their own width and are
  * filled, not stroked.
  */
-const AIRPORT_WIDTHS = { taxiway: 1.5, runway: 5 } as const;
+const AIRPORT_WIDTHS = { taxiway: 1.8, runway: 6 } as const;
 
 // ── The railway layer's three drawing modes ───────────────────────────────────
 //
@@ -101,8 +101,8 @@ const AIRPORT_WIDTHS = { taxiway: 1.5, runway: 5 } as const;
  * does not; `banded` is now what carries a pattern.
  */
 const RAILWAY_PLAIN = {
-  alpha: 0.6,
-  width: 0.9,
+  alpha: 0.7,
+  width: 1.1,
 } as const;
 
 /**
@@ -128,11 +128,11 @@ const RAILWAY_PLAIN = {
  * without narrowing it. `light == dark` is carto's own 50/50.
  */
 const RAILWAY_BANDED = {
-  alpha: 0.6,
-  edge: 0.5,
-  inner: 0.5,
-  light: 5.0,
-  dark: 5.0,
+  alpha: 0.7,
+  edge: 0.6,
+  inner: 0.6,
+  light: 6.0,
+  dark: 6.0,
 } as const;
 
 /**
