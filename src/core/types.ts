@@ -99,6 +99,38 @@ export type Style = {
   variant?: StyleVariant;
 };
 
+/**
+ * The screen corners the wallpaper's city caption can sit in. *Physical* corners —
+ * never mirrored for a right-to-left UI, because the desktop isn't. A const tuple
+ * (the `LAYER_IDS` pattern) because the Style tab enumerates them; mirrors
+ * `CityLabel` in src-tauri/src/config.rs, whose kebab-case names are these.
+ */
+export const LABEL_CORNERS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
+export type LabelCorner = (typeof LABEL_CORNERS)[number];
+
+/**
+ * The city caption a revealed wallpaper carries (`LabelPayload` in
+ * src-tauri/src/pipeline.rs): what to write, and where. Language-neutral by design
+ * — the city's own name, its English name and the country's English name, like a
+ * map's title block. Drawn by `drawLabel` (core/label.ts) as the scene's last layer.
+ */
+export type MapLabel = {
+  corner: LabelCorner;
+  name: string;
+  localName: string;
+  /** ISO code — shown when there's no `countryName`. */
+  country: string;
+  countryName?: string | null;
+  lat: number;
+  lon: number;
+  /**
+   * How far (px) the caption must stay from each edge: the menu bar, Dock or
+   * taskbar, and the crop each display applies when it cover-fits the image.
+   * Absent ⇒ none; the base margin applies either way.
+   */
+  insets?: { top: number; right: number; bottom: number; left: number };
+};
+
 // --- OSM Overpass shapes (only the fields we read) ---
 
 export type Geom = { lat: number; lon: number };

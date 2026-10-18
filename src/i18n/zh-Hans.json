@@ -60,7 +60,36 @@
     "locationPlaceholder": "城市名、坐标,或地图链接",
     "invalidLocation": "没有匹配的城市 — 可改用坐标,例如 51.5074, -0.1278。",
     "apply": "应用",
-    "customRateHint": "自定义位置不做预缓存,每次应用都会实时抓取地图数据;短时间内不要频繁应用多个新坐标,否则可能触发服务的请求上限。"
+    "customRateHint": "自定义位置不做预缓存,每次应用都会实时抓取地图数据;短时间内不要频繁应用多个新坐标,否则可能触发服务的请求上限。",
+    "gameLabel": "每日一猜",
+    "gameDescOn": "每天先看壁纸猜城市在哪个国家或地区，猜完再揭晓城市信息。",
+    "gameDescOff": "每天直接显示城市信息。",
+    "gameTomorrow": "今天的城市已揭晓，明天开始猜。",
+    "gameOffTitle": "关闭每日一猜？",
+    "gameOffBody": "以后每天都会直接显示城市信息。之后可以随时重新打开，打开后从次日起开始猜。",
+    "gameOffForfeit": "今天这局将记为未猜中。",
+    "gameOffConfirm": "关闭",
+    "revealAfterGame": "猜完后揭晓"
+  },
+  "game": {
+    "prompt": "这座城市在哪个国家或地区？",
+    "placeholder": "输入国家或地区…",
+    "guess": "猜",
+    "progress": "第 {{n}} / {{max}} 次",
+    "alreadyGuessed": "已经猜过了，换一个试试。",
+    "noMatch": "请从列表中选择国家或地区。",
+    "painting": "正在生成今日壁纸…",
+    "paintFailed": "无法设置今日壁纸，每分钟重试一次。"
+  },
+  "result": {
+    "won": "第 {{n}} 次猜中",
+    "lost": "{{max}} 次都没猜中 · 答案是{{country}}",
+    "gaveUp": "已放弃 · 答案是{{country}}",
+    "played": "已玩",
+    "winRate": "胜率",
+    "streak": "当前连胜",
+    "maxStreak": "最长连胜",
+    "distribution": "猜中次数分布"
   },
   "style": {
     "theme": "地图主题",
@@ -74,6 +103,13 @@
     "hintMinimal": "仅显示主干道",
     "hintStandard": "按道路等级分级线宽",
     "hintBold": "高对比度层级",
+    "cityLabel": "桌面展示城市信息",
+    "cityLabelHint": "仅在「每日」模式下生效：当天猜完，或关闭「每日一猜」后，才会绘制到壁纸上。",
+    "cityLabelOff": "关闭",
+    "cityLabelTopLeft": "左上角",
+    "cityLabelTopRight": "右上角",
+    "cityLabelBottomLeft": "左下角",
+    "cityLabelBottomRight": "右下角",
     "lightColors": "浅色模式地图配色",
     "darkColors": "深色模式地图配色",
     "active": "当前",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "缓存已为空",
     "bypassCacheTitle": "绕过缓存和 CDN",
     "bypassCacheDesc": "当天的城市直接从 GitHub 读取排期获得,地图数据改为实时从 Overpass API 抓取(不走 CDN),并覆盖本地缓存。用于测试地图数据的改动。重启后自动关闭。",
-    "dailyOnly": "仅在「每日」更新模式下可用。"
+    "dailyOnly": "仅在「每日」更新模式下可用。",
+    "resetTodayTitle": "重置今日游戏",
+    "resetTodayDesc": "删除今天的猜测记录并重新打开「每日一猜」，今天可以重新猜。",
+    "resetTodayButton": "重置",
+    "clearGuessTitle": "清空游戏数据",
+    "clearGuessDesc": "删除所有猜测记录、统计以及「每日一猜」设置。",
+    "clearGuessButton": "清空",
+    "guessFileTitle": "游戏存档",
+    "guessFileDesc": "显示保存游戏记录和「每日一猜」设置的 guess.json。",
+    "guessFileButton": "显示"
   },
   "common": {
     "loading": "加载中…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "打开设置",
+    "openGame": "打开游戏",
     "dailyUpdates": "每日更新",
     "regenerateNow": "立即重新生成",
     "quit": "退出 InkCity",

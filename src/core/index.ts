@@ -16,4 +16,9 @@ export * from "./coords";
 // LAYER_IDS/LayerId only: the client and website use them for UI gating.
 export * from "./osm/layers";
 export * from "./render";
+export * from "./label";
 export * from "./constants";
+// The guess-the-country game — rules, save format and country lookup, written once
+// for the desktop app and the website; only its storage differs per host (see
+// ./guess/store.ts).
+export * from "./guess";

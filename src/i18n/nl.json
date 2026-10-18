@@ -60,7 +60,36 @@
     "locationPlaceholder": "Naam van een stad, coördinaten of een kaartlink",
     "invalidLocation": "Geen overeenkomende stad — probeer coördinaten, bijv. 51.5074, -0.1278.",
     "apply": "Toepassen",
-    "customRateHint": "Aangepaste locaties worden niet vooraf gecached — bij elke toepassing worden de kaartgegevens live opgehaald. Pas dus niet snel achter elkaar veel nieuwe locaties toe, anders bereik je de aanvraaglimiet van de dienst."
+    "customRateHint": "Aangepaste locaties worden niet vooraf gecached — bij elke toepassing worden de kaartgegevens live opgehaald. Pas dus niet snel achter elkaar veel nieuwe locaties toe, anders bereik je de aanvraaglimiet van de dienst.",
+    "gameLabel": "Dagelijks raden",
+    "gameDescOn": "Raad elke dag in welk land of welke regio de stad van de achtergrond ligt — daarna wordt de stad onthuld.",
+    "gameDescOff": "De stad van de dag wordt meteen getoond.",
+    "gameTomorrow": "De stad van vandaag is al bekend — het raden begint morgen.",
+    "gameOffTitle": "Dagelijks raden uitzetten?",
+    "gameOffBody": "Vanaf nu wordt de stad elke dag meteen getoond. Het spel kan op elk moment weer aan; het begint dan de volgende dag.",
+    "gameOffForfeit": "Het spel van vandaag telt als verloren.",
+    "gameOffConfirm": "Uitzetten",
+    "revealAfterGame": "Bekend na het spel van vandaag"
+  },
+  "game": {
+    "prompt": "In welk land of welke regio ligt deze stad?",
+    "placeholder": "Typ een land of regio…",
+    "guess": "Raden",
+    "progress": "Poging {{n}} van {{max}}",
+    "alreadyGuessed": "Al geprobeerd — probeer iets anders.",
+    "noMatch": "Kies een land of regio uit de lijst.",
+    "painting": "Achtergrond van vandaag tekenen…",
+    "paintFailed": "Achtergrond van vandaag instellen mislukt — elke minuut opnieuw geprobeerd."
+  },
+  "result": {
+    "won": "Geraden bij poging {{n}}",
+    "lost": "Niet geraden in {{max}} pogingen — antwoord: {{country}}",
+    "gaveUp": "Opgegeven — antwoord: {{country}}",
+    "played": "Gespeeld",
+    "winRate": "Winstpercentage",
+    "streak": "Huidige reeks",
+    "maxStreak": "Beste reeks",
+    "distribution": "Verdeling van pogingen"
   },
   "style": {
     "theme": "Kaartthema",
@@ -74,6 +103,13 @@
     "hintMinimal": "Alleen hoofdwegen",
     "hintStandard": "Breedte per wegklasse",
     "hintBold": "Hoogcontrast-hiërarchie",
+    "cityLabel": "Stadsinfo op het bureaublad",
+    "cityLabelHint": "Alleen in de modus Dagelijks. Wordt op de achtergrond getekend zodra de stad van vandaag bekend is — als het spel van vandaag voorbij is of “Dagelijks raden” uitstaat.",
+    "cityLabelOff": "Uit",
+    "cityLabelTopLeft": "Linksboven",
+    "cityLabelTopRight": "Rechtsboven",
+    "cityLabelBottomLeft": "Linksonder",
+    "cityLabelBottomRight": "Rechtsonder",
     "lightColors": "Licht palet",
     "darkColors": "Donker palet",
     "active": "Actief",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Cache is al leeg",
     "bypassCacheTitle": "Cache & CDN omzeilen",
     "bypassCacheDesc": "Neemt de stad van de dag uit het schema dat rechtstreeks van GitHub wordt gelezen en haalt de kaartgegevens live op via de Overpass-API in plaats van het CDN, waarbij de lokale cache wordt overschreven. Handig bij het testen van wijzigingen in de kaartgegevens. Staat na een herstart weer uit.",
-    "dailyOnly": "Geldt alleen voor de updatemodus Dagelijks."
+    "dailyOnly": "Geldt alleen voor de updatemodus Dagelijks.",
+    "resetTodayTitle": "Spel van vandaag resetten",
+    "resetTodayDesc": "Wist de pogingen van vandaag en zet “Dagelijks raden” weer aan, zodat vandaag opnieuw gespeeld kan worden.",
+    "resetTodayButton": "Resetten",
+    "clearGuessTitle": "Spelgegevens wissen",
+    "clearGuessDesc": "Verwijdert de pogingen van alle dagen, de statistieken en de instelling “Dagelijks raden”.",
+    "clearGuessButton": "Wissen",
+    "guessFileTitle": "Spelbestand",
+    "guessFileDesc": "Toont guess.json, waarin de spelgeschiedenis en de instelling “Dagelijks raden” staan.",
+    "guessFileButton": "Tonen"
   },
   "common": {
     "loading": "laden…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Instellingen openen",
+    "openGame": "Spel openen",
     "dailyUpdates": "Dagelijkse updates",
     "regenerateNow": "Opnieuw genereren",
     "quit": "InkCity afsluiten",

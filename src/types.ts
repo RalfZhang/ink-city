@@ -4,6 +4,7 @@
 export type {
   City,
   ColorPair,
+  LabelCorner,
   MapProvider,
   RailwayStyle,
   StylePreset,
@@ -14,6 +15,7 @@ export type {
 import type {
   City,
   ColorPair,
+  LabelCorner,
   MapProvider,
   RailwayStyle,
   StylePreset,
@@ -26,6 +28,9 @@ export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 /** How the wallpaper is refreshed — the City-tab "How to update?" selector. */
 export type UpdateMode = "disable" | "daily" | "customized";
 
+/** Where the wallpaper carries the day's city caption (Style tab) — `config::CityLabel`. */
+export type CityLabel = "off" | LabelCorner;
+
 /** Mirrors the Rust `commands::Status` — see there for the field-by-field contract. */
 export type Status = {
   /** How the wallpaper is refreshed (City tab). */
@@ -36,9 +41,16 @@ export type Status = {
   running: boolean;
   /**
    * The city today's Daily wallpaper depicts — null until the backend has resolved
-   * one (see `pipeline::city_for_status`). Nothing recomputes it here.
+   * one (see `pipeline::city_for_status`). Nothing recomputes it here. Present even
+   * while today's guess-the-country game is underway (the game needs the answer to
+   * score guesses), so the City tab must not draw it until the day is revealed.
    */
   city: City | null;
+  /**
+   * Whether today's Daily wallpaper is on the desktop yet — the game's
+   * `DayInputs.ready` (src/core/guess/types.ts): it waits for the map it's about.
+   */
+  todayPainted: boolean;
   /**
    * Why today's Daily render failed, or null if it succeeded / hasn't run yet.
    * Only meaningful next to `city`: both null means "still resolving", while
@@ -94,4 +106,6 @@ export type Status = {
   proxyEnabled: boolean;
   proxyUrl: string;
   mapProvider: MapProvider;
+  /** Where the wallpaper carries the city caption (Style tab). */
+  cityLabel: CityLabel;
 };

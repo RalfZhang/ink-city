@@ -118,6 +118,44 @@ pub enum MapProvider {
     Google,
 }
 
+/// Where the wallpaper carries the day's city caption — the Style tab's "City info
+/// on desktop" selector. `Off` draws none; the four corners are *physical* screen
+/// corners, never mirrored for a right-to-left UI (the desktop isn't).
+///
+/// `BottomRight` by default: clear of the macOS menu bar's status icons and its
+/// desktop-icon column (both top-right) and of Windows' icons (top-left), while the
+/// work-area insets lift it above a Dock or taskbar (see `pipeline::label_insets`).
+///
+/// Drawn only in Daily mode and only once the day is revealed — the "show city
+/// info" preference is on or today's guess-the-country game is over (see
+/// `guess_store::is_revealed`). The kebab-case names are also the tag in the labeled
+/// render's cache name (`<date>-<theme>-label-<tag>.png`), so they must stay
+/// filename-safe. Mirrors `CityLabel` in src/types.ts and `LabelCorner` in
+/// src/core/types.ts.
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum CityLabel {
+    Off,
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    #[default]
+    BottomRight,
+}
+
+impl CityLabel {
+    /// The corner's name as the renderer and the cache key spell it, or `None` for `Off`.
+    pub fn tag(self) -> Option<&'static str> {
+        match self {
+            CityLabel::Off => None,
+            CityLabel::TopLeft => Some("top-left"),
+            CityLabel::TopRight => Some("top-right"),
+            CityLabel::BottomLeft => Some("bottom-left"),
+            CityLabel::BottomRight => Some("bottom-right"),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ColorPair {
     pub background: String,
@@ -198,6 +236,12 @@ pub struct Config {
     /// Only used when `proxy_enabled`.
     pub proxy_url: String,
     pub map_provider: MapProvider,
+    /// Where the wallpaper carries the day's city caption (see `CityLabel`). The
+    /// guess-the-country game's own state — including the `showCityInfo`
+    /// preference that decides when the caption may appear — is *not* here: it lives
+    /// in the game's save file (`guess_store`), the same JSON the website keeps in
+    /// localStorage.
+    pub city_label: CityLabel,
 }
 
 impl Default for Config {
@@ -221,6 +265,7 @@ impl Default for Config {
             proxy_enabled: false,
             proxy_url: String::new(),
             map_provider: MapProvider::default(),
+            city_label: CityLabel::default(),
         }
     }
 }
@@ -452,5 +497,29 @@ mod tests {
             parse_config(r#"{"update_mode":"customized","custom":{"lat":-16.5,"lon":-68.17}}"#);
         assert_eq!(cfg.update_mode, UpdateMode::Customized);
         assert_eq!(cfg.custom, Some(CustomCity { lat: -16.5, lon: -68.17 }));
+    }
+
+    #[test]
+    fn a_config_predating_the_city_label_reads_as_bottom_right() {
+        assert_eq!(parse_config(r#"{"update_mode":"daily"}"#).city_label, CityLabel::BottomRight);
+        assert_eq!(Config::default().city_label, CityLabel::BottomRight);
+    }
+
+    /// The serialized name is also the cache-filename tag and the renderer's
+    /// `corner`, so the three spellings must agree for every value.
+    #[test]
+    fn every_city_label_round_trips_and_matches_its_tag() {
+        for (json, expected) in [
+            ("off", CityLabel::Off),
+            ("top-left", CityLabel::TopLeft),
+            ("top-right", CityLabel::TopRight),
+            ("bottom-left", CityLabel::BottomLeft),
+            ("bottom-right", CityLabel::BottomRight),
+        ] {
+            let cfg = parse_config(&format!(r#"{{"city_label":"{json}"}}"#));
+            assert_eq!(cfg.city_label, expected, "parsing {json}");
+            assert_eq!(serde_json::to_string(&cfg.city_label).unwrap(), format!(r#""{json}""#));
+            assert_eq!(expected.tag(), (json != "off").then_some(json));
+        }
     }
 }

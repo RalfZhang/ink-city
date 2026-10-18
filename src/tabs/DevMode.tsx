@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import SettingRow from "@/components/SettingRow";
+import {
+  emptyGuessStore,
+  parseGuessStore,
+  resetDay,
+  serializeGuessStore,
+  type GuessStore,
+} from "@/core";
+import { tauriGuessStorage } from "@/lib/guess-storage";
 import type { Status } from "../types";
 
 type Props = {
@@ -89,6 +97,30 @@ export default function DevMode({ status, onError }: Props) {
       onError(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // The guess-the-country save, rewritten through the same storage the City tab
+  // plays from. That tab re-reads it each time it's opened, and every write makes
+  // the backend re-check the wallpaper's city caption (`guess_store_write`), so a
+  // reset takes the caption back off as well.
+  const [guessBusy, setGuessBusy] = useState(false);
+  const rewriteGuessStore = async (edit: (store: GuessStore) => GuessStore) => {
+    setGuessBusy(true);
+    try {
+      const { store } = parseGuessStore(await tauriGuessStorage.load());
+      await tauriGuessStorage.save(serializeGuessStore(edit(store)));
+    } catch (e) {
+      onError(e);
+    } finally {
+      setGuessBusy(false);
+    }
+  };
+  const revealGuessStore = async () => {
+    try {
+      await invoke("reveal_guess_store");
+    } catch (e) {
+      onError(e);
     }
   };
 
@@ -209,6 +241,49 @@ export default function DevMode({ status, onError }: Props) {
               />
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-4">
+          <SettingRow
+            label={t("devMode.resetTodayTitle")}
+            description={t("devMode.resetTodayDesc")}
+            control={
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={guessBusy}
+                onClick={() => rewriteGuessStore((store) => resetDay(store, status.date))}
+              >
+                {t("devMode.resetTodayButton")}
+              </Button>
+            }
+          />
+          <SettingRow
+            label={t("devMode.clearGuessTitle")}
+            description={t("devMode.clearGuessDesc")}
+            control={
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={guessBusy}
+                onClick={() => rewriteGuessStore(() => emptyGuessStore())}
+              >
+                <Trash2 className="size-3.5" />
+                {t("devMode.clearGuessButton")}
+              </Button>
+            }
+          />
+          <SettingRow
+            label={t("devMode.guessFileTitle")}
+            description={t("devMode.guessFileDesc")}
+            control={
+              <Button variant="outline" size="sm" onClick={revealGuessStore}>
+                {t("devMode.guessFileButton")}
+              </Button>
+            }
+          />
         </CardContent>
       </Card>
     </div>

@@ -6,7 +6,7 @@
 //! init and on every language change, so Rust never owns a user-facing string.
 
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::OnceLock;
+use std::sync::{Mutex, OnceLock};
 
 use tauri::menu::{
     CheckMenuItem, CheckMenuItemBuilder, Menu, MenuBuilder, MenuItem, MenuItemBuilder,
@@ -15,8 +15,11 @@ use tauri::menu::{
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry};
 
+use crate::city;
+use crate::commands::Status;
 use crate::config::UpdateMode;
 use crate::events::{FrontendEvent, Tab};
+use crate::guess_store;
 use crate::pipeline;
 use crate::state::AppState;
 
@@ -33,6 +36,12 @@ static MENU: OnceLock<Menu<Wry>> = OnceLock::new();
 static UPDATE_ITEM: OnceLock<MenuItem<Wry>> = OnceLock::new();
 static UPDATE_SEP: OnceLock<PredefinedMenuItem<Wry>> = OnceLock::new();
 static UPDATE_SHOWN: AtomicBool = AtomicBool::new(false);
+
+// The "open" entry reads "Open Game" instead of "Open Settings" while today's
+// guess-the-country game can be played. Both labels arrive from the frontend
+// (`update_labels`); empty until then, which reads as the English fallbacks.
+static OPEN_LABELS: Mutex<(String, String)> = Mutex::new((String::new(), String::new()));
+static GAME_OPEN: AtomicBool = AtomicBool::new(false);
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     let initial_daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
@@ -182,6 +191,44 @@ pub fn show_settings(app: &AppHandle) {
     }
 }
 
+/// Point the tray's "open" entry at the game while there's one to play: "Open Game"
+/// exactly when the City tab's game card would take a guess (`guess_store::is_playing`
+/// — Daily mode, today neither over nor skipped, its city known and its wallpaper
+/// up), "Open Settings" otherwise. It opens the same window on the same City tab
+/// either way; only the invitation changes.
+///
+/// Called with every status push (`lib.rs`'s emitter), and read off that `status`,
+/// so the tray and the window agree on the mode, the city and whether it's painted.
+/// Every input already marks status dirty when it moves: a guess or the "Daily
+/// guess" switch (`commands::guess_store_write`), the mode (here and
+/// `set_update_mode`), the midnight rollover (`scheduler`), and a render resolving
+/// the city or setting the wallpaper (`pipeline::run_now`, `pipeline::mark_painted`). Only touches the menu
+/// when the answer flips.
+pub fn sync_open_item(app: &AppHandle, status: &Status) {
+    let open = status.update_mode == UpdateMode::Daily
+        && guess_store::is_playing(
+            &app.state::<AppState>().guess_view.lock().unwrap(),
+            city::today(),
+            status.city.as_ref(),
+            status.today_painted,
+        );
+    if GAME_OPEN.swap(open, Ordering::AcqRel) != open {
+        apply_open_label();
+    }
+}
+
+fn apply_open_label() {
+    let Some(item) = OPEN_ITEM.get() else { return };
+    let labels = OPEN_LABELS.lock().unwrap();
+    let text = match (GAME_OPEN.load(Ordering::Acquire), labels.0.as_str(), labels.1.as_str()) {
+        (true, _, "") => "Open Game",
+        (true, _, game) => game,
+        (false, "", _) => "Open Settings",
+        (false, settings, _) => settings,
+    };
+    let _ = item.set_text(text);
+}
+
 pub fn sync_mode_to_tray(app: &AppHandle) {
     let daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
     if let Some(item) = TOGGLE_ITEM.get() {
@@ -230,14 +277,14 @@ pub fn apply_hide_tray(app: &AppHandle, hide: bool) {
 /// and Rust just renders whatever it's told.
 pub fn update_labels(
     open_settings: &str,
+    open_game: &str,
     daily_updates: &str,
     regenerate_now: &str,
     quit: &str,
     update_available: &str,
 ) {
-    if let Some(it) = OPEN_ITEM.get() {
-        let _ = it.set_text(open_settings);
-    }
+    *OPEN_LABELS.lock().unwrap() = (open_settings.to_string(), open_game.to_string());
+    apply_open_label();
     if let Some(it) = TOGGLE_ITEM.get() {
         let _ = it.set_text(daily_updates);
     }

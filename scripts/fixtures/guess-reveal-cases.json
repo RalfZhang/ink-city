@@ -1,0 +1,24 @@
+{
+  "_comment": "Whether today's city counts as revealed, for a given save file + day. Read by BOTH scripts/guess-test.ts (src/core/guess: isRevealed(dayState(...))) and src-tauri/src/guess_store.rs (is_revealed), so the wallpaper label rule the backend applies can never drift from the game's own. `store` is the raw saved JSON, malformed fields included on purpose.",
+  "date": "2026-10-16",
+  "cases": [
+    { "name": "nothing saved, city known", "store": null, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "nothing saved, city unresolved", "store": null, "city": null, "revealed": false },
+    { "name": "preference on, city unresolved", "store": { "v": 1, "showCityInfo": true, "days": {} }, "city": null, "revealed": true },
+    { "name": "preference on, city known", "store": { "v": 1, "showCityInfo": true, "days": {} }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": true },
+    { "name": "won today", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "cityId": 1, "answer": "FR", "guesses": [{ "code": "FR", "km": 3, "deg": 10 }], "end": "won" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": true },
+    { "name": "lost today", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "guesses": [], "end": "lost" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": true },
+    { "name": "gave up today", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "guesses": [], "end": "gaveUp" } } }, "city": null, "revealed": true },
+    { "name": "skipped today, preference since turned off", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "guesses": [], "end": "skipped" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": true },
+    { "name": "game in progress", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "cityId": 1, "answer": "FR", "guesses": [{ "code": "DE", "km": 600, "deg": 245 }] } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "only yesterday finished", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-15": { "guesses": [], "end": "won" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "unknown end value is ignored", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "guesses": [], "end": "victory" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "answer's country not in the table", "store": null, "city": { "id": 2, "country": "ZZ", "lat": 0, "lon": 0 }, "revealed": true },
+    { "name": "non-boolean preference reads as off", "store": { "v": 1, "showCityInfo": "yes", "days": {} }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "finished against another city still stands", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "cityId": 9, "answer": "DE", "guesses": [], "end": "lost" } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": true },
+    { "name": "unfinished against another city starts over", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": { "cityId": 9, "answer": "DE", "guesses": [{ "code": "PL", "km": 500, "deg": 270 }] } } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "days is not an object", "store": { "v": 1, "showCityInfo": false, "days": [] }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "today's record is not an object", "store": { "v": 1, "showCityInfo": false, "days": { "2026-10-16": "won" } }, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },
+    { "name": "save is not an object", "store": [1, 2, 3], "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false }
+  ]
+}

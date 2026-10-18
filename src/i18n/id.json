@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nama kota, koordinat, atau tautan peta",
     "invalidLocation": "Tidak ada kota yang cocok — coba koordinat, mis. 51.5074, -0.1278.",
     "apply": "Terapkan",
-    "customRateHint": "Lokasi kustom tidak di-cache lebih dulu — setiap penerapan mengambil data peta secara langsung, jadi hindari menerapkan banyak lokasi baru dalam waktu singkat agar tidak terkena batas permintaan layanan."
+    "customRateHint": "Lokasi kustom tidak di-cache lebih dulu — setiap penerapan mengambil data peta secara langsung, jadi hindari menerapkan banyak lokasi baru dalam waktu singkat agar tidak terkena batas permintaan layanan.",
+    "gameLabel": "Tebakan harian",
+    "gameDescOn": "Setiap hari, tebak di negara atau wilayah mana kota pada wallpaper berada — kotanya terungkap setelah permainan selesai.",
+    "gameDescOff": "Kota setiap hari langsung ditampilkan.",
+    "gameTomorrow": "Kota hari ini sudah terungkap — tebakan dimulai besok.",
+    "gameOffTitle": "Matikan tebakan harian?",
+    "gameOffBody": "Mulai sekarang, kota setiap hari langsung ditampilkan. Anda bisa menyalakan permainan lagi kapan saja; permainan akan dimulai hari berikutnya.",
+    "gameOffForfeit": "Permainan hari ini akan dihitung kalah.",
+    "gameOffConfirm": "Matikan",
+    "revealAfterGame": "Terungkap setelah permainan hari ini"
+  },
+  "game": {
+    "prompt": "Kota ini ada di negara atau wilayah mana?",
+    "placeholder": "Ketik negara atau wilayah…",
+    "guess": "Tebak",
+    "progress": "Tebakan {{n}} dari {{max}}",
+    "alreadyGuessed": "Sudah ditebak — coba yang lain.",
+    "noMatch": "Pilih negara atau wilayah dari daftar.",
+    "painting": "Menggambar wallpaper hari ini…",
+    "paintFailed": "Tidak dapat mengatur wallpaper hari ini — dicoba lagi setiap menit."
+  },
+  "result": {
+    "won": "Benar pada tebakan ke-{{n}}",
+    "lost": "Tidak tertebak dalam {{max}} tebakan — jawabannya {{country}}",
+    "gaveUp": "Menyerah — jawabannya {{country}}",
+    "played": "Dimainkan",
+    "winRate": "Persentase menang",
+    "streak": "Beruntun saat ini",
+    "maxStreak": "Beruntun terbaik",
+    "distribution": "Distribusi tebakan"
   },
   "style": {
     "theme": "Tema peta",
@@ -74,6 +103,13 @@
     "hintMinimal": "Hanya jalan utama",
     "hintStandard": "Lebar berdasarkan kelas jalan",
     "hintBold": "Hierarki kontras tinggi",
+    "cityLabel": "Info kota di desktop",
+    "cityLabelHint": "Hanya untuk mode Harian. Digambar di wallpaper setelah kota hari ini terungkap — saat permainan hari ini sudah selesai, atau “Tebakan harian” nonaktif.",
+    "cityLabelOff": "Nonaktif",
+    "cityLabelTopLeft": "Kiri atas",
+    "cityLabelTopRight": "Kanan atas",
+    "cityLabelBottomLeft": "Kiri bawah",
+    "cityLabelBottomRight": "Kanan bawah",
     "lightColors": "Palet terang",
     "darkColors": "Palet gelap",
     "active": "Aktif",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Cache sudah kosong",
     "bypassCacheTitle": "Lewati cache & CDN",
     "bypassCacheDesc": "Mengambil kota hari itu dari jadwal yang dibaca langsung dari GitHub, lalu mengambil data petanya langsung dari Overpass API alih-alih CDN, dan menimpa cache lokal. Berguna saat menguji perubahan data peta. Kembali nonaktif setelah restart.",
-    "dailyOnly": "Hanya berlaku untuk mode pembaruan Harian."
+    "dailyOnly": "Hanya berlaku untuk mode pembaruan Harian.",
+    "resetTodayTitle": "Atur ulang permainan hari ini",
+    "resetTodayDesc": "Menghapus tebakan hari ini dan menyalakan kembali “Tebakan harian”, sehingga hari ini bisa dimainkan lagi.",
+    "resetTodayButton": "Atur ulang",
+    "clearGuessTitle": "Hapus data permainan",
+    "clearGuessDesc": "Menghapus tebakan semua hari, statistik, dan pengaturan “Tebakan harian”.",
+    "clearGuessButton": "Hapus",
+    "guessFileTitle": "Berkas simpanan permainan",
+    "guessFileDesc": "Menampilkan guess.json, tempat riwayat permainan dan pengaturan “Tebakan harian” disimpan.",
+    "guessFileButton": "Tampilkan"
   },
   "common": {
     "loading": "memuat…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Buka Pengaturan",
+    "openGame": "Buka Permainan",
     "dailyUpdates": "Pembaruan Harian",
     "regenerateNow": "Buat ulang",
     "quit": "Keluar dari InkCity",

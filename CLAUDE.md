@@ -4,7 +4,11 @@ A Tauri (Rust + React/TS) desktop app shipping signed bundles for macOS (univers
 
 ## Data
 
-City pins live in `src/data/` (three schema-identical pools; only `cities.json` is wired into the app). For the pools' relationship, the `localName` language/script rules, and how to regenerate them, see [src/data/README.md](src/data/README.md).
+City pins live in `src/data/` (three schema-identical pools; only `cities.json` is wired into the app), next to `countries.json`, the guess-the-country game's answer table. For the pools' relationship, the `localName` language/script rules, how countries.json's reference points were chosen, and how to regenerate them, see [src/data/README.md](src/data/README.md).
+
+## Guess-the-country game
+
+The daily game is written once in `src/core/guess` (rules, save format, stats, country lookup) so the future website can reuse it verbatim; hosts differ only in storage — the desktop keeps the save in `app_data_dir/guess.json` through `src-tauri/src/guess_store.rs`, the website in `localStorage` (`localStorageGuessStorage`). The backend reads just enough of the save (`is_revealed`) to decide the wallpaper's city caption; that one mirrored rule is pinned by `scripts/fixtures/guess-reveal-cases.json`, which both `pnpm guess-test` and `cargo test` run. To test by hand: Dev Mode resets today's game, clears all game data, or shows `guess.json` for editing; `INKCITY_DAY_OFFSET=<n> pnpm tauri dev` (debug builds only) shifts the app's "today" for anything that spans days.
 
 ## Contribution flow
 
@@ -39,7 +43,8 @@ Linux is the one that breaks quietly, because several things the other two treat
 
 - **Setting the wallpaper** is per-desktop, not an API. [wallpaper_linux.rs](src-tauri/src/wallpaper_linux.rs) dispatches on `XDG_CURRENT_DESKTOP`; GNOME / KDE Plasma / XFCE are the supported set, the rest is best-effort. The `wallpaper` crate is deliberately not used here — see that module's header.
 - **The tray is optional.** GNOME 45+ has no `StatusNotifierItem` host without a user-installed extension, and publishing the icon still *succeeds* — so an app whose only surface is the tray becomes unreachable. [tray_linux.rs](src-tauri/src/tray_linux.rs) probes for a host and `lib.rs` surfaces the settings window instead. `TrayIconEvent` is never emitted and tooltips are unsupported, so anything routed through those is macOS/Windows-only by nature.
-- **There is no primary monitor** on Wayland. Anything reaching for one needs the fallback chain in `pipeline::primary_size`.
+- **There is no primary monitor** on Wayland. Anything reaching for one needs the fallback chain in `pipeline::screen_geometry`.
+- **There is no work area** on Wayland either: `Monitor::work_area()` returns the whole screen, so the desktop city caption's safe area (`pipeline::label_insets`) gets no menu-bar/dock insets there and relies on the renderer's base margin alone.
 - **There is no vibrancy**, so the transparent window in `tauri.conf.json` has nothing behind it — `index.css` paints an opaque background off the `data-os` attribute set in `index.html`.
 - **There is no self-update.** Linux ships .deb + .rpm, and Tauri's updater can only replace an AppImage — which we don't ship, because linuxdeploy rpath-patches everything in the AppDir's `usr/bin` and that breaks `ldd` on the bun-compiled `ink-city-osm-cli` sidecar (see the long comment in [release.yml](.github/workflows/release.yml)). `updates::supported()` is the gate: it probes `$APPIMAGE`, so it stays correct if an AppImage is ever added, and the About tab hides its whole update section when it's false rather than offering a check that can't work.
 - **`bundle.icon` must contain no missing paths.** [tauri.linux.conf.json](src-tauri/tauri.linux.conf.json) exists only to narrow that list to the PNGs: Tauri deep-merges `tauri.<platform>.conf.json` over the base config, and the Linux bundler *errors* on an icon path that isn't there, where the Windows one just skips it. The base list names `icons/Assets.car`, which only exists after the macOS-only `pnpm icon:car` — so without the override, every Linux build fails at bundling with the binary already compiled.

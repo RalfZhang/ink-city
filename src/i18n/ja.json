@@ -60,7 +60,36 @@
     "locationPlaceholder": "都市名、座標、または地図のリンク",
     "invalidLocation": "一致する都市がありません。座標を入力してください（例: 51.5074, -0.1278）。",
     "apply": "適用",
-    "customRateHint": "カスタムの場所は事前キャッシュされないため、適用ごとに地図データを取得します。短時間に多数の新しい場所を適用すると、サービスのレート制限に達する場合があります。"
+    "customRateHint": "カスタムの場所は事前キャッシュされないため、適用ごとに地図データを取得します。短時間に多数の新しい場所を適用すると、サービスのレート制限に達する場合があります。",
+    "gameLabel": "一日一問",
+    "gameDescOn": "毎日、壁紙の都市がどの国または地域にあるかを当てます。ゲームが終わると都市が明かされます。",
+    "gameDescOff": "毎日の都市をすぐに表示します。",
+    "gameTomorrow": "今日の都市はすでに明かされています。ゲームは明日から始まります。",
+    "gameOffTitle": "一日一問をオフにしますか？",
+    "gameOffBody": "今後は毎日の都市がすぐに表示されます。ゲームはいつでもオンに戻せ、その場合は翌日から始まります。",
+    "gameOffForfeit": "今日のゲームは負けとして記録されます。",
+    "gameOffConfirm": "オフにする",
+    "revealAfterGame": "今日のゲーム終了後に表示"
+  },
+  "game": {
+    "prompt": "この都市はどの国または地域にありますか？",
+    "placeholder": "国または地域を入力…",
+    "guess": "回答",
+    "progress": "{{max}} 回中 {{n}} 回目",
+    "alreadyGuessed": "回答済みです。別の答えを試してください。",
+    "noMatch": "リストから国または地域を選んでください。",
+    "painting": "今日の壁紙を描画中…",
+    "paintFailed": "今日の壁紙を設定できません。1 分ごとに再試行します。"
+  },
+  "result": {
+    "won": "{{n}} 回目で正解",
+    "lost": "{{max}} 回とも不正解 — 正解は{{country}}",
+    "gaveUp": "ギブアップ — 正解は{{country}}",
+    "played": "プレイ回数",
+    "winRate": "勝率",
+    "streak": "現在の連勝",
+    "maxStreak": "最長連勝",
+    "distribution": "正解までの回数の分布"
   },
   "style": {
     "theme": "マップテーマ",
@@ -74,6 +103,13 @@
     "hintMinimal": "主要道路のみ",
     "hintStandard": "道路の種類別に幅を変更",
     "hintBold": "高コントラストの階層表示",
+    "cityLabel": "デスクトップの都市情報",
+    "cityLabelHint": "「毎日」モードのみ。今日の都市が明かされた後（今日のゲームが終了、または「一日一問」がオフ）、壁紙に描画されます。",
+    "cityLabelOff": "オフ",
+    "cityLabelTopLeft": "左上",
+    "cityLabelTopRight": "右上",
+    "cityLabelBottomLeft": "左下",
+    "cityLabelBottomRight": "右下",
     "lightColors": "ライトパレット",
     "darkColors": "ダークパレット",
     "active": "適用中",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "キャッシュはすでに空です",
     "bypassCacheTitle": "キャッシュとCDNを回避",
     "bypassCacheDesc": "その日の都市を GitHub から直接読んだスケジュールから取得し、地図データは CDN ではなく Overpass API から直接取得して、ローカルキャッシュを上書きします。地図データの変更をテストするときに使います。再起動でオフに戻ります。",
-    "dailyOnly": "「毎日」更新モードでのみ有効です。"
+    "dailyOnly": "「毎日」更新モードでのみ有効です。",
+    "resetTodayTitle": "今日のゲームをリセット",
+    "resetTodayDesc": "今日の回答記録を削除し「一日一問」を再びオンにして、今日をもう一度遊べるようにします。",
+    "resetTodayButton": "リセット",
+    "clearGuessTitle": "ゲームデータを消去",
+    "clearGuessDesc": "すべての日の回答記録、統計、「一日一問」の設定を削除します。",
+    "clearGuessButton": "消去",
+    "guessFileTitle": "ゲームのセーブファイル",
+    "guessFileDesc": "ゲームの履歴と「一日一問」の設定を保存している guess.json を表示します。",
+    "guessFileButton": "表示"
   },
   "common": {
     "loading": "読み込み中…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "設定を開く",
+    "openGame": "ゲームを開く",
     "dailyUpdates": "毎日の更新",
     "regenerateNow": "再生成",
     "quit": "InkCityを終了",

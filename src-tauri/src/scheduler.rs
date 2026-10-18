@@ -63,15 +63,10 @@ pub fn spawn(app: AppHandle) {
 /// a no-op when updates are disabled or a Customized pin isn't set yet — so the
 /// steady-state poll is just a couple of lock reads.
 async fn reconcile(app: &AppHandle) {
-    let Some(desired) = pipeline::desired_signature(app) else {
-        return; // updates disabled, or Customized with no pin
-    };
-    let up_to_date =
-        app.state::<AppState>().last_applied.lock().unwrap().as_deref() == Some(desired.as_str());
-    if up_to_date {
-        return;
+    if pipeline::up_to_date(app) {
+        return; // already showing it — or updates disabled, or Customized with no pin
     }
-    if let Err(e) = pipeline::run_now(app.clone()).await {
+    if let Err(e) = pipeline::run_now(app.clone(), pipeline::RunKind::Apply).await {
         log::error!("[scheduler] pipeline failed: {}", e);
     }
 }

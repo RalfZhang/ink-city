@@ -22,6 +22,7 @@
     "road:fetch": "tsx scripts/render.ts --fetch-only -o road-test/json",
     "schedule-test": "tsx scripts/schedule-test.ts",
     "coords-test": "tsx scripts/coords-test.ts",
+    "guess-test": "tsx scripts/guess-test.ts",
     "railway-test": "tsx scripts/railway-test.ts"
   },
   "dependencies": {

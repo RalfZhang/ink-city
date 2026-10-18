@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nombre de ciudad, coordenadas o un enlace de mapa",
     "invalidLocation": "Ninguna ciudad coincide: prueba con coordenadas, p. ej. 51.5074, -0.1278.",
     "apply": "Aplicar",
-    "customRateHint": "Las ubicaciones personalizadas no se precargan: cada vez que aplicas se descargan los datos del mapa en directo, así que evita aplicar muchas ubicaciones nuevas seguidas o podrías alcanzar el límite de peticiones del servicio."
+    "customRateHint": "Las ubicaciones personalizadas no se precargan: cada vez que aplicas se descargan los datos del mapa en directo, así que evita aplicar muchas ubicaciones nuevas seguidas o podrías alcanzar el límite de peticiones del servicio.",
+    "gameLabel": "Adivinanza diaria",
+    "gameDescOn": "Cada día, adivina en qué país o región está la ciudad del fondo de pantalla; la ciudad se revela al terminar.",
+    "gameDescOff": "La ciudad de cada día se muestra directamente.",
+    "gameTomorrow": "La ciudad de hoy ya está revelada; el juego empieza mañana.",
+    "gameOffTitle": "¿Desactivar la adivinanza diaria?",
+    "gameOffBody": "A partir de ahora, la ciudad de cada día se mostrará directamente. Puedes volver a activar el juego cuando quieras; empezará al día siguiente.",
+    "gameOffForfeit": "La partida de hoy contará como perdida.",
+    "gameOffConfirm": "Desactivar",
+    "revealAfterGame": "Se revela tras la partida de hoy"
+  },
+  "game": {
+    "prompt": "¿En qué país o región está esta ciudad?",
+    "placeholder": "Escribe un país o región…",
+    "guess": "Adivinar",
+    "progress": "Intento {{n}} de {{max}}",
+    "alreadyGuessed": "Ya lo intentaste: prueba con otra respuesta.",
+    "noMatch": "Elige un país o región de la lista.",
+    "painting": "Dibujando el fondo de pantalla de hoy…",
+    "paintFailed": "No se pudo establecer el fondo de pantalla de hoy; se reintenta cada minuto."
+  },
+  "result": {
+    "won": "Acertaste en el intento {{n}}",
+    "lost": "Sin suerte en {{max}} intentos: era {{country}}",
+    "gaveUp": "Te rendiste: era {{country}}",
+    "played": "Jugadas",
+    "winRate": "Tasa de victorias",
+    "streak": "Racha actual",
+    "maxStreak": "Mejor racha",
+    "distribution": "Distribución de intentos"
   },
   "style": {
     "theme": "Tema del mapa",
@@ -74,6 +103,13 @@
     "hintMinimal": "Solo vías principales",
     "hintStandard": "Grosor según la clase de vía",
     "hintBold": "Jerarquía de alto contraste",
+    "cityLabel": "Información de la ciudad en el escritorio",
+    "cityLabelHint": "Solo en el modo Diario. Se dibuja en el fondo de pantalla cuando se revela la ciudad de hoy: al terminar la partida de hoy o con «Adivinanza diaria» desactivada.",
+    "cityLabelOff": "Desactivado",
+    "cityLabelTopLeft": "Arriba a la izquierda",
+    "cityLabelTopRight": "Arriba a la derecha",
+    "cityLabelBottomLeft": "Abajo a la izquierda",
+    "cityLabelBottomRight": "Abajo a la derecha",
     "lightColors": "Paleta clara",
     "darkColors": "Paleta oscura",
     "active": "Activo",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "La caché ya está vacía",
     "bypassCacheTitle": "Omitir caché y CDN",
     "bypassCacheDesc": "Toma la ciudad del día del calendario leído directamente de GitHub y descarga sus datos del mapa en directo desde la API de Overpass en lugar del CDN, sobrescribiendo la caché local. Útil para probar cambios en los datos del mapa. Se desactiva al reiniciar.",
-    "dailyOnly": "Solo se aplica al modo de actualización Diario."
+    "dailyOnly": "Solo se aplica al modo de actualización Diario.",
+    "resetTodayTitle": "Reiniciar el juego de hoy",
+    "resetTodayDesc": "Borra los intentos de hoy y reactiva «Adivinanza diaria», para poder volver a jugar el día de hoy.",
+    "resetTodayButton": "Reiniciar",
+    "clearGuessTitle": "Borrar datos del juego",
+    "clearGuessDesc": "Elimina los intentos de todos los días, las estadísticas y el ajuste «Adivinanza diaria».",
+    "clearGuessButton": "Borrar",
+    "guessFileTitle": "Archivo de partida",
+    "guessFileDesc": "Muestra guess.json, donde se guardan el historial del juego y el ajuste «Adivinanza diaria».",
+    "guessFileButton": "Mostrar"
   },
   "common": {
     "loading": "cargando…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Abrir ajustes",
+    "openGame": "Abrir juego",
     "dailyUpdates": "Actualizaciones diarias",
     "regenerateNow": "Regenerar",
     "quit": "Salir de InkCity",

@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::sync::atomic::Ordering;
 
 use serde::{Deserialize, Serialize};
@@ -6,9 +7,10 @@ use tauri_plugin_opener::OpenerExt;
 
 use crate::city::{self, City};
 use crate::config::{
-    self, ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant, ThemeMode,
-    UpdateCheck, UpdateMode,
+    self, CityLabel, ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant,
+    ThemeMode, UpdateCheck, UpdateMode,
 };
+use crate::guess_store;
 use crate::pipeline::{self, EffectiveTheme};
 use crate::state::AppState;
 use crate::tray;
@@ -38,7 +40,16 @@ pub struct Status {
     /// couldn't reach the schedule): there's no client-side rotation to name a day
     /// with any more, so the City tab shows a placeholder. Informational when
     /// `update_mode` isn't `Daily`; a Customized pin is reported by `custom`.
+    ///
+    /// Sent even while today's guess-the-country game is underway: the game runs in
+    /// the frontend (src/core/guess, shared with the website, which has the city
+    /// anyway) and needs the answer to score guesses. Keeping it off the screen until
+    /// the day is revealed is the City tab's job.
     pub city: Option<City>,
+    /// Whether today's Daily wallpaper is on the desktop yet (`AppState::painted_day`).
+    /// The game waits for it — it's `DayInputs.ready` in src/core/guess/types.ts — so
+    /// no one is asked to guess a map that hasn't appeared.
+    pub today_painted: bool,
     /// Why today's Daily render failed, or `None` when it succeeded or hasn't run
     /// yet. Read together with `city`, it separates two states that look identical
     /// otherwise and call for opposite responses from the user:
@@ -109,6 +120,8 @@ pub struct Status {
     pub proxy_enabled: bool,
     pub proxy_url: String,
     pub map_provider: MapProvider,
+    /// Where the wallpaper carries the city caption (Style tab). See `config::CityLabel`.
+    pub city_label: CityLabel,
 }
 
 /// `Status::last_error` from `AppState::last_error`: the stored message, but only
@@ -162,6 +175,8 @@ pub async fn build_status(app: &AppHandle) -> Status {
     let railway_style = *state.railway_style.lock().unwrap();
     let proxy_url = state.proxy_url.lock().unwrap().clone();
     let map_provider = *state.map_provider.lock().unwrap();
+    let city_label = *state.city_label.lock().unwrap();
+    let today_painted = *state.painted_day.lock().unwrap() == Some(date);
     let last_error = error_for_today(state.last_error.lock().unwrap().as_ref(), date);
     Status {
         update_mode,
@@ -169,6 +184,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         hide_tray: state.hide_tray.load(Ordering::Acquire),
         running,
         city,
+        today_painted,
         last_error,
         date: date.to_string(),
         theme,
@@ -194,6 +210,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         proxy_enabled: state.proxy_enabled.load(Ordering::Acquire),
         proxy_url,
         map_provider,
+        city_label,
     }
 }
 
@@ -340,6 +357,15 @@ pub struct ColorDefaults {
 /// Atomic write of all Style-tab settings. Returns whether a wallpaper
 /// re-render was triggered so the UI can decide whether to wait for
 /// pipeline:end before clearing its Save spinner.
+///
+/// A new look (colours, preset) forces a regen. Otherwise only a new *target* needs
+/// work — the city caption moved, or a theme flip with identical palettes. The
+/// caption counts only once it's actually on screen: moving it while today is still
+/// unrevealed leaves the target as it was, so the corner just applies once the day
+/// is revealed. A new target is a plain apply, since every PNG cached for today was
+/// drawn with the current look (`pipeline::clear_for_force`), and it reports a
+/// re-render only when its PNG isn't cached: a reapply from cache can fire
+/// `pipeline:start`/`:end` too close together for the Save spinner to ever see busy.
 #[tauri::command]
 pub fn apply_style_settings(
     app: AppHandle,
@@ -347,9 +373,11 @@ pub fn apply_style_settings(
     style: StylePreset,
     light: ColorPair,
     dark: ColorPair,
+    city_label: CityLabel,
 ) -> Result<ApplyResult, String> {
     let before_colors = current_effective_colors(&app);
     let before_style = *app.state::<AppState>().style.lock().unwrap();
+    let before_target = pipeline::desired_signature(&app);
 
     {
         let s = app.state::<AppState>();
@@ -357,6 +385,7 @@ pub fn apply_style_settings(
         *s.style.lock().unwrap() = style;
         *s.light.lock().unwrap() = light;
         *s.dark.lock().unwrap() = dark;
+        *s.city_label.lock().unwrap() = city_label;
     }
     persist(&app)?;
     // Push the new theme/style/colors immediately, even when no re-render is
@@ -366,10 +395,16 @@ pub fn apply_style_settings(
     let after_colors = current_effective_colors(&app);
     let after_style = *app.state::<AppState>().style.lock().unwrap();
 
-    let regen_started = before_colors != after_colors || before_style != after_style;
-    if regen_started {
+    let regen_started = if before_colors != after_colors || before_style != after_style {
         pipeline::spawn_force_regen(app);
-    }
+        true
+    } else if pipeline::desired_signature(&app) != before_target {
+        let cached = pipeline::target_cached(&app);
+        pipeline::spawn_apply(app);
+        !cached
+    } else {
+        false
+    };
     Ok(ApplyResult { regen_started })
 }
 
@@ -497,6 +532,72 @@ pub async fn regenerate_now(app: AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// The guess-the-country save as it is on disk (`guess.json`), or `None` before the
+/// first save. The desktop's `GuessStorage.load` — see src/lib/guess-storage.ts; the
+/// website's equivalent reads localStorage.
+///
+/// Also re-reads the backend's own view of it: the file is normally only ever
+/// written through `guess_store_write`, but Dev Mode hands it out for editing by
+/// hand, and the City tab reads it again each time it's opened — so an edit takes
+/// effect, wallpaper caption included, the next time the tab is.
+#[tauri::command]
+pub fn guess_store_read(app: AppHandle) -> Result<Option<String>, String> {
+    let raw = guess_store::read(&app).map_err(|e| e.to_string())?;
+    let view = raw.as_deref().and_then(guess_store::StoreView::parse).unwrap_or_default();
+    adopt_guess_view(app, view);
+    Ok(raw)
+}
+
+/// Persist the guess-the-country save (`GuessStorage.save`). An `Err` means nothing
+/// was written, and the frontend keeps its previous state.
+///
+/// Writing is also how the backend learns that today has been revealed — a guess
+/// that ended the game, or the game being switched off (`showCityInfo`). If that moves
+/// the wallpaper's caption, the captioned render is a new cache target
+/// (`pipeline::daily_names`), so an ordinary apply renders it — queued behind any
+/// render already running (`pipeline::run_now`), and backed by the scheduler's
+/// poll, which sees the signature change if that render fails.
+#[tauri::command]
+pub fn guess_store_write(app: AppHandle, raw: String) -> Result<(), String> {
+    let view = guess_store::write(&app, &raw).map_err(|e| e.to_string())?;
+    adopt_guess_view(app, view);
+    Ok(())
+}
+
+/// Swap in a fresh view of the save. A no-op when it's the view already held — a
+/// guess that didn't end the game, the City tab re-reading an unchanged file. If it
+/// did change, re-apply the wallpaper should that have moved its target — a day
+/// revealed (a game won, lost or given up, the preference turned on) moves its city
+/// caption, as does one un-revealed again through Dev Mode — and mark status dirty:
+/// no `Status` field changes, but the push is what re-checks the tray's "Open Game"
+/// entry (`tray::sync_open_item`).
+fn adopt_guess_view(app: AppHandle, view: guess_store::StoreView) {
+    let state = app.state::<AppState>();
+    {
+        let mut current = state.guess_view.lock().unwrap();
+        if *current == view {
+            return;
+        }
+        *current = view;
+    }
+    state.mark_status_dirty();
+    if !pipeline::up_to_date(&app) {
+        pipeline::spawn_apply(app);
+    }
+}
+
+/// Dev Mode: show the guess-the-country save in Finder / Explorer / the file
+/// manager, for editing by hand (`guess_store_read` picks the edit up). Before the
+/// first save there's no file to point at, so its folder opens instead.
+#[tauri::command]
+pub fn reveal_guess_store(app: AppHandle) -> Result<(), String> {
+    let path = guess_store::path(&app).map_err(|e| e.to_string())?;
+    if path.exists() {
+        return app.opener().reveal_item_in_dir(&path).map_err(|e| e.to_string());
+    }
+    open_dir(&app, path.parent().ok_or("guess.json has no parent directory")?)
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PreviewResult {
@@ -547,13 +648,16 @@ pub async fn submit_render_result(
     date: String,
     bytes: Vec<u8>,
 ) -> Result<(), String> {
+    // Take only a match: a late result from a job that already timed out must leave
+    // the *current* job's channel in place, or that job loses its result too and
+    // fails as "renderer dropped".
     let mut g = state.pending.lock().await;
-    if let Some(p) = g.take() {
-        if p.date == date {
-            let _ = p.tx.send(bytes);
-        } else {
-            log::warn!("[commands] stale render result for {}, expected {}", date, p.date);
-        }
+    if let Some(p) = g.take_if(|p| p.date == date) {
+        let _ = p.tx.send(bytes);
+    } else if let Some(p) = g.as_ref() {
+        log::warn!("[commands] stale render result for {}, expected {}", date, p.date);
+    } else {
+        log::warn!("[commands] render result for {date} arrived with no job pending");
     }
     Ok(())
 }
@@ -561,12 +665,20 @@ pub async fn submit_render_result(
 #[tauri::command]
 pub fn update_tray_labels(
     open_settings: String,
+    open_game: String,
     daily_updates: String,
     regenerate_now: String,
     quit: String,
     update_available: String,
 ) -> Result<(), String> {
-    tray::update_labels(&open_settings, &daily_updates, &regenerate_now, &quit, &update_available);
+    tray::update_labels(
+        &open_settings,
+        &open_game,
+        &daily_updates,
+        &regenerate_now,
+        &quit,
+        &update_available,
+    );
     Ok(())
 }
 
@@ -590,8 +702,12 @@ pub fn quit_app(app: AppHandle) -> Result<(), String> {
 /// the log file without knowing the platform-specific path themselves.
 #[tauri::command]
 pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
-    let dir = app.path().app_log_dir().map_err(|e| e.to_string())?;
-    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    open_dir(&app, &app.path().app_log_dir().map_err(|e| e.to_string())?)
+}
+
+/// Open `dir` in the platform's file manager, creating it first if need be.
+fn open_dir(app: &AppHandle, dir: &Path) -> Result<(), String> {
+    std::fs::create_dir_all(dir).map_err(|e| e.to_string())?;
     app.opener().open_path(dir.to_string_lossy(), None::<&str>).map_err(|e| e.to_string())
 }
 
@@ -661,6 +777,7 @@ fn persist(app: &AppHandle) -> Result<(), String> {
         proxy_enabled: s.proxy_enabled.load(Ordering::Acquire),
         proxy_url: s.proxy_url.lock().unwrap().clone(),
         map_provider: *s.map_provider.lock().unwrap(),
+        city_label: *s.city_label.lock().unwrap(),
     };
     config::save(app, &cfg).map_err(|e| e.to_string())
 }

@@ -60,7 +60,36 @@
     "locationPlaceholder": "도시 이름, 좌표 또는 지도 링크",
     "invalidLocation": "일치하는 도시가 없습니다. 좌표를 입력하세요(예: 51.5074, -0.1278).",
     "apply": "적용",
-    "customRateHint": "사용자 지정 위치는 미리 캐시되지 않아 적용할 때마다 지도 데이터를 실시간으로 가져옵니다. 짧은 시간에 새 위치를 여러 번 적용하면 서비스 요청 한도에 걸릴 수 있습니다."
+    "customRateHint": "사용자 지정 위치는 미리 캐시되지 않아 적용할 때마다 지도 데이터를 실시간으로 가져옵니다. 짧은 시간에 새 위치를 여러 번 적용하면 서비스 요청 한도에 걸릴 수 있습니다.",
+    "gameLabel": "매일 맞히기",
+    "gameDescOn": "매일 배경화면 속 도시가 어느 국가 또는 지역에 있는지 맞혀 보세요. 게임이 끝나면 도시가 공개됩니다.",
+    "gameDescOff": "매일 도시를 바로 표시합니다.",
+    "gameTomorrow": "오늘의 도시는 이미 공개되었습니다. 맞히기는 내일부터 시작됩니다.",
+    "gameOffTitle": "매일 맞히기를 끌까요?",
+    "gameOffBody": "앞으로는 매일 도시를 바로 표시합니다. 언제든지 게임을 다시 켤 수 있으며, 켜면 다음 날부터 시작됩니다.",
+    "gameOffForfeit": "오늘 게임은 패배로 기록됩니다.",
+    "gameOffConfirm": "끄기",
+    "revealAfterGame": "오늘 게임이 끝나면 공개"
+  },
+  "game": {
+    "prompt": "이 도시는 어느 국가 또는 지역에 있나요?",
+    "placeholder": "국가 또는 지역 입력…",
+    "guess": "확인",
+    "progress": "시도 {{n}}/{{max}}",
+    "alreadyGuessed": "이미 입력한 답입니다. 다른 답을 시도해 보세요.",
+    "noMatch": "목록에서 국가 또는 지역을 선택하세요.",
+    "painting": "오늘의 배경화면을 그리는 중…",
+    "paintFailed": "오늘의 배경화면을 설정할 수 없습니다. 1분마다 다시 시도합니다."
+  },
+  "result": {
+    "won": "{{n}}번째 시도에 정답",
+    "lost": "{{max}}번 모두 오답 — 정답: {{country}}",
+    "gaveUp": "포기 — 정답: {{country}}",
+    "played": "플레이 횟수",
+    "winRate": "승률",
+    "streak": "현재 연승",
+    "maxStreak": "최다 연승",
+    "distribution": "시도 횟수 분포"
   },
   "style": {
     "theme": "지도 테마",
@@ -74,6 +103,13 @@
     "hintMinimal": "주요 도로만 표시",
     "hintStandard": "도로 등급별 두께",
     "hintBold": "고대비 계층 구조",
+    "cityLabel": "바탕 화면 도시 정보",
+    "cityLabelHint": "‘매일’ 모드에서만 적용됩니다. 오늘의 도시가 공개되면, 즉 오늘 게임이 끝났거나 ‘매일 맞히기’가 꺼져 있으면 배경화면에 그려집니다.",
+    "cityLabelOff": "사용 안 함",
+    "cityLabelTopLeft": "왼쪽 위",
+    "cityLabelTopRight": "오른쪽 위",
+    "cityLabelBottomLeft": "왼쪽 아래",
+    "cityLabelBottomRight": "오른쪽 아래",
     "lightColors": "라이트 팔레트",
     "darkColors": "다크 팔레트",
     "active": "적용됨",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "캐시가 이미 비어 있습니다",
     "bypassCacheTitle": "캐시 및 CDN 우회",
     "bypassCacheDesc": "그날의 도시를 GitHub에서 바로 읽은 일정에서 가져오고, 지도 데이터는 CDN 대신 Overpass API에서 실시간으로 받아 로컬 캐시를 덮어씁니다. 지도 데이터 변경을 테스트할 때 사용하세요. 재시작하면 꺼집니다.",
-    "dailyOnly": "«매일» 업데이트 모드에서만 적용됩니다."
+    "dailyOnly": "«매일» 업데이트 모드에서만 적용됩니다.",
+    "resetTodayTitle": "오늘의 게임 재설정",
+    "resetTodayDesc": "오늘의 추측 기록을 지우고 ‘매일 맞히기’를 다시 켜서 오늘 게임을 새로 할 수 있게 합니다.",
+    "resetTodayButton": "재설정",
+    "clearGuessTitle": "게임 데이터 지우기",
+    "clearGuessDesc": "모든 날의 추측 기록, 통계, ‘매일 맞히기’ 설정을 삭제합니다.",
+    "clearGuessButton": "지우기",
+    "guessFileTitle": "게임 저장 파일",
+    "guessFileDesc": "게임 기록과 ‘매일 맞히기’ 설정이 저장된 guess.json을 표시합니다.",
+    "guessFileButton": "표시"
   },
   "common": {
     "loading": "로딩 중…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "설정 열기",
+    "openGame": "게임 열기",
     "dailyUpdates": "매일 업데이트",
     "regenerateNow": "다시 생성",
     "quit": "InkCity 종료",

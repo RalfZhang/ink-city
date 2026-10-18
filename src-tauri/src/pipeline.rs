@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use anyhow::{anyhow, Result};
 use chrono::NaiveDate;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager, Theme, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 use tokio::sync::oneshot;
 
@@ -14,6 +14,7 @@ use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateMode};
 use crate::events::FrontendEvent;
+use crate::guess_store;
 use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
@@ -63,6 +64,38 @@ struct RenderRequest {
     height: u32,
     style: Style,
     osm: serde_json::Value,
+    /// The city caption, or absent: an unlabeled request carries no `label` key at
+    /// all, the core convention for an optional layer that's off (and what every
+    /// renderer shipped before captions existed expects).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    label: Option<LabelPayload>,
+}
+
+/// The city caption as `MapLabel` in src/core/types.ts reads it — what to write,
+/// and where. Language-neutral on purpose: the city's own name, its English name
+/// and the country's English name, which is how a map's title block reads and spares
+/// the cache a per-UI-language dimension.
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+struct LabelPayload {
+    corner: &'static str,
+    name: String,
+    local_name: String,
+    country: String,
+    /// From src/data/countries.json; `None` falls back to the code in the renderer.
+    country_name: Option<String>,
+    lat: f64,
+    lon: f64,
+    /// How far (PNG px) the caption must stay from each edge — see `label_insets`.
+    insets: Insets,
+}
+
+#[derive(Serialize, Clone, Copy, Debug, Default, PartialEq)]
+struct Insets {
+    top: f64,
+    right: f64,
+    bottom: f64,
+    left: f64,
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -75,6 +108,9 @@ struct RenderRequest {
 //                                 desktop image by URL). See wallpaper_set::set.
 //     daily/                    ← the Daily rotation cache, swept by cleanup_daily.
 //       <date>-<theme>.png        ← kept KEEP_DAYS back (and any future preview).
+//       <date>-<theme>-label-<corner>.png
+//                                 ← the same day with the city caption, once revealed
+//                                   (see `daily_names`). Same retention.
 //       <date>.osm.json           ← kept only KEEP_OSM_DAYS back; it's the heavy half.
 //     customized/               ← the Customized-pin cache. Writing a new
 //                                 coordinate wipes every other coordinate's
@@ -87,7 +123,9 @@ struct RenderRequest {
 // to the writers (`write_osm`, the PNG write, `wallpaper_set::set`), which all
 // `create_dir_all` their parent — so a read of a not-yet-existing dir fails
 // harmlessly as "nothing cached", and the scheduler's 60s poll
-// (`desired_signature` → `resolve_target`) stays free of filesystem syscalls.
+// (`desired_signature` → `resolve_target`) stays free of filesystem syscalls —
+// save for `label_for` naming today's city once a day, through
+// `city_for_status`'s memo (and only while a city caption is enabled).
 
 fn cache_dir(app: &AppHandle) -> Result<PathBuf> {
     Ok(app.path().app_cache_dir()?)
@@ -177,17 +215,62 @@ struct Target {
     png_path: PathBuf,
     osm_path: PathBuf,
     kind: TargetKind,
+    /// The city caption this render carries, as its corner's tag (`CityLabel::tag`),
+    /// if any (`label_for`). Part of the signature and filename, so it's decided
+    /// here, before anything renders.
+    label: Option<&'static str>,
 }
 
 fn daily_target(app: &AppHandle, date: NaiveDate, theme: EffectiveTheme) -> Result<Target> {
     let dir = daily_dir(app)?;
-    let suffix = theme_suffix(theme);
+    let label = label_for(app, date);
+    let (signature, png) = daily_names(date, theme_suffix(theme), label);
     Ok(Target {
-        signature: format!("daily:{date}:{suffix}"),
-        png_path: dir.join(format!("{date}-{suffix}.png")),
+        signature,
+        png_path: dir.join(png),
         osm_path: dir.join(daily_osm_name(date)),
         kind: TargetKind::Daily(date),
+        label,
     })
+}
+
+/// A Daily render's `last_applied` signature and PNG filename.
+///
+/// A captioned render is a different target — `daily:<date>:<theme>:label-<corner>`
+/// in `<date>-<theme>-label-<corner>.png` — rather than a redraw of the same file,
+/// because a cached PNG is reapplied with no staleness check (`apply_target`):
+///   • revealing the day moves the *desired signature*, so the scheduler's poll
+///     keeps repainting until the captioned image is actually up — even if the
+///     render the reveal kicked off fails;
+///   • the unlabeled PNG cached earlier for the other theme can never be reapplied
+///     after the reveal, because the reveal changed which file the theme flip asks
+///     for.
+/// Unlabeled names are exactly what they were before captions existed, so caches
+/// from older versions keep hitting.
+fn daily_names(date: NaiveDate, theme: &str, label: Option<&str>) -> (String, String) {
+    match label {
+        Some(tag) => {
+            (format!("daily:{date}:{theme}:label-{tag}"), format!("{date}-{theme}-label-{tag}.png"))
+        }
+        None => (format!("daily:{date}:{theme}"), format!("{date}-{theme}.png")),
+    }
+}
+
+/// The caption the Daily wallpaper for `date` should carry — the Style tab's corner,
+/// as its tag — once the day is revealed (`guess_store::is_revealed`); `None` before
+/// that, or when the setting is off.
+///
+/// Only *today* consults the day's city, through `city_for_status`'s memo. Any other
+/// date — Dev Mode previewing a day ahead — is judged on the save alone: calling
+/// `city_for_status` for it would overwrite today's memo, making the next `Status`
+/// re-read today's payload just to recover it.
+fn label_for(app: &AppHandle, date: NaiveDate) -> Option<&'static str> {
+    let state = app.state::<AppState>();
+    let tag = state.city_label.lock().unwrap().tag()?;
+    // Looked up before `guess_view` is locked: `city_for_status` takes `resolved_city`.
+    let city = if date == city::today() { city_for_status(app, date) } else { None };
+    let revealed = guess_store::is_revealed(&state.guess_view.lock().unwrap(), date, city.as_ref());
+    revealed.then_some(tag)
 }
 
 fn custom_target(app: &AppHandle, lat: f64, lon: f64, theme: EffectiveTheme) -> Result<Target> {
@@ -199,6 +282,8 @@ fn custom_target(app: &AppHandle, lat: f64, lon: f64, theme: EffectiveTheme) -> 
         png_path: dir.join(format!("{key}-{suffix}.png")),
         osm_path: dir.join(format!("{key}.osm.json")),
         kind: TargetKind::Custom { key, lat, lon },
+        // A pin is coordinates, not a city — there's nothing to caption.
+        label: None,
     })
 }
 
@@ -228,6 +313,25 @@ fn mark_applied(app: &AppHandle, signature: &str) {
     *app.state::<AppState>().last_applied.lock().unwrap() = Some(signature.to_string());
 }
 
+/// Record which Daily map is now the desktop wallpaper — see
+/// `AppState::painted_day`. A Customized pin replaces it, so applying one clears it:
+/// otherwise switching back to Daily would report today's map as up while the pin
+/// is still showing, and open the game against it until the Daily render lands.
+///
+/// Pushes the change itself rather than leaving it to `run_now`'s closing push,
+/// which a queued run would hold back for a whole extra render.
+fn mark_painted(app: &AppHandle, target: &Target) {
+    let day = match target.kind {
+        TargetKind::Daily(date) => Some(date),
+        TargetKind::Custom { .. } => None,
+    };
+    let state = app.state::<AppState>();
+    let previous = std::mem::replace(&mut *state.painted_day.lock().unwrap(), day);
+    if previous != day {
+        state.mark_status_dirty();
+    }
+}
+
 /// The signature the wallpaper *should* currently match, or `None` when there's
 /// nothing to render (disabled / no pin). Cheap — the scheduler compares it to
 /// `last_applied` to decide whether a repaint is even needed.
@@ -237,30 +341,131 @@ pub fn desired_signature(app: &AppHandle) -> Option<String> {
     resolve_target(app, date, theme).ok().flatten().map(|t| t.signature)
 }
 
+/// Whether there's nothing to repaint: the wallpaper already shows what the current
+/// settings ask for, or they ask for nothing (updates disabled, Customized with no
+/// pin). The scheduler's poll runs on it (`scheduler::reconcile`), and so does a
+/// change that may have moved the target (`commands::adopt_guess_view`).
+pub fn up_to_date(app: &AppHandle) -> bool {
+    desired_signature(app).is_none_or(|desired| {
+        app.state::<AppState>().last_applied.lock().unwrap().as_deref() == Some(desired.as_str())
+    })
+}
+
+/// Whether the wallpaper the current settings ask for is already rendered, so
+/// applying it is a reapply from cache rather than a render. `false` when there's
+/// nothing to render.
+pub fn target_cached(app: &AppHandle) -> bool {
+    resolve_target(app, city::today(), effective_theme(app))
+        .ok()
+        .flatten()
+        .is_some_and(|t| t.png_path.exists())
+}
+
+/// What a caller of `run_now` needs. `Apply` shows the current target, reusing its
+/// cached PNG if there is one; `Force` first deletes today's cached PNGs so the
+/// target is really redrawn (`clear_for_force`). Declared weakest first, so queued
+/// requests merge to the stronger one with `max` — see `AppState::rerun`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum RunKind {
+    Apply,
+    Force,
+}
+
 /// Render today's target (per the current UpdateMode) and apply it as the
 /// wallpaper. A no-op when updates are disabled or a Customized pin isn't set.
-/// Coalesces with any in-flight render via `state.running`.
-pub async fn run_now(app: AppHandle) -> Result<()> {
+///
+/// Only one run is ever in flight (`state.running` — there's one renderer window).
+/// A request that arrives during a run used to be dropped, which lost real work: the
+/// run in flight had already read its inputs, so a style edit or a caption change
+/// made meanwhile only reached the wallpaper at some later regen. Now it's queued
+/// instead (`AppState::rerun`), and the run that holds `running` goes round again
+/// before letting go — checked and cleared under the same lock that releases
+/// `running`, so a request can't slip in between the last check and the release.
+/// `PipelineStart`/`End` bracket the whole loop, so the UI sees one busy stretch.
+pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
     {
         let state = app.state::<AppState>();
         let mut g = state.running.lock().await;
         if *g {
-            return Ok(()); // already running — coalesce silently
+            let mut rerun = state.rerun.lock().unwrap();
+            *rerun = (*rerun).max(Some(kind));
+            return Ok(());
         }
         *g = true;
     }
     FrontendEvent::PipelineStart.emit(&app);
-    let r = run_now_inner(&app).await;
-    {
+    let mut kind = kind;
+    let mut queued = false;
+    let r = loop {
+        // A queued Apply is usually the scheduler's poll landing mid-render, which the
+        // render it waited for has already satisfied — rerunning it would just set the
+        // same wallpaper again. A queued Force always runs: something changed.
+        let r = if queued && kind == RunKind::Apply && up_to_date(&app) {
+            Ok(())
+        } else {
+            if kind == RunKind::Force {
+                clear_for_force(&app);
+            }
+            run_now_inner(&app).await
+        };
+        queued = true;
         let state = app.state::<AppState>();
         let mut g = state.running.lock().await;
-        *g = false;
-    }
+        let next = state.rerun.lock().unwrap().take();
+        match next {
+            None => {
+                *g = false;
+                break r;
+            }
+            // An Apply queued behind a *failed* run isn't looped into: attempts that
+            // fail slowly (CDN/Overpass timeouts, the renderer's 120s) outlast the
+            // scheduler's 60s poll, which would queue another each time, so the loop
+            // would retry back to back and never release `running` — the UI stuck
+            // busy, `PipelineEnd` and the status push carrying `last_error` never
+            // sent. The poll retries within a minute anyway, against whatever the
+            // target has become by then. A queued Force still runs: something changed.
+            Some(RunKind::Apply) if r.is_err() => {
+                *g = false;
+                break r;
+            }
+            Some(next) => {
+                if let Err(e) = &r {
+                    log::error!("[pipeline] run failed, running the queued one next: {e}");
+                }
+                kind = next;
+            }
+        }
+    };
     FrontendEvent::PipelineEnd.emit(&app);
     // Push the post-render snapshot: running back to false, plus any new
     // date/city/has_water (e.g. the scheduler's midnight reconcile).
     app.state::<AppState>().mark_status_dirty();
     r
+}
+
+/// `RunKind::Force`'s extra step: delete the current target's PNG — and every other
+/// PNG cached for today — and forget what was last applied, so the run that follows
+/// really redraws and reapplies. Runs only while holding `state.running` (from inside
+/// `run_now`'s loop): done before taking it, a render already in flight could write
+/// its pre-change PNG back under the same name right after the delete, and mark it
+/// applied.
+///
+/// Today's *other* PNGs go too (the other theme, the other caption variants) because
+/// a cached PNG is reapplied with no staleness check: left behind, one drawn before a
+/// style edit would come back the moment the caption is switched off or the theme
+/// flips. Wiping them keeps "every PNG on disk for today was drawn with the current
+/// settings" true, which is what makes reusing them safe. They re-render from the
+/// cached payload, so the cost is a render, never a download.
+fn clear_for_force(app: &AppHandle) {
+    let date = city::today();
+    let theme = effective_theme(app);
+    if let Ok(Some(target)) = resolve_target(app, date, theme) {
+        let _ = fs::remove_file(&target.png_path);
+    }
+    if let Ok(dir) = daily_dir(app) {
+        let _ = remove_day_pngs(&dir, date);
+    }
+    *app.state::<AppState>().last_applied.lock().unwrap() = None;
 }
 
 async fn run_now_inner(app: &AppHandle) -> Result<()> {
@@ -306,6 +511,7 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
     if target.png_path.exists() {
         wallpaper_set::set(&target.png_path, &live)?;
         mark_applied(app, &target.signature);
+        mark_painted(app, target);
         return Ok(());
     }
 
@@ -320,6 +526,7 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
     let (city, _png) = render_and_cache(app, target).await?;
     wallpaper_set::set(&target.png_path, &live)?;
     mark_applied(app, &target.signature);
+    mark_painted(app, target);
 
     if let TargetKind::Daily(_) = target.kind {
         if let Ok(dir) = daily_dir(app) {
@@ -338,7 +545,7 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
 async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::City, Vec<u8>)> {
     let resolved = resolve_and_record(app, target).await?;
     let city = resolved.city.clone();
-    let bytes = render_bytes_for(app, &target.signature, &target.osm_path, resolved).await?;
+    let bytes = render_bytes_for(app, target, resolved).await?;
     if let Some(parent) = target.png_path.parent() {
         fs::create_dir_all(parent)?;
     }
@@ -469,7 +676,7 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
     // the thing that keeps a day stable:
     //
     //   - `spawn_force_regen` (theme switch, colour/style edit, Lab toggles,
-    //     "regenerate now") deletes only the PNG and re-enters the pipeline. Its
+    //     "regenerate now") deletes only today's PNGs and re-enters the pipeline. Its
     //     doc promises "OSM data is reused if cached" — resolving past the cache
     //     would re-download the whole manifest, tens of MB, on every colour tweak.
     //   - Mid-day the answer can *change*: a schedule manifest that lands after
@@ -609,7 +816,7 @@ pub fn city_for_status(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
 }
 
 /// The Daily flow's OSM cache filename for `date`. One definition so
-/// `daily_target` and `cached_day_osm` can't drift apart.
+/// `daily_target` and `cached_day_city` can't drift apart.
 fn daily_osm_name(date: NaiveDate) -> String {
     format!("{}.osm.json", date)
 }
@@ -621,38 +828,37 @@ fn cached_osm_at(path: &Path) -> Option<serde_json::Value> {
     serde_json::from_str(&fs::read_to_string(path).ok()?).ok()
 }
 
-/// `date`'s payload from the *Daily* cache specifically — what `city_for_status`
-/// reads. (`resolve_daily` takes its path as an argument instead, so Advance
-/// Preview can point it at the preview cache.)
-fn cached_day_osm(app: &AppHandle, date: NaiveDate) -> Option<serde_json::Value> {
-    cached_osm_at(&daily_dir(app).ok()?.join(daily_osm_name(date)))
-}
-
 /// The `city` envelope both published flows stamp onto a payload, or `None` when
 /// it predates the envelope (a live sidecar fetch) or is half-written.
 fn city_envelope(v: &serde_json::Value) -> Option<city::City> {
     serde_json::from_value(v.get("city")?.clone()).ok()
 }
 
-/// The `city` envelope on `<date>.osm.json` — `city_for_status`'s source (2).
+/// The `city` envelope on `<date>.osm.json` in the *Daily* cache —
+/// `city_for_status`'s source (2). Deserializes that one field and lets serde skip
+/// the map data rather than build it into a `Value`: the memo runs this on its first
+/// call of a day, which the scheduler's poll can make, and a tens-of-MB `Value` just
+/// to read the envelope costs hundreds of MB of peak memory. (`resolve_daily` reads
+/// the whole payload because it renders it.)
 fn cached_day_city(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
-    city_envelope(&cached_day_osm(app, date)?)
+    #[derive(Deserialize)]
+    struct Envelope {
+        city: Option<city::City>,
+    }
+    let path = daily_dir(app).ok()?.join(daily_osm_name(date));
+    serde_json::from_str::<Envelope>(&fs::read_to_string(path).ok()?).ok()?.city
 }
 
 /// Fetch the target's OSM data and render it via the hidden renderer window,
 /// returning the raw PNG bytes. Writes the OSM cache but NOT the PNG — the caller
 /// owns the PNG (so `render_preview` can render without persisting a wallpaper).
 ///
-/// `job_id` is echoed back by the renderer and matched against the pending job,
-/// so a stale result (e.g. a superseded custom pin) is rejected.
-async fn render_bytes_for(
-    app: &AppHandle,
-    job_id: &str,
-    osm_path: &Path,
-    resolved: Resolved,
-) -> Result<Vec<u8>> {
+/// `target.signature` doubles as the job id: the renderer echoes it back and it's
+/// matched against the pending job, so a stale result (e.g. a superseded custom pin)
+/// is rejected.
+async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) -> Result<Vec<u8>> {
     let renderer = ensure_renderer(app).await?;
-    let (w, h) = primary_size(&renderer)?;
+    let ((w, h), screens) = screen_geometry(&renderer)?;
     let aspect = w as f64 / h as f64;
     // 10km half = 20km long side. MUST match MAX_HALF_KM in scripts/osm-cli.ts:
     // the precached square (aspect=1) is the superset every screen-aspect
@@ -673,11 +879,11 @@ async fn render_bytes_for(
         // for the scheduled city, so cache + use it directly (overwriting any
         // stale day cache from a prior rotation pick).
         Some(DayOsm::Fetched(v)) => {
-            write_osm(osm_path, &v)?;
+            write_osm(&target.osm_path, &v)?;
             v
         }
-        // Already the contents of `osm_path` — writing it back would just burn a
-        // multi-MB write.
+        // Already the contents of `target.osm_path` — writing it back would just burn
+        // a multi-MB write.
         Some(DayOsm::Cached(v)) => v,
         // Nothing preloaded: a Customized pin (arbitrary coordinates, never
         // published), the reconstruction rung, or Dev Mode's bypass. Written back
@@ -689,7 +895,7 @@ async fn render_bytes_for(
             if let Some(date) = stamp {
                 stamp_manifest_envelope(&mut v, date, &city);
             }
-            write_osm(osm_path, &v)?;
+            write_osm(&target.osm_path, &v)?;
             v
         }
     };
@@ -717,10 +923,29 @@ async fn render_bytes_for(
     {
         let state = app.state::<AppState>();
         let mut g = state.pending.lock().await;
-        *g = Some(PendingJob { date: job_id.to_string(), tx });
+        *g = Some(PendingJob { date: target.signature.clone(), tx });
     }
 
-    let req = RenderRequest { date: job_id.to_string(), bbox, width: w, height: h, style, osm };
+    let label = target.label.map(|corner| LabelPayload {
+        corner,
+        name: city.name.clone(),
+        local_name: city.local_name.clone(),
+        country: city.country.clone(),
+        country_name: guess_store::country_name(&city.country).map(str::to_string),
+        lat: city.lat,
+        lon: city.lon,
+        insets: label_insets(w as f64, h as f64, &screens),
+    });
+
+    let req = RenderRequest {
+        date: target.signature.clone(),
+        bbox,
+        width: w,
+        height: h,
+        style,
+        osm,
+        label,
+    };
     renderer.emit("render-request", &req)?;
 
     tokio::time::timeout(Duration::from_secs(120), rx)
@@ -802,13 +1027,19 @@ pub async fn render_preview(
         }
         Err(e) => Err(e),
     };
-    {
-        let state = app.state::<AppState>();
+    // A run requested while the preview held `running` was queued for it (see
+    // `run_now`); hand it on now that the renderer is free.
+    let state = app.state::<AppState>();
+    let queued = {
         let mut g = state.running.lock().await;
         *g = false;
-    }
+        state.rerun.lock().unwrap().take()
+    };
     FrontendEvent::PipelineEnd.emit(app);
-    app.state::<AppState>().mark_status_dirty();
+    state.mark_status_dirty();
+    if let Some(kind) = queued {
+        spawn_run(app.clone(), kind);
+    }
     r
 }
 
@@ -872,7 +1103,11 @@ async fn wait_renderer_ready(app: &AppHandle) -> Result<()> {
 /// `None` here — GTK has no monitor for a window it hasn't realized, and the
 /// renderer window is deliberately never shown — hence the third rung, which
 /// goes through `gdk_display_get_n_monitors` and so answers on Wayland too.
-fn primary_size(win: &WebviewWindow) -> Result<(u32, u32)> {
+///
+/// Also returns every display the image will be shown on, for `label_insets` — the
+/// one PNG is applied to all of them. When the list can't be had, the sizing monitor
+/// stands in for it.
+fn screen_geometry(win: &WebviewWindow) -> Result<((u32, u32), Vec<Screen>)> {
     let m = match win.primary_monitor()? {
         Some(m) => m,
         None => win
@@ -881,13 +1116,79 @@ fn primary_size(win: &WebviewWindow) -> Result<(u32, u32)> {
             .ok_or_else(|| anyhow!("no monitor"))?,
     };
     let s = m.size();
-    Ok((s.width, s.height))
+    let mut screens: Vec<Screen> =
+        win.available_monitors().unwrap_or_default().iter().map(screen_of).collect();
+    if screens.is_empty() {
+        screens.push(screen_of(&m));
+    }
+    Ok(((s.width, s.height), screens))
+}
+
+/// One screen, as `label_insets` sees it: its physical size, and how much of each
+/// edge the system keeps for itself — the strip outside its `work_area`, i.e. the
+/// menu bar and a visible Dock on macOS (`NSScreen.visibleFrame`), the taskbar on
+/// Windows, panels on X11. Wayland reports the whole screen as the work area, so
+/// there it's all zeros and only the renderer's base margin keeps the caption clear.
+#[derive(Clone, Copy, Debug, PartialEq)]
+struct Screen {
+    w: f64,
+    h: f64,
+    reserved: Insets,
+}
+
+fn screen_of(m: &tauri::Monitor) -> Screen {
+    let (pos, size, wa) = (m.position(), m.size(), m.work_area());
+    let (mx, my, mw, mh) = (pos.x as f64, pos.y as f64, size.width as f64, size.height as f64);
+    let (wx, wy) = (wa.position.x as f64, wa.position.y as f64);
+    let (ww, wh) = (wa.size.width as f64, wa.size.height as f64);
+    Screen {
+        w: mw,
+        h: mh,
+        reserved: Insets {
+            top: (wy - my).max(0.0),
+            right: ((mx + mw) - (wx + ww)).max(0.0),
+            bottom: ((my + mh) - (wy + wh)).max(0.0),
+            left: (wx - mx).max(0.0),
+        },
+    }
+}
+
+/// How far the caption must stay from each edge of a `w`×`h` wallpaper so that it
+/// shows whole on every display.
+///
+/// Every platform applies the one PNG cover-fit (scaled to fill, centred, overflow
+/// cropped — see `wallpaper_set`), so a display whose aspect differs from the image's
+/// loses a band off two opposite edges, and its reserved strips cover a bit more.
+/// Both are converted to image pixels, and the worst display wins per edge — a 16:10
+/// laptop driving a 21:9 monitor crops a sixth off the top and bottom of the image,
+/// which a corner caption must survive. Each edge is capped at a quarter of the image
+/// so a degenerate geometry can't push the caption off the canvas. Deliberately not
+/// part of the render's signature: moving the Dock shouldn't re-render the day.
+fn label_insets(w: f64, h: f64, screens: &[Screen]) -> Insets {
+    let mut out = Insets::default();
+    for d in screens.iter().filter(|d| d.w > 0.0 && d.h > 0.0) {
+        // Screen pixels per image pixel under cover-fit.
+        let s = (d.w / w).max(d.h / h);
+        let crop_x = (w - d.w / s) / 2.0;
+        let crop_y = (h - d.h / s) / 2.0;
+        out.top = out.top.max(crop_y + d.reserved.top / s);
+        out.bottom = out.bottom.max(crop_y + d.reserved.bottom / s);
+        out.left = out.left.max(crop_x + d.reserved.left / s);
+        out.right = out.right.max(crop_x + d.reserved.right / s);
+    }
+    Insets {
+        top: out.top.min(h / 4.0),
+        right: out.right.min(w / 4.0),
+        bottom: out.bottom.min(h / 4.0),
+        left: out.left.min(w / 4.0),
+    }
 }
 
 /// Visit every date-keyed artifact in `dir` — the downloaded OSM data
 /// (`YYYY-MM-DD.osm.json`) and rendered wallpapers (`YYYY-MM-DD-<theme>.png`).
 /// Matches on the leading 10-char ISO date prefix (slicing, not splitting on
-/// '.'), so it never touches anything that isn't ours. Used by `cleanup_daily`.
+/// '.'), so it never touches anything that isn't ours. Used by `cleanup_daily`,
+/// `remove_day_pngs` and `wipe_cache`.
 fn for_each_daily_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDate)) -> Result<()> {
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
@@ -923,6 +1224,16 @@ fn cleanup_daily(dir: &Path, today: NaiveDate) -> Result<()> {
             age <= KEEP_DAYS
         };
         if !keep {
+            let _ = fs::remove_file(entry.path());
+        }
+    })
+}
+
+/// Delete every rendered PNG for `date` in the Daily cache — `<date>-*.png`, all
+/// themes and caption variants — leaving its OSM payload for the re-render.
+fn remove_day_pngs(dir: &Path, date: NaiveDate) -> Result<()> {
+    for_each_daily_artifact(dir, |entry, d| {
+        if d == date && entry.file_name().to_string_lossy().ends_with(".png") {
             let _ = fs::remove_file(entry.path());
         }
     })
@@ -986,36 +1297,30 @@ pub fn wipe_cache(app: &AppHandle) -> Result<(usize, u64)> {
     Ok((files, bytes))
 }
 
-/// Apply the current mode's wallpaper without forcing a re-render — reuses a
-/// cached PNG if one exists, otherwise renders it. Fire-and-forget; errors are
-/// logged. Used on mode switches / applying a pin, where the goal is to show the
-/// right wallpaper, not necessarily a fresh render. A no-op when disabled / no pin.
-pub fn spawn_apply(app: AppHandle) {
+fn spawn_run(app: AppHandle, kind: RunKind) {
     tauri::async_runtime::spawn(async move {
-        if let Err(e) = run_now(app).await {
-            log::error!("[pipeline] apply failed: {e}");
+        if let Err(e) = run_now(app, kind).await {
+            log::error!("[pipeline] {kind:?} run failed: {e}");
         }
     });
 }
 
-/// Delete the current target's PNG and re-render + reapply it (OSM data is reused
-/// if cached). Used for theme switches, style/color/layer edits, and "regenerate
-/// now" — where the output must change even though the filename may not. Clearing
-/// `last_applied` ensures the scheduler re-applies rather than treating stale
-/// state as current. Fire-and-forget: errors are logged. A no-op when updates are
-/// disabled / no pin.
+/// Apply the current mode's wallpaper without forcing a re-render — reuses a
+/// cached PNG if one exists, otherwise renders it. Fire-and-forget; errors are
+/// logged. Used on mode switches / applying a pin / revealing today's city or moving
+/// its caption, where the goal is to show the right wallpaper, not necessarily a fresh
+/// render. A no-op when disabled / no pin.
+pub fn spawn_apply(app: AppHandle) {
+    spawn_run(app, RunKind::Apply);
+}
+
+/// Re-render + reapply today's wallpaper even though its filename may not change
+/// (OSM data is reused if cached) — see `clear_for_force` for what gets deleted
+/// first, and why it's every PNG cached for today. Used for theme switches,
+/// style/color/layer edits, and "regenerate now".
+/// Fire-and-forget: errors are logged. A no-op when updates are disabled / no pin.
 pub fn spawn_force_regen(app: AppHandle) {
-    tauri::async_runtime::spawn(async move {
-        let date = city::today();
-        let theme = effective_theme(&app);
-        if let Ok(Some(target)) = resolve_target(&app, date, theme) {
-            let _ = fs::remove_file(&target.png_path);
-        }
-        *app.state::<AppState>().last_applied.lock().unwrap() = None;
-        if let Err(e) = run_now(app).await {
-            log::error!("[pipeline] force regen failed: {e}");
-        }
-    });
+    spawn_run(app, RunKind::Force);
 }
 
 #[cfg(test)]
@@ -1243,6 +1548,9 @@ mod tests {
             format!("{}-dark.png", day(-1)),
             // Still inside the PNG window.
             format!("{}-light.png", day(-7)),
+            // A captioned variant ages exactly like the plain one: the date prefix
+            // is all the sweep reads.
+            format!("{}-dark-label-bottom-right.png", day(-7)),
             // An advance preview five days out — reapplied verbatim when it lands.
             format!("{}-light.png", day(5)),
             // Not ours: no leading ISO date, so nothing should touch it.
@@ -1253,6 +1561,7 @@ mod tests {
             format!("{}.osm.json", day(-2)),
             format!("{}.osm.json", day(-7)),
             format!("{}-light.png", day(-8)),
+            format!("{}-light-label-top-left.png", day(-8)),
             // A future preview's payload: re-previewing re-resolves anyway.
             format!("{}.osm.json", day(5)),
         ];
@@ -1269,5 +1578,153 @@ mod tests {
             assert!(!dir.join(f).exists(), "{f} should have been swept");
         }
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    /// Unlabeled names must stay byte-for-byte what they were before captions
+    /// existed — every cache already on disk is keyed by them — and a caption must
+    /// change both the signature (so the scheduler repaints) and the file (so the
+    /// uncaptioned PNG can't be reapplied in its place).
+    #[test]
+    fn daily_names_are_unchanged_without_a_caption_and_distinct_with_one() {
+        let date = NaiveDate::from_ymd_opt(2026, 10, 16).unwrap();
+        assert_eq!(
+            daily_names(date, "light", None),
+            ("daily:2026-10-16:light".to_string(), "2026-10-16-light.png".to_string())
+        );
+        assert_eq!(
+            daily_names(date, "dark", Some("bottom-right")),
+            (
+                "daily:2026-10-16:dark:label-bottom-right".to_string(),
+                "2026-10-16-dark-label-bottom-right.png".to_string()
+            )
+        );
+        assert_ne!(
+            daily_names(date, "dark", Some("top-left")),
+            daily_names(date, "dark", Some("bottom-right"))
+        );
+    }
+
+    /// Queued requests merge with `max`, so the declaration order is the merge order: a
+    /// queued Force must outrank a queued Apply, and either must outrank nothing queued.
+    #[test]
+    fn queued_run_kinds_merge_to_the_stronger_one() {
+        assert_eq!(Some(RunKind::Apply).max(Some(RunKind::Force)), Some(RunKind::Force));
+        assert_eq!(None.max(Some(RunKind::Apply)), Some(RunKind::Apply));
+    }
+
+    #[test]
+    fn remove_day_pngs_clears_every_variant_of_that_day_only() {
+        let dir = std::env::temp_dir().join(format!("inkcity-daypngs-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        let today = NaiveDate::from_ymd_opt(2026, 10, 16).unwrap();
+        let gone =
+            ["2026-10-16-light.png", "2026-10-16-dark.png", "2026-10-16-light-label-top-left.png"];
+        let kept = [
+            "2026-10-16.osm.json",
+            "2026-10-15-light.png",
+            "2026-10-17-dark-label-bottom-right.png",
+        ];
+        for f in gone.iter().chain(kept.iter()) {
+            fs::write(dir.join(f), b"x").unwrap();
+        }
+        remove_day_pngs(&dir, today).unwrap();
+        for f in gone {
+            assert!(!dir.join(f).exists(), "{f} should be gone");
+        }
+        for f in kept {
+            assert!(dir.join(f).exists(), "{f} should be kept");
+        }
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    /// Same reasoning as the `Style` payload test: nothing type-checks the IPC
+    /// boundary, so pin the camelCase keys `MapLabel` (src/core/types.ts) reads, and
+    /// that an unlabeled request carries no `label` key at all.
+    #[test]
+    fn label_payload_uses_the_keys_the_renderer_reads() {
+        let label = LabelPayload {
+            corner: "bottom-right",
+            name: "Moscow".into(),
+            local_name: "Москва".into(),
+            country: "RU".into(),
+            country_name: Some("Russia".into()),
+            lat: 55.7558,
+            lon: 37.6173,
+            insets: Insets { top: 1.0, right: 2.0, bottom: 3.0, left: 4.0 },
+        };
+        let v = serde_json::to_value(&label).unwrap();
+        assert_eq!(v["corner"], "bottom-right");
+        assert_eq!(v["localName"], "Москва");
+        assert_eq!(v["countryName"], "Russia");
+        assert_eq!(v["insets"]["bottom"], 3.0);
+        let req = |label| RenderRequest {
+            date: "daily:2026-10-16:light".into(),
+            bbox: Bbox { south: 0.0, west: 0.0, north: 1.0, east: 1.0 },
+            width: 10,
+            height: 10,
+            style: Style {
+                background: "#000000".into(),
+                foreground: "#ffffff".into(),
+                preset: StylePreset::Standard,
+                show_water: false,
+                show_airports: false,
+                railway_style: RailwayStyle::Off,
+                show_aerialways: false,
+                variant: StyleVariant::Ink,
+            },
+            osm: serde_json::json!({}),
+            label,
+        };
+        assert!(serde_json::to_value(req(None)).unwrap().get("label").is_none());
+        assert_eq!(serde_json::to_value(req(Some(label))).unwrap()["label"]["name"], "Moscow");
+    }
+
+    fn screen(w: f64, h: f64, top: f64, right: f64, bottom: f64, left: f64) -> Screen {
+        Screen { w, h, reserved: Insets { top, right, bottom, left } }
+    }
+
+    #[test]
+    fn label_insets_cover_the_menu_bar_and_dock_of_a_matching_display() {
+        // A 2880×1800 MacBook screen: 74 px menu bar, 140 px Dock at the bottom.
+        let i = label_insets(2880.0, 1800.0, &[screen(2880.0, 1800.0, 74.0, 0.0, 140.0, 0.0)]);
+        assert_eq!(i, Insets { top: 74.0, right: 0.0, bottom: 140.0, left: 0.0 });
+    }
+
+    #[test]
+    fn label_insets_add_the_crop_of_a_display_with_another_aspect() {
+        // A 16:10 wallpaper on a 21:9 (3440×1440) monitor: cover-fit scales the width
+        // to fit and crops the overflow off the top and bottom equally.
+        let (w, h) = (2880.0, 1800.0);
+        let i = label_insets(
+            w,
+            h,
+            &[
+                screen(2880.0, 1800.0, 0.0, 0.0, 0.0, 0.0),
+                screen(3440.0, 1440.0, 0.0, 0.0, 96.0, 0.0),
+            ],
+        );
+        let s = 3440.0 / w;
+        let crop_y = (h - 1440.0 / s) / 2.0;
+        assert!((i.top - crop_y).abs() < 1e-9, "{i:?}");
+        assert!((i.bottom - (crop_y + 96.0 / s)).abs() < 1e-9, "{i:?}");
+        assert_eq!(i.left, 0.0);
+        assert_eq!(i.right, 0.0);
+    }
+
+    /// Wayland reports the whole screen as its work area: no insets at all, the
+    /// renderer's own margin is all that's left.
+    #[test]
+    fn label_insets_are_zero_when_nothing_is_reserved() {
+        let i = label_insets(1920.0, 1080.0, &[screen(1920.0, 1080.0, 0.0, 0.0, 0.0, 0.0)]);
+        assert_eq!(i, Insets::default());
+        assert_eq!(label_insets(1920.0, 1080.0, &[]), Insets::default());
+    }
+
+    #[test]
+    fn label_insets_are_capped_at_a_quarter_of_the_image() {
+        let i = label_insets(1000.0, 1000.0, &[screen(1000.0, 1000.0, 900.0, 0.0, 0.0, 600.0)]);
+        assert_eq!(i.top, 250.0);
+        assert_eq!(i.left, 250.0);
     }
 }

@@ -67,7 +67,40 @@ fn cities() -> &'static [City] {
 }
 
 pub fn today() -> NaiveDate {
-    Local::now().date_naive()
+    let today = Local::now().date_naive();
+    #[cfg(debug_assertions)]
+    if let Some(days) = dev_day_offset() {
+        return today + chrono::Duration::days(days);
+    }
+    today
+}
+
+/// Dev builds only: `INKCITY_DAY_OFFSET=<n> pnpm tauri dev` makes the whole app
+/// believe today is `n` days from now — the schedule, the caches, `Status.date` and
+/// with it the guess-the-country game all follow `today()`. For testing what only
+/// happens across days (the midnight rollover, streaks, the game resuming after
+/// the "Daily guess" switch is turned back on) without touching the system clock. The CDN
+/// publishes about a week of days ahead, so offsets of 0–6 resolve to scheduled
+/// cities; beyond that a day can't be named. Read once; compiled out of release
+/// builds entirely.
+#[cfg(debug_assertions)]
+fn dev_day_offset() -> Option<i64> {
+    static OFFSET: OnceLock<Option<i64>> = OnceLock::new();
+    *OFFSET.get_or_init(|| {
+        let raw = std::env::var("INKCITY_DAY_OFFSET").ok()?;
+        match raw.trim().parse::<i64>() {
+            Ok(days) => {
+                log::warn!("[city] INKCITY_DAY_OFFSET: pretending today is {days} day(s) away");
+                Some(days)
+            }
+            Err(_) => {
+                log::warn!(
+                    "[city] ignoring INKCITY_DAY_OFFSET={raw:?}: not a whole number of days"
+                );
+                None
+            }
+        }
+    })
 }
 
 /// Cities whose `name`, `localName` or country code matches `query`, best first,

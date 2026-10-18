@@ -60,7 +60,36 @@
     "locationPlaceholder": "Tên thành phố, toạ độ, hoặc liên kết bản đồ",
     "invalidLocation": "Không có thành phố phù hợp — hãy thử toạ độ, ví dụ 51.5074, -0.1278.",
     "apply": "Áp dụng",
-    "customRateHint": "Vị trí tùy chỉnh không được lưu sẵn — mỗi lần áp dụng sẽ tải dữ liệu bản đồ trực tiếp, vì vậy đừng áp dụng nhiều vị trí mới liên tiếp, nếu không bạn có thể bị giới hạn số yêu cầu của dịch vụ."
+    "customRateHint": "Vị trí tùy chỉnh không được lưu sẵn — mỗi lần áp dụng sẽ tải dữ liệu bản đồ trực tiếp, vì vậy đừng áp dụng nhiều vị trí mới liên tiếp, nếu không bạn có thể bị giới hạn số yêu cầu của dịch vụ.",
+    "gameLabel": "Đoán mỗi ngày",
+    "gameDescOn": "Mỗi ngày, hãy đoán thành phố trên hình nền thuộc quốc gia hoặc khu vực nào — thành phố sẽ được tiết lộ khi bạn chơi xong.",
+    "gameDescOff": "Thành phố mỗi ngày được hiển thị ngay.",
+    "gameTomorrow": "Thành phố hôm nay đã được tiết lộ — việc đoán sẽ bắt đầu từ ngày mai.",
+    "gameOffTitle": "Tắt trò chơi đoán mỗi ngày?",
+    "gameOffBody": "Từ giờ, thành phố mỗi ngày sẽ được hiển thị ngay. Bạn có thể bật lại trò chơi bất cứ lúc nào; khi đó trò chơi sẽ bắt đầu từ ngày hôm sau.",
+    "gameOffForfeit": "Lượt chơi hôm nay sẽ bị tính là thua.",
+    "gameOffConfirm": "Tắt",
+    "revealAfterGame": "Tiết lộ sau lượt chơi hôm nay"
+  },
+  "game": {
+    "prompt": "Thành phố này thuộc quốc gia hoặc khu vực nào?",
+    "placeholder": "Nhập quốc gia hoặc khu vực…",
+    "guess": "Đoán",
+    "progress": "Lượt đoán {{n}}/{{max}}",
+    "alreadyGuessed": "Đã đoán rồi — hãy thử đáp án khác.",
+    "noMatch": "Hãy chọn một quốc gia hoặc khu vực trong danh sách.",
+    "painting": "Đang vẽ hình nền hôm nay…",
+    "paintFailed": "Không đặt được hình nền hôm nay — thử lại mỗi phút."
+  },
+  "result": {
+    "won": "Đoán đúng ở lượt thứ {{n}}",
+    "lost": "Không đoán đúng sau {{max}} lượt — đáp án là {{country}}",
+    "gaveUp": "Đã bỏ cuộc — đáp án là {{country}}",
+    "played": "Đã chơi",
+    "winRate": "Tỷ lệ thắng",
+    "streak": "Chuỗi thắng hiện tại",
+    "maxStreak": "Chuỗi thắng dài nhất",
+    "distribution": "Phân bố số lượt đoán"
   },
   "style": {
     "theme": "Chủ đề bản đồ",
@@ -74,6 +103,13 @@
     "hintMinimal": "Chỉ đường chính",
     "hintStandard": "Độ rộng theo loại đường",
     "hintBold": "Phân cấp tương phản cao",
+    "cityLabel": "Thông tin thành phố trên màn hình nền",
+    "cityLabelHint": "Chỉ áp dụng cho chế độ Hằng ngày. Được vẽ lên hình nền khi thành phố hôm nay đã được tiết lộ — khi lượt chơi hôm nay đã kết thúc, hoặc khi tắt “Đoán mỗi ngày”.",
+    "cityLabelOff": "Tắt",
+    "cityLabelTopLeft": "Góc trên bên trái",
+    "cityLabelTopRight": "Góc trên bên phải",
+    "cityLabelBottomLeft": "Góc dưới bên trái",
+    "cityLabelBottomRight": "Góc dưới bên phải",
     "lightColors": "Bảng màu sáng",
     "darkColors": "Bảng màu tối",
     "active": "Đang dùng",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Bộ nhớ đệm đã trống",
     "bypassCacheTitle": "Bỏ qua bộ nhớ đệm & CDN",
     "bypassCacheDesc": "Lấy thành phố của ngày đó từ lịch đọc trực tiếp từ GitHub, rồi tải dữ liệu bản đồ trực tiếp từ Overpass API thay vì CDN, ghi đè bộ đệm cục bộ. Dùng khi thử nghiệm thay đổi dữ liệu bản đồ. Tự tắt sau khi khởi động lại.",
-    "dailyOnly": "Chỉ áp dụng cho chế độ cập nhật Hằng ngày."
+    "dailyOnly": "Chỉ áp dụng cho chế độ cập nhật Hằng ngày.",
+    "resetTodayTitle": "Đặt lại trò chơi hôm nay",
+    "resetTodayDesc": "Xóa các lượt đoán hôm nay và bật lại “Đoán mỗi ngày” để có thể chơi lại ngày hôm nay.",
+    "resetTodayButton": "Đặt lại",
+    "clearGuessTitle": "Xóa dữ liệu trò chơi",
+    "clearGuessDesc": "Xóa lượt đoán của mọi ngày, số liệu thống kê và cài đặt “Đoán mỗi ngày”.",
+    "clearGuessButton": "Xóa",
+    "guessFileTitle": "Tệp lưu trò chơi",
+    "guessFileDesc": "Hiển thị guess.json, nơi lưu lịch sử trò chơi và cài đặt “Đoán mỗi ngày”.",
+    "guessFileButton": "Hiển thị"
   },
   "common": {
     "loading": "đang tải…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Mở Cài đặt",
+    "openGame": "Mở Trò chơi",
     "dailyUpdates": "Cập nhật hàng ngày",
     "regenerateNow": "Tạo lại",
     "quit": "Thoát InkCity",

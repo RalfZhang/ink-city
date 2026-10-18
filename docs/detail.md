@@ -58,6 +58,8 @@ pnpm tauri dev
 
 `pnpm tauri dev`/`build` always compiles the sidecar (`ink-city-osm-cli`, built from `scripts/osm-cli.ts`) for your machine first (the `pretauri` script runs `build:sidecar`), so a fresh clone works with no separate manual step — just bun installed. Re-run `pnpm build:sidecar` yourself only if you want to rebuild it without going through `tauri dev`/`build`.
 
+**Testing across days.** A dev build reads `INKCITY_DAY_OFFSET` and treats today as that many days away — `INKCITY_DAY_OFFSET=1 pnpm tauri dev` is tomorrow, for everything that keys off the date: the schedule, the caches, the City tab and the guess-the-country game (rollover, streaks, the game resuming after "Daily guess" is turned back on). The CDN publishes about a week ahead, so 0–6 resolve to scheduled cities. Release builds compile it out. Within a day, Dev Mode can reset today's game, clear all game data, or show `guess.json` for editing by hand.
+
 **Build a release bundle**
 
 ```bash

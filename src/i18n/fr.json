@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nom de ville, coordonnées ou lien de carte",
     "invalidLocation": "Aucune ville correspondante — essayez des coordonnées, p. ex. 51.5074, -0.1278.",
     "apply": "Appliquer",
-    "customRateHint": "Les lieux personnalisés ne sont pas pré-mis en cache : chaque application télécharge les données cartographiques en direct. Évitez donc d'appliquer de nombreux nouveaux lieux à la suite, sous peine d'atteindre la limite de requêtes du service."
+    "customRateHint": "Les lieux personnalisés ne sont pas pré-mis en cache : chaque application télécharge les données cartographiques en direct. Évitez donc d'appliquer de nombreux nouveaux lieux à la suite, sous peine d'atteindre la limite de requêtes du service.",
+    "gameLabel": "Devinette du jour",
+    "gameDescOn": "Chaque jour, devinez dans quel pays ou quelle région se trouve la ville du fond d'écran — la ville est révélée une fois la partie finie.",
+    "gameDescOff": "La ville du jour s'affiche directement.",
+    "gameTomorrow": "La ville du jour est déjà révélée — la devinette commence demain.",
+    "gameOffTitle": "Désactiver la devinette du jour ?",
+    "gameOffBody": "Désormais, la ville du jour s'affichera directement. Vous pouvez réactiver le jeu à tout moment ; il commencera alors le lendemain.",
+    "gameOffForfeit": "La partie du jour comptera comme perdue.",
+    "gameOffConfirm": "Désactiver",
+    "revealAfterGame": "Révélée après la partie du jour"
+  },
+  "game": {
+    "prompt": "Dans quel pays ou quelle région se trouve cette ville ?",
+    "placeholder": "Saisissez un pays ou une région…",
+    "guess": "Valider",
+    "progress": "Essai {{n}} sur {{max}}",
+    "alreadyGuessed": "Déjà proposé — essayez autre chose.",
+    "noMatch": "Choisissez un pays ou une région dans la liste.",
+    "painting": "Dessin du fond d'écran du jour…",
+    "paintFailed": "Impossible de définir le fond d'écran du jour — nouvelle tentative chaque minute."
+  },
+  "result": {
+    "won": "Trouvé à l'essai {{n}}",
+    "lost": "Pas trouvé en {{max}} essais — réponse : {{country}}",
+    "gaveUp": "Abandon — réponse : {{country}}",
+    "played": "Parties",
+    "winRate": "Taux de réussite",
+    "streak": "Série actuelle",
+    "maxStreak": "Meilleure série",
+    "distribution": "Répartition des essais"
   },
   "style": {
     "theme": "Thème de la carte",
@@ -74,6 +103,13 @@
     "hintMinimal": "Routes principales uniquement",
     "hintStandard": "Largeur selon la catégorie de route",
     "hintBold": "Hiérarchie à fort contraste",
+    "cityLabel": "Infos de la ville sur le bureau",
+    "cityLabelHint": "Mode Quotidien uniquement. Les infos sont dessinées sur le fond d'écran une fois la ville du jour révélée — si la partie du jour est terminée ou si « Devinette du jour » est désactivée.",
+    "cityLabelOff": "Désactivé",
+    "cityLabelTopLeft": "En haut à gauche",
+    "cityLabelTopRight": "En haut à droite",
+    "cityLabelBottomLeft": "En bas à gauche",
+    "cityLabelBottomRight": "En bas à droite",
     "lightColors": "Palette claire",
     "darkColors": "Palette sombre",
     "active": "Actif",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Le cache est déjà vide",
     "bypassCacheTitle": "Contourner le cache et le CDN",
     "bypassCacheDesc": "Prend la ville du jour dans le calendrier lu directement sur GitHub, puis récupère ses données cartographiques en direct via l'API Overpass au lieu du CDN, en écrasant le cache local. Utile pour tester des modifications des données. Réinitialisé au redémarrage.",
-    "dailyOnly": "Ne s'applique qu'au mode de mise à jour Quotidien."
+    "dailyOnly": "Ne s'applique qu'au mode de mise à jour Quotidien.",
+    "resetTodayTitle": "Réinitialiser la partie du jour",
+    "resetTodayDesc": "Supprime les essais du jour et réactive « Devinette du jour », pour pouvoir rejouer la journée.",
+    "resetTodayButton": "Réinitialiser",
+    "clearGuessTitle": "Effacer les données du jeu",
+    "clearGuessDesc": "Supprime les essais de tous les jours, les statistiques et le réglage « Devinette du jour ».",
+    "clearGuessButton": "Effacer",
+    "guessFileTitle": "Fichier de sauvegarde",
+    "guessFileDesc": "Affiche guess.json, qui contient l'historique du jeu et le réglage « Devinette du jour ».",
+    "guessFileButton": "Afficher"
   },
   "common": {
     "loading": "chargement…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Ouvrir les paramètres",
+    "openGame": "Ouvrir le jeu",
     "dailyUpdates": "Mises à jour quotidiennes",
     "regenerateNow": "Régénérer",
     "quit": "Quitter InkCity",

@@ -94,6 +94,9 @@ function App() {
     const sync = () => {
       invoke("update_tray_labels", {
         openSettings: i18n.t("tray.openSettings"),
+        // Shown instead of openSettings while today's game is playable — Rust
+        // picks between the two (`tray::sync_open_item`).
+        openGame: i18n.t("tray.openGame"),
         dailyUpdates: i18n.t("tray.dailyUpdates"),
         regenerateNow: i18n.t("tray.regenerateNow"),
         quit: i18n.t("tray.quit"),

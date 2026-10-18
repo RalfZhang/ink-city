@@ -6,10 +6,17 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { STYLE_PRESETS } from "@/core";
-import type { ColorPair, Status, StylePreset, ThemeMode } from "../types";
+import { LABEL_CORNERS, STYLE_PRESETS } from "@/core";
+import type { CityLabel, ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
   status: Status;
@@ -38,6 +45,18 @@ const PRESET_LABELS: Record<StylePreset, { labelKey: ParseKeys; hintKey: ParseKe
   bold: { labelKey: "style.presetBold", hintKey: "style.hintBold" },
 };
 
+// The desktop city caption's corner, "off" first, then `LABEL_CORNERS` order. A
+// `Record` for the same reason as `PRESET_LABELS`: a corner added to the union is a
+// missing-key error here rather than an option the selector silently lacks.
+const CITY_LABELS: Record<CityLabel, ParseKeys> = {
+  off: "style.cityLabelOff",
+  "top-left": "style.cityLabelTopLeft",
+  "top-right": "style.cityLabelTopRight",
+  "bottom-left": "style.cityLabelBottomLeft",
+  "bottom-right": "style.cityLabelBottomRight",
+};
+const CITY_LABEL_ORDER: CityLabel[] = ["off", ...LABEL_CORNERS];
+
 export default function Style({ status, busy, onError }: Props) {
   const { t } = useTranslation();
 
@@ -47,6 +66,7 @@ export default function Style({ status, busy, onError }: Props) {
   const [preset, setPreset] = useState<StylePreset>(status.style);
   const [light, setLight] = useState<ColorPair>(status.light);
   const [dark, setDark] = useState<ColorPair>(status.dark);
+  const [cityLabel, setCityLabel] = useState<CityLabel>(status.cityLabel);
   const [defaults, setDefaults] = useState<Defaults | null>(null);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
@@ -82,7 +102,8 @@ export default function Style({ status, busy, onError }: Props) {
     light.background !== status.light.background ||
     light.foreground !== status.light.foreground ||
     dark.background !== status.dark.background ||
-    dark.foreground !== status.dark.foreground;
+    dark.foreground !== status.dark.foreground ||
+    cityLabel !== status.cityLabel;
 
   const save = async () => {
     setSaving(true);
@@ -93,6 +114,7 @@ export default function Style({ status, busy, onError }: Props) {
         style: preset,
         light,
         dark,
+        cityLabel,
       });
       if (!result.regenStarted) {
         setSaving(false);
@@ -140,6 +162,27 @@ export default function Style({ status, busy, onError }: Props) {
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+        </Section>
+
+        <Separator />
+
+        <Section label={t("style.cityLabel")} hint={t("style.cityLabelHint")}>
+          <Select
+            value={cityLabel}
+            onValueChange={(v) => setCityLabel(v as CityLabel)}
+            disabled={saving}
+          >
+            <SelectTrigger className="w-[150px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CITY_LABEL_ORDER.map((id) => (
+                <SelectItem key={id} value={id}>
+                  {t(CITY_LABELS[id])}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Section>
 
         <Separator />

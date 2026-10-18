@@ -13,9 +13,11 @@ use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::{oneshot, Mutex, Notify};
 
 use crate::config::{
-    ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant, ThemeMode,
-    UpdateCheck, UpdateMode,
+    CityLabel, ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant,
+    ThemeMode, UpdateCheck, UpdateMode,
 };
+use crate::guess_store::StoreView;
+use crate::pipeline::RunKind;
 use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
@@ -94,10 +96,36 @@ pub struct AppState {
     pub proxy_enabled: AtomicBool,
     pub proxy_url: StdMutex<String>,
     pub map_provider: StdMutex<MapProvider>,
+    /// Where the wallpaper carries the day's city caption (Style tab). Persisted —
+    /// see `config::CityLabel`.
+    pub city_label: StdMutex<CityLabel>,
+    /// The two fields of the guess-the-country save the backend needs — the "show
+    /// city info" preference and which days have ended — for
+    /// `guess_store::is_revealed`, which gates the wallpaper caption. Seeded from
+    /// `guess.json` at launch and replaced on every `guess_store_write`; the save
+    /// itself belongs to the frontend (src/core/guess), so this is never written
+    /// back. Never hold it across a call into the pipeline: `pipeline::label_for`
+    /// looks the city up (`city_for_status` takes `resolved_city`) before locking it.
+    pub guess_view: StdMutex<StoreView>,
+    /// The date whose Daily wallpaper is on the desktop right now — set by
+    /// `pipeline::apply_target` once `wallpaper_set::set` succeeds, and cleared when
+    /// a Customized pin is applied over it (`pipeline::mark_painted`). `Status` reports
+    /// whether that's today (`today_painted`), and the game waits for it, so nobody
+    /// is asked to guess a map that isn't up yet (it can lag the city by a render,
+    /// or never arrive if setting the wallpaper fails). In-memory only: on launch the
+    /// first reconcile reapplies the cached PNG within moments and sets it again. A
+    /// force regen doesn't clear it — the old image stays up until the new one
+    /// replaces it, so the game shouldn't close in between.
+    pub painted_day: StdMutex<Option<chrono::NaiveDate>>,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
     pub running: Mutex<bool>,
+    /// A `pipeline::run_now` request that arrived while a run held `running`, merged
+    /// to the stronger kind (a queued `Force` absorbs a queued `Apply`). Only touched
+    /// under the `running` lock; the run in flight drains it before releasing
+    /// `running` (and `render_preview` hands it on) — see `run_now`. In-memory only.
+    pub rerun: StdMutex<Option<RunKind>>,
     pub quitting: AtomicBool,
     /// Signature of the render the wallpaper was last successfully applied for —
     /// see `pipeline::Target::signature`. In-memory only (None on launch →
@@ -182,8 +210,14 @@ impl AppState {
             proxy_enabled: AtomicBool::new(cfg.proxy_enabled),
             proxy_url: StdMutex::new(cfg.proxy_url.clone()),
             map_provider: StdMutex::new(cfg.map_provider),
+            city_label: StdMutex::new(cfg.city_label),
+            // Read from disk in `lib.rs`'s setup, which has the AppHandle that
+            // locates it; empty until then.
+            guess_view: StdMutex::new(StoreView::default()),
+            painted_day: StdMutex::new(None),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
+            rerun: StdMutex::new(None),
             quitting: AtomicBool::new(false),
             last_applied: StdMutex::new(None),
             resolved_city: StdMutex::new(None),

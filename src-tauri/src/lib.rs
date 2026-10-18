@@ -16,6 +16,10 @@
 //!     port of `src/core/bbox.ts`; keep the two in sync.
 //!   - `config` (persisted) vs `state` (live). `tray`, `updates` — the windowless
 //!     surfaces, whose user-facing strings are pushed in from the frontend's i18n.
+//!   - `guess_store` — keeps the guess-the-country game's save on disk. The game
+//!     itself runs in the frontend (`src/core/guess`, shared with the website);
+//!     the backend only reads whether today is revealed, to gate the wallpaper's
+//!     city caption.
 mod bbox;
 mod cdn;
 mod cities_update;
@@ -24,6 +28,7 @@ mod commands;
 mod config;
 mod events;
 mod github_mirror;
+mod guess_store;
 mod osm_sidecar;
 mod pipeline;
 mod scheduler;
@@ -188,6 +193,9 @@ pub fn run() {
                 github_mirror::set_proxy(Some(cfg.proxy_url.clone()));
             }
             handle.manage(AppState::from_config(&cfg));
+            // Whether today is already revealed decides the first render's city
+            // caption, so the game's save is read before the scheduler starts.
+            *handle.state::<AppState>().guess_view.lock().unwrap() = guess_store::load_view(handle);
 
             // First-launch default: turn on launch-at-login once. Autostart
             // state lives in the OS (LaunchAgent plist / HKCU Run key), not in
@@ -342,6 +350,9 @@ pub fn run() {
                 loop {
                     dirty.notified().await;
                     let status = commands::build_status(&emit_handle).await;
+                    // The tray's "Open Game" / "Open Settings" entry reads the same
+                    // snapshot, so it's re-checked on the same signal.
+                    tray::sync_open_item(&emit_handle, &status);
                     crate::events::FrontendEvent::StatusChanged(status).emit(&emit_handle);
                 }
             });
@@ -368,6 +379,9 @@ pub fn run() {
             commands::apply_proxy_settings,
             commands::get_color_defaults,
             commands::regenerate_now,
+            commands::guess_store_read,
+            commands::guess_store_write,
+            commands::reveal_guess_store,
             commands::renderer_ready,
             commands::submit_render_result,
             commands::quit_app,

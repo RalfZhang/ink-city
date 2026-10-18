@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nome da cidade, coordenadas ou um link de mapa",
     "invalidLocation": "Nenhuma cidade correspondente — tente coordenadas, ex.: 51.5074, -0.1278.",
     "apply": "Aplicar",
-    "customRateHint": "Locais personalizados não são pré-armazenados em cache — cada aplicação busca os dados do mapa ao vivo, portanto evite aplicar muitos locais novos em sequência ou você pode atingir o limite de requisições do serviço."
+    "customRateHint": "Locais personalizados não são pré-armazenados em cache — cada aplicação busca os dados do mapa ao vivo, portanto evite aplicar muitos locais novos em sequência ou você pode atingir o limite de requisições do serviço.",
+    "gameLabel": "Palpite do dia",
+    "gameDescOn": "Todo dia, adivinhe em qual país ou região fica a cidade do papel de parede — a cidade é revelada quando a partida termina.",
+    "gameDescOff": "A cidade de cada dia é mostrada imediatamente.",
+    "gameTomorrow": "A cidade de hoje já foi revelada — os palpites começam amanhã.",
+    "gameOffTitle": "Desativar o palpite do dia?",
+    "gameOffBody": "A partir de agora, a cidade de cada dia será mostrada imediatamente. Você pode reativar o jogo a qualquer momento; ele começa no dia seguinte.",
+    "gameOffForfeit": "A partida de hoje contará como derrota.",
+    "gameOffConfirm": "Desativar",
+    "revealAfterGame": "Revelada após a partida de hoje"
+  },
+  "game": {
+    "prompt": "Em qual país ou região fica esta cidade?",
+    "placeholder": "Digite um país ou região…",
+    "guess": "Adivinhar",
+    "progress": "Tentativa {{n}} de {{max}}",
+    "alreadyGuessed": "Resposta já tentada — tente outra.",
+    "noMatch": "Escolha um país ou região da lista.",
+    "painting": "Desenhando o papel de parede de hoje…",
+    "paintFailed": "Não foi possível definir o papel de parede de hoje; nova tentativa a cada minuto."
+  },
+  "result": {
+    "won": "Acertou na {{n}}ª tentativa",
+    "lost": "Não acertou em {{max}} tentativas — resposta: {{country}}",
+    "gaveUp": "Desistiu — resposta: {{country}}",
+    "played": "Partidas",
+    "winRate": "Taxa de vitórias",
+    "streak": "Sequência atual",
+    "maxStreak": "Melhor sequência",
+    "distribution": "Distribuição de tentativas"
   },
   "style": {
     "theme": "Tema do mapa",
@@ -74,6 +103,13 @@
     "hintMinimal": "Apenas vias principais",
     "hintStandard": "Largura por classe de via",
     "hintBold": "Hierarquia de alto contraste",
+    "cityLabel": "Informações da cidade na área de trabalho",
+    "cityLabelHint": "Apenas no modo Diário. As informações são desenhadas no papel de parede quando a cidade de hoje é revelada — ao fim da partida de hoje ou com “Palpite do dia” desativado.",
+    "cityLabelOff": "Desativado",
+    "cityLabelTopLeft": "Superior esquerdo",
+    "cityLabelTopRight": "Superior direito",
+    "cityLabelBottomLeft": "Inferior esquerdo",
+    "cityLabelBottomRight": "Inferior direito",
     "lightColors": "Paleta clara",
     "darkColors": "Paleta escura",
     "active": "Ativo",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "O cache já está vazio",
     "bypassCacheTitle": "Ignorar cache e CDN",
     "bypassCacheDesc": "Pega a cidade do dia no calendário lido direto do GitHub e busca os dados do mapa ao vivo na API Overpass em vez do CDN, sobrescrevendo o cache local. Útil para testar mudanças nos dados. Volta a desligado ao reiniciar.",
-    "dailyOnly": "Aplica-se apenas ao modo de atualização Diário."
+    "dailyOnly": "Aplica-se apenas ao modo de atualização Diário.",
+    "resetTodayTitle": "Reiniciar o jogo de hoje",
+    "resetTodayDesc": "Apaga as tentativas de hoje e reativa “Palpite do dia”, para que o dia possa ser jogado de novo.",
+    "resetTodayButton": "Reiniciar",
+    "clearGuessTitle": "Apagar dados do jogo",
+    "clearGuessDesc": "Exclui as tentativas de todos os dias, as estatísticas e a configuração “Palpite do dia”.",
+    "clearGuessButton": "Apagar",
+    "guessFileTitle": "Arquivo de salvamento",
+    "guessFileDesc": "Mostra o guess.json, que guarda o histórico do jogo e a configuração “Palpite do dia”.",
+    "guessFileButton": "Mostrar"
   },
   "common": {
     "loading": "carregando…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Abrir configurações",
+    "openGame": "Abrir jogo",
     "dailyUpdates": "Atualizações diárias",
     "regenerateNow": "Regenerar",
     "quit": "Sair do InkCity",

@@ -60,7 +60,36 @@
     "locationPlaceholder": "Stadtname, Koordinaten oder ein Karten-Link",
     "invalidLocation": "Keine passende Stadt – versuche Koordinaten, z. B. 51.5074, -0.1278.",
     "apply": "Übernehmen",
-    "customRateHint": "Eigene Orte sind nicht vorab zwischengespeichert – jedes Übernehmen lädt die Kartendaten live. Wende daher nicht viele neue Orte in kurzer Folge an, sonst erreichst du das Anfragelimit des Dienstes."
+    "customRateHint": "Eigene Orte sind nicht vorab zwischengespeichert – jedes Übernehmen lädt die Kartendaten live. Wende daher nicht viele neue Orte in kurzer Folge an, sonst erreichst du das Anfragelimit des Dienstes.",
+    "gameLabel": "Tagesrätsel",
+    "gameDescOn": "Rate jeden Tag, in welchem Land oder welcher Region die Stadt des Hintergrundbilds liegt – danach wird die Stadt aufgedeckt.",
+    "gameDescOff": "Die Stadt des Tages wird sofort angezeigt.",
+    "gameTomorrow": "Die heutige Stadt ist schon aufgedeckt – geraten wird ab morgen.",
+    "gameOffTitle": "Tagesrätsel ausschalten?",
+    "gameOffBody": "Ab jetzt wird die Stadt jeden Tag sofort angezeigt. Das Spiel lässt sich jederzeit wieder einschalten; es beginnt dann am nächsten Tag.",
+    "gameOffForfeit": "Das heutige Spiel zählt als verloren.",
+    "gameOffConfirm": "Ausschalten",
+    "revealAfterGame": "Wird nach dem heutigen Rätsel aufgedeckt"
+  },
+  "game": {
+    "prompt": "In welchem Land oder welcher Region liegt diese Stadt?",
+    "placeholder": "Land oder Region eingeben…",
+    "guess": "Raten",
+    "progress": "Versuch {{n}} von {{max}}",
+    "alreadyGuessed": "Schon geraten – versuche etwas anderes.",
+    "noMatch": "Wähle ein Land oder eine Region aus der Liste.",
+    "painting": "Heutiges Hintergrundbild wird gezeichnet…",
+    "paintFailed": "Heutiges Hintergrundbild konnte nicht festgelegt werden – neuer Versuch jede Minute."
+  },
+  "result": {
+    "won": "Im {{n}}. Versuch erraten",
+    "lost": "Kein Treffer in {{max}} Versuchen – Lösung: {{country}}",
+    "gaveUp": "Aufgegeben – Lösung: {{country}}",
+    "played": "Gespielt",
+    "winRate": "Gewinnquote",
+    "streak": "Aktuelle Serie",
+    "maxStreak": "Beste Serie",
+    "distribution": "Verteilung der Versuche"
   },
   "style": {
     "theme": "Kartendesign",
@@ -74,6 +103,13 @@
     "hintMinimal": "Nur Hauptstraßen",
     "hintStandard": "Breite nach Straßenklasse",
     "hintBold": "Hochkontrast-Hierarchie",
+    "cityLabel": "Stadtinfos auf dem Desktop",
+    "cityLabelHint": "Nur im Modus „Täglich“. Die Infos werden aufs Hintergrundbild gezeichnet, sobald die heutige Stadt aufgedeckt ist – also wenn das heutige Rätsel vorbei ist oder „Tagesrätsel“ aus ist.",
+    "cityLabelOff": "Aus",
+    "cityLabelTopLeft": "Oben links",
+    "cityLabelTopRight": "Oben rechts",
+    "cityLabelBottomLeft": "Unten links",
+    "cityLabelBottomRight": "Unten rechts",
     "lightColors": "Helle Palette",
     "darkColors": "Dunkle Palette",
     "active": "Aktiv",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Cache ist bereits leer",
     "bypassCacheTitle": "Cache & CDN umgehen",
     "bypassCacheDesc": "Nimmt die Stadt des Tages aus dem direkt bei GitHub gelesenen Zeitplan und lädt ihre Kartendaten live über die Overpass-API statt vom CDN, wobei der lokale Cache überschrieben wird. Zum Testen von Änderungen an den Kartendaten. Wird beim Neustart zurückgesetzt.",
-    "dailyOnly": "Gilt nur für den Modus „Täglich“."
+    "dailyOnly": "Gilt nur für den Modus „Täglich“.",
+    "resetTodayTitle": "Heutiges Spiel zurücksetzen",
+    "resetTodayDesc": "Löscht die heutigen Versuche und schaltet „Tagesrätsel“ wieder ein, sodass der heutige Tag erneut gespielt werden kann.",
+    "resetTodayButton": "Zurücksetzen",
+    "clearGuessTitle": "Spieldaten löschen",
+    "clearGuessDesc": "Löscht die Versuche aller Tage, die Statistik und die Einstellung „Tagesrätsel“.",
+    "clearGuessButton": "Löschen",
+    "guessFileTitle": "Spielstand-Datei",
+    "guessFileDesc": "Zeigt guess.json, in der der Spielverlauf und die Einstellung „Tagesrätsel“ gespeichert sind.",
+    "guessFileButton": "Anzeigen"
   },
   "common": {
     "loading": "Wird geladen…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Einstellungen öffnen",
+    "openGame": "Spiel öffnen",
     "dailyUpdates": "Tägliche Updates",
     "regenerateNow": "Neu generieren",
     "quit": "InkCity beenden",

@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nazwa miasta, współrzędne lub link do mapy",
     "invalidLocation": "Brak pasującego miasta — podaj współrzędne, np. 51.5074, -0.1278.",
     "apply": "Zastosuj",
-    "customRateHint": "Własne lokalizacje nie są wcześniej buforowane — każde zastosowanie pobiera dane mapy na bieżąco, więc nie stosuj wielu nowych lokalizacji w krótkim czasie, bo możesz przekroczyć limit zapytań serwisu."
+    "customRateHint": "Własne lokalizacje nie są wcześniej buforowane — każde zastosowanie pobiera dane mapy na bieżąco, więc nie stosuj wielu nowych lokalizacji w krótkim czasie, bo możesz przekroczyć limit zapytań serwisu.",
+    "gameLabel": "Zagadka dnia",
+    "gameDescOn": "Każdego dnia zgadnij, w jakim kraju lub regionie leży miasto z tapety — miasto zostanie odkryte po zakończeniu gry.",
+    "gameDescOff": "Miasto dnia jest pokazywane od razu.",
+    "gameTomorrow": "Dzisiejsze miasto jest już odkryte — zgadywanie zaczyna się jutro.",
+    "gameOffTitle": "Wyłączyć zagadkę dnia?",
+    "gameOffBody": "Od teraz miasto dnia będzie pokazywane od razu. Możesz w każdej chwili ponownie włączyć grę; zacznie się wtedy następnego dnia.",
+    "gameOffForfeit": "Dzisiejsza gra zostanie zaliczona jako przegrana.",
+    "gameOffConfirm": "Wyłącz",
+    "revealAfterGame": "Odkryte po dzisiejszej grze"
+  },
+  "game": {
+    "prompt": "W jakim kraju lub regionie leży to miasto?",
+    "placeholder": "Wpisz kraj lub region…",
+    "guess": "Zgadnij",
+    "progress": "Próba {{n}} z {{max}}",
+    "alreadyGuessed": "Już to było — spróbuj czegoś innego.",
+    "noMatch": "Wybierz kraj lub region z listy.",
+    "painting": "Rysowanie dzisiejszej tapety…",
+    "paintFailed": "Nie udało się ustawić dzisiejszej tapety — ponawianie co minutę."
+  },
+  "result": {
+    "won": "Odgadnięte za {{n}}. razem",
+    "lost": "Nie udało się w {{max}} próbach — to {{country}}",
+    "gaveUp": "Gra poddana — to {{country}}",
+    "played": "Rozegrane",
+    "winRate": "Skuteczność",
+    "streak": "Obecna seria",
+    "maxStreak": "Najlepsza seria",
+    "distribution": "Rozkład prób"
   },
   "style": {
     "theme": "Motyw mapy",
@@ -74,6 +103,13 @@
     "hintMinimal": "Tylko główne drogi",
     "hintStandard": "Szerokość według klasy drogi",
     "hintBold": "Hierarchia wysokiego kontrastu",
+    "cityLabel": "Informacje o mieście na pulpicie",
+    "cityLabelHint": "Tylko w trybie Codziennie. Pojawiają się na tapecie, gdy dzisiejsze miasto zostało odkryte — czyli gdy dzisiejsza gra się zakończyła lub opcja „Zagadka dnia” jest wyłączona.",
+    "cityLabelOff": "Wyłączone",
+    "cityLabelTopLeft": "Lewy górny róg",
+    "cityLabelTopRight": "Prawy górny róg",
+    "cityLabelBottomLeft": "Lewy dolny róg",
+    "cityLabelBottomRight": "Prawy dolny róg",
     "lightColors": "Jasna paleta",
     "darkColors": "Ciemna paleta",
     "active": "Aktywna",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Pamięć podręczna jest już pusta",
     "bypassCacheTitle": "Pomiń pamięć podręczną i CDN",
     "bypassCacheDesc": "Bierze miasto dnia z harmonogramu czytanego wprost z GitHuba, a dane mapy pobiera na żywo z API Overpass zamiast z CDN, nadpisując lokalną pamięć podręczną. Przydatne przy testowaniu zmian w danych. Po restarcie wraca do wyłączonego.",
-    "dailyOnly": "Dotyczy tylko trybu aktualizacji Codziennie."
+    "dailyOnly": "Dotyczy tylko trybu aktualizacji Codziennie.",
+    "resetTodayTitle": "Zresetuj dzisiejszą grę",
+    "resetTodayDesc": "Usuwa dzisiejsze próby i ponownie włącza opcję „Zagadka dnia”, aby można było zagrać w dzisiejszy dzień od nowa.",
+    "resetTodayButton": "Resetuj",
+    "clearGuessTitle": "Wyczyść dane gry",
+    "clearGuessDesc": "Usuwa próby ze wszystkich dni, statystyki i ustawienie „Zagadka dnia”.",
+    "clearGuessButton": "Wyczyść",
+    "guessFileTitle": "Plik zapisu gry",
+    "guessFileDesc": "Pokazuje plik guess.json z historią gry i ustawieniem „Zagadka dnia”.",
+    "guessFileButton": "Pokaż"
   },
   "common": {
     "loading": "wczytywanie…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Otwórz ustawienia",
+    "openGame": "Otwórz grę",
     "dailyUpdates": "Codzienne aktualizacje",
     "regenerateNow": "Wygeneruj ponownie",
     "quit": "Zamknij InkCity",

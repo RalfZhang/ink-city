@@ -1,5 +1,6 @@
-import type { AirportKind, Bbox, Geom, Osm, RailwayStyle, Style, StylePreset, Way } from "./types";
+import type { AirportKind, Bbox, Geom, MapLabel, Osm, RailwayStyle, Style, StylePreset, Way } from "./types";
 import type { LayerId } from "./osm/layers";
+import { drawLabel } from "./label";
 import { groundHeightKm, project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA } from "./constants";
 import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./mondrian";
@@ -201,6 +202,8 @@ export type DrawReq = {
   height: number;
   style: Style;
   osm: Osm;
+  /** The city caption, drawn last (core/label.ts). Absent ⇒ none. */
+  label?: MapLabel;
 };
 
 /**
@@ -772,19 +775,20 @@ const OVER_ROADS: LayerDraw[] = [
 /**
  * Per-feature counts drawn, for logging. `roads` (always present), one entry per
  * optional {@link LayerId} (a disabled or absent layer reports 0), plus `blocks`
- * — the Mondrian color planes, 0 in the `ink` variant.
+ * — the Mondrian color planes, 0 in the `ink` variant — and `label`, 1 when the
+ * city caption was drawn.
  *
  * "Feature" is the source feature everywhere except `railways`, which counts the
  * stitched chains it actually strokes and so reads far lower than the payload's way
  * count (see {@link chainRailways}).
  */
-export type SceneCounts = { roads: number; blocks: number } & Record<LayerId, number>;
+export type SceneCounts = { roads: number; blocks: number; label: number } & Record<LayerId, number>;
 
 /**
  * Compose the full wallpaper onto `ctx` and return the per-layer feature counts
  * (for logging). This is the single source of truth for layer compositing order:
  *
- *   background ▸ water ▸ [Mondrian blocks] ▸ ROADS ▸ railways ▸ aerialways ▸ airports
+ *   background ▸ water ▸ [Mondrian blocks] ▸ ROADS ▸ railways ▸ aerialways ▸ airports ▸ [caption]
  *
  * Roads are the always-present anchor and split the optional layers into those
  * drawn under vs. over them. The over-road layers sit on top on purpose: railways
@@ -826,7 +830,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCou
   // Keys ordered to mirror the compositing pipeline (bottom → top) so the log
   // reads in the same order things are painted.
   const counts: SceneCounts = {
-    water: 0, blocks: 0, roads: 0, railways: 0, aerialways: 0, airports: 0,
+    water: 0, blocks: 0, roads: 0, railways: 0, aerialways: 0, airports: 0, label: 0,
   };
   for (const { id, draw } of UNDER_ROADS) counts[id] = draw(ctx, r);
   // The block-bounding road set has to match what `drawRoads` actually strokes
@@ -836,5 +840,16 @@ export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCou
   }
   counts.roads = drawRoads(ctx, r);
   for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, r);
+  // The caption goes over everything, in the same (possibly Mondrian-forced) ink.
+  // A caption that throws must never cost the wallpaper: the desktop's renderer
+  // would otherwise drop the whole render and Rust wait out its 120s timeout.
+  if (r.label) {
+    try {
+      drawLabel(ctx, r.label, style, width, height);
+      counts.label = 1;
+    } catch (e) {
+      console.error("[render] city caption failed; drawing the map without it", e);
+    }
+  }
   return counts;
 }

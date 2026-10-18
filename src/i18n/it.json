@@ -60,7 +60,36 @@
     "locationPlaceholder": "Nome della città, coordinate o un link di mappa",
     "invalidLocation": "Nessuna città corrispondente: prova con le coordinate, es. 51.5074, -0.1278.",
     "apply": "Applica",
-    "customRateHint": "Le posizioni personalizzate non sono precaricate: ogni applicazione scarica i dati della mappa in tempo reale, quindi evita di applicare molte nuove posizioni in rapida successione o potresti raggiungere il limite di richieste del servizio."
+    "customRateHint": "Le posizioni personalizzate non sono precaricate: ogni applicazione scarica i dati della mappa in tempo reale, quindi evita di applicare molte nuove posizioni in rapida successione o potresti raggiungere il limite di richieste del servizio.",
+    "gameLabel": "Indovinello del giorno",
+    "gameDescOn": "Ogni giorno, indovina in quale Paese o regione si trova la città dello sfondo: la città viene svelata a partita finita.",
+    "gameDescOff": "La città di ogni giorno viene mostrata subito.",
+    "gameTomorrow": "La città di oggi è già svelata: l'indovinello inizia domani.",
+    "gameOffTitle": "Disattivare l'indovinello del giorno?",
+    "gameOffBody": "D'ora in poi la città di ogni giorno verrà mostrata subito. Puoi riattivare il gioco in qualsiasi momento; partirà dal giorno successivo.",
+    "gameOffForfeit": "La partita di oggi conterà come persa.",
+    "gameOffConfirm": "Disattiva",
+    "revealAfterGame": "Svelata dopo la partita di oggi"
+  },
+  "game": {
+    "prompt": "In quale Paese o regione si trova questa città?",
+    "placeholder": "Scrivi un Paese o una regione…",
+    "guess": "Indovina",
+    "progress": "Tentativo {{n}} di {{max}}",
+    "alreadyGuessed": "Già provato: prova con un'altra risposta.",
+    "noMatch": "Scegli un Paese o una regione dall'elenco.",
+    "painting": "Disegno dello sfondo di oggi…",
+    "paintFailed": "Impossibile impostare lo sfondo di oggi: nuovo tentativo ogni minuto."
+  },
+  "result": {
+    "won": "Indovinato al {{n}}° tentativo",
+    "lost": "Non indovinato in {{max}} tentativi. Risposta: {{country}}",
+    "gaveUp": "Partita abbandonata. Risposta: {{country}}",
+    "played": "Giocate",
+    "winRate": "Tasso di vittoria",
+    "streak": "Serie attuale",
+    "maxStreak": "Serie migliore",
+    "distribution": "Distribuzione dei tentativi"
   },
   "style": {
     "theme": "Tema mappa",
@@ -74,6 +103,13 @@
     "hintMinimal": "Solo strade principali",
     "hintStandard": "Spessore in base alla classe stradale",
     "hintBold": "Gerarchia ad alto contrasto",
+    "cityLabel": "Info città sul desktop",
+    "cityLabelHint": "Solo in modalità Giornaliero. Le info vengono disegnate sullo sfondo quando la città di oggi è svelata: a partita di oggi finita o con «Indovinello del giorno» disattivato.",
+    "cityLabelOff": "Disattivato",
+    "cityLabelTopLeft": "In alto a sinistra",
+    "cityLabelTopRight": "In alto a destra",
+    "cityLabelBottomLeft": "In basso a sinistra",
+    "cityLabelBottomRight": "In basso a destra",
     "lightColors": "Palette chiara",
     "darkColors": "Palette scura",
     "active": "Attiva",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "La cache è già vuota",
     "bypassCacheTitle": "Ignora cache e CDN",
     "bypassCacheDesc": "Prende la città del giorno dal calendario letto direttamente da GitHub, poi scarica i suoi dati della mappa in tempo reale dall'API Overpass invece che dal CDN, sovrascrivendo la cache locale. Utile per testare modifiche ai dati. Si disattiva al riavvio.",
-    "dailyOnly": "Vale solo per la modalità di aggiornamento Giornaliero."
+    "dailyOnly": "Vale solo per la modalità di aggiornamento Giornaliero.",
+    "resetTodayTitle": "Azzera la partita di oggi",
+    "resetTodayDesc": "Elimina i tentativi di oggi e riattiva «Indovinello del giorno», così la giornata si può rigiocare.",
+    "resetTodayButton": "Azzera",
+    "clearGuessTitle": "Cancella i dati del gioco",
+    "clearGuessDesc": "Elimina i tentativi di tutti i giorni, le statistiche e l'impostazione «Indovinello del giorno».",
+    "clearGuessButton": "Cancella",
+    "guessFileTitle": "File di salvataggio",
+    "guessFileDesc": "Mostra guess.json, che contiene la cronologia del gioco e l'impostazione «Indovinello del giorno».",
+    "guessFileButton": "Mostra"
   },
   "common": {
     "loading": "caricamento…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Apri impostazioni",
+    "openGame": "Apri il gioco",
     "dailyUpdates": "Aggiornamenti giornalieri",
     "regenerateNow": "Rigenera",
     "quit": "Esci da InkCity",

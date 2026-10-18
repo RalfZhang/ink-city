@@ -60,7 +60,36 @@
     "locationPlaceholder": "City name, coordinates, or a map link",
     "invalidLocation": "No matching city — try coordinates, e.g. 51.5074, -0.1278.",
     "apply": "Apply",
-    "customRateHint": "Custom locations aren't precached — each Apply fetches map data live, so avoid applying many new locations in quick succession or you may hit the service's rate limit."
+    "customRateHint": "Custom locations aren't precached — each Apply fetches map data live, so avoid applying many new locations in quick succession or you may hit the service's rate limit.",
+    "gameLabel": "Daily guess",
+    "gameDescOn": "Each day, guess which country or region the wallpaper's city is in — the city is revealed once you're done.",
+    "gameDescOff": "Each day's city is shown right away.",
+    "gameTomorrow": "Today's city is already revealed — guessing starts tomorrow.",
+    "gameOffTitle": "Turn off the daily guess?",
+    "gameOffBody": "From now on each day's city is shown right away. You can turn the game back on at any time; it then starts the next day.",
+    "gameOffForfeit": "Today's game will count as a loss.",
+    "gameOffConfirm": "Turn off",
+    "revealAfterGame": "Revealed after today's guess"
+  },
+  "game": {
+    "prompt": "Which country or region is this city in?",
+    "placeholder": "Type a country or region…",
+    "guess": "Guess",
+    "progress": "Guess {{n}} of {{max}}",
+    "alreadyGuessed": "Already guessed — try another.",
+    "noMatch": "Pick a country or region from the list.",
+    "painting": "Painting today's wallpaper…",
+    "paintFailed": "Couldn't set today's wallpaper — retrying every minute."
+  },
+  "result": {
+    "won": "Got it on guess {{n}}",
+    "lost": "No luck in {{max}} guesses — it's {{country}}",
+    "gaveUp": "Gave up — it's {{country}}",
+    "played": "Played",
+    "winRate": "Win rate",
+    "streak": "Streak",
+    "maxStreak": "Best streak",
+    "distribution": "Guess distribution"
   },
   "style": {
     "theme": "Map theme",
@@ -74,6 +103,13 @@
     "hintMinimal": "Major roads only",
     "hintStandard": "Width by road class",
     "hintBold": "High contrast hierarchy",
+    "cityLabel": "City info on desktop",
+    "cityLabelHint": "Daily mode only. Drawn on the wallpaper once today's city is revealed — today's guess is over, or Daily guess is off.",
+    "cityLabelOff": "Off",
+    "cityLabelTopLeft": "Top left",
+    "cityLabelTopRight": "Top right",
+    "cityLabelBottomLeft": "Bottom left",
+    "cityLabelBottomRight": "Bottom right",
     "lightColors": "Light palette",
     "darkColors": "Dark palette",
     "active": "Active",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Cache is already empty",
     "bypassCacheTitle": "Bypass cache & CDN",
     "bypassCacheDesc": "Take the day's city from the schedule read straight off GitHub, then fetch its map data live from the Overpass API instead of the CDN, overwriting the local cache. Use when testing edits to the map data. Resets to off on restart.",
-    "dailyOnly": "Only applies to the Daily update mode."
+    "dailyOnly": "Only applies to the Daily update mode.",
+    "resetTodayTitle": "Reset today's game",
+    "resetTodayDesc": "Delete today's guesses and turn Daily guess back on, so today can be played again.",
+    "resetTodayButton": "Reset",
+    "clearGuessTitle": "Clear game data",
+    "clearGuessDesc": "Delete every day's guesses, the stats and the Daily guess setting.",
+    "clearGuessButton": "Clear",
+    "guessFileTitle": "Game save file",
+    "guessFileDesc": "Show guess.json, which holds the game's history and the Daily guess setting.",
+    "guessFileButton": "Show"
   },
   "common": {
     "loading": "loading…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Open Settings",
+    "openGame": "Open Game",
     "dailyUpdates": "Daily Updates",
     "regenerateNow": "Regenerate",
     "quit": "Quit InkCity",

@@ -13,6 +13,9 @@ deserializes anywhere the others do.
 | `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). **What the schedule draws from.** |
 | `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. **Ditto.** |
 
+`countries.json` sits beside them but isn't a pool: it's the guess-the-country game's
+table of answers — see [the last section](#countriesjson--the-guess-the-country-table).
+
 Only `cities.json` is loaded at runtime — it's hardcoded in
 [`src-tauri/src/city.rs`](../../src-tauri/src/city.rs) (`include_str!` + cache
 filename) and the jsDelivr hot-update URL in `cities_update.rs`. Its one job there is
@@ -335,3 +338,32 @@ Target-language priority: **CURATED > China autonomous region > India state > mu
   Sri Jayawardenepura Kotte → ශ්‍රී ජයවර්ධනපුර කෝට්ටේ (was කොළඹ, i.e. Colombo — GeoNames
   has no Sinhala name for Kotte at all, so rule 6's "keep current value" had nothing
   to keep).
+
+## `countries.json` — the guess-the-country table
+
+One row per country/region code the two schedule pools contain — exactly the answers
+the daily game can have (243) — as `{ code, name, lat, lon }`. Read by the game itself
+(`src/core/guess`, handed in by the host, like every core consumer of this directory),
+and bundled into the backend (`src-tauri/src/guess_store.rs`), which needs the codes to
+tell a playable day from one it can only reveal and the names for the wallpaper caption.
+`pnpm guess-test` fails if a pool ever gains a country this table lacks.
+
+- **`lat`/`lon`** is the point a guess's distance and bearing are measured *from* (to
+  the day's city). It's the area centroid of the country's largest polygon in Natural
+  Earth 10m admin-0 (public domain, matched on `ISO_A2_EH`), computed in a local
+  equirectangular projection so high latitudes aren't stretched — or, when that
+  centroid falls outside the shape (VN, IL, GM, MH, MV), its pole of inaccessibility
+  (polylabel). Not Natural Earth's own `LABEL_X/LABEL_Y`: those mark where a world
+  map's *label* goes, and Russia's sits in European Russia, which turns "the city is
+  1,500 km south of Russia" into nonsense for a target in Mongolia. Codes Natural Earth
+  folds into their sovereign (BQ CC CX GF GP MQ RE SJ TK YT) take the mean of their
+  pins in `cities-countries.json` — they're small enough that any point on them works.
+  Rounded to 2 decimals (~1 km).
+- **`name`** is CLDR's English name (`Intl.DisplayNames`), except six that read badly
+  as a caption: HK "Hong Kong", MO "Macao", PS "Palestine", MM "Myanmar", CD "DR Congo",
+  CG "Congo". The settings window shows CLDR names in the player's own language at
+  runtime; this field is the wallpaper caption's (which is language-neutral) and the
+  fallback where the platform has no `Intl.DisplayNames`.
+
+Like the curated pools it has no committed generator: rebuild it with a throwaway
+script from the sources above and commit only the JSON.

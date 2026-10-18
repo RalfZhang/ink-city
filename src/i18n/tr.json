@@ -60,7 +60,36 @@
     "locationPlaceholder": "Şehir adı, koordinat veya harita bağlantısı",
     "invalidLocation": "Eşleşen şehir yok — koordinat girin, ör. 51.5074, -0.1278.",
     "apply": "Uygula",
-    "customRateHint": "Özel konumlar önceden önbelleğe alınmaz — her uygulama harita verilerini canlı çeker, bu yüzden kısa sürede çok sayıda yeni konum uygulamayın; aksi hâlde servisin istek sınırına takılabilirsiniz."
+    "customRateHint": "Özel konumlar önceden önbelleğe alınmaz — her uygulama harita verilerini canlı çeker, bu yüzden kısa sürede çok sayıda yeni konum uygulamayın; aksi hâlde servisin istek sınırına takılabilirsiniz.",
+    "gameLabel": "Günlük tahmin",
+    "gameDescOn": "Her gün duvar kağıdındaki şehrin hangi ülke veya bölgede olduğunu tahmin edin — oyun bitince şehir açıklanır.",
+    "gameDescOff": "Günün şehri hemen gösterilir.",
+    "gameTomorrow": "Bugünün şehri zaten açıklandı — tahmin yarın başlıyor.",
+    "gameOffTitle": "Günlük tahmin kapatılsın mı?",
+    "gameOffBody": "Bundan sonra günün şehri hemen gösterilecek. Oyunu istediğiniz zaman yeniden açabilirsiniz; oyun o zaman ertesi gün başlar.",
+    "gameOffForfeit": "Bugünkü oyun kaybedilmiş sayılacak.",
+    "gameOffConfirm": "Kapat",
+    "revealAfterGame": "Bugünkü oyun bitince açıklanacak"
+  },
+  "game": {
+    "prompt": "Bu şehir hangi ülke veya bölgede?",
+    "placeholder": "Bir ülke veya bölge yazın…",
+    "guess": "Tahmin et",
+    "progress": "Tahmin {{n}} / {{max}}",
+    "alreadyGuessed": "Bunu zaten denediniz — başka bir tane deneyin.",
+    "noMatch": "Listeden bir ülke veya bölge seçin.",
+    "painting": "Bugünün duvar kağıdı çiziliyor…",
+    "paintFailed": "Bugünün duvar kağıdı ayarlanamadı — her dakika yeniden denenir."
+  },
+  "result": {
+    "won": "{{n}}. tahminde bildiniz",
+    "lost": "{{max}} tahminde bilemediniz — cevap: {{country}}",
+    "gaveUp": "Pes ettiniz — cevap: {{country}}",
+    "played": "Oynanan",
+    "winRate": "Kazanma oranı",
+    "streak": "Mevcut seri",
+    "maxStreak": "En iyi seri",
+    "distribution": "Tahmin dağılımı"
   },
   "style": {
     "theme": "Harita teması",
@@ -74,6 +103,13 @@
     "hintMinimal": "Yalnızca ana yollar",
     "hintStandard": "Yol sınıfına göre kalınlık",
     "hintBold": "Yüksek kontrastlı hiyerarşi",
+    "cityLabel": "Masaüstünde şehir bilgisi",
+    "cityLabelHint": "Yalnızca Günlük modda. Bugünün şehri açıklandığında duvar kağıdına çizilir — bugünkü oyun bittiyse ya da “Günlük tahmin” kapalıysa.",
+    "cityLabelOff": "Kapalı",
+    "cityLabelTopLeft": "Sol üst",
+    "cityLabelTopRight": "Sağ üst",
+    "cityLabelBottomLeft": "Sol alt",
+    "cityLabelBottomRight": "Sağ alt",
     "lightColors": "Açık palet",
     "darkColors": "Koyu palet",
     "active": "Etkin",
@@ -128,7 +164,16 @@
     "cleanCacheEmpty": "Önbellek zaten boş",
     "bypassCacheTitle": "Önbelleği ve CDN'yi atla",
     "bypassCacheDesc": "Günün şehrini doğrudan GitHub'dan okunan takvimden alır, harita verisini ise CDN yerine Overpass API'den canlı çeker ve yerel önbelleği üzerine yazar. Harita verisi değişikliklerini denerken kullanın. Yeniden başlatmada kapanır.",
-    "dailyOnly": "Yalnızca Günlük güncelleme modunda geçerlidir."
+    "dailyOnly": "Yalnızca Günlük güncelleme modunda geçerlidir.",
+    "resetTodayTitle": "Bugünün oyununu sıfırla",
+    "resetTodayDesc": "Bugünkü tahminleri siler ve “Günlük tahmin” seçeneğini tekrar açar; böylece bugün yeniden oynanabilir.",
+    "resetTodayButton": "Sıfırla",
+    "clearGuessTitle": "Oyun verilerini temizle",
+    "clearGuessDesc": "Tüm günlerin tahminlerini, istatistikleri ve “Günlük tahmin” ayarını siler.",
+    "clearGuessButton": "Temizle",
+    "guessFileTitle": "Oyun kayıt dosyası",
+    "guessFileDesc": "Oyun geçmişinin ve “Günlük tahmin” ayarının saklandığı guess.json dosyasını gösterir.",
+    "guessFileButton": "Göster"
   },
   "common": {
     "loading": "yükleniyor…",
@@ -136,6 +181,7 @@
   },
   "tray": {
     "openSettings": "Ayarları Aç",
+    "openGame": "Oyunu Aç",
     "dailyUpdates": "Günlük Güncellemeler",
     "regenerateNow": "Yeniden oluştur",
     "quit": "InkCity'den Çık",

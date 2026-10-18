@@ -172,7 +172,8 @@ The client never computes a pick of any kind, so there is no Rust port to keep i
 lockstep — and with random picks there couldn't be one.
 
 Step 1 is load-bearing, not just a saving. `spawn_force_regen` (theme switch,
-colour/style edit, Lab toggles, "regenerate now") deletes only the PNG and
+colour/style edit, Lab toggles, "regenerate now") deletes today's rendered PNGs
+— every theme and caption variant, never the payload — and
 re-enters the pipeline, so without it every colour tweak would re-download the
 whole manifest — tens of MB — and, worse, could resolve a *different* city than
 the PNG already cached for the other theme. Because the PNG cache key is
