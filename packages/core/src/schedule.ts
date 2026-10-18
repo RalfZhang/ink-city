@@ -28,7 +28,8 @@ import { dateStamp } from "./city";
 // & CDN", which reads `city-list.json` for the day's city precisely *because* it
 // carries no map data (see `pipeline::resolve_daily`). Either way the client never
 // recomputes a pick, so there is no Rust port to keep in lockstep. Deliberately
-// NOT re-exported from ./index (the client barrel), same rule as ./osm.
+// NOT re-exported from ./index (the client barrel): scripts import it as
+// `@inkcity/core/schedule`.
 
 // Every window below is measured in *calendar days off a date key*, never in
 // entry counts. That distinction is what lets a hand-pinned day sit arbitrarily
@@ -60,7 +61,7 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
 // `schedule-test.ts` checks it too, because it can't be caught by inspection.
 
 /**
- * Which `src/data/*.json` city pools the schedule draws from. The hyphen keeps
+ * Which `packages/core/data/*.json` city pools the schedule draws from. The hyphen keeps
  * `cities.json` — the legacy population rotation's list, now read only by that
  * deprecated CI flow — out on purpose.
  * Shared so the precache script and its test agree on one definition. The
@@ -130,7 +131,7 @@ export function stamps(state: ScheduleState): string[] {
 
 /**
  * Every city across the pools, deduped by `id`, with *later pools winning*.
- * Callers pass `src/data/cities-*.json` in glob (alphabetical) order, so
+ * Callers pass `packages/core/data/cities-*.json` in glob (alphabetical) order, so
  * `cities-famous.json` overrides `cities-countries.json` — the two carry the
  * same ids for shared cities but differ in coordinate precision and in how they
  * spell names (`Bogotá` vs `Bogota`). `country` is *not* one of the divergences:

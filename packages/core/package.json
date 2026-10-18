@@ -1,0 +1,10 @@
+{
+  "name": "@inkcity/core",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schedule": "./src/schedule.ts",
+    "./countries.json": "./data/countries.json"
+  }
+}

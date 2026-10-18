@@ -143,7 +143,7 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
 
-      # Compiles scripts/osm-cli.ts (see src/core/osm/fetch-city.ts) into the
+      # Compiles scripts/osm-cli.ts (see packages/osm/src/fetch-city.ts) into the
       # bundled sidecar binary the desktop app runs for live OSM fetches (a CDN
       # miss, a user-entered custom location, or Dev Mode's bypass). Same
       # implementation as the precache job, just packaged for the app instead of

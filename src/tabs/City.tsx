@@ -16,9 +16,9 @@ import GuessCountry from "@/components/guess/GuessCountry";
 import GuessResult from "@/components/guess/GuessResult";
 import DailyGuessSwitch from "@/components/guess/DailyGuessSwitch";
 import { useGuessGame } from "@/components/guess/useGuessGame";
-import { countryIndex, isRevealed } from "@/core";
+import { countryIndex, isRevealed } from "@inkcity/core";
 import { tauriGuessStorage } from "@/lib/guess-storage";
-import countries from "@/data/countries.json";
+import countries from "@inkcity/core/countries.json";
 import type { Status, UpdateMode } from "../types";
 
 type Props = {

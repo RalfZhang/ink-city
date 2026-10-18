@@ -1,6 +1,6 @@
 #!/usr/bin/env -S npx tsx
 // Verifies the coordinate parser behind the "Customized" update mode
-// (src/core/coords.ts, issue #11):
+// (packages/core/src/coords.ts, issue #11):
 //   • every input format the module documents actually parses,
 //   • pasted Google Maps / OpenStreetMap links yield the place, not null,
 //   • out-of-range and junk input is rejected rather than pinned.
@@ -8,7 +8,7 @@
 //
 //   pnpm coords-test
 
-import { parseLatLon } from "../src/core/coords.ts";
+import { parseLatLon } from "@inkcity/core";
 
 /** `null` ⇒ the input must be rejected. */
 type Case = [input: string, want: [lat: number, lon: number] | null];

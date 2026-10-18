@@ -1,5 +1,6 @@
 // Re-export from the portable core so existing `../constants` imports keep
-// working. The canonical definitions live in `@/core/constants`.
+// working. The canonical definitions live in `@inkcity/core`
+// (packages/core/src/constants.ts).
 export {
   GITHUB_REPO,
   GITHUB_ISSUES,
@@ -12,4 +13,4 @@ export {
   GEONAMES_URL,
   CC_BY_URL,
   VISUAL_DESIGNER,
-} from "./core";
+} from "@inkcity/core";

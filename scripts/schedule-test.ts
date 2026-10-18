@@ -1,5 +1,5 @@
 #!/usr/bin/env -S npx tsx
-// Verifies the persisted daily city schedule (src/core/schedule.ts, issue #1):
+// Verifies the persisted daily city schedule (packages/core/src/schedule.ts, issue #1):
 //   • the pools merge/dedupe by id into one candidate list,
 //   • the day-count constants still satisfy the retention invariant,
 //   • over a multi-year run: no city within CITY_COOLDOWN_DAYS (30) and no
@@ -21,7 +21,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { City } from "../src/core/index.ts";
+import type { City } from "@inkcity/core";
 import {
   advanceSchedule,
   candidatesFor,
@@ -43,10 +43,10 @@ import {
   SCHEDULE_ROOT,
   SCHEDULE_STATE_FILE,
   type ScheduleState,
-} from "../src/core/schedule.ts";
+} from "@inkcity/core/schedule";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const DATA_DIR = join(ROOT, "src", "data");
+const DATA_DIR = join(ROOT, "packages", "core", "data");
 
 function fail(msg: string): never {
   console.error(`✗ ${msg}`);
@@ -160,7 +160,7 @@ console.log(
 
 // The same constant osm-cli.ts globs with, so the test can't drift from it.
 const files = readdirSync(DATA_DIR).filter((n) => SCHEDULE_POOL_RE.test(n)).sort();
-check(files.length > 0, "no src/data/cities-*.json pools found");
+check(files.length > 0, "no packages/core/data/cities-*.json pools found");
 check(!files.includes("cities.json"), "cities.json must not be part of the schedule pool");
 
 const pools = files.map((f) => JSON.parse(readFileSync(join(DATA_DIR, f), "utf8")) as City[]);

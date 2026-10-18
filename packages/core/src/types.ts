@@ -156,7 +156,7 @@ export type WayTags = {
 
 // --- Water layer ---
 // Pre-assembled at precache time (the heavy stitching lives in
-// src/core/osm/water.ts and runs in CI, never on the client) so the renderer
+// packages/osm/src/water.ts and runs in CI, never on the client) so the renderer
 // just fills polygons.
 
 /** A polygon ready to fill: one outer ring + zero or more holes (islands). */
@@ -181,8 +181,8 @@ export type WaterFeature =
 // whole bbox, so no edge-of-bbox clipping is needed: a feature only partly inside
 // the requested area is passed through as-is and clips at the canvas edge when
 // drawn. Which OSM tags each layer collects (and what it deliberately leaves out)
-// lives in core/osm/{airports,railways,aerialways}.ts; how each is drawn lives in
-// core/render.ts.
+// lives in packages/osm/src/{airports,railways,aerialways}.ts; how each is drawn
+// lives in ./render.ts.
 
 /** Runway or taxiway — selects the stroke width (lines) and draw order at render time. */
 export type AirportKind = "runway" | "taxiway";
@@ -194,7 +194,7 @@ export type AirportKind = "runway" | "taxiway";
  *              runway/taxiway at any canvas size.
  *   • `area` — a closed way mapped as the paved surface itself, filled at its
  *              true footprint (no width fudging, matching carto).
- * Which one a way becomes is decided at slim time — see core/osm/airports.ts.
+ * Which one a way becomes is decided at slim time — see packages/osm/src/airports.ts.
  * The union is additive: payloads cached before areas shipped carry only `line`
  * features and still parse.
  */

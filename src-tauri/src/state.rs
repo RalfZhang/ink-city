@@ -103,7 +103,7 @@ pub struct AppState {
     /// city info" preference and which days have ended — for
     /// `guess_store::is_revealed`, which gates the wallpaper caption. Seeded from
     /// `guess.json` at launch and replaced on every `guess_store_write`; the save
-    /// itself belongs to the frontend (src/core/guess), so this is never written
+    /// itself belongs to the frontend (packages/core/src/guess), so this is never written
     /// back. Never hold it across a call into the pipeline: `pipeline::label_for`
     /// looks the city up (`city_for_status` takes `resolved_city`) before locking it.
     pub guess_view: StdMutex<StoreView>,

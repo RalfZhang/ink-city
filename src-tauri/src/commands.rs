@@ -42,12 +42,12 @@ pub struct Status {
     /// `update_mode` isn't `Daily`; a Customized pin is reported by `custom`.
     ///
     /// Sent even while today's guess-the-country game is underway: the game runs in
-    /// the frontend (src/core/guess, shared with the website, which has the city
+    /// the frontend (packages/core/src/guess, shared with the website, which has the city
     /// anyway) and needs the answer to score guesses. Keeping it off the screen until
     /// the day is revealed is the City tab's job.
     pub city: Option<City>,
     /// Whether today's Daily wallpaper is on the desktop yet (`AppState::painted_day`).
-    /// The game waits for it — it's `DayInputs.ready` in src/core/guess/types.ts — so
+    /// The game waits for it — it's `DayInputs.ready` in packages/core/src/guess/types.ts — so
     /// no one is asked to guess a map that hasn't appeared.
     pub today_painted: bool,
     /// Why today's Daily render failed, or `None` when it succeeded or hasn't run

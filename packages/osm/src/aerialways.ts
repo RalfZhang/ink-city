@@ -1,4 +1,4 @@
-import type { AerialwayFeature, Bbox, Geom } from "../types";
+import type { AerialwayFeature, Bbox, Geom } from "@inkcity/core";
 
 // The "aerialways" layer's selector + slim, dispatched by fetch-city.ts — cable
 // cars, gondolas, chair/drag lifts, etc. (OSM aerialway=*). Runs at PRECACHE/FETCH

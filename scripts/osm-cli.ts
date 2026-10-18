@@ -3,7 +3,7 @@
 // pre-cacher (publishing to the `data` branch, served by jsDelivr) and, once
 // compiled to a standalone binary, as the desktop app's sidecar for live fetches (a
 // CDN miss, a user-entered custom location, or Dev Mode's bypass). Both paths go
-// through the same src/core/osm/fetch-city.ts, so a live fallback always gets the
+// through the same packages/osm/src/fetch-city.ts, so a live fallback always gets the
 // same layers as the CDN.
 //
 // Usage:
@@ -12,7 +12,7 @@
 //
 // `precache` mode publishes TWO flows side by side to the `data` branch:
 //
-//   osm/<city.id>.json — the legacy population rotation (src/data/cities.json,
+//   osm/<city.id>.json — the legacy population rotation (packages/core/data/cities.json,
 //     the same pick_for_date the desktop client used to compute offline). For the
 //     next N days it fetches a 20km square, slimmed for size. Already-present
 //     cities are skipped; cities no longer in the window are removed.
@@ -24,9 +24,9 @@
 //     2026-11-01, by which point anything still reading this flow is ~3 months
 //     behind. What goes with it: `loadCities`, `windowCities`, `existingIds`,
 //     `backfillCity`, the id-keyed half of `runPrecache` (and `imminentMissing`),
-//     `pickCityForDate` in src/core/city.ts, the data-out/osm glob + publish guard
-//     in .github/workflows/precache.yml, and src/data/cities.json itself, which
-//     nothing else reads (see src/data/README.md).
+//     `pickCityForDate` in packages/core/src/city.ts, the data-out/osm glob + publish guard
+//     in .github/workflows/precache.yml, and packages/core/data/cities.json itself, which
+//     nothing else reads (see packages/core/data/README.md).
 //
 //     NOT `readCachedMeta` — despite being written for this flow, it's shared:
 //     `runScheduleCache` calls it to decide which date-keyed manifests it can
@@ -36,7 +36,7 @@
 //     day's city *and* its map data in one payload, so the client needs no
 //     rotation logic of its own. Which city each day gets is randomly drawn
 //     (under no-repeat cooldowns) and then *persisted* in osm-v2/city-list.json,
-//     which is read back on the next run — see src/core/schedule.ts. Editing a
+//     which is read back on the next run — see packages/core/src/schedule.ts. Editing a
 //     future day in that file overrides it; this script re-fetches the map data
 //     to match.
 //
@@ -61,8 +61,8 @@ import {
   type City,
   type Bbox,
   type Osm,
-} from "../src/core/index.ts";
-import { fetchCityData } from "../src/core/osm/index.ts";
+} from "@inkcity/core";
+import { fetchCityData } from "@inkcity/osm";
 import {
   advanceSchedule,
   manifestWindow,
@@ -78,11 +78,11 @@ import {
   SCHEDULE_ROOT,
   SCHEDULE_STATE_FILE,
   type ScheduleState,
-} from "../src/core/schedule.ts";
+} from "@inkcity/core/schedule";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const DATA_DIR = join(ROOT, "src", "data");
+const DATA_DIR = join(ROOT, "packages", "core", "data");
 
 const COORD_PRECISION = 5;
 // Match the client: bbox_for_screen(lat, lon, max_half_km = 10, aspect = 1)
@@ -109,7 +109,7 @@ function loadCities(): City[] {
   return JSON.parse(raw) as City[];
 }
 
-/** Every city across src/data/cities-*.json, deduped by id (see mergePools). */
+/** Every city across packages/core/data/cities-*.json, deduped by id (see mergePools). */
 function loadSchedulePool(): City[] {
   const files = readdirSync(DATA_DIR).filter((n) => SCHEDULE_POOL_RE.test(n)).sort();
   if (files.length === 0) throw new Error(`no ${SCHEDULE_POOL_RE} pools in ${DATA_DIR}`);
@@ -435,7 +435,7 @@ function removePublished(dir: string, name: string): void {
  *
  * `city-list.json` is read back here, given a city for `today + LOOKAHEAD_DAYS`,
  * trimmed of anything older than `today - HISTORY_BACK_DAYS`, and written out
- * again. See src/core/schedule.ts for why it's stored rather than derived, and for
+ * again. See packages/core/src/schedule.ts for why it's stored rather than derived, and for
  * the cooldown rules. Because it's stored, **editing a day in that file is the
  * supported way to override it** — at any distance in the future, since nothing
  * re-rolls an entry that exists and the retention window is measured in days off

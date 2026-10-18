@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { GuessStorage } from "@/core";
+import type { GuessStorage } from "@inkcity/core";
 
 /**
  * The desktop's `GuessStorage` — the one platform-specific piece of the

@@ -2,17 +2,17 @@
 //! game the backend has to know.
 //!
 //! The game itself — its rules, its save-file format, stats — is written once in
-//! `src/core/guess` and shared with the website, which keeps the same JSON in
+//! `packages/core/src/guess` and shared with the website, which keeps the same JSON in
 //! `localStorage`. On the desktop the frontend reads and writes that JSON through
 //! `commands::guess_store_read` / `guess_store_write`, and this module just keeps it
 //! on disk at `app_data_dir()/guess.json`. Treat the contents as the frontend's: the
-//! format is defined by `src/core/guess/store.ts`.
+//! format is defined by `packages/core/src/guess/store.ts`.
 //!
 //! The exception is whether *today's city has been revealed*. The wallpaper's city
 //! caption may only appear once it has, and that's decided at render time — often
 //! with no window open at all (midnight, a theme flip at sunset). So the backend
 //! reads the two fields that decide it (`StoreView`) and applies `is_revealed`, a
-//! mirror of `isRevealed(dayState(…))` in src/core/guess/game.ts. Both are tested
+//! mirror of `isRevealed(dayState(…))` in packages/core/src/guess/game.ts. Both are tested
 //! against the same fixture, scripts/fixtures/guess-reveal-cases.json, so the two
 //! readings can't drift apart.
 
@@ -31,7 +31,7 @@ use crate::city::City;
 
 const FILE: &str = "guess.json";
 
-/// The `DayEnd` values src/core/guess/types.ts defines. Any other `end` is ignored,
+/// The `DayEnd` values packages/core/src/guess/types.ts defines. Any other `end` is ignored,
 /// exactly as `parseGuessStore` ignores it.
 const DAY_ENDS: [&str; 4] = ["won", "lost", "gaveUp", "skipped"];
 
@@ -68,7 +68,7 @@ impl StoreView {
 }
 
 /// Country code → English name, from the table the game uses
-/// (src/data/countries.json, bundled). The codes decide `is_revealed`'s
+/// (packages/core/data/countries.json, bundled). The codes decide `is_revealed`'s
 /// "unplayable country" rung; the names caption the wallpaper.
 fn countries() -> &'static HashMap<String, String> {
     static COUNTRIES: OnceLock<HashMap<String, String>> = OnceLock::new();
@@ -78,7 +78,7 @@ fn countries() -> &'static HashMap<String, String> {
             code: String,
             name: String,
         }
-        let rows: Vec<Row> = serde_json::from_str(include_str!("../../src/data/countries.json"))
+        let rows: Vec<Row> = serde_json::from_str(include_str!("../../packages/core/data/countries.json"))
             .expect("bundled countries.json invalid");
         rows.into_iter().map(|r| (r.code, r.name)).collect()
     })
@@ -92,7 +92,7 @@ pub fn country_name(code: &str) -> Option<&'static str> {
 /// Whether `today`'s city may be shown: the day has ended (won, lost, given up or
 /// skipped), or the `showCityInfo` preference is on (the game switched off), or the
 /// city's country isn't one the game can be played for. The mirror of
-/// `isRevealed(dayState(…))` in src/core/guess/game.ts — whose remaining states (no
+/// `isRevealed(dayState(…))` in packages/core/src/guess/game.ts — whose remaining states (no
 /// city yet, map not showing yet, playing) are exactly the ones that reveal nothing,
 /// which is why "is the map on the desktop yet" has no counterpart here.
 pub fn is_revealed(view: &StoreView, today: NaiveDate, city: Option<&City>) -> bool {

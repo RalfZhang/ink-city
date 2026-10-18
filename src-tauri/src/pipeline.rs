@@ -71,7 +71,7 @@ struct RenderRequest {
     label: Option<LabelPayload>,
 }
 
-/// The city caption as `MapLabel` in src/core/types.ts reads it — what to write,
+/// The city caption as `MapLabel` in packages/core/src/types.ts reads it — what to write,
 /// and where. Language-neutral on purpose: the city's own name, its English name
 /// and the country's English name, which is how a map's title block reads and spares
 /// the cache a per-UI-language dimension.
@@ -82,7 +82,7 @@ struct LabelPayload {
     name: String,
     local_name: String,
     country: String,
-    /// From src/data/countries.json; `None` falls back to the code in the renderer.
+    /// From packages/core/data/countries.json; `None` falls back to the code in the renderer.
     country_name: Option<String>,
     lat: f64,
     lon: f64,
@@ -1332,7 +1332,7 @@ mod tests {
     /// forgotten rename would arrive at `drawScene` as snake_case, read as
     /// `undefined`, and silently render as if the layer were off. So pin the
     /// camelCase key names and the railway mode's wire values, which must match
-    /// `Style` / `RailwayStyle` in src/core/types.ts.
+    /// `Style` / `RailwayStyle` in packages/core/src/types.ts.
     #[test]
     fn style_payload_uses_the_keys_the_renderer_reads() {
         let style = Style {
@@ -1639,7 +1639,7 @@ mod tests {
     }
 
     /// Same reasoning as the `Style` payload test: nothing type-checks the IPC
-    /// boundary, so pin the camelCase keys `MapLabel` (src/core/types.ts) reads, and
+    /// boundary, so pin the camelCase keys `MapLabel` (packages/core/src/types.ts) reads, and
     /// that an unlabeled request carries no `label` key at all.
     #[test]
     fn label_payload_uses_the_keys_the_renderer_reads() {

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import SettingRow from "@/components/SettingRow";
-import { isRevealed, type GameSnapshot } from "@/core";
+import { isRevealed, type GameSnapshot } from "@inkcity/core";
 
 /**
  * The "Daily guess" switch — on by default, so the game is what a day starts with.

@@ -1,5 +1,5 @@
-import type { Bbox, Geom, Osm, WayTags } from "../types";
-import { isClosed } from "../geom";
+import type { Bbox, Geom, Osm, WayTags } from "@inkcity/core";
+import { isClosed } from "./geom";
 
 // The road network — the always-present base layer every city has (unlike the
 // optional water/airports/railways/aerialways layers). Selector + slim only;

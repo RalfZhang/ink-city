@@ -12,7 +12,7 @@
 //! Tried before the live osm-cli sidecar because jsDelivr is reliably reachable
 //! from mainland China and the slim payload is small. Any miss (404 / not yet
 //! cached / network error) falls through to the sidecar, which itself falls back
-//! across Overpass mirrors (see osm_sidecar.rs / core/osm/overpass.ts).
+//! across Overpass mirrors (see osm_sidecar.rs / packages/osm/src/overpass.ts).
 //!
 //! See `github_mirror` for the mirrored-host order and why those hosts.
 
@@ -26,12 +26,12 @@ use crate::github_mirror;
 
 /// The date-keyed manifests.
 ///
-/// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `src/core/schedule.ts`,
+/// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `packages/core/src/schedule.ts`,
 /// which is where the layout is defined and the producer side reads it from.
 const SCHEDULE_PATH: &str = "osm-v2/data";
 /// The schedule *state* file, one level up from the manifests: `<dir>/<stem>.json`
 /// = `osm-v2/city-list.json`. Must match `SCHEDULE_ROOT`/`SCHEDULE_STATE_FILE` in
-/// `src/core/schedule.ts`.
+/// `packages/core/src/schedule.ts`.
 ///
 /// Normally CI/human-facing only — the client gets city *and* map data from one
 /// manifest and never needs this. The exception is Dev Mode's "bypass cache &

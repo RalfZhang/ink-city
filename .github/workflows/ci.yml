@@ -82,6 +82,17 @@ jobs:
           out=$(pnpm exec tsx scripts/osm-cli.ts 2>&1 || true)
           grep -q "usage: osm-cli" <<<"$out" || { echo "$out"; exit 1; }
 
+      # `@/` is the desktop app's alias for its own src/. Inside a workspace
+      # package it would resolve against whichever app happens to compile it —
+      # building fine here and breaking (or silently importing the wrong file)
+      # in the next consumer — so packages import each other by name only.
+      - name: No app aliases inside packages
+        run: |
+          if grep -rnE "from ['\"]@/" packages --include='*.ts' --include='*.tsx'; then
+            echo "::error::packages must not import through the app's @/ alias"
+            exit 1
+          fi
+
   rust:
     name: cargo test (${{ matrix.platform }})
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository

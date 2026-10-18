@@ -4,12 +4,12 @@ import { invoke } from "@tauri-apps/api/core";
 // until a request carries a caption.
 import "@fontsource-variable/geist";
 
-import { drawScene, labelFonts, type DrawReq, type MapLabel } from "@/core";
+import { drawScene, labelFonts, type DrawReq, type MapLabel } from "@inkcity/core";
 import { logError, logInfo, logWarn } from "@/lib/log";
 
 // Thin Tauri adapter: receive a render request over IPC, draw via the portable
 // core, and hand the PNG bytes back to Rust. All drawing logic lives in
-// `@/core/render` so the website and CI can reuse it.
+// `@inkcity/core` (packages/core/src/render.ts) so the website and CI can reuse it.
 
 type RenderReq = DrawReq & { date: string };
 

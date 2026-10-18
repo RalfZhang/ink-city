@@ -1,20 +1,20 @@
-// Barrel for the portable core — the client-safe surface. Consumers import from
-// "@/core" (desktop) or vendor this directory into the CI script / website repos.
+// `@inkcity/core` — the portable, client-safe surface, imported by the desktop
+// frontend, the CI scripts and (later) the website as a workspace package.
 //
-// Two parts of this directory are deliberately absent, and vendoring must still
-// include them:
+// Two modules are deliberately absent from this barrel:
 //
-//   • ./osm/* beyond ./osm/layers — precache/sidecar-only (Node/Deno/Bun).
-//     ./osm/water pulls in `polygon-clipping`, which we keep out of the client
-//     bundle; the acquisition path is reached only via scripts/osm-cli.ts → ./osm.
+//   • ./schedule — CI-only; scripts import it as `@inkcity/core/schedule`.
 //   • ./mondrian — no standalone consumer, reached only through `drawScene`'s
 //     `variant`, but ./render imports it directly.
+//
+// OSM acquisition isn't here at all: it lives in `@inkcity/osm`, so its
+// `polygon-clipping` dependency can never reach a client bundle.
 export * from "./types";
 export * from "./city";
 export * from "./bbox";
 export * from "./coords";
 // LAYER_IDS/LayerId only: the client and website use them for UI gating.
-export * from "./osm/layers";
+export * from "./layers";
 export * from "./render";
 export * from "./label";
 export * from "./constants";

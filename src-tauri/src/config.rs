@@ -76,7 +76,7 @@ pub enum StylePreset {
 /// art style is a new arm here instead of another boolean that can contradict
 /// this one. `Ink` is the default ink-on-paper map in the theme's colors;
 /// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18).
-/// Mirrors `StyleVariant` in src/core/types.ts and is serialized straight into
+/// Mirrors `StyleVariant` in packages/core/src/types.ts and is serialized straight into
 /// the renderer's `Style` payload.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -89,9 +89,9 @@ pub enum StyleVariant {
 /// How the railway layer is drawn — the Lab-tab selector. One dimension rather
 /// than a `show_railways` boolean plus a separate style field, so "hidden" and
 /// "which symbol" can never contradict each other. `Off` by default, like every
-/// other optional layer. Mirrors `RailwayStyle` in src/core/types.ts and is
+/// other optional layer. Mirrors `RailwayStyle` in packages/core/src/types.ts and is
 /// serialized straight into the renderer's `Style` payload; the drawable modes are
-/// dispatched through `RAILWAY_MODES` in src/core/render.ts, where each one's
+/// dispatched through `RAILWAY_MODES` in packages/core/src/render.ts, where each one's
 /// weights and opacity live too.
 ///
 /// Replaces the legacy `show_railways: bool`, which `parse_config` migrates.
@@ -106,7 +106,7 @@ pub enum RailwayStyle {
 }
 
 /// Which map service the City tab's map button opens. Mirrors `MAP_PROVIDERS` in
-/// src/core/constants.ts, which holds each service's label key and URL template.
+/// packages/core/src/constants.ts, which holds each service's label key and URL template.
 ///
 /// `Osm` by default.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
@@ -131,7 +131,7 @@ pub enum MapProvider {
 /// `guess_store::is_revealed`). The kebab-case names are also the tag in the labeled
 /// render's cache name (`<date>-<theme>-label-<tag>.png`), so they must stay
 /// filename-safe. Mirrors `CityLabel` in src/types.ts and `LabelCorner` in
-/// src/core/types.ts.
+/// packages/core/src/types.ts.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 pub enum CityLabel {
@@ -200,7 +200,8 @@ pub struct Config {
     /// unconditionally in the Lab tab — a city whose data lacks the layer simply
     /// renders nothing for it, so nothing probes the payload first.
     pub show_water: bool,
-    /// Runways + taxiways, as centerlines or areas (no aprons — see core/osm/airports.ts).
+    /// Runways + taxiways, as centerlines or areas (no aprons — see
+    /// packages/osm/src/airports.ts).
     pub show_airports: bool,
     /// Surface rail centerlines, and which symbol they're drawn in (see
     /// `RailwayStyle`). Not a `show_*` bool like its neighbours because the user
@@ -220,7 +221,7 @@ pub struct Config {
     /// Which visual language the wallpaper is drawn in (see `StyleVariant`).
     /// `Ink` by default. A Lab-tab experiment for now: `Mondrian` replaces the
     /// theme colors with the Mondrian paper/ink pair, but the layer toggles above
-    /// still apply. See src/core/mondrian.ts.
+    /// still apply. See packages/core/src/mondrian.ts.
     pub variant: StyleVariant,
     /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
     /// the 7-click gesture on the version number in About. Persisted so the tab
@@ -318,7 +319,7 @@ pub fn load(app: &AppHandle) -> Config {
 ///     dashed line, and the dash did not survive the rewrite — so an upgrading
 ///     user's railways do change slightly whatever we pick here. `Plain` is the
 ///     nearest survivor (same weight, one unadorned stroke, see `RAILWAY_PLAIN` in
-///     src/core/render.ts) and the only choice that isn't a deliberate new symbol:
+///     packages/core/src/render.ts) and the only choice that isn't a deliberate new symbol:
 ///     landing someone on `Banded` or `Ties` would hand them a look they never
 ///     opted into. The upgrade does not force a re-render, so on the day of the
 ///     update the desktop may still show the pre-upgrade drawing while the selector

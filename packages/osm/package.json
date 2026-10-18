@@ -1,0 +1,12 @@
+{
+  "name": "@inkcity/osm",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@inkcity/core": "workspace:*",
+    "polygon-clipping": "^0.15.7"
+  }
+}

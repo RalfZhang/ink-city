@@ -19,7 +19,7 @@ import {
   resetDay,
   serializeGuessStore,
   type GuessStore,
-} from "@/core";
+} from "@inkcity/core";
 import { tauriGuessStorage } from "@/lib/guess-storage";
 import type { Status } from "../types";
 

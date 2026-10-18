@@ -5,17 +5,17 @@
 // the CDN and the live fallback always produce the same shape for the same bbox.
 //
 // Runs in Node/Deno/Bun — never on the client (see water.ts's note on
-// polygon-clipping) — so this module is deliberately NOT re-exported from
-// ./index (the client barrel), same rule as ./water.
+// polygon-clipping), which is what keeps this package separate from
+// `@inkcity/core`.
 
-import type { Bbox, Osm } from "../types";
+import type { Bbox, Osm } from "@inkcity/core";
 import { fetchOverpass } from "./overpass";
 import { roadsSelector, slimRoads } from "./roads";
 import { waterSelector, slimWater } from "./water";
 import { airportsSelector, slimAirports } from "./airports";
 import { railwaysSelector, slimRailways } from "./railways";
 import { aerialwaysSelector, slimAerialways } from "./aerialways";
-import { OSM_SCHEMA_VERSION } from "../constants";
+import { OSM_SCHEMA_VERSION } from "@inkcity/core";
 
 export type FetchCityOptions = {
   coordPrecision?: number;

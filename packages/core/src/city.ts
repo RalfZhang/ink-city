@@ -1,7 +1,7 @@
 import type { City } from "./types";
 
 // The legacy population rotation — a date → index permutation over a
-// population-sorted list (`src/data/cities.json`).
+// population-sorted list (`packages/core/data/cities.json`).
 //
 // DEPRECATED, and no longer mirrored anywhere: the Rust port in
 // `src-tauri/src/city.rs` is gone, because the desktop client no longer picks the

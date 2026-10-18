@@ -77,8 +77,8 @@ import {
   type RailwayStyle,
   type Style,
   type StylePreset,
-} from "../src/core/index.ts";
-import { fetchCityData } from "../src/core/osm/index.ts";
+} from "@inkcity/core";
+import { fetchCityData } from "@inkcity/osm";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");

@@ -10,7 +10,7 @@ export type {
   StylePreset,
   StyleVariant,
   ThemeMode,
-} from "./core";
+} from "@inkcity/core";
 
 import type {
   City,
@@ -21,7 +21,7 @@ import type {
   StylePreset,
   StyleVariant,
   ThemeMode,
-} from "./core";
+} from "@inkcity/core";
 
 export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 
@@ -48,7 +48,7 @@ export type Status = {
   city: City | null;
   /**
    * Whether today's Daily wallpaper is on the desktop yet — the game's
-   * `DayInputs.ready` (src/core/guess/types.ts): it waits for the map it's about.
+   * `DayInputs.ready` (packages/core/src/guess/types.ts): it waits for the map it's about.
    */
   todayPainted: boolean;
   /**

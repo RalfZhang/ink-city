@@ -18,11 +18,11 @@ table of answers — see [the last section](#countriesjson--the-guess-the-countr
 
 The two `cities-*.json` pools fill both runtime roles. The CI-authored schedule draws
 every daily city from them (see
-[random-city-strategy.md](../../docs/random-city-strategy.md)), and the desktop app
+[random-city-strategy.md](../../../docs/random-city-strategy.md)), and the desktop app
 compiles the same two files in as its **Customized-mode name search** index — merged
 and deduped by id exactly as the schedule merges them (`mergePools` in
-`src/core/schedule.ts`, mirrored by `merge_pools` in
-[`src-tauri/src/city.rs`](../../src-tauri/src/city.rs)). So any city that can come up
+`packages/core/src/schedule.ts`, mirrored by `merge_pools` in
+[`src-tauri/src/city.rs`](../../../src-tauri/src/city.rs)). So any city that can come up
 as the daily one can also be searched for by name, under the same native-script
 `localName`. A test in city.rs fails if a `cities-*.json` appears here without being
 added to its `POOLS`. Should the two roles ever need different lists — a search index
@@ -38,7 +38,7 @@ go with that flow.
 ## How these are built / regenerated
 
 `cities.json` has a committed generator,
-[`scripts/build-cities.mjs`](../../scripts/build-cities.mjs) (`pnpm build:cities`).
+[`scripts/build-cities.mjs`](../../../scripts/build-cities.mjs) (`pnpm build:cities`).
 
 **The two curated pools do not, by convention** — they're produced by a throwaway
 script run from `/tmp`, and only the resulting JSON is committed. They reuse
@@ -65,8 +65,8 @@ checkable: join all three pools to `cities1000.txt` by `id` and every `country` 
 match. It holds for all 2276 pins except the two with no `cities1000.txt` row at all
 (Jaboatão in `cities.json`, Monte Águila — see below). Across pools it's also
 consistent: shared ids never disagree on `country`, which is what lets
-[`mergePools`](../core/schedule.ts) pick a winner without moving a city between
-country cooldowns.
+[`mergePools`](../src/schedule.ts) pick a winner without moving a
+city between country cooldowns.
 
 ## `lat` / `lon` — where the coordinates come from
 
@@ -75,10 +75,10 @@ OSM's `wikidata` tag.** `cities.json` is unaffected — it stays GeoNames.
 
 This matters more here than it would elsewhere, because the coordinate is not a
 label point: it is simultaneously the Overpass download area, the render crop and
-the projection origin ([`pipeline.rs`](../../src-tauri/src/pipeline.rs)'s
+the projection origin ([`pipeline.rs`](../../../src-tauri/src/pipeline.rs)'s
 `bbox_for_screen(lat, lon, 10.0, aspect)`, `MAX_HALF_KM` in
-[`osm-cli.ts`](../../scripts/osm-cli.ts), `RENDER_RADIUS_KM` in
-[`render.ts`](../../scripts/render.ts) — all three must agree on 10). The long side
+[`osm-cli.ts`](../../../scripts/osm-cli.ts), `RENDER_RADIUS_KM` in
+[`render.ts`](../../../scripts/render.ts) — all three must agree on 10). The long side
 is a fixed 20 km, so a 16:9 frame is only **11.25 km tall** and a 21:9 one 8.6 km.
 Nothing recenters on failure: a bad coordinate just renders empty.
 
@@ -234,7 +234,7 @@ one renders the same frame — previously they could differ by up to 21 km.
   ASCII, `asciiname` for the 15 that aren't (`Bogota`, `São Paulo` → `Sao Paulo`,
   `Zürich` → `Zuerich`). `cities-famous.json` keeps the diacritics instead, so the
   two pools differ on 19 of their 221 shared ids. Worth knowing before "fixing" either
-  side: [`city.rs`'s search](../../src-tauri/src/city.rs) lowercases but does **not**
+  side: [`city.rs`'s search](../../../src-tauri/src/city.rs) lowercases but does **not**
   fold diacritics, so an ASCII `name` is what a user typing `bogota` can actually find.
 - `population` is **GeoNames verbatim** — the whole file re-derives
   from a dump, so a stale dump shows up here as a stale number (Astana `345604` and
@@ -338,7 +338,7 @@ Target-language priority: **CURATED > China autonomous region > India state > mu
 
 One row per country/region code the two schedule pools contain — exactly the answers
 the daily game can have (243) — as `{ code, name, lat, lon }`. Read by the game itself
-(`src/core/guess`, handed in by the host, like every core consumer of this directory),
+(`packages/core/src/guess`, handed in by the host, like every core consumer of this directory),
 and bundled into the backend (`src-tauri/src/guess_store.rs`), which needs the codes to
 tell a playable day from one it can only reveal and the names for the wallpaper caption.
 `pnpm guess-test` fails if a pool ever gains a country this table lacks.

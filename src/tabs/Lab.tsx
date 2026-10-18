@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SettingRow from "@/components/SettingRow";
-import { RAILWAY_STYLES } from "@/core";
+import { RAILWAY_STYLES } from "@inkcity/core";
 import type { RailwayStyle, Status, StyleVariant } from "../types";
 
 // The railway row is a selector rather than a switch: "don't draw" is one of the

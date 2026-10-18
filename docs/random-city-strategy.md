@@ -17,7 +17,7 @@ below records the last time anyone did).
 
 | Part | State |
 |---|---|
-| Schedule state + cooldowns (`src/core/schedule.ts`) | ✅ + tested (`pnpm schedule-test`) |
+| Schedule state + cooldowns (`packages/core/src/schedule.ts`) | ✅ + tested (`pnpm schedule-test`) |
 | Pre-cache advances the schedule and emits manifests (`scripts/osm-cli.ts`) | ✅ (additive to `osm/<id>.json`) |
 | Workflow gzips + publishes `osm-v2/` (`.github/workflows/precache.yml`) | ✅ |
 | Client fetch-by-date + reconstruction (`cdn.rs` + `pipeline.rs`) | ✅ |
@@ -82,7 +82,7 @@ Now picks are genuinely random (`Math.random`) and the result is persisted — w
 is also what makes the cooldowns possible at all, since a random pick can't be
 recomputed, only remembered.
 
-**Pool** — every `src/data/cities-*.json` (currently `cities-famous.json` +
+**Pool** — every `packages/core/data/cities-*.json` (currently `cities-famous.json` +
 `cities-countries.json`), merged and **deduped by `id`**, with later files
 winning: ~1055 cities from 1276 rows. `cities.json` is excluded on purpose (the
 hyphen in the glob) — it belongs to the legacy rotation, and is now only that
@@ -251,7 +251,7 @@ What went with it: `city::pick_for_date` and its `EPOCH`/`MULTIPLIER`,
 the client no longer reads `osm/` at all. `city.rs` kept loading
 `src/data/cities.json` as the index behind the City tab's Customized-mode name
 search until that too moved to the schedule's own pools (compiled in, no longer
-hot-updated from `main`); `src/core/city.ts` keeps `pickCityForDate` for CI.
+hot-updated from `main`); `packages/core/src/city.ts` keeps `pickCityForDate` for CI.
 
 **CI still publishes `osm/`**, unchanged, for clients shipped before this change —
 they have no other last rung. **Recommended removal after 2026-11-01**, by which

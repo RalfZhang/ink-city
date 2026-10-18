@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds src/data/cities.json from GeoNames cities1000.
+// Builds packages/core/data/cities.json from GeoNames cities1000.
 // Run with: pnpm build:cities
 
 import { mkdtempSync, createWriteStream, readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -10,7 +10,7 @@ import { spawnSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const OUT = join(ROOT, "src", "data", "cities.json");
+const OUT = join(ROOT, "packages", "core", "data", "cities.json");
 const URL = "https://download.geonames.org/export/dump/cities1000.zip";
 const TOP_N = 1000;
 

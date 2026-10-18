@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { MAX_GUESSES, countryName, type CountryIndex, type GameSnapshot } from "@/core";
+import { MAX_GUESSES, countryName, type CountryIndex, type GameSnapshot } from "@inkcity/core";
 import { cn } from "@/lib/utils";
 import GuessRow from "./GuessRow";
 

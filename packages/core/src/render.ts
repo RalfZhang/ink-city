@@ -1,5 +1,5 @@
 import type { AirportKind, Bbox, Geom, MapLabel, Osm, RailwayStyle, Style, StylePreset, Way } from "./types";
-import type { LayerId } from "./osm/layers";
+import type { LayerId } from "./layers";
 import { drawLabel } from "./label";
 import { groundHeightKm, project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA } from "./constants";

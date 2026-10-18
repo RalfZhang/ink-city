@@ -1,6 +1,6 @@
 ## How the daily city is chosen
 
-A GitHub Action draws each day's city at random from `src/data/cities-*.json` (~1055 cities) under no-repeat cooldowns — no city within 30 days, no country within 5 — and **persists the result** to `osm-v2/city-list.json` on the `data` branch. The client reads that, so the pick is not a formula it can recompute; the tradeoff is that a stored schedule can be steered by hand, which a seeded one can't. [random-city-strategy.md](random-city-strategy.md) is the full account, including the hand-edit workflow and the three-rung client ladder.
+A GitHub Action draws each day's city at random from `packages/core/data/cities-*.json` (~1055 cities) under no-repeat cooldowns — no city within 30 days, no country within 5 — and **persists the result** to `osm-v2/city-list.json` on the `data` branch. The client reads that, so the pick is not a formula it can recompute; the tradeoff is that a stored schedule can be steered by hand, which a seeded one can't. [random-city-strategy.md](random-city-strategy.md) is the full account, including the hand-edit workflow and the three-rung client ladder.
 
 **The population rotation is gone from the client.** It was the last-resort fallback during the migration — reached when no host served either schedule file — and picked a city with:
 
@@ -8,17 +8,20 @@ A GitHub Action draws each day's city at random from `src/data/cities-*.json` (~
 index = (days_since_2023-03-03 * 379) % N
 ```
 
-`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` can stay population-sorted and append-only. The Rust port is deleted; `src/core/city.ts` keeps the formula for the CI pre-cacher, which still publishes the id-keyed `osm/<id>.json` payloads for clients shipped before the removal (recommended removal after 2026-11-01). A day the schedule can't name is now simply not painted: the previous wallpaper stays up, the City tab says why, and the 60s poll retries. The formula is not a source of truth for any client any more — the future website will read the manifests rather than recompute it, since a random stored pick has no formula to recompute.
+`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` can stay population-sorted and append-only. The Rust port is deleted; `packages/core/src/city.ts` keeps the formula for the CI pre-cacher, which still publishes the id-keyed `osm/<id>.json` payloads for clients shipped before the removal (recommended removal after 2026-11-01). A day the schedule can't name is now simply not painted: the previous wallpaper stays up, the City tab says why, and the 60s poll retries. The formula is not a source of truth for any client any more — the future website will read the manifests rather than recompute it, since a random stored pick has no formula to recompute.
 
 ## Architecture
 
 ```
-src/core/           Portable, dependency-free logic (city pick, bbox math, the
-                    daily schedule, canvas rendering incl. the Mondrian variant)
-                    shared by the desktop renderer, osm-cli, and a future website.
-src/core/osm/       Overpass transport + per-layer extraction (roads, water,
-                    airports, railways, aerialways). Node/Bun only — never
-                    bundled into the client; see src/core/index.ts.
+packages/core/      `@inkcity/core` — portable, dependency-free logic (city pick,
+                    bbox math, the daily schedule, the guess-the-country game,
+                    canvas rendering incl. the Mondrian variant) shared by the
+                    desktop renderer, osm-cli, and a future website.
+packages/osm/       `@inkcity/osm` — Overpass transport + per-layer extraction
+                    (roads, water, airports, railways, aerialways). Node/Bun
+                    only; a package of its own so it never reaches a client
+                    bundle. Both are pnpm workspace packages, imported as
+                    TypeScript source with no build step.
 src/                React + TypeScript settings UI (Vite).
 src/renderer/       Hidden WebView that draws the map to a canvas → PNG.
 src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting, tray,
@@ -38,7 +41,7 @@ scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mod
 
 **Map variants:** `Style.variant` picks the visual language the same geometry is drawn in — `ink` (the default map, in the theme's colors) or `mondrian` (issue #18). The Mondrian variant is not a separate pipeline: `core/render.ts` runs the one compositing order with the palette forced to its paper/ink pair and one extra step that fills a deterministic subset of the enclosed city blocks (`core/mondrian.ts`) just before the roads are stroked over them. Which blocks exist is derived from the road classes the active preset actually strokes, so a color plane always has its black borders.
 
-**CDN pre-cache:** a GitHub Action runs `osm-cli precache` every 6 hours, fetching the upcoming days' map data (all five layers), slimming it, and force-pushing it to the `data` branch, which [jsDelivr](https://www.jsdelivr.com/) serves as a CDN. This keeps the app fast and reachable on networks where Overpass is slow or blocked (notably mainland China). The desktop app's live fallback (`osm-cli fetch`, run as a bundled sidecar) shares the exact same TypeScript implementation, so a CDN miss never produces data poorer than the CDN's — see `src/core/osm/fetch-city.ts`.
+**CDN pre-cache:** a GitHub Action runs `osm-cli precache` every 6 hours, fetching the upcoming days' map data (all five layers), slimming it, and force-pushing it to the `data` branch, which [jsDelivr](https://www.jsdelivr.com/) serves as a CDN. This keeps the app fast and reachable on networks where Overpass is slow or blocked (notably mainland China). The desktop app's live fallback (`osm-cli fetch`, run as a bundled sidecar) shares the exact same TypeScript implementation, so a CDN miss never produces data poorer than the CDN's — see `packages/osm/src/fetch-city.ts`.
 
 ## Build from source
 

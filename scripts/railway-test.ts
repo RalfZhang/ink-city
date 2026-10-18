@@ -1,6 +1,6 @@
 #!/usr/bin/env -S npx tsx
 // Verifies the railway way-stitcher behind the `banded`/`ties`/`plain` symbols
-// (chainRailways in src/core/render.ts):
+// (chainRailways in packages/core/src/render.ts):
 //   • ways that meet end-to-end join into one chain, in either orientation and
 //     whichever end of the growing chain they attach to,
 //   • a chain breaks where three or more ways meet — a switch or junction is a real
@@ -19,8 +19,8 @@
 //
 //   pnpm railway-test
 
-import { chainRailways } from "../src/core/render.ts";
-import type { Geom } from "../src/core/index.ts";
+import { chainRailways } from "@inkcity/core";
+import type { Geom } from "@inkcity/core";
 
 /** A way as `[lat, lon]` pairs — shorter to write than {lat, lon} objects. */
 type Way = [number, number][];

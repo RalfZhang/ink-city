@@ -7,14 +7,14 @@ import type { City } from "../types";
 // everything between is shared.
 
 /**
- * One row of `src/data/countries.json`: a country or region the game accepts as a
- * guess. Like every core consumer of `src/data`, the table is passed in by the
+ * One row of `packages/core/data/countries.json`: a country or region the game accepts as a
+ * guess. Like every core consumer of `packages/core/data`, the table is passed in by the
  * caller rather than imported here (see `countryIndex`).
  */
 export type Country = {
   /** ISO 3166-1 alpha-2 (plus the user-assigned `XK`) — the same code space as `City.country`. */
   code: string;
-  /** English display name: CLDR's, with a few overridden for captions (src/data/README.md). */
+  /** English display name: CLDR's, with a few overridden for captions (packages/core/data/README.md). */
   name: string;
   /** Reference point distances and bearings are measured from. */
   lat: number;

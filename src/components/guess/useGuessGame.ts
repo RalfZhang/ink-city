@@ -11,7 +11,7 @@ import {
   type GuessOutcome,
   type GuessStorage,
   type GuessStore,
-} from "@/core";
+} from "@inkcity/core";
 
 export type GuessGame = {
   /** Today's game, or null until the save has been read — draw nothing that could reveal the city yet. */
@@ -29,7 +29,7 @@ export type GuessGame = {
 
 /**
  * The guess-the-country game as React state: the save file from `storage`, today's
- * inputs from the host, and the shared rules in src/core/guess between them. Free of
+ * inputs from the host, and the shared rules in packages/core/src/guess between them. Free of
  * Tauri on purpose — the desktop passes `tauriGuessStorage` and the Status-derived
  * inputs, the website its localStorage and its own day.
  *

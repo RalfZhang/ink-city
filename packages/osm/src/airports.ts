@@ -1,5 +1,5 @@
-import type { AirportFeature, AirportKind, Bbox } from "../types";
-import { dedupeAdjacent, isClosed, roundPts } from "../geom";
+import type { AirportFeature, AirportKind, Bbox } from "@inkcity/core";
+import { dedupeAdjacent, isClosed, roundPts } from "./geom";
 
 // The "airports" layer's selector + slim, dispatched by fetch-city.ts. Runs at
 // PRECACHE/FETCH time (Node/Deno/Bun), never on the client.

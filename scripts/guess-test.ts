@@ -1,12 +1,12 @@
 #!/usr/bin/env -S npx tsx
-// Verifies the guess-the-country game (src/core/guess), which the desktop app and the
+// Verifies the guess-the-country game (packages/core/src/guess), which the desktop app and the
 // website share:
 //   • the hint geometry — distances, rhumb-line bearings, compass points, ink tiers,
 //   • the rules — winning, losing, duplicates, the "Daily guess" switch, a city
 //     that changes mid-day, and the states a day waits in before it can be played,
 //   • lifetime stats and streaks, and the tolerant save-file parser,
 //   • the country lookup, in English and in other scripts,
-//   • src/data/countries.json covering every country the daily schedule can draw,
+//   • packages/core/data/countries.json covering every country the daily schedule can draw,
 //   • the reveal rule against scripts/fixtures/guess-reveal-cases.json — the same
 //     file src-tauri/src/guess_store.rs tests its mirror of that rule against.
 // Exits non-zero (printing every violation) on failure.
@@ -41,8 +41,8 @@ import {
   type DayCity,
   type DayInputs,
   type GuessStore,
-} from "../src/core/guess/index.ts";
-import { SCHEDULE_POOL_RE } from "../src/core/schedule.ts";
+} from "@inkcity/core";
+import { SCHEDULE_POOL_RE } from "@inkcity/core/schedule";
 import { LOCALES } from "../src/i18n/locales.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -246,7 +246,7 @@ function play(store: GuessStore, codes: string[], inputs = day()): GuessStore {
 
 // --- country table + lookup --------------------------------------------------------
 
-const countries = readJson<Country[]>("src/data/countries.json");
+const countries = readJson<Country[]>("packages/core/data/countries.json");
 const real = countryIndex(countries);
 {
   const codes = countries.map((c) => c.code);
@@ -254,9 +254,9 @@ const real = countryIndex(countries);
   check(codes.every((c) => /^[A-Z]{2}$/.test(c)), "country codes are two upper-case letters");
   check(countries.every((c) => Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180 && c.name.length > 0), "coordinates in range, names present");
   type Pin = { country: string };
-  const poolFiles = readdirSync(join(root, "src/data")).filter((n) => SCHEDULE_POOL_RE.test(n));
+  const poolFiles = readdirSync(join(root, "packages/core/data")).filter((n) => SCHEDULE_POOL_RE.test(n));
   check(poolFiles.length > 0, "found the schedule's city pools", poolFiles);
-  const pools = poolFiles.flatMap((n) => readJson<Pin[]>(`src/data/${n}`));
+  const pools = poolFiles.flatMap((n) => readJson<Pin[]>(`packages/core/data/${n}`));
   const missing = [...new Set(pools.map((p) => p.country))].filter((c) => !real.byCode.has(c));
   check(missing.length === 0, "countries.json covers every country the schedule draws from", missing);
 

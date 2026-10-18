@@ -17,7 +17,7 @@ name: Precache OSM
 #
 #   osm-v2/  the date-keyed schedule + its state file — what every current client
 #            reads (src-tauri/src/cdn.rs).
-#   osm/     the legacy id-keyed rotation, driven by src/data/cities.json.
+#   osm/     the legacy id-keyed rotation, driven by packages/core/data/cities.json.
 #            DEPRECATED: current clients dropped the cities.json rotation fallback,
 #            so nothing reads these; they're published only for clients shipped
 #            before that change. RECOMMENDED REMOVAL AFTER 2026-11-01 — drop the
@@ -66,7 +66,7 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      # Water assembly (scripts/osm-cli.ts → src/core/osm/water.ts) needs
+      # Water assembly (scripts/osm-cli.ts → packages/osm/src/water.ts) needs
       # `polygon-clipping`. `--ignore-scripts` skips the `canvas` native build,
       # which is a devDependency only used by the local render harness, not here.
       - name: Install dependencies
@@ -144,7 +144,7 @@ jobs:
           # run (and edited by hand) rather than fetched by the client, so a .gz
           # sibling would just be dead weight.
           # The paths must match SCHEDULE_ROOT/SCHEDULE_DATA_DIR in
-          # src/core/schedule.ts, which is where the layout is defined.
+          # packages/core/src/schedule.ts, which is where the layout is defined.
           files=(data-out/osm/*.json data-out/osm-v2/data/*.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "nothing to compress"
@@ -221,7 +221,7 @@ jobs:
           # than the branch already has; that's the restore step's job, which
           # aborts the whole run on any clone failure other than "branch missing".
           #
-          # osm-v2/ must match SCHEDULE_ROOT in src/core/schedule.ts.
+          # osm-v2/ must match SCHEDULE_ROOT in packages/core/src/schedule.ts.
           if [ -z "$(ls -A osm osm-v2 client 2>/dev/null)" ]; then
             echo "nothing to publish (no cities cached, no schedule, no client files)"
             exit 0

@@ -1,5 +1,11 @@
 import { ArrowUp, Check } from "lucide-react";
-import { MAX_TIER, countryName, type CompassPoint, type CountryIndex, type GuessView } from "@/core";
+import {
+  MAX_TIER,
+  countryName,
+  type CompassPoint,
+  type CountryIndex,
+  type GuessView,
+} from "@inkcity/core";
 import { cn } from "@/lib/utils";
 
 const ANGLE: Record<CompassPoint, number> = {

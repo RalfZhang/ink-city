@@ -16,7 +16,7 @@ import {
 // next state, persist it, and only then commit it — a failed write leaves nothing
 // half-applied.
 
-/** The country table, indexed for lookup. Built once by the host from `src/data/countries.json`. */
+/** The country table, indexed for lookup. Built once by the host from `packages/core/data/countries.json`. */
 export type CountryIndex = {
   readonly list: readonly Country[];
   readonly byCode: ReadonlyMap<string, Country>;

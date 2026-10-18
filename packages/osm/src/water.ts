@@ -4,13 +4,14 @@
 import polygonClipping, { type MultiPolygon, type Ring } from "polygon-clipping";
 const { difference, union } = polygonClipping;
 
-import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "../types";
-import { TOL, isClosed, dedupeAdjacent, roundPts } from "../geom";
+import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "@inkcity/core";
+import { TOL, isClosed, dedupeAdjacent, roundPts } from "./geom";
 
 // The "water" layer's selector + slim, dispatched by fetch-city.ts. Runs at
-// PRECACHE/FETCH time (Node/Deno/Bun), never on the client — and unlike its sibling
-// layer modules it is also kept out of ../index because it depends on
-// `polygon-clipping`, which must stay out of the desktop/website bundle.
+// PRECACHE/FETCH time (Node/Deno/Bun), never on the client. Its dependency on
+// `polygon-clipping`, which must stay out of the desktop/website bundle, is the
+// main reason OSM acquisition is a package of its own rather than part of
+// `@inkcity/core`.
 //
 // This is where all the fiddly geometry lives, worked in geographic (lat/lon) space
 // where OSM's "land on the left, water on the right" coastline rule holds as

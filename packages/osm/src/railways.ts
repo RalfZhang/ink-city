@@ -1,5 +1,5 @@
-import type { Bbox, RailwayFeature } from "../types";
-import { dedupeAdjacent, roundPts } from "../geom";
+import type { Bbox, RailwayFeature } from "@inkcity/core";
+import { dedupeAdjacent, roundPts } from "./geom";
 
 // The "railways" layer's selector + slim, dispatched by fetch-city.ts. Runs at
 // PRECACHE/FETCH time (Node/Deno/Bun), never on the client.

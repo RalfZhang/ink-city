@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { LABEL_CORNERS, STYLE_PRESETS } from "@/core";
+import { LABEL_CORNERS, STYLE_PRESETS } from "@inkcity/core";
 import type { CityLabel, ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {

@@ -13,7 +13,7 @@ import {
   type CountryIndex,
   type GameSnapshot,
   type GuessOutcome,
-} from "@/core";
+} from "@inkcity/core";
 import GuessRow from "./GuessRow";
 
 type Props = {

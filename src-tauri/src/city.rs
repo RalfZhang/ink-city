@@ -2,7 +2,7 @@
 //! (issue #11) — `search` below — plus `today()`, the app's single definition of
 //! the current date.
 //!
-//! The list is the schedule's own pool: every `src/data/cities-*.json`, merged
+//! The list is the schedule's own pool: every `packages/core/data/cities-*.json`, merged
 //! the way CI merges them, so any city that can come up as the daily one can be
 //! found by name too, under the same native-script `localName`. It is compiled
 //! in and nothing else: releases up to v0.13.0 searched `src/data/cities.json`
@@ -11,7 +11,7 @@
 //!
 //! The list used to also *be* the daily city: a `(days * 379) % N` permutation
 //! over the population-sorted cities.json, computed offline and mirrored in
-//! `src/core/city.ts`. That rotation is gone from the client. The daily city now
+//! `packages/core/src/city.ts`. That rotation is gone from the client. The daily city now
 //! comes from the CI-authored schedule and nothing else, with
 //! `osm-v2/city-list.json` as its own last rung (see `pipeline::resolve_daily`
 //! and docs/random-city-strategy.md) — so no local formula can name a day the
@@ -27,11 +27,11 @@ use tauri::{AppHandle, Manager};
 use unicode_normalization::UnicodeNormalization;
 
 /// The schedule's pools in the order CI merges them (scripts/osm-cli.ts reads
-/// `src/data/cities-*.json` sorted by name), named so a test can check that a
+/// `packages/core/data/cities-*.json` sorted by name), named so a test can check that a
 /// pool added there isn't missing here.
 const POOLS: [(&str, &str); 2] = [
-    ("cities-countries.json", include_str!("../../src/data/cities-countries.json")),
-    ("cities-famous.json", include_str!("../../src/data/cities-famous.json")),
+    ("cities-countries.json", include_str!("../../packages/core/data/cities-countries.json")),
+    ("cities-famous.json", include_str!("../../packages/core/data/cities-famous.json")),
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -120,7 +120,7 @@ fn fold(text: &str, german: bool) -> String {
     out
 }
 
-/// `mergePools` (src/core/schedule.ts) in Rust: one entry per id, with a later
+/// `mergePools` (packages/core/src/schedule.ts) in Rust: one entry per id, with a later
 /// pool's entry replacing an earlier one in place. Fed the same files in the same
 /// order, it yields exactly the cities the schedule draws from, under the same
 /// names — the pools share 221 cities and spell some of them differently
@@ -317,15 +317,15 @@ mod tests {
         assert_eq!(names, ["Bogotá", "Quito", "Lima"]);
     }
 
-    /// CI draws the daily city from every `src/data/cities-*.json` it finds; the
+    /// CI draws the daily city from every `packages/core/data/cities-*.json` it finds; the
     /// search can only include the ones named in `POOLS`. A pool added on one side
     /// alone would make some daily cities unsearchable, so compare the two lists,
     /// in CI's (sorted) order — which is also the order `merge_pools` needs.
     #[test]
     fn the_bundled_pools_are_every_schedule_pool() {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../src/data");
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../packages/core/data");
         let mut on_disk: Vec<String> = fs::read_dir(&dir)
-            .expect("src/data is readable")
+            .expect("packages/core/data is readable")
             .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
             .filter(|name| name.starts_with("cities-") && name.ends_with(".json"))
             .collect();

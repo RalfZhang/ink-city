@@ -1,7 +1,7 @@
 // Shared lat/lon geometry primitives for the layer-extraction modules
 // (water.ts / airports.ts / railways.ts). These run at PRECACHE/FETCH time
 // (Node/Deno/Bun), never on the client — same rule as the modules that use
-// them, so this stays out of ./index (the client barrel).
+// them, which is why they live in this package and not in `@inkcity/core`.
 
 /** A raw or slimmed point; `Geom` and Overpass `out geom` shapes both match. */
 export type Pt = { lat: number; lon: number };
