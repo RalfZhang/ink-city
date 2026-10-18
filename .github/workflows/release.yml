@@ -260,6 +260,29 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+          # Version-free asset names, so `releases/latest/download/<name>` is a
+          # permanent link to the newest installer — the README's download links
+          # and the website's buttons rely on it: InkCity_universal.dmg,
+          # InkCity_x64-setup.exe, InkCity_x64.msi, InkCity_amd64.deb,
+          # InkCity_x86_64.rpm, plus the updater's InkCity_universal.app.tar.gz
+          # (tauri-action never put the version in that one). Like the updater
+          # manifest, those links only move to a new version when the publish job
+          # below flips the release to latest.
+          #
+          # `assetNamePattern` is the v0 spelling. v1 renamed it to
+          # `releaseAssetNamePattern`, and an unknown `with:` key is only a
+          # warning, so upgrading the action without renaming this would quietly
+          # bring the version back into every name and break those links.
+          #
+          # latest.json is unaffected: tauri-action builds its URLs by looking the
+          # uploaded assets up through this same pattern (and pairs each .sig with
+          # the name minus `.sig`), and installed clients only follow those URLs.
+          # [setup] renders as "-setup" for the NSIS installer and empty for every
+          # other bundle; [arch] is per bundle (universal / x64 / amd64 / x86_64);
+          # [ext] includes `.sig`. Together they keep every name distinct.
+          # A second WiX language would collide (there is no [lang] placeholder),
+          # and GitHub would reject the duplicate upload, failing the job loudly.
+          assetNamePattern: "[name]_[arch][setup][ext]"
 
       # macOS 26 renders the app icon from a compiled asset catalog, not the
       # .icns: the bundler runs `actool` over src-tauri/icons/InkCity.icon to

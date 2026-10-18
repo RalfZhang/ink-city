@@ -21,10 +21,11 @@ InkCity is a small cross-platform (macOS + Windows + Linux) desktop app. Every d
 
 ## Installation
 
-Open https://github.com/RalfZhang/ink-city/releases/latest/
-- For windows: download `InkCity_x.x.x_x64-setup.exe ` and run the installer.
-- macOS: download `InkCity_x.x.x_universal.dmg `, open it, and drag the app to your Applications folder.
-- Linux (x86_64): download `InkCity_x.x.x_amd64.deb` (Debian/Ubuntu) or `InkCity-x.x.x-1.x86_64.rpm` (Fedora/openSUSE) and install it with your package manager. Built against Ubuntu 24.04, so glibc 2.39 or newer.
+These links always download the latest release. Every version, plus the Windows `.msi`, is on the [releases page](https://github.com/RalfZhang/ink-city/releases).
+
+- Windows (x64): download [InkCity_x64-setup.exe](https://github.com/RalfZhang/ink-city/releases/latest/download/InkCity_x64-setup.exe) and run the installer.
+- macOS (Apple Silicon and Intel): download [InkCity_universal.dmg](https://github.com/RalfZhang/ink-city/releases/latest/download/InkCity_universal.dmg), open it, and drag the app to your Applications folder.
+- Linux (x86_64): download [InkCity_amd64.deb](https://github.com/RalfZhang/ink-city/releases/latest/download/InkCity_amd64.deb) (Debian/Ubuntu) or [InkCity_x86_64.rpm](https://github.com/RalfZhang/ink-city/releases/latest/download/InkCity_x86_64.rpm) (Fedora/openSUSE) and install it with your package manager. Built against Ubuntu 24.04, so glibc 2.39 or newer.
   <details>
   <summary>Linux notes</summary>
 
