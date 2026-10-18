@@ -325,13 +325,65 @@ jobs:
           echo "--- appearances in Assets.car ---"
           assetutil --info "$app/Contents/Resources/Assets.car" | grep -i appearance | sort -u || true
 
+  # tauri-action merges each leg's entries into the release's existing
+  # latest.json, and for a universal macOS build it deliberately leaves
+  # darwin-aarch64 / darwin-x86_64 (and their `-app` twins) alone if they are
+  # already there — it takes them for native builds. A fresh release has none, so
+  # a normal run never notices. A dispatch re-run into a release that already has
+  # a latest.json does: the macOS leg replaces InkCity_universal.app.tar.gz under
+  # the same name but keeps the previous build's signature, so every macOS update
+  # fails verification. That shipped once, on the 2026-10-18 rebuild of v0.13.0.
+  #
+  # So once every leg has finished, point each entry's signature at the .sig
+  # uploaded next to the asset it names. The leg that built an asset uploads its
+  # .sig with it, which makes that copy the authoritative one. On a normal release
+  # every entry already matches and nothing is uploaded. It runs even when a leg
+  # failed, because a re-run's release is already public: a macOS leg can replace
+  # the tarball while Windows fails, and `publish` would never run to catch it. A
+  # missing .sig fails the job, and with it `publish`, so a manifest nobody can
+  # vouch for never becomes latest.
+  reconcile-updater-manifest:
+    needs: release
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - name: Point latest.json's signatures at the uploaded .sig files
+        run: |
+          set -euo pipefail
+          dir=$(mktemp -d)
+          gh release download "$TAG" --pattern latest.json --dir "$dir"
+          changed=0
+          for key in $(jq -r '.platforms | keys[]' "$dir/latest.json"); do
+            asset=$(jq -r --arg k "$key" '.platforms[$k].url | split("/") | last' "$dir/latest.json")
+            sig="$dir/$asset.sig"
+            [ -f "$sig" ] || gh release download "$TAG" --pattern "$asset.sig" --dir "$dir"
+            if [ "$(jq -r --arg k "$key" '.platforms[$k].signature' "$dir/latest.json")" != "$(cat "$sig")" ]; then
+              echo "::warning::latest.json $key carried a stale signature for $asset; replacing it with $asset.sig"
+              jq --arg k "$key" --rawfile s "$sig" '.platforms[$k].signature = $s' "$dir/latest.json" > "$dir/next.json"
+              mv "$dir/next.json" "$dir/latest.json"
+              changed=1
+            fi
+          done
+          if [ "$changed" = 1 ]; then
+            gh release upload "$TAG" "$dir/latest.json" --clobber
+          else
+            echo "Every latest.json signature already matches its .sig."
+          fi
+
   # Flip the draft release to public + latest, but only after every matrix build
   # has succeeded and uploaded its assets. With fail-fast: false, a single
   # platform failure leaves the release as a draft (invisible to the updater),
   # so users never see a half-built release — and since `needs` waits on the whole
-  # matrix, adding a platform extends that guarantee with no change here.
+  # matrix, adding a platform extends that guarantee with no change here. It also
+  # waits for the manifest to be reconciled (above).
   publish:
-    needs: release
+    needs: [release, reconcile-updater-manifest]
     runs-on: ubuntu-latest
     permissions:
       contents: write

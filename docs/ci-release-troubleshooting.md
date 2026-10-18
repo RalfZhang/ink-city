@@ -32,6 +32,21 @@ tag and confirm the run is green.
 > (`inputs.tag || github.ref_name`) for checkout, `tagName`, `releaseName`, and
 > the publish step.
 
+### Re-running into a release that already has a latest.json
+
+tauri-action merges each platform's updater entries into the release's existing
+`latest.json`, but for a universal macOS build it won't overwrite
+`darwin-aarch64` / `darwin-x86_64` (or their `-app` twins) once they exist — it
+takes them for native builds. A re-run replaces `InkCity_universal.app.tar.gz`
+under the same name, so the manifest ends up pairing the new tarball with the
+previous build's signature, and every macOS update fails verification. That
+shipped once, on the 2026-10-18 rebuild of v0.13.0, and was repaired by hand.
+
+The `reconcile-updater-manifest` job in `release.yml` now closes it. It runs after
+every build, including a partly failed one, points each entry's signature at the
+`.sig` uploaded next to the asset it names, and re-uploads `latest.json` only if
+something changed — so on a normal release it does nothing.
+
 ## Recovering from a bad draft release
 
 If a run failed partway, the release for that tag may be a **draft** with missing
