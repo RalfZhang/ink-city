@@ -10,10 +10,10 @@
 //!   - `pipeline` — resolve what to render → get its OSM → draw it in the hidden
 //!     renderer window → `wallpaper_set` it. The core of the app.
 //!   - `cdn` / `github_mirror` / `osm_sidecar` — where OSM data comes from, in
-//!     fallback order. `cities_update` refreshes the bundled city list the same way.
-//!   - `city` — the bundled city list, for the Customized-mode name search (the
-//!     daily city comes from the published schedule, not from here). `bbox` is a
-//!     port of `src/core/bbox.ts`; keep the two in sync.
+//!     fallback order.
+//!   - `city` — the compiled-in schedule pool, for the Customized-mode name search
+//!     (the daily city comes from the published schedule, not from here). `bbox`
+//!     is a port of `src/core/bbox.ts`; keep the two in sync.
 //!   - `config` (persisted) vs `state` (live). `tray`, `updates` — the windowless
 //!     surfaces, whose user-facing strings are pushed in from the frontend's i18n.
 //!   - `guess_store` — keeps the guess-the-country game's save on disk. The game
@@ -22,7 +22,6 @@
 //!     city caption.
 mod bbox;
 mod cdn;
-mod cities_update;
 mod city;
 mod commands;
 mod config;
@@ -210,9 +209,9 @@ pub fn run() {
                 let _ = config::mark_initialized(handle);
             }
 
-            // Load the cities list (cache → bundled fallback) that backs the
-            // Customized-mode name search.
-            city::initialize(handle);
+            // The Customized-mode search index is compiled in now; clear out the
+            // hot-updated copy that older releases kept on disk.
+            city::remove_retired_cache(handle);
 
             // Hidden renderer window — built up front so it's ready for the first run.
             let _ = WebviewWindowBuilder::new(

@@ -31,8 +31,9 @@ const SEARCH_DEBOUNCE_MS = 180;
  *     Apply is enabled immediately.
  *   • a city name — anything that isn't coordinates is treated as a name and looked
  *     up in the bundled list (`search_cities`); picking a suggestion fills in its
- *     coordinates, which is what actually gets pinned. Only the ~1000-city bundled
- *     list is searched, so a name that isn't in it falls back to entering coordinates.
+ *     coordinates, which is what actually gets pinned. Only the bundled list — the
+ *     daily schedule's own ~1000-city pool — is searched, so a name that isn't in it
+ *     falls back to entering coordinates.
  */
 export default function CustomCity({ status, onError }: Props) {
   const { t } = useTranslation();

@@ -43,6 +43,9 @@ base64 = "0.22"
 # plugin `download` that `update_bundle` replaces. Same crate and same version
 # tauri-plugin-updater already pulls in, so this adds no new dependency.
 minisign-verify = "0.2"
+# Folding accents out of city names, so the Customized search finds "São Paulo"
+# from "sao paulo" (`city::fold`).
+unicode-normalization = "0.1"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5"

@@ -61,9 +61,12 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
 
 /**
  * Which `src/data/*.json` city pools the schedule draws from. The hyphen keeps
- * `cities.json` — the legacy population rotation's list, now only the desktop
- * name-search index — out on purpose.
- * Shared so the precache script and its test agree on one definition.
+ * `cities.json` — the legacy population rotation's list, now read only by that
+ * deprecated CI flow — out on purpose.
+ * Shared so the precache script and its test agree on one definition. The
+ * desktop's Customized-mode name search compiles in the same pools by name
+ * (`POOLS` in src-tauri/src/city.rs), and a test there fails if a pool exists
+ * here that it doesn't list.
  */
 export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
 

@@ -3,7 +3,6 @@ use std::time::Duration;
 use chrono::NaiveDate;
 use tauri::{AppHandle, Manager};
 
-use crate::cities_update;
 use crate::city;
 use crate::pipeline;
 use crate::state::AppState;
@@ -19,10 +18,6 @@ const POLL_SECS: u64 = 60;
 
 pub fn spawn(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
-        // Calendar date the cities-list refresh last fired on. It's ETag-gated
-        // and network-light, and there's nothing to retry within a day, so a
-        // single shot when the date rolls over is plenty.
-        let mut cities_checked: Option<NaiveDate> = None;
         // Last date we observed, to push the city/date rollover to an open
         // window. Done regardless of the update mode (`reconcile` early-returns
         // when there's nothing to render) so the displayed city stays correct
@@ -31,11 +26,6 @@ pub fn spawn(app: AppHandle) {
         let mut last_date: Option<NaiveDate> = None;
         loop {
             let today = city::today();
-
-            if cities_checked != Some(today) {
-                cities_update::spawn_check(app.clone());
-                cities_checked = Some(today);
-            }
 
             if last_date.is_some() && last_date != Some(today) {
                 app.state::<AppState>().mark_status_dirty();

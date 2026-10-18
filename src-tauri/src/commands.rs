@@ -258,8 +258,8 @@ pub fn apply_custom_city(app: AppHandle, lat: f64, lon: f64) -> Result<(), Strin
 
 /// Name lookup for the Customized-mode input (issue #11): the bundled city list
 /// filtered by `query`, best match first. Searched in the backend because the
-/// list already lives there (see `city::search`) — shipping ~1000 cities to the
-/// webview just to filter them would only bloat the bundle.
+/// list already lives there (see `city::search`) — shipping the whole schedule
+/// pool to the webview just to filter it would only bloat the bundle.
 #[tauri::command]
 pub fn search_cities(query: String) -> Vec<City> {
     city::search(&query, 8)

@@ -9,36 +9,31 @@ deserializes anywhere the others do.
 
 | File | Pins | What it is |
 |---|---|---|
-| `cities.json` | 1000 | Top cities by population (GeoNames). **The only one the desktop binary loads.** |
-| `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). **What the schedule draws from.** |
+| `cities.json` | 1000 | Top cities by population (GeoNames). **Legacy:** read only by the deprecated id-keyed CI flow. |
+| `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). **The schedule and the desktop search.** |
 | `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. **Ditto.** |
 
 `countries.json` sits beside them but isn't a pool: it's the guess-the-country game's
 table of answers — see [the last section](#countriesjson--the-guess-the-country-table).
 
-Only `cities.json` is loaded at runtime — it's hardcoded in
-[`src-tauri/src/city.rs`](../../src-tauri/src/city.rs) (`include_str!` + cache
-filename) and the jsDelivr hot-update URL in `cities_update.rs`. Its one job there is
-the **Customized-mode name search**: it used to also *be* the daily city (a
-population-ordered rotation), but the client now takes that from the CI-authored
-schedule, which draws from the two `cities-*.json` pools instead — see
-[random-city-strategy.md](../../docs/random-city-strategy.md). `cities.json` also
-still drives the deprecated id-keyed precache flow in CI (removal recommended after
-2026-11-01).
+The two `cities-*.json` pools fill both runtime roles. The CI-authored schedule draws
+every daily city from them (see
+[random-city-strategy.md](../../docs/random-city-strategy.md)), and the desktop app
+compiles the same two files in as its **Customized-mode name search** index — merged
+and deduped by id exactly as the schedule merges them (`mergePools` in
+`src/core/schedule.ts`, mirrored by `merge_pools` in
+[`src-tauri/src/city.rs`](../../src-tauri/src/city.rs)). So any city that can come up
+as the daily one can also be searched for by name, under the same native-script
+`localName`. A test in city.rs fails if a `cities-*.json` appears here without being
+added to its `POOLS`. Should the two roles ever need different lists — a search index
+wants whatever users are likely to type, the schedule whatever makes the best
+wallpapers — split them deliberately and change that test with it.
 
-"Loaded by the desktop binary" is narrower than "used by the app", and the gap is
-the point. The other two pools are **not** dead files and are not waiting to be
-wired in: the CI schedule already draws from both, so they decide every daily city
-the app paints — it just receives those picks over the CDN instead of computing
-them from a bundled file.
-
-What's still single-pool is the **Customized-mode name search**, which remains
-`cities.json` alone. *That* is the part awaiting a multi-list selector: a
-list-selection setting plus parameterizing the filename/URL hardcoded above.
-
-Worth keeping the two roles apart, because they pull in opposite directions — a
-search index wants whatever pool the user is most likely to type a name from, while
-the schedule wants whichever makes the best wallpapers.
+`cities.json` used to fill both roles itself: first as the daily city (a
+population-ordered rotation), then only as the search index, which releases up to
+v0.13.0 also re-downloaded daily from `main`. Now only the deprecated id-keyed
+precache flow in CI reads it (removal recommended after 2026-11-01), and the file can
+go with that flow.
 
 ## How these are built / regenerated
 
@@ -208,7 +203,7 @@ one renders the same frame — previously they could differ by up to 21 km.
 `localName` means "this city's name in the locally-appropriate language/script."
 
 - **`cities.json`** — `localName` is the GeoNames `name` column, mostly Latin/English
-  (`Beijing`, `Moscow`). **Not** nativized. (This is the file the app actually shows.)
+  (`Beijing`, `Moscow`). **Not** nativized.
 - **`cities-countries.json` & `cities-famous.json`** — `localName` is **native script**
   (北京, Москва, Αθήνα, ירושלים), resolved from GeoNames `alternateNamesV2` per the rules
   below.

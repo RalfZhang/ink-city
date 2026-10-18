@@ -4,7 +4,7 @@ A Tauri (Rust + React/TS) desktop app shipping signed bundles for macOS (univers
 
 ## Data
 
-City pins live in `src/data/` (three schema-identical pools; only `cities.json` is wired into the app), next to `countries.json`, the guess-the-country game's answer table. For the pools' relationship, the `localName` language/script rules, how countries.json's reference points were chosen, and how to regenerate them, see [src/data/README.md](src/data/README.md).
+City pins live in `src/data/` (three schema-identical pools), next to `countries.json`, the guess-the-country game's answer table. The daily schedule draws from `cities-famous.json` + `cities-countries.json`, and the app compiles the same two in as its Customized-mode search index; `cities.json` only feeds the legacy CI rotation until it is removed after 2026-11-01. For the pools' relationship, the `localName` language/script rules, how countries.json's reference points were chosen, and how to regenerate them, see [src/data/README.md](src/data/README.md).
 
 ## Guess-the-country game
 
@@ -12,9 +12,9 @@ The daily game is written once in `src/core/guess` (rules, save format, stats, c
 
 ## Files clients fetch at runtime
 
-Installed apps (and, later, the website) re-read some repo files over jsDelivr at fixed paths, so each such path is a contract with every version already shipped. **Serve them from the `data` branch, never from `main`.** Keep the source anywhere on `main` and have [precache.yml](.github/workflows/precache.yml) copy it from `origin/main` into `data` on every run, as its "Publish client files from main" step does for `client/update-mirrors.json`. That way `main`'s layout stays free to change. Don't hand-edit `data`: it is force-pushed as a fresh single commit every run, and only the schedule state carries over. A `data` path that any release has read is frozen — add new ones, but rename or remove one only with a dated deprecation, as with the legacy `osm/` flow.
+Installed apps (and, later, the website) re-read some repo files over jsDelivr at fixed paths, so each such path is a contract with every version already shipped. **Serve them from the `data` branch, never from `main`.** Keep the source anywhere on `main` and have [precache.yml](.github/workflows/precache.yml) copy it from `origin/main` into `data` on every run, as its "Publish client files from main" step does for `client/update-mirrors.json`. That way `main`'s layout stays free to change. Don't hand-edit `data`: every run clones it, rewrites the paths CI owns, and force-pushes the whole tree back as a fresh single commit — so a hand edit to one of those paths is lost on the next run, and any other file carries over and stays served indefinitely. A `data` path that any release has read is frozen — add new ones, but rename or remove one only with a dated deprecation, as with the legacy `osm/` flow.
 
-What `data` serves today: `osm-v2/data/<date>.json[.gz]` and `osm-v2/city-list.json` (the schedule), `client/update-mirrors.json` (updater relays), and `osm/<id>.json[.gz]` (legacy, until 2026-11-01). Two `main` paths predate the rule and are still read by shipped versions: `src/data/cities.json` (every version, for the Customized search index; being retired) and `src-tauri/update-mirrors.json` (v0.12.2–v0.13.0). Both degrade gracefully when missing — the client keeps its cached or compiled-in copy — so moving them only stops those versions' refreshes.
+What `data` serves today: `osm-v2/data/<date>.json[.gz]` and `osm-v2/city-list.json` (the schedule), `client/update-mirrors.json` (updater relays), and `osm/<id>.json[.gz]` (legacy, until 2026-11-01). Two `main` paths predate the rule and are still read by shipped versions: `src/data/cities.json` (v0.2.0–v0.13.0, their Customized search index) and `src-tauri/update-mirrors.json` (v0.12.2–v0.13.0). Both degrade gracefully when missing — the client keeps its cached or compiled-in copy — so moving them only stops those versions' refreshes.
 
 ## Contribution flow
 

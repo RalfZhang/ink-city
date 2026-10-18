@@ -25,9 +25,8 @@
 //     behind. What goes with it: `loadCities`, `windowCities`, `existingIds`,
 //     `backfillCity`, the id-keyed half of `runPrecache` (and `imminentMissing`),
 //     `pickCityForDate` in src/core/city.ts, the data-out/osm glob + publish guard
-//     in .github/workflows/precache.yml, and — once nothing reads it —
-//     src/data/cities.json's role as a rotation list (the desktop Customized-mode
-//     name search still loads it; see src/data/README.md).
+//     in .github/workflows/precache.yml, and src/data/cities.json itself, which
+//     nothing else reads (see src/data/README.md).
 //
 //     NOT `readCachedMeta` — despite being written for this flow, it's shared:
 //     `runScheduleCache` calls it to decide which date-keyed manifests it can

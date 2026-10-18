@@ -159,13 +159,16 @@ jobs:
       #
       # It is read from origin/main explicitly, not from whatever ref this run
       # checked out, so dispatching the workflow from a feature branch can't
-      # publish an unreviewed list. A copy that fails to parse is not published:
-      # the one restored from the branch above stays in place, so the client keeps
-      # reading the last good list (it would refuse an unusable one anyway).
+      # publish an unreviewed list. A copy the client would refuse is not
+      # published: the one restored from the branch above stays in place, so the
+      # client keeps reading the last good list. The jq check mirrors
+      # `parse_mirror_list` in github_mirror.rs — `hosts` an array of strings
+      # only, at least one of them an https URL with a host — so keep the two in
+      # step.
       # `if: always()` for the same reason as the steps around it — a run whose
       # fetches failed should still carry the current list.
       #
-      # mirrors_dest must match MIRRORS_REF/MIRRORS_FILE in
+      # mirrors_dest must match DATA_REF/MIRRORS_FILE in
       # src-tauri/src/github_mirror.rs, and mirrors_src the file it compiles in; a
       # test there reads these two assignments.
       - name: Publish client files from main
@@ -176,7 +179,9 @@ jobs:
           git fetch --no-tags --depth=1 origin main
           candidate="$RUNNER_TEMP/update-mirrors.json"
           git show "FETCH_HEAD:$mirrors_src" > "$candidate"
-          if jq -e '.hosts | length > 0' "$candidate" > /dev/null; then
+          usable='.hosts | type == "array" and all(type == "string")
+            and any(test("^\\s*https://[^/\\s]"))'
+          if jq -e "$usable" "$candidate" > /dev/null; then
             mkdir -p "$(dirname "$mirrors_dest")"
             mv "$candidate" "$mirrors_dest"
           else
@@ -197,27 +202,28 @@ jobs:
           # Single-commit branch each run: reuse the files restored above, but
           # drop history so the repo never bloats with old OSM blobs.
           rm -rf .git
-          # Publish if *either* flow produced something. Checking only osm/ (as
+          # Publish if *any* step produced something. Checking only osm/ (as
           # this did before osm-v2/ existed) would silently discard a successful
           # schedule run — and still report the job green, since a run that
-          # fetched schedule days but no rotation cities isn't a failure. It
-          # would also stop publishing entirely once the legacy osm/ flow is
-          # retired (recommended after 2026-11-01 — see the header), which is
-          # when the osm/ half of this condition goes too.
+          # fetched schedule days but no rotation cities isn't a failure. Leaving
+          # out client/ would do the same to the client files on a fresh branch
+          # whose precache step died early, and clients would 404 on them. The
+          # osm/ entry goes when the legacy flow is retired (recommended after
+          # 2026-11-01 — see the header).
           #
-          # Note this is now a *narrow* guard, not the safety net it reads as. Any
-          # run that reached the schedule leaves osm-v2/city-list.json behind even
-          # when every fetch failed (intended — the schedule state is worth
-          # publishing on its own), so all it still catches is a precache step that
-          # died before writing anything at all: `git commit` on an empty tree
-          # exits non-zero and would fail this step for no reason. It does NOT
-          # protect against publishing a *thinner* tree than the branch already
-          # has; that's the restore step's job, which aborts the whole run on any
-          # clone failure other than "branch missing".
+          # Note this is a *narrow* guard, not the safety net it reads as. Any
+          # run that reached the schedule leaves osm-v2/city-list.json behind
+          # even when every fetch failed, and any run whose client step worked
+          # leaves client/ (both intended — each is worth publishing on its own),
+          # so all it still catches is a run that wrote nothing at all: `git
+          # commit` on an empty tree exits non-zero and would fail this step for
+          # no reason. It does NOT protect against publishing a *thinner* tree
+          # than the branch already has; that's the restore step's job, which
+          # aborts the whole run on any clone failure other than "branch missing".
           #
           # osm-v2/ must match SCHEDULE_ROOT in src/core/schedule.ts.
-          if [ -z "$(ls -A osm 2>/dev/null)" ] && [ -z "$(ls -A osm-v2 2>/dev/null)" ]; then
-            echo "nothing to publish (no cities cached, no schedule)"
+          if [ -z "$(ls -A osm osm-v2 client 2>/dev/null)" ]; then
+            echo "nothing to publish (no cities cached, no schedule, no client files)"
             exit 0
           fi
           git init -q -b data

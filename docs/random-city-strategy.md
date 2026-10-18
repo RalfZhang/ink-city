@@ -85,8 +85,9 @@ recomputed, only remembered.
 **Pool** — every `src/data/cities-*.json` (currently `cities-famous.json` +
 `cities-countries.json`), merged and **deduped by `id`**, with later files
 winning: ~1055 cities from 1276 rows. `cities.json` is excluded on purpose (the
-hyphen in the glob) — it belongs to the legacy rotation, and is now only the desktop
-Customized-mode search index plus that deprecated CI flow's list. The two pools share ids
+hyphen in the glob) — it belongs to the legacy rotation, and is now only that
+deprecated CI flow's list. The desktop's Customized-mode search index is this same
+merged pool, compiled in (`src-tauri/src/city.rs`). The two pools share ids
 for the 221 cities they both list but differ in coordinate precision and in how
 they spell names (`Bogotá` vs `Bogota`); `cities-famous.json` wins those by glob
 order. `country` is **not** one of the divergences — all pools carry the same ISO
@@ -247,10 +248,10 @@ poll retries.
 
 What went with it: `city::pick_for_date` and its `EPOCH`/`MULTIPLIER`,
 `pipeline::rotation_fallback`, `Resolved::cdn_id`, and `cdn::fetch_cached_osm` —
-the client no longer reads `osm/` at all. `city.rs` still loads
-`src/data/cities.json` (bundled + hot-updated by `cities_update`), but only as the
-index behind the City tab's Customized-mode name search; `src/core/city.ts` keeps
-`pickCityForDate` for CI.
+the client no longer reads `osm/` at all. `city.rs` kept loading
+`src/data/cities.json` as the index behind the City tab's Customized-mode name
+search until that too moved to the schedule's own pools (compiled in, no longer
+hot-updated from `main`); `src/core/city.ts` keeps `pickCityForDate` for CI.
 
 **CI still publishes `osm/`**, unchanged, for clients shipped before this change —
 they have no other last rung. **Recommended removal after 2026-11-01**, by which

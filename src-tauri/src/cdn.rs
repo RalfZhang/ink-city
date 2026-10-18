@@ -24,7 +24,6 @@ use flate2::read::GzDecoder;
 use crate::city;
 use crate::github_mirror;
 
-const GIT_REF: &str = "data";
 /// The date-keyed manifests.
 ///
 /// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `src/core/schedule.ts`,
@@ -55,7 +54,7 @@ const SCHEDULE_STATE_STEM: &str = "city-list";
 /// the rotation. Validating exactly what the caller consumes is also what keeps
 /// the two from drifting apart.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
-    let bases = github_mirror::mirror_urls(GIT_REF, SCHEDULE_PATH);
+    let bases = github_mirror::mirror_urls(github_mirror::DATA_REF, SCHEDULE_PATH);
     let v = fetch_from_mirrors(bases, date, Gz::Prefer, validate_scheduled).await?;
     let city = scheduled_city(&v)?;
     Ok((city, v))
@@ -88,8 +87,8 @@ pub enum Hosts {
 /// (`Gz::Skip`) rather than spending a request on a `.gz` that can't exist.
 pub async fn fetch_schedule_city(date: &str, hosts: Hosts) -> Result<city::City> {
     let bases = match hosts {
-        Hosts::Mirrored => github_mirror::mirror_urls(GIT_REF, SCHEDULE_STATE_DIR),
-        Hosts::GithubOnly => github_mirror::github_only_urls(GIT_REF, SCHEDULE_STATE_DIR),
+        Hosts::Mirrored => github_mirror::mirror_urls(github_mirror::DATA_REF, SCHEDULE_STATE_DIR),
+        Hosts::GithubOnly => github_mirror::github_only_urls(github_mirror::DATA_REF, SCHEDULE_STATE_DIR),
     };
     let v = fetch_from_mirrors(bases, SCHEDULE_STATE_STEM, Gz::Skip, validate_state).await?;
     schedule_entry(&v, date)

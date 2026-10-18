@@ -8,8 +8,8 @@ use serde::Deserialize;
 /// connection. Set once at startup from the persisted config and again whenever
 /// the user changes the Proxy setting (see `commands::apply_proxy_settings`).
 /// A module-level holder rather than a `client()` parameter because the callers
-/// (`cdn.rs`, `cities_update.rs`) have no `AppState` handle, and the proxy is a
-/// single app-wide setting.
+/// (`cdn.rs`, and `refresh_release_proxies` below) have no `AppState` handle, and
+/// the proxy is a single app-wide setting.
 static PROXY: RwLock<Option<String>> = RwLock::new(None);
 
 /// Update the proxy applied to future `client()` builds. `None` (or the empty
@@ -21,6 +21,11 @@ pub fn set_proxy(url: Option<String>) {
 
 /// Repo these mirrors serve. Update if the repo moves.
 pub const REPO: &str = "RalfZhang/ink-city";
+
+/// The branch every repo file installed clients fetch is read from (CLAUDE.md,
+/// "Files clients fetch at runtime"): the CI-published `data` branch, never
+/// `main`. Shipped versions have it compiled in, so it can't be renamed.
+pub const DATA_REF: &str = "data";
 
 /// jsDelivr (and friends) rather than raw.githubusercontent.com directly,
 /// because the latter is frequently DNS-poisoned in mainland China and
@@ -103,10 +108,10 @@ const RELEASE_ORIGIN_HOST: &str = "github.com";
 /// the source file's. Releases v0.12.2 through v0.13.0 still read
 /// `src-tauri/update-mirrors.json` on `main`; if that path goes away they keep
 /// their cached or compiled-in list and only stop receiving updates to it.
+///
+/// Read from `DATA_REF`. The source of truth is still `main` (reviewed, never
+/// force-pushed); `data` is where CI publishes it.
 const MIRRORS_FILE: &str = "client/update-mirrors.json";
-/// Branch the live copy is read from. The source of truth is still `main`
-/// (reviewed, never force-pushed); `data` is where CI publishes it.
-const MIRRORS_REF: &str = "data";
 /// The compiled-in copy of the very same file — one source of truth, so the
 /// shipped default can't drift from what's published.
 const BAKED_IN_MIRRORS: &str = include_str!("../update-mirrors.json");
@@ -213,7 +218,7 @@ pub async fn refresh_release_proxies() -> Option<String> {
             return None;
         }
     };
-    for url in mirror_urls(MIRRORS_REF, MIRRORS_FILE) {
+    for url in mirror_urls(DATA_REF, MIRRORS_FILE) {
         let fetched = match client.get(&url).send().await {
             Ok(response) if response.status().is_success() => response.text().await,
             Ok(response) => {
@@ -360,15 +365,15 @@ mod tests {
 
     #[test]
     fn mirror_urls_covers_all_hosts_jsdelivr_style_first() {
-        let urls = mirror_urls("main", "src/data/cities.json");
+        let urls = mirror_urls(DATA_REF, MIRRORS_FILE);
         assert_eq!(urls.len(), JSDELIVR_STYLE_HOSTS.len() + RAW_STYLE_HOSTS.len());
         assert_eq!(
             urls[0],
-            "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@main/src/data/cities.json"
+            "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@data/client/update-mirrors.json"
         );
         assert_eq!(
             urls[JSDELIVR_STYLE_HOSTS.len()],
-            "https://raw.githack.com/RalfZhang/ink-city/main/src/data/cities.json"
+            "https://raw.githack.com/RalfZhang/ink-city/data/client/update-mirrors.json"
         );
     }
 
@@ -415,7 +420,7 @@ mod tests {
         assert!(BAKED_IN_MIRRORS.contains("\"note\""));
     }
 
-    /// Nothing but precache.yml puts the list where `MIRRORS_REF`/`MIRRORS_FILE`
+    /// Nothing but precache.yml puts the list where `DATA_REF`/`MIRRORS_FILE`
     /// look, and a path renamed on either side would fail silently: every client
     /// would get a 404, keep its old list, and log at debug level. So compare the
     /// workflow's actual assignments, not a substring a comment could satisfy —
@@ -431,7 +436,7 @@ mod tests {
                 .find_map(|line| line.strip_prefix(prefix.as_str()))
                 .unwrap_or_else(|| panic!("precache.yml no longer assigns `{var}`"))
         };
-        assert_eq!(MIRRORS_REF, "data", "precache.yml publishes to the data branch only");
+        assert_eq!(DATA_REF, "data", "precache.yml publishes to the data branch only");
         assert_eq!(assigned("mirrors_dest"), format!("data-out/{MIRRORS_FILE}"));
         // The repo-root path of `BAKED_IN_MIRRORS`'s `../update-mirrors.json`.
         assert_eq!(assigned("mirrors_src"), "src-tauri/update-mirrors.json");
