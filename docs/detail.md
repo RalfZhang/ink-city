@@ -29,8 +29,9 @@ src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting, tray,
 scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mode
                     and the app's live single-fetch sidecar mode), build-sidecar,
                     build-cities, render, and the check-i18n / *-test guards.
-.github/workflows/  precache (OSM data → `data` branch, every 6h) and the
-                    release-please → release signing pipeline.
+.github/workflows/  ci (build + every test, cargo test on all three OSes, on each
+                    pushed branch), precache (OSM data → `data` branch, every 6h)
+                    and the release-please → release signing pipeline.
 ```
 
 **Data flow:** resolve today's city *and* its map data together (local day cache → schedule manifest → schedule state + live Overpass → rotation fallback) → compute a screen-sized bbox → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). OSM and PNG artifacts are cached for `KEEP_DAYS` (7) so re-rendering after a theme change needs no network.

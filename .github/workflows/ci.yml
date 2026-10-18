@@ -1,0 +1,156 @@
+name: CI
+# Builds the frontend and runs every test the repo has, on each pushed branch and
+# on pull requests from forks. Until this workflow existed none of them ran
+# anywhere but a developer's machine — including the Rust↔TS parity checks (the
+# guess-reveal fixture both `pnpm guess-test` and `cargo test` read, and
+# schedule-test's comparison against cdn.rs and precache.yml), which only mean
+# something when both sides run against the same commit.
+#
+#   ts    `pnpm build` (check:i18n → tsc → vite build), the four tsx test
+#         scripts, and an offline run of osm-cli proving its whole import graph
+#         still resolves — the precache job and the bundled sidecar both start
+#         there.
+#   rust  `cargo test` on all three OSes. Development happens on a Mac, so the
+#         Linux-only (tray_linux, wallpaper_linux) and Windows-only modules are
+#         otherwise first compiled by a release build. tauri-build refuses to
+#         compile without the `bundle.externalBin` sidecar for the host triple,
+#         so the job builds the real one with bun first — and runs it, which also
+#         catches bun no longer being able to bundle osm-cli.
+#
+# The contribution flow fast-forwards main locally, so a branch's push is the
+# pre-merge check: push it, wait for green, then fast-forward.
+
+on:
+  push:
+    # `data` is the CI-owned branch precache.yml force-pushes map data to; it
+    # holds no source.
+    branches-ignore: [data]
+    paths-ignore: ["**/*.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**/*.md", "docs/**"]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ts:
+    name: TypeScript build + tests
+    # A same-repo PR's branch was already checked by its push; only fork PRs,
+    # which have no push event here, need the pull_request run.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # `--ignore-scripts` skips the `canvas` native build: only the local render
+      # harness (scripts/render.ts) uses it. Same reasoning as precache.yml.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build (check:i18n, tsc, vite)
+        run: pnpm build
+
+      - name: Tests
+        run: |
+          pnpm guess-test
+          pnpm schedule-test
+          pnpm coords-test
+          pnpm railway-test
+
+      # With no arguments osm-cli throws its usage line, which it can only reach
+      # once every module it imports has loaded — no Overpass request involved.
+      # The output is captured before grepping because the CLI exits non-zero
+      # here by design and the default shell runs with pipefail.
+      - name: osm-cli loads
+        run: |
+          out=$(pnpm exec tsx scripts/osm-cli.ts 2>&1 || true)
+          grep -q "usage: osm-cli" <<<"$out" || { echo "$out"; exit 1; }
+
+  rust:
+    name: cargo test (${{ matrix.platform }})
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-24.04 rather than -latest to match release.yml's pinned Linux
+        # build (see the comment there).
+        platform: [ubuntu-24.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Same list as release.yml's — keep the two in step.
+      - name: Install Linux build dependencies
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libxdo-dev \
+            xdg-utils \
+            build-essential \
+            curl wget file libssl-dev libgtk-3-dev
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # Saved from main only. A Tauri target dir runs to gigabytes per OS and the
+      # repo's 10 GB cache quota is shared with release.yml, so branches restore
+      # main's copy instead of each storing their own.
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      # bun bundles osm-cli from node_modules, so the sidecar needs these too.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      # No flags: the host triple, the same build `pnpm tauri dev` runs.
+      - name: Build osm-cli sidecar
+        run: pnpm build:sidecar
+
+      - name: Sidecar runs
+        shell: bash
+        run: |
+          bin="src-tauri/binaries/ink-city-osm-cli-$(rustc --print host-tuple)"
+          if [ "$RUNNER_OS" = "Windows" ]; then bin="$bin.exe"; fi
+          out=$("$bin" 2>&1 || true)
+          grep -q "usage: osm-cli" <<<"$out" || { echo "$out"; exit 1; }
+
+      - name: cargo test
+        run: cargo test --manifest-path src-tauri/Cargo.toml --locked

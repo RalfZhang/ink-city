@@ -18,7 +18,8 @@ Never commit directly to `main`. For any change:
 2. Commit using **Conventional Commits** — this drives automated versioning:
    - `feat:` → minor bump, `fix:` → patch bump, `feat!:` / `BREAKING CHANGE:` → major bump.
    - Other types (`chore:`, `ci:`, `docs:`, `refactor:`) don't trigger a release on their own.
-3. **Fast-forward merge** the branch into `main` (keep history linear).
+3. Push the branch and wait for [CI](.github/workflows/ci.yml) to pass: `pnpm build`, every TS test script, and `cargo test` on all three OSes.
+4. **Fast-forward merge** the branch into `main` (keep history linear).
 
 The push to `main` triggers the release pipeline below.
 
