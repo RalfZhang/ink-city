@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0](https://github.com/RalfZhang/ink-city/compare/v0.12.3...v0.13.0) (2026-10-18)
+
+
+### Features
+
+* guess game ([d49c925](https://github.com/RalfZhang/ink-city/commit/d49c92575826c5e4d23994d140c5a990c745350e))
+
+
+### Bug Fixes
+
+* update line styles ([5b15e51](https://github.com/RalfZhang/ink-city/commit/5b15e51a69d245b1606daf1ecdfd8630320c4980))
+
 ## [0.12.3](https://github.com/RalfZhang/ink-city/compare/v0.12.2...v0.12.3) (2026-10-13)
 
 
