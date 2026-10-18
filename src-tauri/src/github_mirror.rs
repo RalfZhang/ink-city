@@ -92,13 +92,21 @@ const RELEASE_ORIGIN_HOST: &str = "github.com";
 /// because it will rot: these are small independent operators, and of seventeen
 /// candidates surveyed only five worked — the rest were dead, geo-fenced,
 /// serving landing pages, or already rate-limiting. That file is compiled in as
-/// the default *and* re-read from `main` at runtime, so a list gone stale is one
-/// commit to fix for clients already installed (see `refresh_release_proxies`) —
-/// which matters because a broken update path can't carry its own fix.
-const MIRRORS_FILE: &str = "src-tauri/update-mirrors.json";
-/// Branch the live copy is read from. `main`, not the CI-managed `data` branch:
-/// this file is hand-edited under pressure, and `main` is never force-pushed.
-const MIRRORS_REF: &str = "main";
+/// the default *and* re-read at runtime, so a list gone stale is one commit to
+/// fix for clients already installed (see `refresh_release_proxies`) — which
+/// matters because a broken update path can't carry its own fix.
+///
+/// The runtime copy is the one precache.yml publishes to the `data` branch: it
+/// copies the hand-edited file from `main` on every run, and on every push that
+/// edits it. Like every file installed clients fetch, it is read from `data` so
+/// that `main`'s layout stays free to change — this path is the contract, not
+/// the source file's. Releases v0.12.2 through v0.13.0 still read
+/// `src-tauri/update-mirrors.json` on `main`; if that path goes away they keep
+/// their cached or compiled-in list and only stop receiving updates to it.
+const MIRRORS_FILE: &str = "client/update-mirrors.json";
+/// Branch the live copy is read from. The source of truth is still `main`
+/// (reviewed, never force-pushed); `data` is where CI publishes it.
+const MIRRORS_REF: &str = "data";
 /// The compiled-in copy of the very same file — one source of truth, so the
 /// shipped default can't drift from what's published.
 const BAKED_IN_MIRRORS: &str = include_str!("../update-mirrors.json");
@@ -190,9 +198,10 @@ pub fn set_release_proxies(json: &str) -> Result<()> {
     Ok(())
 }
 
-/// Re-read the published list from `main` over the data-path CDN — a route
-/// already proven reachable where GitHub itself isn't (see `cdn.rs`), which is
-/// the whole point: it works in exactly the situation the relays exist for.
+/// Re-read the published list from the `data` branch over the data-path CDN —
+/// a route already proven reachable where GitHub itself isn't (see `cdn.rs`),
+/// which is the whole point: it works in exactly the situation the relays exist
+/// for.
 ///
 /// Returns the JSON that won so the caller can cache it, or `None` if every host
 /// missed. Never fails and never disturbs the list in force on a miss.
@@ -404,6 +413,28 @@ mod tests {
         // The `note` field is there for whoever edits this under pressure;
         // unknown keys must stay ignorable so it can never break the parse.
         assert!(BAKED_IN_MIRRORS.contains("\"note\""));
+    }
+
+    /// Nothing but precache.yml puts the list where `MIRRORS_REF`/`MIRRORS_FILE`
+    /// look, and a path renamed on either side would fail silently: every client
+    /// would get a 404, keep its old list, and log at debug level. So compare the
+    /// workflow's actual assignments, not a substring a comment could satisfy —
+    /// including that it publishes the same file this module compiles in.
+    #[test]
+    fn precache_publishes_the_list_where_clients_read_it() {
+        const WORKFLOW: &str = include_str!("../../.github/workflows/precache.yml");
+        let assigned = |var: &str| -> &'static str {
+            let prefix = format!("{var}=");
+            WORKFLOW
+                .lines()
+                .map(str::trim)
+                .find_map(|line| line.strip_prefix(prefix.as_str()))
+                .unwrap_or_else(|| panic!("precache.yml no longer assigns `{var}`"))
+        };
+        assert_eq!(MIRRORS_REF, "data", "precache.yml publishes to the data branch only");
+        assert_eq!(assigned("mirrors_dest"), format!("data-out/{MIRRORS_FILE}"));
+        // The repo-root path of `BAKED_IN_MIRRORS`'s `../update-mirrors.json`.
+        assert_eq!(assigned("mirrors_src"), "src-tauri/update-mirrors.json");
     }
 
     #[test]

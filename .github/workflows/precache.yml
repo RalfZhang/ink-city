@@ -35,6 +35,12 @@ on:
     # arrives, and let a partially-failed window finish filling.
     - cron: "49 1,7,13,19 * * *"
   workflow_dispatch: {} # allow manual runs
+  # An edit to a client file (see "Publish client files from main" below) reaches
+  # the data branch minutes after it merges instead of at the next cron run. The
+  # run also does the usual precache pass, which is a no-op when nothing is due.
+  push:
+    branches: [main]
+    paths: [src-tauri/update-mirrors.json]
 
 # Avoid two runs racing to force-push the data branch.
 concurrency:
@@ -144,6 +150,38 @@ jobs:
             echo "nothing to compress"
           else
             gzip -k -f -9 "${files[@]}"
+          fi
+
+      # Installed clients read repo files at runtime only from this branch, never
+      # from `main` (CLAUDE.md, "Files clients fetch at runtime"), so `main`'s
+      # layout can change without breaking anything already shipped. The source
+      # stays on `main`, hand-edited and reviewed there; this step publishes it.
+      #
+      # It is read from origin/main explicitly, not from whatever ref this run
+      # checked out, so dispatching the workflow from a feature branch can't
+      # publish an unreviewed list. A copy that fails to parse is not published:
+      # the one restored from the branch above stays in place, so the client keeps
+      # reading the last good list (it would refuse an unusable one anyway).
+      # `if: always()` for the same reason as the steps around it — a run whose
+      # fetches failed should still carry the current list.
+      #
+      # mirrors_dest must match MIRRORS_REF/MIRRORS_FILE in
+      # src-tauri/src/github_mirror.rs, and mirrors_src the file it compiles in; a
+      # test there reads these two assignments.
+      - name: Publish client files from main
+        if: always()
+        run: |
+          mirrors_src=src-tauri/update-mirrors.json
+          mirrors_dest=data-out/client/update-mirrors.json
+          git fetch --no-tags --depth=1 origin main
+          candidate="$RUNNER_TEMP/update-mirrors.json"
+          git show "FETCH_HEAD:$mirrors_src" > "$candidate"
+          if jq -e '.hosts | length > 0' "$candidate" > /dev/null; then
+            mkdir -p "$(dirname "$mirrors_dest")"
+            mv "$candidate" "$mirrors_dest"
+          else
+            echo "::error::$mirrors_src on main has no usable hosts list — keeping the published copy"
+            exit 1
           fi
 
       # `if: always()` so that when the precache step exits non-zero (its alarm

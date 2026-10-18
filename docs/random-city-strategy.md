@@ -54,6 +54,11 @@ osm-v2/
   data/
     <YYYY-MM-DD>.json       one day's city + map data
     <YYYY-MM-DD>.json.gz
+client/
+  update-mirrors.json       updater relay list, copied from main's
+                            src-tauri/update-mirrors.json on every run (not part
+                            of the schedule — see CLAUDE.md, "Files clients
+                            fetch at runtime")
 ```
 
 `city-list.json` deliberately sits *beside* `data/`, not in it: the manifest

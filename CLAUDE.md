@@ -10,6 +10,12 @@ City pins live in `src/data/` (three schema-identical pools; only `cities.json` 
 
 The daily game is written once in `src/core/guess` (rules, save format, stats, country lookup) so the future website can reuse it verbatim; hosts differ only in storage — the desktop keeps the save in `app_data_dir/guess.json` through `src-tauri/src/guess_store.rs`, the website in `localStorage` (`localStorageGuessStorage`). The backend reads just enough of the save (`is_revealed`) to decide the wallpaper's city caption; that one mirrored rule is pinned by `scripts/fixtures/guess-reveal-cases.json`, which both `pnpm guess-test` and `cargo test` run. To test by hand: Dev Mode resets today's game, clears all game data, or shows `guess.json` for editing; `INKCITY_DAY_OFFSET=<n> pnpm tauri dev` (debug builds only) shifts the app's "today" for anything that spans days.
 
+## Files clients fetch at runtime
+
+Installed apps (and, later, the website) re-read some repo files over jsDelivr at fixed paths, so each such path is a contract with every version already shipped. **Serve them from the `data` branch, never from `main`.** Keep the source anywhere on `main` and have [precache.yml](.github/workflows/precache.yml) copy it from `origin/main` into `data` on every run, as its "Publish client files from main" step does for `client/update-mirrors.json`. That way `main`'s layout stays free to change. Don't hand-edit `data`: it is force-pushed as a fresh single commit every run, and only the schedule state carries over. A `data` path that any release has read is frozen — add new ones, but rename or remove one only with a dated deprecation, as with the legacy `osm/` flow.
+
+What `data` serves today: `osm-v2/data/<date>.json[.gz]` and `osm-v2/city-list.json` (the schedule), `client/update-mirrors.json` (updater relays), and `osm/<id>.json[.gz]` (legacy, until 2026-11-01). Two `main` paths predate the rule and are still read by shipped versions: `src/data/cities.json` (every version, for the Customized search index; being retired) and `src-tauri/update-mirrors.json` (v0.12.2–v0.13.0). Both degrade gracefully when missing — the client keeps its cached or compiled-in copy — so moving them only stops those versions' refreshes.
+
 ## Contribution flow
 
 Never commit directly to `main`. For any change:
