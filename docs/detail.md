@@ -13,22 +13,27 @@ index = (days_since_2023-03-03 * 379) % N
 ## Architecture
 
 ```
-packages/core/      `@inkcity/core` — portable, dependency-free logic (city pick,
-                    bbox math, the daily schedule, the guess-the-country game,
-                    canvas rendering incl. the Mondrian variant) shared by the
-                    desktop renderer, osm-cli, and a future website.
-packages/osm/       `@inkcity/osm` — Overpass transport + per-layer extraction
-                    (roads, water, airports, railways, aerialways). Node/Bun
-                    only; a package of its own so it never reaches a client
-                    bundle. Both are pnpm workspace packages, imported as
-                    TypeScript source with no build step.
-src/                React + TypeScript settings UI (Vite).
-src/renderer/       Hidden WebView that draws the map to a canvas → PNG.
-src-tauri/          Rust backend: scheduler, pipeline, wallpaper setting, tray,
+apps/desktop/       The desktop app (`@inkcity/desktop`):
+  src/              React + TypeScript settings UI (Vite).
+  src/renderer/     Hidden WebView that draws the map to a canvas → PNG.
+  src-tauri/        Rust backend: scheduler, pipeline, wallpaper setting, tray,
                     config, CDN fetch, and the osm-cli sidecar invocation. See
                     the module map at the top of src-tauri/src/lib.rs. The
                     per-OS modules are wallpaper_linux, tray_linux (Linux) and
                     tray_theme (Windows).
+packages/core/      `@inkcity/core` — portable, dependency-free logic (city pick,
+                    bbox math, the daily schedule, the guess-the-country game,
+                    canvas rendering incl. the Mondrian variant) and the city
+                    data, shared by the desktop renderer, osm-cli, and a future
+                    website.
+packages/osm/       `@inkcity/osm` — Overpass transport + per-layer extraction
+                    (roads, water, airports, railways, aerialways). Node/Bun
+                    only; a package of its own so it never reaches a client
+                    bundle.
+packages/ui/        `@inkcity/ui` — shadcn components, the theme stylesheet, and
+                    the guess-the-country game's React layer and strings. All
+                    three packages are imported as TypeScript source with no
+                    build step.
 scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mode
                     and the app's live single-fetch sidecar mode), build-sidecar,
                     build-cities, render, and the check-i18n / *-test guards.
@@ -91,14 +96,16 @@ Local development leaks caches in three places, none of them tracked:
 | What | Why it grows | Mitigation |
 | --- | --- | --- |
 | `.<hash>-00000000.bun-build` in the repo root | `bun build --compile` temp files, only cleaned up on a clean exit — an interrupted `pnpm build:sidecar` leaves them behind | `build-sidecar.ts` now sweeps them before *and* after every compile, so they no longer accumulate |
-| `src-tauri/target` (was multi-GB) | cargo debug artifacts | `[profile.dev]` in `src-tauri/Cargo.toml` drops dependency debuginfo and keeps only line tables for our own code (~3-4x smaller); `pnpm clean --rust` wipes it |
-| `.git` | the CI-owned `data` branch — see below | `pnpm clean --git`, plus the config below to stop fetching it |
+| `apps/desktop/src-tauri/target` (was multi-GB) | cargo debug artifacts | `[profile.dev]` in `apps/desktop/src-tauri/Cargo.toml` drops dependency debuginfo and keeps only line tables for our own code (~3-4x smaller); `pnpm run clean --rust` wipes it |
+| `.git` | the CI-owned `data` branch — see below | `pnpm run clean --git`, plus the config below to stop fetching it |
+
+`run` is required: pnpm 11 has a built-in `pnpm clean` that rejects these flags before it hands over to the script.
 
 ```bash
-pnpm clean            # bun temps, dist/, test-out/ — safe and instant
-pnpm clean --rust     # also cargo clean (next `tauri dev` recompiles from scratch)
-pnpm clean --git      # also expire the origin/data reflog + git gc --prune=now
-pnpm clean --all
+pnpm run clean            # bun temps, dist/, test-out/ — safe and instant
+pnpm run clean --rust     # also cargo clean (next `tauri dev` recompiles from scratch)
+pnpm run clean --git      # also expire the origin/data reflog + git gc --prune=now
+pnpm run clean --all
 ```
 
 ### Why `.git` grows, and why plain `git gc` doesn't shrink it
@@ -116,7 +123,7 @@ combined. Everything above that is the `data` branch:
   (30 days) — and every fetch in the meantime adds another snapshot.
 
 That's the whole mechanism: 42 fetches had accumulated 42 pinned snapshots,
-≈190 MB that no amount of `git gc` would touch. `pnpm clean --git` expires that
+≈190 MB that no amount of `git gc` would touch. `pnpm run clean --git` expires that
 one reflog before packing, which is why it can reclaim what a bare gc can't.
 It only ever discards `origin/data` history — CI output that lives on the remote
 and reaches the app over jsDelivr, never local work.
@@ -124,7 +131,7 @@ and reaches the app over jsDelivr, never local work.
 A dev clone never reads that branch locally — the app gets it from jsDelivr, and
 the precache workflow clones it separately into `data-out/`. So the durable fix
 is to stop fetching it, which **`pnpm install` now does for you**: the `prepare`
-script runs `pnpm clean --setup-git`, which is idempotent and does four things:
+script runs `pnpm run clean --setup-git`, which is idempotent and does four things:
 
 | | |
 | --- | --- |

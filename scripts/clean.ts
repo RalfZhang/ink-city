@@ -2,16 +2,16 @@
 // Reclaims the disk that local development leaks. Nothing here touches
 // tracked files or anything CI needs — every target is a rebuildable cache:
 //
-//   pnpm clean            the cheap sweep: bun temp files, stale build output
-//   pnpm clean --rust     also `cargo clean` (src-tauri/target, multi-GB —
-//                         the next `tauri dev` recompiles from scratch, ~minutes)
-//   pnpm clean --git      also repack .git and drop unreachable objects
-//   pnpm clean --all      all of the above
-//   pnpm clean --setup-git   one-shot, idempotent: stop this clone from ever
-//                         fetching the `data` branch again (see below). Wired to
-//                         the "prepare" script, so `pnpm install` runs it — a
-//                         fresh clone is cleaned up without anyone typing
-//                         anything. Opt out with INKCITY_SKIP_GIT_SETUP=1.
+//   pnpm run clean            the cheap sweep: bun temp files, stale build output
+//   pnpm run clean --rust     also `cargo clean` (apps/desktop/src-tauri/target, multi-GB —
+//                             the next `tauri dev` recompiles from scratch, ~minutes)
+//   pnpm run clean --git      also repack .git and drop unreachable objects
+//   pnpm run clean --all      all of the above
+//   pnpm run clean --setup-git   one-shot, idempotent: stop this clone from ever
+//                             fetching the `data` branch again (see below). Wired to
+//                             the "prepare" script, so `pnpm install` runs it — a
+//                             fresh clone is cleaned up without anyone typing
+//                             anything. Opt out with INKCITY_SKIP_GIT_SETUP=1.
 //
 // On .git: this repo's own source history is tiny (~9 MB for main + dev + every
 // tag). All the bloat is the CI-owned `data` branch — precache.yml republishes
@@ -32,7 +32,7 @@
 //   git config --add remote.origin.fetch '^refs/heads/data'
 //   git config gc.'refs/remotes/origin/data'.reflogExpire now
 //   git config gc.'refs/remotes/origin/data'.reflogExpireUnreachable now
-//   git update-ref -d refs/remotes/origin/data && pnpm clean --git
+//   git update-ref -d refs/remotes/origin/data && pnpm run clean --git
 // The negative refspec covers `git fetch` and `git pull`, but *not* an explicit
 // `git fetch origin data` — that still overrides it, which is what the two
 // gc.* lines are there to mop up. Nor does it help the *initial* clone: `git
@@ -167,19 +167,20 @@ function removeDir(rel: string) {
 }
 
 sweepBunTemps();
-removeDir("dist");
+removeDir("apps/desktop/dist");
 removeDir("test-out");
 
+const crate = join(ROOT, "apps", "desktop", "src-tauri");
+const target = join(crate, "target");
 if (want("--rust")) {
-  const target = join(ROOT, "src-tauri", "target");
   const before = sizeOf(target);
   if (before) {
-    execFileSync("cargo", ["clean"], { cwd: join(ROOT, "src-tauri"), stdio: "inherit" });
+    execFileSync("cargo", ["clean"], { cwd: crate, stdio: "inherit" });
     freed += before - sizeOf(target);
-    console.log(`[clean] src-tauri/target: freed ${mb(before)}`);
+    console.log(`[clean] apps/desktop/src-tauri/target: freed ${mb(before)}`);
   }
 } else {
-  console.log(`[clean] src-tauri/target: ${mb(sizeOf(join(ROOT, "src-tauri", "target")))} (skipped, pass --rust)`);
+  console.log(`[clean] apps/desktop/src-tauri/target: ${mb(sizeOf(target))} (skipped, pass --rust)`);
 }
 
 if (want("--git")) {

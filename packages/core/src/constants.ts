@@ -67,7 +67,7 @@ const MAP_ZOOM = 13;
 
 /**
  * `id` doubles as the persisted value, so these must match the serde names of
- * `MapProvider` in src-tauri/src/config.rs. `osm` is the default: it's the data
+ * `MapProvider` in apps/desktop/src-tauri/src/config.rs. `osm` is the default: it's the data
  * the wallpaper is drawn from, and unlike Google Maps it's reachable everywhere
  * InkCity ships.
  */

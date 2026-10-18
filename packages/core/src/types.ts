@@ -60,7 +60,7 @@ export type StyleVariant = "ink" | "mondrian";
  * each one's weights and own opacity live in its `RAILWAY_PLAIN` / `RAILWAY_BANDED`
  * / `RAILWAY_TIES` block there.
  * Replaces the old `showRailways: boolean`; persisted configs are migrated in
- * `parse_config` (src-tauri/src/config.rs).
+ * `parse_config` (apps/desktop/src-tauri/src/config.rs).
  *
  * Listed as a const tuple with the type derived from it (the `LAYER_IDS` pattern
  * in osm/layers.ts) because three places have to enumerate the union: `RAILWAY_MODES`
@@ -103,14 +103,14 @@ export type Style = {
  * The screen corners the wallpaper's city caption can sit in. *Physical* corners —
  * never mirrored for a right-to-left UI, because the desktop isn't. A const tuple
  * (the `LAYER_IDS` pattern) because the Style tab enumerates them; mirrors
- * `CityLabel` in src-tauri/src/config.rs, whose kebab-case names are these.
+ * `CityLabel` in apps/desktop/src-tauri/src/config.rs, whose kebab-case names are these.
  */
 export const LABEL_CORNERS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
 export type LabelCorner = (typeof LABEL_CORNERS)[number];
 
 /**
  * The city caption a revealed wallpaper carries (`LabelPayload` in
- * src-tauri/src/pipeline.rs): what to write, and where. Language-neutral by design
+ * apps/desktop/src-tauri/src/pipeline.rs): what to write, and where. Language-neutral by design
  * — the city's own name, its English name and the country's English name, like a
  * map's title block. Drawn by `drawLabel` (core/label.ts) as the scene's last layer.
  */

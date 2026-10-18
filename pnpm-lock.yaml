@@ -7,16 +7,37 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      '@inkcity/core':
+        specifier: workspace:*
+        version: link:packages/core
+      '@inkcity/osm':
+        specifier: workspace:*
+        version: link:packages/osm
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
+      canvas:
+        specifier: ^3.1.0
+        version: 3.2.3
+      tsx:
+        specifier: ^4.20.6
+        version: 4.23.0
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+
+  apps/desktop:
     dependencies:
       '@fontsource-variable/geist':
         specifier: ^5.2.9
         version: 5.2.9
       '@inkcity/core':
         specifier: workspace:*
-        version: link:packages/core
+        version: link:../../packages/core
       '@inkcity/ui':
         specifier: workspace:*
-        version: link:packages/ui
+        version: link:../../packages/ui
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.1
@@ -51,9 +72,6 @@ importers:
         specifier: ^4.8.2
         version: 4.13.0(typescript@5.8.3)
     devDependencies:
-      '@inkcity/osm':
-        specifier: workspace:*
-        version: link:packages/osm
       '@tailwindcss/vite':
         specifier: ^4.3.0
         version: 4.3.2(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
@@ -72,15 +90,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.6.0
         version: 4.7.0(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
-      canvas:
-        specifier: ^3.1.0
-        version: 3.2.3
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.2
-      tsx:
-        specifier: ^4.20.6
-        version: 4.23.0
       typescript:
         specifier: ~5.8.3
         version: 5.8.3

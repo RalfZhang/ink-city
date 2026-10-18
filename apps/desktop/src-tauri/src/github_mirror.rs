@@ -105,9 +105,10 @@ const RELEASE_ORIGIN_HOST: &str = "github.com";
 /// copies the hand-edited file from `main` on every run, and on every push that
 /// edits it. Like every file installed clients fetch, it is read from `data` so
 /// that `main`'s layout stays free to change — this path is the contract, not
-/// the source file's. Releases v0.12.2 through v0.13.0 still read
-/// `src-tauri/update-mirrors.json` on `main`; if that path goes away they keep
-/// their cached or compiled-in list and only stop receiving updates to it.
+/// the source file's. Releases v0.12.2 through v0.13.0 read
+/// `src-tauri/update-mirrors.json` on `main` instead, which went away when the
+/// desktop app moved to apps/desktop; they keep their cached or compiled-in
+/// list and only stopped receiving updates to it.
 ///
 /// Read from `DATA_REF`. The source of truth is still `main` (reviewed, never
 /// force-pushed); `data` is where CI publishes it.
@@ -427,7 +428,7 @@ mod tests {
     /// including that it publishes the same file this module compiles in.
     #[test]
     fn precache_publishes_the_list_where_clients_read_it() {
-        const WORKFLOW: &str = include_str!("../../.github/workflows/precache.yml");
+        const WORKFLOW: &str = include_str!("../../../../.github/workflows/precache.yml");
         let assigned = |var: &str| -> &'static str {
             let prefix = format!("{var}=");
             WORKFLOW
@@ -439,7 +440,7 @@ mod tests {
         assert_eq!(DATA_REF, "data", "precache.yml publishes to the data branch only");
         assert_eq!(assigned("mirrors_dest"), format!("data-out/{MIRRORS_FILE}"));
         // The repo-root path of `BAKED_IN_MIRRORS`'s `../update-mirrors.json`.
-        assert_eq!(assigned("mirrors_src"), "src-tauri/update-mirrors.json");
+        assert_eq!(assigned("mirrors_src"), "apps/desktop/src-tauri/update-mirrors.json");
     }
 
     #[test]

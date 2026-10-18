@@ -8,7 +8,7 @@
 //   • the country lookup, in English and in other scripts,
 //   • packages/core/data/countries.json covering every country the daily schedule can draw,
 //   • the reveal rule against scripts/fixtures/guess-reveal-cases.json — the same
-//     file src-tauri/src/guess_store.rs tests its mirror of that rule against.
+//     file apps/desktop/src-tauri/src/guess_store.rs tests its mirror of that rule against.
 // Exits non-zero (printing every violation) on failure.
 //
 //   pnpm guess-test
@@ -43,7 +43,7 @@ import {
   type GuessStore,
 } from "@inkcity/core";
 import { SCHEDULE_POOL_RE } from "@inkcity/core/schedule";
-import { LOCALES } from "../src/i18n/locales.ts";
+import { LOCALES } from "../apps/desktop/src/i18n/locales.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = <T>(rel: string): T => JSON.parse(readFileSync(join(root, rel), "utf8")) as T;

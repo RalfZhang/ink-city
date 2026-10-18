@@ -1,5 +1,5 @@
 {
-  "_comment": "Whether today's city counts as revealed, for a given save file + day. Read by BOTH scripts/guess-test.ts (packages/core/src/guess: isRevealed(dayState(...))) and src-tauri/src/guess_store.rs (is_revealed), so the wallpaper label rule the backend applies can never drift from the game's own. `store` is the raw saved JSON, malformed fields included on purpose.",
+  "_comment": "Whether today's city counts as revealed, for a given save file + day. Read by BOTH scripts/guess-test.ts (packages/core/src/guess: isRevealed(dayState(...))) and apps/desktop/src-tauri/src/guess_store.rs (is_revealed), so the wallpaper label rule the backend applies can never drift from the game's own. `store` is the raw saved JSON, malformed fields included on purpose.",
   "date": "2026-10-16",
   "cases": [
     { "name": "nothing saved, city known", "store": null, "city": { "id": 1, "country": "FR", "lat": 48.85, "lon": 2.35 }, "revealed": false },

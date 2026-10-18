@@ -3,7 +3,7 @@ import { error as pluginError, info as pluginInfo, warn as pluginWarn } from "@t
 // Thin wrapper around @tauri-apps/plugin-log: keeps the existing console.*
 // output (immediate, visible in devtools while developing) and additionally
 // persists the line to the log file the Rust side manages (see the
-// `tauri_plugin_log` registration in src-tauri/src/lib.rs and the "open log
+// `tauri_plugin_log` registration in apps/desktop/src-tauri/src/lib.rs and the "open log
 // folder" button in the About tab) — so a user hitting a bug has something to
 // attach, instead of output only devtools would have shown. Fire-and-forget:
 // the plugin call is IPC, and a logging failure shouldn't affect the caller.

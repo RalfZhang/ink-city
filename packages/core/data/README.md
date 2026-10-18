@@ -22,7 +22,7 @@ every daily city from them (see
 compiles the same two files in as its **Customized-mode name search** index — merged
 and deduped by id exactly as the schedule merges them (`mergePools` in
 `packages/core/src/schedule.ts`, mirrored by `merge_pools` in
-[`src-tauri/src/city.rs`](../../../src-tauri/src/city.rs)). So any city that can come up
+[`apps/desktop/src-tauri/src/city.rs`](../../../apps/desktop/src-tauri/src/city.rs)). So any city that can come up
 as the daily one can also be searched for by name, under the same native-script
 `localName`. A test in city.rs fails if a `cities-*.json` appears here without being
 added to its `POOLS`. Should the two roles ever need different lists — a search index
@@ -75,7 +75,7 @@ OSM's `wikidata` tag.** `cities.json` is unaffected — it stays GeoNames.
 
 This matters more here than it would elsewhere, because the coordinate is not a
 label point: it is simultaneously the Overpass download area, the render crop and
-the projection origin ([`pipeline.rs`](../../../src-tauri/src/pipeline.rs)'s
+the projection origin ([`pipeline.rs`](../../../apps/desktop/src-tauri/src/pipeline.rs)'s
 `bbox_for_screen(lat, lon, 10.0, aspect)`, `MAX_HALF_KM` in
 [`osm-cli.ts`](../../../scripts/osm-cli.ts), `RENDER_RADIUS_KM` in
 [`render.ts`](../../../scripts/render.ts) — all three must agree on 10). The long side
@@ -234,7 +234,7 @@ one renders the same frame — previously they could differ by up to 21 km.
   ASCII, `asciiname` for the 15 that aren't (`Bogota`, `São Paulo` → `Sao Paulo`,
   `Zürich` → `Zuerich`). `cities-famous.json` keeps the diacritics instead, so the
   two pools differ on 19 of their 221 shared ids. Worth knowing before "fixing" either
-  side: [`city.rs`'s search](../../../src-tauri/src/city.rs) lowercases but does **not**
+  side: [`city.rs`'s search](../../../apps/desktop/src-tauri/src/city.rs) lowercases but does **not**
   fold diacritics, so an ASCII `name` is what a user typing `bogota` can actually find.
 - `population` is **GeoNames verbatim** — the whole file re-derives
   from a dump, so a stale dump shows up here as a stale number (Astana `345604` and
@@ -339,7 +339,7 @@ Target-language priority: **CURATED > China autonomous region > India state > mu
 One row per country/region code the two schedule pools contain — exactly the answers
 the daily game can have (243) — as `{ code, name, lat, lon }`. Read by the game itself
 (`packages/core/src/guess`, handed in by the host, like every core consumer of this directory),
-and bundled into the backend (`src-tauri/src/guess_store.rs`), which needs the codes to
+and bundled into the backend (`apps/desktop/src-tauri/src/guess_store.rs`), which needs the codes to
 tell a playable day from one it can only reveal and the names for the wallpaper caption.
 `pnpm guess-test` fails if a pool ever gains a country this table lacks.
 

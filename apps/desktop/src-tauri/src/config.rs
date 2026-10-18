@@ -130,7 +130,7 @@ pub enum MapProvider {
 /// info" preference is on or today's guess-the-country game is over (see
 /// `guess_store::is_revealed`). The kebab-case names are also the tag in the labeled
 /// render's cache name (`<date>-<theme>-label-<tag>.png`), so they must stay
-/// filename-safe. Mirrors `CityLabel` in src/types.ts and `LabelCorner` in
+/// filename-safe. Mirrors `CityLabel` in apps/desktop/src/types.ts and `LabelCorner` in
 /// packages/core/src/types.ts.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]

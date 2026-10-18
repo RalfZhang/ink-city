@@ -78,7 +78,7 @@ console.log(
 
 // SCHEDULE_ROOT / SCHEDULE_DATA_DIR / SCHEDULE_STATE_FILE define the published
 // layout, but the two consumers that can't import them — the client
-// (src-tauri/src/cdn.rs) and the workflow that publishes the branch
+// (apps/desktop/src-tauri/src/cdn.rs) and the workflow that publishes the branch
 // (.github/workflows/precache.yml) — repeat the strings literally. A comment alone
 // does not hold five copies together: one of cdn.rs's stores the state file
 // *without* its extension, so it matches neither `grep osm-v2` nor
@@ -111,7 +111,7 @@ check(
   `SCHEDULE_STATE_FILE must end in .json — cdn.rs stores it as a stem and re-adds the extension`,
 );
 
-const cdnRs = readSibling("src-tauri", "src", "cdn.rs");
+const cdnRs = readSibling("apps", "desktop", "src-tauri", "src", "cdn.rs");
 for (const [name, expected] of [
   ["SCHEDULE_PATH", `${SCHEDULE_ROOT}/${SCHEDULE_DATA_DIR}`],
   ["SCHEDULE_STATE_DIR", SCHEDULE_ROOT],

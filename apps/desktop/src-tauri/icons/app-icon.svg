@@ -10,7 +10,7 @@
 
      bundle.icon lists two art sets because the platforms don't share one: this file
      feeds icon.ico, while icon.icns and the loose PNGs come from InkCity.icon's
-     layers. `tauri icon` only takes one input, so it runs twice:
+     layers. `tauri icon` only takes one input, so it runs twice (from apps/desktop):
 
        # Windows — take icon.ico (+ the Square*/StoreLogo set, unused by NSIS/MSI
        # but kept so the directory stays complete)

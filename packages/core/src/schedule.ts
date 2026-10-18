@@ -66,7 +66,7 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
  * deprecated CI flow — out on purpose.
  * Shared so the precache script and its test agree on one definition. The
  * desktop's Customized-mode name search compiles in the same pools by name
- * (`POOLS` in src-tauri/src/city.rs), and a test there fails if a pool exists
+ * (`POOLS` in apps/desktop/src-tauri/src/city.rs), and a test there fails if a pool exists
  * here that it doesn't list.
  */
 export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
@@ -84,7 +84,7 @@ export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
  * Two files outside TypeScript repeat this layout literally, because neither can
  * import it:
  *
- *   - `src-tauri/src/cdn.rs` — `SCHEDULE_PATH` (root + data dir),
+ *   - `apps/desktop/src-tauri/src/cdn.rs` — `SCHEDULE_PATH` (root + data dir),
  *     `SCHEDULE_STATE_DIR` (the root) and `SCHEDULE_STATE_STEM` (the state file
  *     *without* its `.json`, which `fetch_from_mirrors` re-adds along with the
  *     `.gz` variant).

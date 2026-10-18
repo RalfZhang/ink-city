@@ -78,8 +78,9 @@ fn countries() -> &'static HashMap<String, String> {
             code: String,
             name: String,
         }
-        let rows: Vec<Row> = serde_json::from_str(include_str!("../../packages/core/data/countries.json"))
-            .expect("bundled countries.json invalid");
+        let rows: Vec<Row> =
+            serde_json::from_str(include_str!("../../../../packages/core/data/countries.json"))
+                .expect("bundled countries.json invalid");
         rows.into_iter().map(|r| (r.code, r.name)).collect()
     })
 }
@@ -213,9 +214,10 @@ mod tests {
             date: NaiveDate,
             cases: Vec<Case>,
         }
-        let fixture: Fixture =
-            serde_json::from_str(include_str!("../../scripts/fixtures/guess-reveal-cases.json"))
-                .unwrap();
+        let fixture: Fixture = serde_json::from_str(include_str!(
+            "../../../../scripts/fixtures/guess-reveal-cases.json"
+        ))
+        .unwrap();
         assert!(!fixture.cases.is_empty());
         for case in fixture.cases {
             let view = if case.store.is_null() {

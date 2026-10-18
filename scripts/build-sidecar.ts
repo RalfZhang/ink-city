@@ -1,6 +1,6 @@
 #!/usr/bin/env -S npx tsx
 // Compiles scripts/osm-cli.ts into the Tauri sidecar binary, named per
-// Tauri's externalBin convention: src-tauri/binaries/ink-city-osm-cli-<target-triple>
+// Tauri's externalBin convention: apps/desktop/src-tauri/binaries/ink-city-osm-cli-<target-triple>
 // (+ ".exe" on Windows; see BIN below for why the basename is prefixed).
 // Requires `bun` (https://bun.sh) at *build* time only — the compiled binary is
 // a standalone executable; nothing at app runtime needs a JS engine.
@@ -23,9 +23,9 @@
 //
 // macOS universal builds need a fat binary, which `bun build --compile` can't
 // produce directly: build the two arch-specific binaries above, then
-//   lipo -create -output src-tauri/binaries/ink-city-osm-cli-universal-apple-darwin \
-//     src-tauri/binaries/ink-city-osm-cli-aarch64-apple-darwin \
-//     src-tauri/binaries/ink-city-osm-cli-x86_64-apple-darwin
+//   lipo -create -output apps/desktop/src-tauri/binaries/ink-city-osm-cli-universal-apple-darwin \
+//     apps/desktop/src-tauri/binaries/ink-city-osm-cli-aarch64-apple-darwin \
+//     apps/desktop/src-tauri/binaries/ink-city-osm-cli-x86_64-apple-darwin
 // Keep all three files — don't delete the arch-specific ones afterward.
 // `tauri build --target universal-apple-darwin` needs both: build.rs runs
 // once per real arch (cargo has no literal "universal" target) and looks up
@@ -40,7 +40,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const OUT_DIR = join(ROOT, "src-tauri", "binaries");
+const OUT_DIR = join(ROOT, "apps", "desktop", "src-tauri", "binaries");
 
 /** Basename of the compiled sidecar, prefixed with the product name while the
  * TypeScript source it's built from stays `scripts/osm-cli.ts`. The prefix is

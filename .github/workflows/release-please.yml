@@ -2,7 +2,7 @@
 #
 # On every push to main, release-please scans the commits since the last release
 # and maintains a "release PR" that bumps the version in package.json +
-# src-tauri/tauri.conf.json (see release-please-config.json) and updates
+# apps/desktop/src-tauri/tauri.conf.json (see release-please-config.json) and updates
 # CHANGELOG.md. `feat:` -> minor, `fix:` -> patch, `feat!:`/`BREAKING CHANGE`
 # -> major. Merging that PR makes release-please cut the release.
 #

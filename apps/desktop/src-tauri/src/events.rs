@@ -13,7 +13,7 @@ use tauri::{AppHandle, Emitter};
 use crate::commands::Status;
 
 /// The tabs `FrontendEvent::OpenTab` can target. An enum rather than a bare string
-/// because the frontend receives this as a `TabId` (see `src/App.tsx`) and switches
+/// because the frontend receives this as a `TabId` (see `apps/desktop/src/App.tsx`) and switches
 /// to it: a value that isn't one of those ids would strand the Tabs component on a
 /// tab with no trigger and no content. Add an arm when a new tab needs targeting.
 pub enum Tab {

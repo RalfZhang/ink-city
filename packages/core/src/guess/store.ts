@@ -2,9 +2,9 @@ import { DAY_ENDS, type DayEnd, type DayRecord, type Guess, type GuessStore } fr
 
 // The save file: its (de)serialization and the one seam where the two hosts differ.
 // The desktop app keeps the JSON in `guess.json` through Rust commands
-// (src/lib/guess-storage.ts → src-tauri/src/guess_store.rs); the website keeps the
-// same JSON in `localStorage` (`localStorageGuessStorage` below). Everything else
-// about the game is shared.
+// (apps/desktop/src/lib/guess-storage.ts → apps/desktop/src-tauri/src/guess_store.rs);
+// the website keeps the same JSON in `localStorage` (`localStorageGuessStorage`
+// below). Everything else about the game is shared.
 
 /** Bump on any change to `GuessStore`'s shape — additive changes only. */
 export const GUESS_STORE_VERSION = 1;
@@ -66,7 +66,7 @@ function parseRecord(v: unknown): DayRecord | null {
  *
  * `end` survives on its own even when the rest of a record is damaged; the desktop
  * backend reads exactly that field to decide whether the day is revealed, so the two
- * readings agree (src-tauri/src/guess_store.rs).
+ * readings agree (apps/desktop/src-tauri/src/guess_store.rs).
  */
 export function parseGuessStore(raw: string | null): { store: GuessStore; corrupt: boolean } {
   if (raw === null || raw.trim() === "") return { store: emptyGuessStore(), corrupt: false };

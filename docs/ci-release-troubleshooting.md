@@ -26,11 +26,21 @@ signs both platforms, and uploads assets to that tag's release. This is how you
 validate a `ci:`-only fix: land the fix on `main`, then dispatch against the last
 tag and confirm the run is green.
 
-> Why the input matters: without it, a manual dispatch runs against `main`, so
-> `github.ref_name` is `main` and the build would create a bogus `InkCity main`
-> release/tag. The `tag` input makes dispatch resolve to a real version tag
-> (`inputs.tag || github.ref_name`) for checkout, `tagName`, `releaseName`, and
-> the publish step.
+> Why the tag goes through `RELEASE_TAG` (the pushed tag, else the `tag` input)
+> rather than `github.ref_name`: on a dispatch that is the branch the run was
+> started from, and handing it to tauri-action as `tagName` would create a bogus
+> `InkCity main` release. With no `tag` input, `RELEASE_TAG` is empty and the run
+> releases nothing — see the next section.
+
+### Build-only runs
+
+Leave the `tag` input empty to build without releasing. The run checks out the
+branch it was started from ("Use workflow from"), builds and signs all three
+platforms — the macOS icon check included — and uploads nothing: tauri-action
+gets no tag, and the reconcile and publish jobs are skipped. Use it to check a
+change to the build itself (paths, bundling, the sidecar, a tauri-action bump)
+before a real release depends on it. Pushing the branch first is all it needs;
+nothing reaches `main`.
 
 ### Re-running into a release that already has a latest.json
 
@@ -74,7 +84,7 @@ release still computes correctly.
 Two macOS-only steps in `release.yml` exist to stop a release shipping the wrong
 app icon. macOS 26 draws the icon from a compiled asset catalog
 (`Contents/Resources/Assets.car`, named by `CFBundleIconName`) built by `actool`
-from [src-tauri/icons/InkCity.icon](../src-tauri/icons/InkCity.icon). `actool`
+from [apps/desktop/src-tauri/icons/InkCity.icon](../apps/desktop/src-tauri/icons/InkCity.icon). `actool`
 ships only inside full Xcode 26+; when it's missing or too old the bundler logs a
 single line and carries on, and the app falls back to the `.icns` — which macOS 26
 renders inside a grey rounded-rect plate. Nothing else fails, so without these
@@ -86,7 +96,7 @@ steps a bad icon would sail through signing and publishing.
   that one is too old.
 - **"Compile the macOS icon catalog"** runs `pnpm icon:car`
   ([scripts/build-icon-car.sh](../scripts/build-icon-car.sh)), producing the
-  gitignored `src-tauri/icons/Assets.car` that `bundle.icon` points at.
+  gitignored `apps/desktop/src-tauri/icons/Assets.car` that `bundle.icon` points at.
 - **`--verbose` in the macOS matrix `args`** is load-bearing, not leftover
   debugging. tauri-bundler reports an actool rejection as a bare `failed to
   bundle project: Failed to create app Assets.car: 'failed to run actool'`. It

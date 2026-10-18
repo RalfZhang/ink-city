@@ -16,7 +16,7 @@ use crate::state::AppState;
 use crate::tray;
 
 /// The whole backend→frontend state contract, rebuilt by `build_status` and pushed
-/// on every change. Mirrored field-for-field by `Status` in `src/types.ts`, so a
+/// on every change. Mirrored field-for-field by `Status` in `apps/desktop/src/types.ts`, so a
 /// field added here needs adding there too (and a `mark_status_dirty()` at whatever
 /// mutates it, or an open window won't see it).
 ///
@@ -533,7 +533,7 @@ pub async fn regenerate_now(app: AppHandle) -> Result<(), String> {
 }
 
 /// The guess-the-country save as it is on disk (`guess.json`), or `None` before the
-/// first save. The desktop's `GuessStorage.load` — see src/lib/guess-storage.ts; the
+/// first save. The desktop's `GuessStorage.load` — see apps/desktop/src/lib/guess-storage.ts; the
 /// website's equivalent reads localStorage.
 ///
 /// Also re-reads the backend's own view of it: the file is normally only ever

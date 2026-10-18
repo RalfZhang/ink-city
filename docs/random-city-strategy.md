@@ -56,9 +56,9 @@ osm-v2/
     <YYYY-MM-DD>.json.gz
 client/
   update-mirrors.json       updater relay list, copied from main's
-                            src-tauri/update-mirrors.json on every run (not part
-                            of the schedule — see CLAUDE.md, "Files clients
-                            fetch at runtime")
+                            apps/desktop/src-tauri/update-mirrors.json on every
+                            run (not part of the schedule — see CLAUDE.md,
+                            "Files clients fetch at runtime")
 ```
 
 `city-list.json` deliberately sits *beside* `data/`, not in it: the manifest
@@ -87,7 +87,7 @@ recomputed, only remembered.
 winning: ~1055 cities from 1276 rows. `cities.json` is excluded on purpose (the
 hyphen in the glob) — it belongs to the legacy rotation, and is now only that
 deprecated CI flow's list. The desktop's Customized-mode search index is this same
-merged pool, compiled in (`src-tauri/src/city.rs`). The two pools share ids
+merged pool, compiled in (`apps/desktop/src-tauri/src/city.rs`). The two pools share ids
 for the 221 cities they both list but differ in coordinate precision and in how
 they spell names (`Bogotá` vs `Bogota`); `cities-famous.json` wins those by glob
 order. `country` is **not** one of the divergences — all pools carry the same ISO
@@ -149,7 +149,7 @@ so a day with no entry and no manifest can't be painted at all (the previous
 wallpaper stays up and the poll keeps retrying). Filling gaps by hand in
 `city-list.json` is the fix.
 
-**Client** (`src-tauri`) — `pipeline::resolve_daily` resolves the day's city and
+**Client** (`apps/desktop/src-tauri`) — `pipeline::resolve_daily` resolves the day's city and
 its map data *together*, walking one ladder and stopping at the first rung that
 answers:
 

@@ -141,7 +141,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: "src-tauri -> target"
+          workspaces: "apps/desktop/src-tauri -> target"
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       # bun bundles osm-cli from node_modules, so the sidecar needs these too.
@@ -158,10 +158,10 @@ jobs:
       - name: Sidecar runs
         shell: bash
         run: |
-          bin="src-tauri/binaries/ink-city-osm-cli-$(rustc --print host-tuple)"
+          bin="apps/desktop/src-tauri/binaries/ink-city-osm-cli-$(rustc --print host-tuple)"
           if [ "$RUNNER_OS" = "Windows" ]; then bin="$bin.exe"; fi
           out=$("$bin" 2>&1 || true)
           grep -q "usage: osm-cli" <<<"$out" || { echo "$out"; exit 1; }
 
       - name: cargo test
-        run: cargo test --manifest-path src-tauri/Cargo.toml --locked
+        run: cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked

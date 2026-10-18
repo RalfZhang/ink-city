@@ -30,8 +30,8 @@ use unicode_normalization::UnicodeNormalization;
 /// `packages/core/data/cities-*.json` sorted by name), named so a test can check that a
 /// pool added there isn't missing here.
 const POOLS: [(&str, &str); 2] = [
-    ("cities-countries.json", include_str!("../../packages/core/data/cities-countries.json")),
-    ("cities-famous.json", include_str!("../../packages/core/data/cities-famous.json")),
+    ("cities-countries.json", include_str!("../../../../packages/core/data/cities-countries.json")),
+    ("cities-famous.json", include_str!("../../../../packages/core/data/cities-famous.json")),
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -323,7 +323,8 @@ mod tests {
     /// in CI's (sorted) order — which is also the order `merge_pools` needs.
     #[test]
     fn the_bundled_pools_are_every_schedule_pool() {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../packages/core/data");
+        let dir =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../packages/core/data");
         let mut on_disk: Vec<String> = fs::read_dir(&dir)
             .expect("packages/core/data is readable")
             .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())

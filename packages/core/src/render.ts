@@ -96,7 +96,7 @@ const AIRPORT_WIDTHS = { taxiway: 1.8, runway: 6 } as const;
 /**
  * `plain` — one solid stroke, no pattern. The quiet option: reads as "a line that
  * isn't a road" purely by tint, with nothing to catch the eye. It is also where an
- * upgrading user lands (see `parse_config` in src-tauri/src/config.rs), being the
+ * upgrading user lands (see `parse_config` in apps/desktop/src-tauri/src/config.rs), being the
  * nearest survivor of the single rail line InkCity drew before the selector — that
  * one was dashed `[4.5, 3.5]` at alpha 0.7, so the width carries over but the dash
  * does not; `banded` is now what carries a pattern.

@@ -19,8 +19,8 @@
 //
 //     DEPRECATED — published for already-shipped clients only. Current clients
 //     dropped the cities.json rotation entirely: their last rung is now
-//     osm-v2/city-list.json (see src-tauri/src/pipeline.rs `resolve_daily`), and
-//     src-tauri/src/cdn.rs no longer reads osm/ at all. RECOMMENDED REMOVAL AFTER
+//     osm-v2/city-list.json (see apps/desktop/src-tauri/src/pipeline.rs `resolve_daily`), and
+//     apps/desktop/src-tauri/src/cdn.rs no longer reads osm/ at all. RECOMMENDED REMOVAL AFTER
 //     2026-11-01, by which point anything still reading this flow is ~3 months
 //     behind. What goes with it: `loadCities`, `windowCities`, `existingIds`,
 //     `backfillCity`, the id-keyed half of `runPrecache` (and `imminentMissing`),
@@ -43,7 +43,7 @@
 // Both payloads carry the same `city` envelope. The CI workflow gzips each .json
 // into a .json.gz sibling before publishing; why that exists (jsDelivr's per-file
 // cap, not bandwidth) is documented in .github/workflows/precache.yml, and the
-// client's .gz-then-.json preference in src-tauri/src/cdn.rs.
+// client's .gz-then-.json preference in apps/desktop/src-tauri/src/cdn.rs.
 //
 // `fetch` mode: fetch exactly the given bbox and print one JSON payload to
 // stdout (nothing else goes to stdout — diagnostics go to stderr). This is

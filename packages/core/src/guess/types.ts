@@ -61,7 +61,7 @@ export type DayRecord = {
  * website. This shape *is* the cross-host contract, so it only ever changes
  * additively, with `v` bumped (the OSM payload rule). The desktop backend also reads
  * two fields of it (`showCityInfo`, `days[*].end`) to decide whether the wallpaper
- * may show the city — see `isRevealed` and src-tauri/src/guess_store.rs.
+ * may show the city — see `isRevealed` and apps/desktop/src-tauri/src/guess_store.rs.
  */
 export type GuessStore = {
   v: number;

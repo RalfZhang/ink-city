@@ -1,6 +1,6 @@
 // Strings for the shared components, as their own i18next namespace (`UI_NS`).
 // A host registers `uiResources[code]` under that namespace for every locale it
-// ships, next to its own resources — see src/i18n/index.ts in the desktop app.
+// ships, next to its own resources — see apps/desktop/src/i18n/index.ts in the desktop app.
 // `pnpm check:i18n` holds these files to the same parity rule as the desktop's:
 // every key of en.json in every locale, nothing extra.
 //

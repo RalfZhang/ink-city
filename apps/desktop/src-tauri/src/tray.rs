@@ -77,7 +77,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
 
     let mut builder = TrayIconBuilder::with_id(TRAY_ID).tooltip("InkCity").menu(&menu);
 
-    // All icons are embedded at compile time (paths are relative to src-tauri/);
+    // All icons are embedded at compile time (paths are relative to apps/desktop/src-tauri/);
     // see the header comment in icons/tray-icon.svg for how they're regenerated.
     //
     // macOS menu bars want a monochrome template image, which the system tints for

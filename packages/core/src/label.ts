@@ -8,7 +8,7 @@ import type { MapLabel, Style } from "./types";
 
 /**
  * Geist first — the settings window's typeface, bundled with the app (the renderer
- * loads it, src/renderer/render.ts) — though it only covers Latin, Cyrillic and
+ * loads it, apps/desktop/src/renderer/render.ts) — though it only covers Latin, Cyrillic and
  * Vietnamese; every other script falls back glyph by glyph to the system's fonts,
  * the same fallback the City tab's own `localName` line relies on.
  *

@@ -4,7 +4,7 @@ import type { City } from "./types";
 // population-sorted list (`packages/core/data/cities.json`).
 //
 // DEPRECATED, and no longer mirrored anywhere: the Rust port in
-// `src-tauri/src/city.rs` is gone, because the desktop client no longer picks the
+// `apps/desktop/src-tauri/src/city.rs` is gone, because the desktop client no longer picks the
 // daily city at all — it reads the CI-authored schedule, whose picks are random and
 // stored, so no formula can reproduce them (docs/random-city-strategy.md). The one
 // live consumer left is `scripts/osm-cli.ts`, which still publishes the id-keyed

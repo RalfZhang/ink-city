@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Compile src-tauri/icons/InkCity.icon into src-tauri/icons/Assets.car.
+# Compile apps/desktop/src-tauri/icons/InkCity.icon into apps/desktop/src-tauri/icons/Assets.car.
 #
 # Why this exists rather than letting the bundler do it: tauri-bundler can compile
 # a `.icon` itself, but on macOS 26 that path crashes inside actool —
@@ -25,8 +25,8 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-src="$repo_root/src-tauri/icons/InkCity.icon"
-dest="$repo_root/src-tauri/icons/Assets.car"
+src="$repo_root/apps/desktop/src-tauri/icons/InkCity.icon"
+dest="$repo_root/apps/desktop/src-tauri/icons/Assets.car"
 
 if [ "$(uname -s)" != "Darwin" ]; then
   echo "error: asset catalogs are macOS-only; nothing to do on $(uname -s)" >&2

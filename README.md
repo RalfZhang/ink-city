@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="src-tauri/icons/app-icon.svg" height="120" alt="InkCity" />
+  <img src="apps/desktop/src-tauri/icons/app-icon.svg" height="120" alt="InkCity" />
   <h1>InkCity</h1>
   <p>Your desktop wallpaper, redrawn every day as the road map of a different city.</p>
   <div>

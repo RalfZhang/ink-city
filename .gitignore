@@ -32,7 +32,7 @@ idea.md
 
 # Compiled osm-cli sidecar binaries (scripts/build-sidecar.ts); build
 # artifacts, rebuilt locally with `npm run build:sidecar` or by CI.
-/src-tauri/binaries/
+/apps/desktop/src-tauri/binaries/
 *.bun-build
 
 # render-map.ts output (local map previews)
@@ -48,4 +48,4 @@ tmp.md
 
 # Compiled macOS icon catalog (scripts/build-icon-car.sh); build artifact,
 # rebuilt by CI and by `pnpm icon:car`. Source of truth is icons/InkCity.icon.
-/src-tauri/icons/Assets.car
+/apps/desktop/src-tauri/icons/Assets.car

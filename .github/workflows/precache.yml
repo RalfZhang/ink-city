@@ -5,7 +5,7 @@ name: Precache OSM
 # (cdn.jsdelivr.net/gh/<repo>@data). The desktop client pulls from there before
 # falling back to the same osm-cli binary run live (as a sidecar), so users on slow
 # or Overpass-blocked networks (notably mainland China) get fast, reliable data.
-# See scripts/osm-cli.ts and src-tauri/src/cdn.rs.
+# See scripts/osm-cli.ts and apps/desktop/src-tauri/src/cdn.rs.
 #
 # Every published .json also gets a gzip-compressed sibling. That is NOT for
 # bandwidth — jsDelivr already compresses .json over the wire on its own (it answers
@@ -16,7 +16,7 @@ name: Precache OSM
 # TWO FLOWS ARE PUBLISHED, and only one is still read:
 #
 #   osm-v2/  the date-keyed schedule + its state file — what every current client
-#            reads (src-tauri/src/cdn.rs).
+#            reads (apps/desktop/src-tauri/src/cdn.rs).
 #   osm/     the legacy id-keyed rotation, driven by packages/core/data/cities.json.
 #            DEPRECATED: current clients dropped the cities.json rotation fallback,
 #            so nothing reads these; they're published only for clients shipped
@@ -40,7 +40,7 @@ on:
   # run also does the usual precache pass, which is a no-op when nothing is due.
   push:
     branches: [main]
-    paths: [src-tauri/update-mirrors.json]
+    paths: [apps/desktop/src-tauri/update-mirrors.json]
 
 # Avoid two runs racing to force-push the data branch.
 concurrency:
@@ -169,12 +169,12 @@ jobs:
       # fetches failed should still carry the current list.
       #
       # mirrors_dest must match DATA_REF/MIRRORS_FILE in
-      # src-tauri/src/github_mirror.rs, and mirrors_src the file it compiles in; a
+      # apps/desktop/src-tauri/src/github_mirror.rs, and mirrors_src the file it compiles in; a
       # test there reads these two assignments.
       - name: Publish client files from main
         if: always()
         run: |
-          mirrors_src=src-tauri/update-mirrors.json
+          mirrors_src=apps/desktop/src-tauri/update-mirrors.json
           mirrors_dest=data-out/client/update-mirrors.json
           git fetch --no-tags --depth=1 origin main
           candidate="$RUNNER_TEMP/update-mirrors.json"
