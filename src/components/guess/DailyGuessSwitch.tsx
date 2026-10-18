@@ -9,8 +9,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Switch } from "@/components/ui/switch";
+} from "@inkcity/ui/components/alert-dialog";
+import { Switch } from "@inkcity/ui/components/switch";
 import SettingRow from "@/components/SettingRow";
 import { isRevealed, type GameSnapshot } from "@inkcity/core";
 

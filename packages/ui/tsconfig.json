@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+
+    // Only for the shadcn CLI, which maps components.json's aliases to folders
+    // through this. The package's own files import each other relatively.
+    "paths": {
+      "@inkcity/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

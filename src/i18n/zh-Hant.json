@@ -72,24 +72,8 @@
     "revealAfterGame": "猜完後揭曉"
   },
   "game": {
-    "prompt": "這座城市在哪個國家或地區？",
-    "placeholder": "輸入國家或地區…",
-    "guess": "猜",
-    "progress": "第 {{n}} / {{max}} 次",
-    "alreadyGuessed": "已經猜過了，換一個試試。",
-    "noMatch": "請從清單中選擇國家或地區。",
     "painting": "正在生成今日桌布…",
     "paintFailed": "無法設定今日桌布，每分鐘重試一次。"
-  },
-  "result": {
-    "won": "第 {{n}} 次猜中",
-    "lost": "{{max}} 次都沒猜中 · 答案是{{country}}",
-    "gaveUp": "已放棄 · 答案是{{country}}",
-    "played": "已玩",
-    "winRate": "勝率",
-    "streak": "目前連勝",
-    "maxStreak": "最長連勝",
-    "distribution": "猜中次數分布"
   },
   "style": {
     "theme": "地圖主題",

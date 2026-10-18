@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "W jakim kraju lub regionie leży to miasto?",
+    "placeholder": "Wpisz kraj lub region…",
+    "guess": "Zgadnij",
+    "progress": "Próba {{n}} z {{max}}",
+    "alreadyGuessed": "Już to było — spróbuj czegoś innego.",
+    "noMatch": "Wybierz kraj lub region z listy."
+  },
+  "result": {
+    "won": "Odgadnięte za {{n}}. razem",
+    "lost": "Nie udało się w {{max}} próbach — to {{country}}",
+    "gaveUp": "Gra poddana — to {{country}}",
+    "played": "Rozegrane",
+    "winRate": "Skuteczność",
+    "streak": "Obecna seria",
+    "maxStreak": "Najlepsza seria",
+    "distribution": "Rozkład prób"
+  }
+}

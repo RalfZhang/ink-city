@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "Thành phố này thuộc quốc gia hoặc khu vực nào?",
+    "placeholder": "Nhập quốc gia hoặc khu vực…",
+    "guess": "Đoán",
+    "progress": "Lượt đoán {{n}}/{{max}}",
+    "alreadyGuessed": "Đã đoán rồi — hãy thử đáp án khác.",
+    "noMatch": "Hãy chọn một quốc gia hoặc khu vực trong danh sách."
+  },
+  "result": {
+    "won": "Đoán đúng ở lượt thứ {{n}}",
+    "lost": "Không đoán đúng sau {{max}} lượt — đáp án là {{country}}",
+    "gaveUp": "Đã bỏ cuộc — đáp án là {{country}}",
+    "played": "Đã chơi",
+    "winRate": "Tỷ lệ thắng",
+    "streak": "Chuỗi thắng hiện tại",
+    "maxStreak": "Chuỗi thắng dài nhất",
+    "distribution": "Phân bố số lượt đoán"
+  }
+}

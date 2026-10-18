@@ -1,18 +1,19 @@
 import { useTranslation } from "react-i18next";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "../components/card";
+import { Separator } from "../components/separator";
 import { MAX_GUESSES, countryName, type CountryIndex, type GameSnapshot } from "@inkcity/core";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
+import { UI_NS } from "../i18n/ns";
 import GuessRow from "./GuessRow";
 
 /**
- * Today's result under the revealed city card: how it went, the trail of guesses,
- * and the lifetime record — played, win rate, current and best streak, and how many
- * guesses each win took, with today's bar inked solid (and bold, so it doesn't rely
- * on tone alone).
+ * Today's result once the day is over (on the desktop, under the revealed city
+ * card): how it went, the trail of guesses, and the lifetime record — played, win
+ * rate, current and best streak, and how many guesses each win took, with today's
+ * bar inked solid (and bold, so it doesn't rely on tone alone).
  */
 export default function GuessResult({ snapshot, index }: { snapshot: GameSnapshot; index: CountryIndex }) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(UI_NS);
   const lang = i18n.language;
   const { stats, guesses } = snapshot;
   const won = snapshot.state === "won";

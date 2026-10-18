@@ -6,14 +6,20 @@
 // so the resource type is derived from it. `zh-Hans.json` is kept in lockstep at
 // build time by `scripts/check-i18n.ts` — that script, not the type system,
 // guarantees every key here also has a translation in every other locale.
+//
+// `ui` is the shared components' namespace (packages/ui/src/i18n). That package
+// declares its own augmentation for its own type-check; this one covers both
+// namespaces for the app, and the two never meet in one program.
 import "i18next";
 import type en from "./en.json";
+import type { UiResources } from "@inkcity/ui/i18n";
 
 declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "translation";
     resources: {
       translation: typeof en;
+      ui: UiResources;
     };
   }
 }

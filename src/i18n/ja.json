@@ -72,24 +72,8 @@
     "revealAfterGame": "今日のゲーム終了後に表示"
   },
   "game": {
-    "prompt": "この都市はどの国または地域にありますか？",
-    "placeholder": "国または地域を入力…",
-    "guess": "回答",
-    "progress": "{{max}} 回中 {{n}} 回目",
-    "alreadyGuessed": "回答済みです。別の答えを試してください。",
-    "noMatch": "リストから国または地域を選んでください。",
     "painting": "今日の壁紙を描画中…",
     "paintFailed": "今日の壁紙を設定できません。1 分ごとに再試行します。"
-  },
-  "result": {
-    "won": "{{n}} 回目で正解",
-    "lost": "{{max}} 回とも不正解 — 正解は{{country}}",
-    "gaveUp": "ギブアップ — 正解は{{country}}",
-    "played": "プレイ回数",
-    "winRate": "勝率",
-    "streak": "現在の連勝",
-    "maxStreak": "最長連勝",
-    "distribution": "正解までの回数の分布"
   },
   "style": {
     "theme": "マップテーマ",

@@ -13,6 +13,11 @@ export default defineConfig(async () => ({
     alias: {
       "@": resolve(__dirname, "src"),
     },
+    // The shared components (`@inkcity/ui`) must use the app's copies of these: a
+    // second react-i18next would read an i18next nobody initialized, a second React
+    // breaks hooks. pnpm links one copy today, but it keys each copy on its peers,
+    // so a version drift anywhere would quietly split them.
+    dedupe: ["react", "react-dom", "i18next", "react-i18next"],
   },
   build: {
     rollupOptions: {

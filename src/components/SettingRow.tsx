@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Label } from "@/components/ui/label";
+import { Label } from "@inkcity/ui/components/label";
 
 // A settings/section row: label (with optional sub-description) on the left, an
 // optional control on the right. Shared across the General / Style / About tabs

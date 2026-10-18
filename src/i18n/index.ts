@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { UI_NS, uiResources } from "@inkcity/ui/i18n";
 import { LOCALES, SUPPORTED, dirForLocale, type LocaleCode } from "./locales";
 
 export { LOCALES, RTL_LOCALES, dirForLocale, type LocaleCode } from "./locales";
@@ -31,9 +32,11 @@ function initialLanguage(): LocaleCode {
   return detectFromNavigator();
 }
 
+// Two namespaces per locale: the app's own strings, and the shared components'
+// (`@inkcity/ui`), which read theirs from `UI_NS`.
 i18n.use(initReactI18next).init({
   resources: Object.fromEntries(
-    LOCALES.map((l) => [l.code, { translation: l.translation }]),
+    LOCALES.map((l) => [l.code, { translation: l.translation, [UI_NS]: uiResources[l.code] }]),
   ),
   lng: initialLanguage(),
   fallbackLng: "en",

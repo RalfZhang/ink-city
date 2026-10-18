@@ -72,24 +72,8 @@
     "revealAfterGame": "Bugünkü oyun bitince açıklanacak"
   },
   "game": {
-    "prompt": "Bu şehir hangi ülke veya bölgede?",
-    "placeholder": "Bir ülke veya bölge yazın…",
-    "guess": "Tahmin et",
-    "progress": "Tahmin {{n}} / {{max}}",
-    "alreadyGuessed": "Bunu zaten denediniz — başka bir tane deneyin.",
-    "noMatch": "Listeden bir ülke veya bölge seçin.",
     "painting": "Bugünün duvar kağıdı çiziliyor…",
     "paintFailed": "Bugünün duvar kağıdı ayarlanamadı — her dakika yeniden denenir."
-  },
-  "result": {
-    "won": "{{n}}. tahminde bildiniz",
-    "lost": "{{max}} tahminde bilemediniz — cevap: {{country}}",
-    "gaveUp": "Pes ettiniz — cevap: {{country}}",
-    "played": "Oynanan",
-    "winRate": "Kazanma oranı",
-    "streak": "Mevcut seri",
-    "maxStreak": "En iyi seri",
-    "distribution": "Tahmin dağılımı"
   },
   "style": {
     "theme": "Harita teması",

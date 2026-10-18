@@ -72,24 +72,8 @@
     "revealAfterGame": "Svelata dopo la partita di oggi"
   },
   "game": {
-    "prompt": "In quale Paese o regione si trova questa città?",
-    "placeholder": "Scrivi un Paese o una regione…",
-    "guess": "Indovina",
-    "progress": "Tentativo {{n}} di {{max}}",
-    "alreadyGuessed": "Già provato: prova con un'altra risposta.",
-    "noMatch": "Scegli un Paese o una regione dall'elenco.",
     "painting": "Disegno dello sfondo di oggi…",
     "paintFailed": "Impossibile impostare lo sfondo di oggi: nuovo tentativo ogni minuto."
-  },
-  "result": {
-    "won": "Indovinato al {{n}}° tentativo",
-    "lost": "Non indovinato in {{max}} tentativi. Risposta: {{country}}",
-    "gaveUp": "Partita abbandonata. Risposta: {{country}}",
-    "played": "Giocate",
-    "winRate": "Tasso di vittoria",
-    "streak": "Serie attuale",
-    "maxStreak": "Serie migliore",
-    "distribution": "Distribuzione dei tentativi"
   },
   "style": {
     "theme": "Tema mappa",

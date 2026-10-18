@@ -2,16 +2,16 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { Loader2, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@inkcity/ui/components/button";
+import { Card, CardContent } from "@inkcity/ui/components/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+} from "@inkcity/ui/components/select";
+import { Switch } from "@inkcity/ui/components/switch";
 import SettingRow from "@/components/SettingRow";
 import {
   emptyGuessStore,

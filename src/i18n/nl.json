@@ -72,24 +72,8 @@
     "revealAfterGame": "Bekend na het spel van vandaag"
   },
   "game": {
-    "prompt": "In welk land of welke regio ligt deze stad?",
-    "placeholder": "Typ een land of regio…",
-    "guess": "Raden",
-    "progress": "Poging {{n}} van {{max}}",
-    "alreadyGuessed": "Al geprobeerd — probeer iets anders.",
-    "noMatch": "Kies een land of regio uit de lijst.",
     "painting": "Achtergrond van vandaag tekenen…",
     "paintFailed": "Achtergrond van vandaag instellen mislukt — elke minuut opnieuw geprobeerd."
-  },
-  "result": {
-    "won": "Geraden bij poging {{n}}",
-    "lost": "Niet geraden in {{max}} pogingen — antwoord: {{country}}",
-    "gaveUp": "Opgegeven — antwoord: {{country}}",
-    "played": "Gespeeld",
-    "winRate": "Winstpercentage",
-    "streak": "Huidige reeks",
-    "maxStreak": "Beste reeks",
-    "distribution": "Verdeling van pogingen"
   },
   "style": {
     "theme": "Kaartthema",

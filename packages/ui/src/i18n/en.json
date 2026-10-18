@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "Which country or region is this city in?",
+    "placeholder": "Type a country or region…",
+    "guess": "Guess",
+    "progress": "Guess {{n}} of {{max}}",
+    "alreadyGuessed": "Already guessed — try another.",
+    "noMatch": "Pick a country or region from the list."
+  },
+  "result": {
+    "won": "Got it on guess {{n}}",
+    "lost": "No luck in {{max}} guesses — it's {{country}}",
+    "gaveUp": "Gave up — it's {{country}}",
+    "played": "Played",
+    "winRate": "Win rate",
+    "streak": "Streak",
+    "maxStreak": "Best streak",
+    "distribution": "Guess distribution"
+  }
+}

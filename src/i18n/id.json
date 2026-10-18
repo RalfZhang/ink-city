@@ -72,24 +72,8 @@
     "revealAfterGame": "Terungkap setelah permainan hari ini"
   },
   "game": {
-    "prompt": "Kota ini ada di negara atau wilayah mana?",
-    "placeholder": "Ketik negara atau wilayah…",
-    "guess": "Tebak",
-    "progress": "Tebakan {{n}} dari {{max}}",
-    "alreadyGuessed": "Sudah ditebak — coba yang lain.",
-    "noMatch": "Pilih negara atau wilayah dari daftar.",
     "painting": "Menggambar wallpaper hari ini…",
     "paintFailed": "Tidak dapat mengatur wallpaper hari ini — dicoba lagi setiap menit."
-  },
-  "result": {
-    "won": "Benar pada tebakan ke-{{n}}",
-    "lost": "Tidak tertebak dalam {{max}} tebakan — jawabannya {{country}}",
-    "gaveUp": "Menyerah — jawabannya {{country}}",
-    "played": "Dimainkan",
-    "winRate": "Persentase menang",
-    "streak": "Beruntun saat ini",
-    "maxStreak": "Beruntun terbaik",
-    "distribution": "Distribusi tebakan"
   },
   "style": {
     "theme": "Tema peta",

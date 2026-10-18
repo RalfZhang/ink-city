@@ -6,7 +6,7 @@ import {
   type CountryIndex,
   type GuessView,
 } from "@inkcity/core";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 const ANGLE: Record<CompassPoint, number> = {
   n: 0, ne: 45, e: 90, se: 135, s: 180, sw: 225, w: 270, nw: 315,

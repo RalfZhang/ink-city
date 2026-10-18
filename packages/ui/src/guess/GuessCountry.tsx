@@ -1,9 +1,9 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "../components/button";
+import { Card, CardContent } from "../components/card";
+import { Input } from "../components/input";
 import {
   MAX_GUESSES,
   countryName,
@@ -14,6 +14,7 @@ import {
   type GameSnapshot,
   type GuessOutcome,
 } from "@inkcity/core";
+import { UI_NS } from "../i18n/ns";
 import GuessRow from "./GuessRow";
 
 type Props = {
@@ -21,8 +22,12 @@ type Props = {
   snapshot: GameSnapshot;
   index: CountryIndex;
   saving: boolean;
-  /** Why today's map can't be painted, if it can't — shown in place of the hint line. */
-  lastError: string | null;
+  /**
+   * The hint line while today's map isn't drawn yet (`snapshot.state === "painting"`).
+   * The host words it: the desktop talks about painting its wallpaper (and why it
+   * can't), a web page about loading the map.
+   */
+  paintingLine: string;
   onGuess: (code: string) => Promise<GuessOutcome | "failed">;
 };
 
@@ -30,10 +35,9 @@ type Hint = "alreadyGuessed" | "noMatch";
 
 /**
  * The guess-the-country card: name a country or region, see how far and which way
- * today's city lies from it, six tries. Sits under the (concealed) city card until
- * the day is revealed; that card carries the date, the fetch status and Regenerate,
- * so this one is only the game. Key it by date so a midnight rollover starts it
- * fresh.
+ * today's city lies from it, six tries. Only the game: the date, the fetch status
+ * and the like belong to the host (on the desktop, the concealed city card above
+ * it). Key it by date so a midnight rollover starts it fresh.
  *
  * Entering a guess is two steps on purpose, because a guess can't be taken back:
  * picking a suggestion only fills the box, and Enter (or Guess) on a name that
@@ -43,8 +47,8 @@ type Hint = "alreadyGuessed" | "noMatch";
  * suggestion list floats over them (it sits at the top of the card because the
  * card clips overflow), and the hint line keeps its height when empty.
  */
-export default function GuessCountry({ snapshot, index, saving, lastError, onGuess }: Props) {
-  const { t, i18n } = useTranslation();
+export default function GuessCountry({ snapshot, index, saving, paintingLine, onGuess }: Props) {
+  const { t, i18n } = useTranslation(UI_NS);
   const lang = i18n.language;
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(false);
@@ -102,11 +106,11 @@ export default function GuessCountry({ snapshot, index, saving, lastError, onGue
   };
 
   // The line under the box: why the game isn't open yet, or what went wrong with
-  // the last attempt. A day still resolving says nothing here — the city card
-  // above already explains that.
+  // the last attempt. A day still resolving says nothing here — the host already
+  // explains that (on the desktop, the city card above).
   const line =
     snapshot.state === "painting"
-      ? t(lastError ? "game.paintFailed" : "game.painting")
+      ? paintingLine
       : hint
         ? t(hint === "alreadyGuessed" ? "game.alreadyGuessed" : "game.noMatch")
         : "";

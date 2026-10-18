@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { cn } from "@inkcity/ui/lib/utils";
+import { Input } from "@inkcity/ui/components/input";
+import { Switch } from "@inkcity/ui/components/switch";
 import SettingRow from "@/components/SettingRow";
 
 type Props = {

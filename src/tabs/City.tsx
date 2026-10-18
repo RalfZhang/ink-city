@@ -1,21 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@inkcity/ui/components/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+} from "@inkcity/ui/components/select";
+import { Separator } from "@inkcity/ui/components/separator";
 import SettingRow from "@/components/SettingRow";
 import DailyCity from "@/components/DailyCity";
 import CustomCity from "@/components/CustomCity";
-import GuessCountry from "@/components/guess/GuessCountry";
-import GuessResult from "@/components/guess/GuessResult";
+import { GuessCountry, GuessResult, useGuessGame } from "@inkcity/ui/guess";
 import DailyGuessSwitch from "@/components/guess/DailyGuessSwitch";
-import { useGuessGame } from "@/components/guess/useGuessGame";
 import { countryIndex, isRevealed } from "@inkcity/core";
 import { tauriGuessStorage } from "@/lib/guess-storage";
 import countries from "@inkcity/core/countries.json";
@@ -110,7 +108,7 @@ export default function City({ status, onError }: Props) {
               snapshot={snapshot}
               index={COUNTRIES}
               saving={game.saving}
-              lastError={status.lastError}
+              paintingLine={t(status.lastError ? "game.paintFailed" : "game.painting")}
               onGuess={game.guess}
             />
           )}

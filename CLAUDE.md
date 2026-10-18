@@ -2,6 +2,16 @@
 
 A Tauri (Rust + React/TS) desktop app shipping signed bundles for macOS (universal), Windows and Linux (x86_64).
 
+## Workspace packages
+
+The repo root is the desktop app. Code it shares with CI and the future website lives in pnpm workspace packages, imported as TypeScript source with no build step (`pnpm build` type-checks each with `tsc -p`):
+
+- `@inkcity/core` (`packages/core`) — portable logic: rendering, bbox, the schedule, the guess-the-country rules, plus `data/` (the city pools, and `countries.json`, exported as `@inkcity/core/countries.json`).
+- `@inkcity/osm` (`packages/osm`) — Overpass fetch and layer extraction. Node/Bun only, kept out of client bundles (it pulls in `polygon-clipping`); `scripts/osm-cli.ts` is its entry point and stays in `scripts/`.
+- `@inkcity/ui` (`packages/ui`) — the shadcn components (`@inkcity/ui/components/*`), `cn`, the theme stylesheet (`@inkcity/ui/globals.css`) and the game's React layer (`@inkcity/ui/guess`). Its strings are the `ui` i18next namespace in `packages/ui/src/i18n`, held to the same parity check as the app's; wording only a host can give comes in as a prop (GuessCountry's `paintingLine`). Desktop-only settings UI — `SettingRow`, the "Daily guess" switch — stays in `src/`.
+
+Inside a package, files import each other relatively; packages never use the app's `@/` alias (CI rejects it). `shadcn add` writes into `packages/ui/src/components/` — switch its `cn` import to `../lib/utils` like the rest.
+
 ## Data
 
 City pins live in `packages/core/data/` (three schema-identical pools), next to `countries.json`, the guess-the-country game's answer table. The daily schedule draws from `cities-famous.json` + `cities-countries.json`, and the app compiles the same two in as its Customized-mode search index; `cities.json` only feeds the legacy CI rotation until it is removed after 2026-11-01. For the pools' relationship, the `localName` language/script rules, how countries.json's reference points were chosen, and how to regenerate them, see [packages/core/data/README.md](packages/core/data/README.md).

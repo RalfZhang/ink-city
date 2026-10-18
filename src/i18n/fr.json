@@ -72,24 +72,8 @@
     "revealAfterGame": "Révélée après la partie du jour"
   },
   "game": {
-    "prompt": "Dans quel pays ou quelle région se trouve cette ville ?",
-    "placeholder": "Saisissez un pays ou une région…",
-    "guess": "Valider",
-    "progress": "Essai {{n}} sur {{max}}",
-    "alreadyGuessed": "Déjà proposé — essayez autre chose.",
-    "noMatch": "Choisissez un pays ou une région dans la liste.",
     "painting": "Dessin du fond d'écran du jour…",
     "paintFailed": "Impossible de définir le fond d'écran du jour — nouvelle tentative chaque minute."
-  },
-  "result": {
-    "won": "Trouvé à l'essai {{n}}",
-    "lost": "Pas trouvé en {{max}} essais — réponse : {{country}}",
-    "gaveUp": "Abandon — réponse : {{country}}",
-    "played": "Parties",
-    "winRate": "Taux de réussite",
-    "streak": "Série actuelle",
-    "maxStreak": "Meilleure série",
-    "distribution": "Répartition des essais"
   },
   "style": {
     "theme": "Thème de la carte",

@@ -2,9 +2,9 @@ import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Button } from "@inkcity/ui/components/button";
+import { Card, CardContent, CardFooter } from "@inkcity/ui/components/card";
+import { cn } from "@inkcity/ui/lib/utils";
 import type { Status } from "../types";
 import { wikipediaUrl, mapUrl } from "../constants";
 

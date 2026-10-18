@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "¿En qué país o región está esta ciudad?",
+    "placeholder": "Escribe un país o región…",
+    "guess": "Adivinar",
+    "progress": "Intento {{n}} de {{max}}",
+    "alreadyGuessed": "Ya lo intentaste: prueba con otra respuesta.",
+    "noMatch": "Elige un país o región de la lista."
+  },
+  "result": {
+    "won": "Acertaste en el intento {{n}}",
+    "lost": "Sin suerte en {{max}} intentos: era {{country}}",
+    "gaveUp": "Te rendiste: era {{country}}",
+    "played": "Jugadas",
+    "winRate": "Tasa de victorias",
+    "streak": "Racha actual",
+    "maxStreak": "Mejor racha",
+    "distribution": "Distribución de intentos"
+  }
+}

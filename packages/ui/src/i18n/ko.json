@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "이 도시는 어느 국가 또는 지역에 있나요?",
+    "placeholder": "국가 또는 지역 입력…",
+    "guess": "확인",
+    "progress": "시도 {{n}}/{{max}}",
+    "alreadyGuessed": "이미 입력한 답입니다. 다른 답을 시도해 보세요.",
+    "noMatch": "목록에서 국가 또는 지역을 선택하세요."
+  },
+  "result": {
+    "won": "{{n}}번째 시도에 정답",
+    "lost": "{{max}}번 모두 오답 — 정답: {{country}}",
+    "gaveUp": "포기 — 정답: {{country}}",
+    "played": "플레이 횟수",
+    "winRate": "승률",
+    "streak": "현재 연승",
+    "maxStreak": "최다 연승",
+    "distribution": "시도 횟수 분포"
+  }
+}

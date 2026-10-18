@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@inkcity/ui/components/card";
+import { Switch } from "@inkcity/ui/components/switch";
+import { Separator } from "@inkcity/ui/components/separator";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@inkcity/ui/components/select";
 import SettingRow from "@/components/SettingRow";
 import ProxySetting from "@/components/ProxySetting";
 import { getLocaleChoice, setLocaleChoice, LOCALES, type LocaleChoice } from "../i18n";

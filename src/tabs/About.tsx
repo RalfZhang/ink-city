@@ -4,17 +4,17 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { getVersion } from "@tauri-apps/api/app";
 import { Trans, useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@inkcity/ui/components/button";
+import { Card, CardContent, CardFooter } from "@inkcity/ui/components/card";
+import { Switch } from "@inkcity/ui/components/switch";
+import { Separator } from "@inkcity/ui/components/separator";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@inkcity/ui/components/select";
 import SettingRow from "@/components/SettingRow";
 import { logError } from "@/lib/log";
 import {

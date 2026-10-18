@@ -1,0 +1,20 @@
+{
+  "game": {
+    "prompt": "Kota ini ada di negara atau wilayah mana?",
+    "placeholder": "Ketik negara atau wilayah…",
+    "guess": "Tebak",
+    "progress": "Tebakan {{n}} dari {{max}}",
+    "alreadyGuessed": "Sudah ditebak — coba yang lain.",
+    "noMatch": "Pilih negara atau wilayah dari daftar."
+  },
+  "result": {
+    "won": "Benar pada tebakan ke-{{n}}",
+    "lost": "Tidak tertebak dalam {{max}} tebakan — jawabannya {{country}}",
+    "gaveUp": "Menyerah — jawabannya {{country}}",
+    "played": "Dimainkan",
+    "winRate": "Persentase menang",
+    "streak": "Beruntun saat ini",
+    "maxStreak": "Beruntun terbaik",
+    "distribution": "Distribusi tebakan"
+  }
+}

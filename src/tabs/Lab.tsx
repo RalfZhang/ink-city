@@ -3,17 +3,17 @@ import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import type { ParseKeys } from "i18next";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "@inkcity/ui/components/button";
+import { Card, CardContent, CardFooter } from "@inkcity/ui/components/card";
+import { Separator } from "@inkcity/ui/components/separator";
+import { Switch } from "@inkcity/ui/components/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@inkcity/ui/components/select";
 import SettingRow from "@/components/SettingRow";
 import { RAILWAY_STYLES } from "@inkcity/core";
 import type { RailwayStyle, Status, StyleVariant } from "../types";
