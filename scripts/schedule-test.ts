@@ -142,7 +142,11 @@ check(
 
 // The publish guard has to count the schedule as something worth publishing, or a
 // run that fetched schedule days but no rotation cities is discarded while green.
-const guarded = [...precacheYml.matchAll(/ls -A (\S+)/g)].map((m) => m[1]);
+// Every operand of each `ls -A`, up to its redirect or `)`: the guard lists all
+// its directories in one call (`ls -A osm osm-v2 client 2>/dev/null`).
+const guarded = [...precacheYml.matchAll(/ls -A ([^)]*?)\s*(?:2>|\))/g)].flatMap((m) =>
+  m[1].split(/\s+/).filter(Boolean),
+);
 check(
   guarded.includes(SCHEDULE_ROOT),
   `precache.yml publish guard checks [${guarded.join(", ")}], none of them ${SCHEDULE_ROOT}`,
