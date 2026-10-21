@@ -23,7 +23,8 @@
     "paintFailed": "Guessing opens once the map has loaded."
   },
   "storage": {
-    "memoryOnly": "Your browser isn't keeping this game, so it ends when you close the page."
+    "memoryOnly": "Your browser isn't keeping this game, so it ends when you close the page.",
+    "dismiss": "Dismiss"
   },
   "download": {
     "teaser": "InkCity is a desktop app that puts a new city on your wallpaper every day.",

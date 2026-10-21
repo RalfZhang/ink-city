@@ -23,7 +23,8 @@
     "paintFailed": "Tebakan dibuka setelah peta selesai dimuat."
   },
   "storage": {
-    "memoryOnly": "Browser Anda tidak menyimpan permainan ini, jadi permainan berakhir saat halaman ditutup."
+    "memoryOnly": "Browser Anda tidak menyimpan permainan ini, jadi permainan berakhir saat halaman ditutup.",
+    "dismiss": "Tutup"
   },
   "download": {
     "teaser": "InkCity adalah aplikasi desktop yang memasang kota baru sebagai wallpaper Anda setiap hari.",

@@ -23,7 +23,8 @@
     "paintFailed": "Dá para adivinhar assim que o mapa carregar."
   },
   "storage": {
-    "memoryOnly": "Seu navegador não salva esta partida, então ela termina quando você fechar a página."
+    "memoryOnly": "Seu navegador não salva esta partida, então ela termina quando você fechar a página.",
+    "dismiss": "Fechar"
   },
   "download": {
     "teaser": "InkCity é um aplicativo de desktop que coloca uma cidade nova no seu papel de parede todo dia.",

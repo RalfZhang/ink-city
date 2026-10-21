@@ -23,7 +23,8 @@
     "paintFailed": "Raten geht los, sobald die Karte geladen ist."
   },
   "storage": {
-    "memoryOnly": "Dein Browser speichert dieses Spiel nicht – es endet, wenn du die Seite schließt."
+    "memoryOnly": "Dein Browser speichert dieses Spiel nicht – es endet, wenn du die Seite schließt.",
+    "dismiss": "Schließen"
   },
   "download": {
     "teaser": "InkCity ist eine Desktop-App, die dir jeden Tag eine neue Stadt als Hintergrundbild setzt.",

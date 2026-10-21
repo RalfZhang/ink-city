@@ -23,7 +23,8 @@
     "paintFailed": "Podrás adivinar en cuanto el mapa se haya cargado."
   },
   "storage": {
-    "memoryOnly": "Tu navegador no guarda esta partida, así que se perderá al cerrar la página."
+    "memoryOnly": "Tu navegador no guarda esta partida, así que se perderá al cerrar la página.",
+    "dismiss": "Cerrar"
   },
   "download": {
     "teaser": "InkCity es una aplicación de escritorio que pone una ciudad nueva en tu fondo de pantalla cada día.",

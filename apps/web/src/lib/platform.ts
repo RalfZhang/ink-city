@@ -10,8 +10,18 @@ export type Visitor = DesktopPlatform | "mobile" | "unknown";
 export type NavigatorLike = {
   userAgent: string;
   maxTouchPoints?: number;
-  userAgentData?: { platform?: string; mobile?: boolean };
+  userAgentData?: {
+    platform?: string;
+    mobile?: boolean;
+    getHighEntropyValues?: (hints: string[]) => Promise<{ architecture?: string }>;
+  };
 };
+
+// Linux is the one platform shipped for a single architecture (x86_64), so an ARM
+// machine running it — a Raspberry Pi, Asahi on a Mac, a Chromebook's Linux — has
+// nothing to install, and is left unplaced rather than led to packages it'd refuse.
+const ARM_UA = /\b(aarch64|arm64|armv\d+l?)\b/i;
+const linux = (ua: string): Visitor => (ARM_UA.test(ua) ? "unknown" : "linux");
 
 /**
  * Client Hints first (Chromium: `userAgentData.platform` is "macOS", "Windows",
@@ -29,7 +39,7 @@ export function detectVisitor(nav: NavigatorLike): Visitor {
     case "windows":
       return "windows";
     case "linux":
-      return "linux";
+      return linux(nav.userAgent);
     case "android":
     case "ios":
       return "mobile";
@@ -43,6 +53,23 @@ export function detectVisitor(nav: NavigatorLike): Visitor {
   if (/Macintosh|Mac OS X/.test(ua)) return (nav.maxTouchPoints ?? 0) > 1 ? "mobile" : "macos";
   if (/Windows/.test(ua)) return "windows";
   if (/CrOS/.test(ua)) return "unknown";
-  if (/Linux|X11/.test(ua)) return "linux";
+  if (/Linux|X11/.test(ua)) return linux(ua);
   return "unknown";
+}
+
+/**
+ * `visitor` checked against Client Hints' architecture, where it's a Linux one: the
+ * user agent can't say ARM there in Chromium, whose reduced UA string reads
+ * "Linux x86_64" on every Linux machine (a Raspberry Pi's default browser included).
+ * Firefox's still names the real one, which `detectVisitor` reads.
+ */
+export async function refineVisitor(nav: NavigatorLike, visitor: Visitor): Promise<Visitor> {
+  const hints = nav.userAgentData;
+  if (visitor !== "linux" || !hints?.getHighEntropyValues) return visitor;
+  try {
+    const { architecture } = await hints.getHighEntropyValues(["architecture"]);
+    return architecture === "arm" ? "unknown" : visitor;
+  } catch {
+    return visitor;
+  }
 }

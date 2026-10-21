@@ -23,7 +23,8 @@
     "paintFailed": "地图加载好后就可以开始猜了。"
   },
   "storage": {
-    "memoryOnly": "你的浏览器没有保存这局游戏，关闭页面后进度就会丢失。"
+    "memoryOnly": "你的浏览器没有保存这局游戏，关闭页面后进度就会丢失。",
+    "dismiss": "关闭"
   },
   "download": {
     "teaser": "InkCity 是一款桌面应用，每天把一座新城市设为你的壁纸。",

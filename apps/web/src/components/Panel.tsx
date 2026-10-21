@@ -11,6 +11,8 @@ type Props = {
   rtl: boolean;
   hidden: boolean;
   onHiddenChange: (hidden: boolean) => void;
+  /** Laid over the panel's foot: one that turns up mid-game never moves the game about. */
+  notice?: ReactNode;
   children: ReactNode;
 };
 
@@ -24,7 +26,7 @@ type Props = {
  * "Show the whole map" (the eye, or H) slides it out of the way; a button in the
  * corner brings it back.
  */
-export default function Panel({ panelRef, wide, rtl, hidden, onHiddenChange, children }: Props) {
+export default function Panel({ panelRef, wide, rtl, hidden, onHiddenChange, notice, children }: Props) {
   const { t } = useTranslation();
   const RestoreIcon = !wide ? PanelBottomOpen : rtl ? PanelRightOpen : PanelLeftOpen;
   return (
@@ -62,6 +64,7 @@ export default function Panel({ panelRef, wide, rtl, hidden, onHiddenChange, chi
           </Button>
         </header>
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 pb-5 space-y-4">{children}</div>
+        {notice && <div className="absolute inset-x-3 bottom-3">{notice}</div>}
       </aside>
       {hidden && (
         <Button

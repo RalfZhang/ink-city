@@ -18,6 +18,14 @@ export type MapStatus = {
 
 const IDLE: MapStatus = { city: null, painted: false, stage: null, error: null };
 
+/** A status, and the day it's about. */
+type DayStatus = MapStatus & { date: string };
+
+/** `patch` applied to `day`'s status — to a fresh one, if what's held is another day's. */
+const forDay =
+  (day: string, patch: Partial<MapStatus>) =>
+  (s: DayStatus): DayStatus => ({ ...(s.date === day ? s : IDLE), ...patch, date: day });
+
 /**
  * Show a frame: copied onto a plain 2D canvas. A `bitmaprenderer` canvas could
  * take the bitmap without the copy, but it's one more context type with its own
@@ -43,7 +51,7 @@ export function useDailyMap(
   size: { width: number; height: number } | null,
   canvas: RefObject<HTMLCanvasElement | null>,
 ): MapStatus & { retry: () => void } {
-  const [status, setStatus] = useState<MapStatus>(IDLE);
+  const [status, setStatus] = useState<DayStatus>(() => ({ ...IDLE, date }));
   const client = useRef<MapClient | null>(null);
   const lastRequest = useRef<ShowRequest | null>(null);
   // Replies name their day; one for a day the page has moved past is dropped.
@@ -53,12 +61,12 @@ export function useDailyMap(
   useEffect(() => {
     const c = createMapClient((reply) => {
       if (reply.date !== today.current) return;
-      if (reply.type === "stage") setStatus((s) => ({ ...s, stage: reply.stage, error: null }));
-      else if (reply.type === "city") setStatus((s) => ({ ...s, city: reply.city, error: null }));
-      else if (reply.type === "error") setStatus((s) => ({ ...s, stage: null, error: reply.message }));
+      if (reply.type === "stage") setStatus(forDay(reply.date, { stage: reply.stage, error: null }));
+      else if (reply.type === "city") setStatus(forDay(reply.date, { city: reply.city, error: null }));
+      else if (reply.type === "error") setStatus(forDay(reply.date, { stage: null, error: reply.message }));
       else {
         if (canvas.current) paint(canvas.current, reply);
-        setStatus((s) => ({ ...s, painted: true, stage: null, error: null }));
+        setStatus(forDay(reply.date, { painted: true, stage: null, error: null }));
       }
     });
     client.current = c;
@@ -68,8 +76,6 @@ export function useDailyMap(
       client.current = null;
     };
   }, [canvas]);
-
-  useEffect(() => setStatus(IDLE), [date]);
 
   const width = size?.width;
   const height = size?.height;
@@ -82,9 +88,12 @@ export function useDailyMap(
   }, [date, theme, width, height]);
 
   const retry = useCallback(() => {
-    setStatus((s) => ({ ...s, error: null }));
-    if (lastRequest.current) client.current?.show(lastRequest.current);
+    setStatus(forDay(today.current, { error: null }));
+    if (lastRequest.current) client.current?.show({ ...lastRequest.current, retry: true });
   }, []);
 
-  return { ...status, retry };
+  // Read against the date being rendered, not reset after it: a new date is IDLE from
+  // its first frame, never today's date beside yesterday's city and painted map.
+  const { date: about, ...current } = status;
+  return { ...(about === date ? current : IDLE), retry };
 }

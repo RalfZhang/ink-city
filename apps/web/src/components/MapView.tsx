@@ -4,6 +4,8 @@ import { cn } from "@inkcity/ui/lib/utils";
 type Props = {
   /** The box the map fills — measured by the page to size the drawing. */
   stageRef: RefObject<HTMLDivElement | null>;
+  /** The part of the stage on screen right now (the dynamic viewport) — measured to aim the slide. */
+  viewRef: RefObject<HTMLDivElement | null>;
   canvasRef: RefObject<HTMLCanvasElement | null>;
   /** How far to slide the map (CSS px) so the city sits in the middle of what the panel leaves free. */
   shift: { x: number; y: number };
@@ -19,11 +21,13 @@ type Props = {
  * back — no redraw.
  *
  * `h-lvh`, the large viewport height: a phone's browser chrome showing and hiding
- * as the page scrolls doesn't resize it, so it doesn't redraw for that either.
+ * as the page scrolls doesn't resize it, so it doesn't redraw for that either. While
+ * the chrome shows, the stage runs on under it — the slide takes that into account.
  */
-export default function MapView({ stageRef, canvasRef, shift, painted }: Props) {
+export default function MapView({ stageRef, viewRef, canvasRef, shift, painted }: Props) {
   return (
     <div ref={stageRef} aria-hidden className="fixed inset-x-0 top-0 h-lvh overflow-hidden">
+      <div ref={viewRef} className="invisible absolute inset-x-0 top-0 h-dvh" />
       <div
         className="absolute inset-0 transition-transform duration-500 ease-out motion-reduce:transition-none"
         style={{ transform: `translate(${shift.x}px, ${shift.y}px)` }}

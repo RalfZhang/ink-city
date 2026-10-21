@@ -23,7 +23,8 @@
     "paintFailed": "Harita yüklenince tahmin edebilirsiniz."
   },
   "storage": {
-    "memoryOnly": "Tarayıcınız bu oyunu kaydetmiyor; sayfayı kapattığınızda oyun biter."
+    "memoryOnly": "Tarayıcınız bu oyunu kaydetmiyor; sayfayı kapattığınızda oyun biter.",
+    "dismiss": "Kapat"
   },
   "download": {
     "teaser": "InkCity, her gün duvar kağıdınıza yeni bir şehir koyan bir masaüstü uygulamasıdır.",

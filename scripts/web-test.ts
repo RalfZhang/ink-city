@@ -3,12 +3,13 @@
 // browser to run:
 //   • the fetch ladder (map/load.ts): cache first and nothing else on a hit; then
 //     every host in cdn.json order, `.gz` before `.json` on each, never from the HTTP
-//     cache; a 200 that isn't a day (an HTML error page) skipped; a host that never
-//     answers given up on; the rebuilt day stamped and cached; nothing in a day's
-//     place when everything fails,
+//     cache; a 200 that isn't a day (an HTML error page) skipped; a host that goes
+//     quiet given up on, .json and all, while a slow one is waited for; the rebuilt
+//     day stamped and cached; nothing in a day's place when everything fails; an
+//     Overpass mirror that never answers left for the next,
 //   • decoding a day (map/manifest.ts): gzip sniffed, a whole city required,
 //   • the engine (map/engine.ts): one load per day, a burst of requests drawn once,
-//     a theme switch redrawn from memory,
+//     a theme switch redrawn from memory, a day that failed reloaded by a retry only,
 //   • the save's fallback to memory when the browser won't store it (lib/storage.ts),
 //   • which installer to lead with for which visitor (lib/platform.ts),
 //   • the local date and the countdown (lib/date.ts), the city's name per language
@@ -34,13 +35,14 @@ import type { GuessStorage } from "@inkcity/core";
 import { shiftStamp } from "@inkcity/core/schedule";
 import { cityName } from "../apps/web/src/lib/city-name";
 import { formatCountdown, localDate, msUntilMidnight } from "../apps/web/src/lib/date";
-import { detectVisitor, type NavigatorLike, type Visitor } from "../apps/web/src/lib/platform";
+import { detectVisitor, refineVisitor, type NavigatorLike, type Visitor } from "../apps/web/src/lib/platform";
 import { memoryFallback } from "../apps/web/src/lib/storage";
 import type { DayCache } from "../apps/web/src/map/cache";
 import { createEngine, type Reply, type ShowRequest } from "../apps/web/src/map/engine";
 import { loadDay, type LoadDeps } from "../apps/web/src/map/load";
 import { decodeManifest, gzip, isGzip } from "../apps/web/src/map/manifest";
 import { MAX_CANVAS_PIXELS, pixelSize } from "../apps/web/src/map/size";
+import { fetchOverpass } from "../packages/osm/src/overpass";
 
 let checks = 0;
 let failures = 0;
@@ -117,7 +119,7 @@ const deps = (over: Partial<LoadDeps>): LoadDeps => ({
     throw new Error("rung 3 not expected here");
   },
   gzip: true,
-  headersTimeoutMs: 50,
+  stallTimeoutMs: 50,
   ...over,
 });
 
@@ -167,23 +169,47 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
 }
 
 {
-  // A host that never starts answering is given up on.
+  // A host gone quiet — before its headers, or partway through its body — is given up
+  // on, without being asked for its .json; one that's slow but keeps sending is waited for.
   const calls: Call[] = [];
-  const hang = () => new Promise<Response>(() => {});
-  const routes: Record<string, () => Response | Promise<Response>> = {
-    [`${manifests[0]}/${DATE}.json.gz`]: hang,
-    [`${manifests[0]}/${DATE}.json`]: hang,
-    [`${manifests[1]}/${DATE}.json.gz`]: async () => new Response(await gzip(JSON.stringify(DAY))),
+  const gz = await gzip(JSON.stringify(DAY));
+  const tick = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const aborted = () => new DOMException("aborted", "AbortError");
+  // A body as the browser streams it: `parts`, `gapMs` apart, then the end — or, if
+  // it never `ends`, silence. The request's abort errors it, as it does the browser's.
+  const streamed = (signal: AbortSignal | undefined, parts: Uint8Array[], gapMs: number, ends: boolean) =>
+    new Response(
+      new ReadableStream<Uint8Array>({
+        async start(c) {
+          signal?.addEventListener("abort", () => c.error(aborted()));
+          for (const part of parts) {
+            await tick(gapMs);
+            if (signal?.aborted) return;
+            c.enqueue(part);
+          }
+          if (ends) c.close();
+        },
+      }),
+    );
+  const quarter = Math.ceil(gz.length / 4);
+  const routes: Record<string, (signal: AbortSignal | undefined) => Response | Promise<Response>> = {
+    [`${manifests[0]}/${DATE}.json.gz`]: (signal) => new Promise((_, reject) => signal?.addEventListener("abort", () => reject(aborted()))),
+    [`${manifests[1]}/${DATE}.json.gz`]: (signal) => streamed(signal, [gz.slice(0, quarter)], 0, false),
+    [`${manifests[2]}/${DATE}.json.gz`]: (signal) => streamed(signal, [0, 1, 2, 3].map((i) => gz.slice(i * quarter, (i + 1) * quarter)), 25, true),
   };
-  // A fetch that honours its abort signal, as the browser's does.
-  const fetchFn = (async (input: RequestInfo | URL, init?: RequestInit) =>
-    Promise.race([
-      fakeFetch(routes, calls)(input, init),
-      new Promise<Response>((_, reject) => init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")))),
-    ])) as typeof fetch;
+  const fetchFn = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    calls.push({ url, cache: init?.cache });
+    const route = routes[url];
+    if (!route) throw new TypeError("network error");
+    return route(init?.signal ?? undefined);
+  }) as typeof fetch;
   const t0 = Date.now();
-  const got = await loadDay(DATE, deps({ fetch: fetchFn, headersTimeoutMs: 40 }));
+  const got = await loadDay(DATE, deps({ fetch: fetchFn, stallTimeoutMs: 40 }));
   check(got.source === "cdn" && Date.now() - t0 < 1000, "a stalled host costs its timeout, then the next one answers");
+  check(got.manifest.city.id === CITY.id, "a body that takes longer than the timeout but keeps coming is waited for");
+  const quiet = [manifests[0], manifests[1]].map((m) => `${m}/${DATE}.json`);
+  check(!calls.some((c) => quiet.includes(c.url)), "a host that went quiet isn't asked for its .json", calls.map((c) => c.url));
 }
 
 {
@@ -228,6 +254,30 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   }
 }
 
+// ---- rung 3's Overpass client ---------------------------------------------------
+
+{
+  // A mirror that never answers is left for the next once its time is up.
+  const asked: string[] = [];
+  const real = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    asked.push(String(input));
+    if (asked.length === 1)
+      return new Promise<Response>((_, reject) =>
+        init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError"))),
+      );
+    return new Response(JSON.stringify({ elements: [] }));
+  }) as typeof fetch;
+  try {
+    const t0 = Date.now();
+    const got = await fetchOverpass("[out:json];", ["https://hangs.test", "https://answers.test"], { retries: 0, requestTimeoutMs: 40, userAgent: null });
+    check(asked.length === 2 && Date.now() - t0 < 1000, "an Overpass mirror that never answers is left for the next", asked);
+    check(Array.isArray((got as { elements?: unknown }).elements), "and the next one's answer is returned");
+  } finally {
+    globalThis.fetch = real;
+  }
+}
+
 // ---- the engine -----------------------------------------------------------------
 
 {
@@ -265,6 +315,37 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   check(loads === 1 && drawn.at(-1) === "light@1440x900", "a theme switch redraws from memory", { loads, drawn });
 }
 
+{
+  // A day that failed stays failed through resizes and theme switches: only the
+  // page's retry (or another day) climbs the ladder again.
+  let loads = 0;
+  const replies: Reply[] = [];
+  const show = createEngine({
+    deps: deps({ cache: { ...memoryCache(), read: async () => (loads++, null) } }),
+    render: async () => {
+      throw new Error("nothing should be drawn");
+    },
+    post: (reply) => replies.push(reply),
+  });
+  const req = (width: number, theme: "light" | "dark" = "light"): ShowRequest => ({
+    type: "show", date: DATE, theme, width, height: 900, cssWidth: width, cssHeight: 900,
+  });
+  const settle = () => new Promise((r) => setTimeout(r, 50));
+  show(req(800));
+  show(req(1000)); // a resize while the load fails
+  await settle();
+  check(loads === 1 && replies.at(-1)?.type === "error", "a resize during a failing load doesn't load the day again", loads);
+  const before = replies.length;
+  show(req(1200));
+  show(req(1200, "dark"));
+  await settle();
+  check(loads === 1 && replies.length === before, "nor does a resize or a theme switch after it, which leaves the error up", loads);
+  show({ ...req(1200), retry: true });
+  show(req(1300)); // and one during the retry
+  await settle();
+  check(loads === 2, "the retry loads it once more, and only once", loads);
+}
+
 // ---- the save's fallback to memory ----------------------------------------------
 
 {
@@ -294,6 +375,8 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
     android: "Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36",
     windows: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
     linuxFirefox: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0",
+    armLinuxFirefox: "Mozilla/5.0 (X11; Linux aarch64; rv:142.0) Gecko/20100101 Firefox/142.0",
+    linuxChrome: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
     chromeOS: "Mozilla/5.0 (X11; CrOS x86_64 16181.61.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
   };
   const cases: [string, NavigatorLike, Visitor][] = [
@@ -303,6 +386,7 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
     ["Android phone", { userAgent: UA.android }, "mobile"],
     ["Windows Chrome", { userAgent: UA.windows }, "windows"],
     ["Ubuntu Firefox", { userAgent: UA.linuxFirefox }, "linux"],
+    ["Firefox on ARM Linux (no x86_64 package installs there)", { userAgent: UA.armLinuxFirefox }, "unknown"],
     ["ChromeOS", { userAgent: UA.chromeOS }, "unknown"],
     ["an unknown agent", { userAgent: "curl/8.7.1" }, "unknown"],
     ["hints: macOS", { userAgent: UA.windows, userAgentData: { platform: "macOS", mobile: false } }, "macos"],
@@ -315,6 +399,22 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   for (const [name, nav, want] of cases) {
     const got = detectVisitor(nav);
     check(got === want, `visitor: ${name} → ${want}`, got);
+  }
+
+  // Chromium says x86_64 in every Linux user agent; only the architecture hint knows.
+  const chromium = (architecture: string, platform = "Linux"): NavigatorLike => ({
+    userAgent: UA.linuxChrome,
+    userAgentData: { platform, mobile: false, getHighEntropyValues: async () => ({ architecture }) },
+  });
+  const refined: [string, NavigatorLike, Visitor][] = [
+    ["Chromium on a Raspberry Pi", chromium("arm"), "unknown"],
+    ["Chromium on x86 Linux", chromium("x86"), "linux"],
+    ["Chromium on an ARM Windows (x64 installers run there)", { ...chromium("arm", "Windows"), userAgent: UA.windows }, "windows"],
+    ["a Linux browser without the hint", { userAgent: UA.linuxFirefox }, "linux"],
+  ];
+  for (const [name, nav, want] of refined) {
+    const got = await refineVisitor(nav, detectVisitor(nav));
+    check(got === want, `visitor, refined: ${name} → ${want}`, got);
   }
 }
 

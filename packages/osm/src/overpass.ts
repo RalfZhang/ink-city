@@ -31,6 +31,12 @@ export type FetchOptions = {
    * worker passes `null`.
    */
   userAgent?: string | null;
+  /**
+   * How long one mirror gets — its answer and the whole body — before it's left for
+   * the next. Unset, there's no limit: the query's `[timeout:]` bounds how long
+   * Overpass runs it, not a connection that never answers.
+   */
+  requestTimeoutMs?: number;
 };
 
 const USER_AGENT = `InkCity/0.1 (${GITHUB_REPO})`;
@@ -75,6 +81,8 @@ export async function fetchOverpass(
   for (let round = 0; round <= retries; round++) {
     let retryAfterMs = 0;
     for (const url of mirrors) {
+      const abort = new AbortController();
+      const timer = opts.requestTimeoutMs === undefined ? undefined : setTimeout(() => abort.abort(), opts.requestTimeoutMs);
       try {
         const res = await fetch(url, {
           method: "POST",
@@ -85,6 +93,7 @@ export async function fetchOverpass(
             ...(userAgent === null ? {} : { "User-Agent": userAgent }),
           },
           body: `data=${encodeURIComponent(query)}`,
+          signal: abort.signal,
         });
         if (res.status === 429 || res.status === 504) {
           const ra = Number(res.headers.get("retry-after"));
@@ -98,7 +107,9 @@ export async function fetchOverpass(
         if (err !== undefined) throw new Error(err); // another mirror (or round) may finish it
         return json;
       } catch (e) {
-        lastErr = e;
+        lastErr = abort.signal.aborted ? new Error(`no answer within ${opts.requestTimeoutMs} ms`) : e;
+      } finally {
+        clearTimeout(timer);
       }
     }
     if (round < retries) {

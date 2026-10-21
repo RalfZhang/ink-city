@@ -23,7 +23,8 @@
     "paintFailed": "Vous pourrez deviner dès que la carte sera chargée."
   },
   "storage": {
-    "memoryOnly": "Votre navigateur ne conserve pas cette partie : elle s'arrête quand vous fermez la page."
+    "memoryOnly": "Votre navigateur ne conserve pas cette partie : elle s'arrête quand vous fermez la page.",
+    "dismiss": "Fermer"
   },
   "download": {
     "teaser": "InkCity est une application de bureau qui met chaque jour une nouvelle ville en fond d'écran.",

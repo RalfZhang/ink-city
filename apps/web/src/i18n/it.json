@@ -23,7 +23,8 @@
     "paintFailed": "Potrai indovinare appena la mappa sarà caricata."
   },
   "storage": {
-    "memoryOnly": "Il tuo browser non salva questa partita: finirà quando chiudi la pagina."
+    "memoryOnly": "Il tuo browser non salva questa partita: finirà quando chiudi la pagina.",
+    "dismiss": "Chiudi"
   },
   "download": {
     "teaser": "InkCity è un'app desktop che ogni giorno mette una nuova città come sfondo.",

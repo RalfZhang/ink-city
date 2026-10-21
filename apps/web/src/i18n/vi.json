@@ -23,7 +23,8 @@
     "paintFailed": "Có thể đoán khi bản đồ đã tải xong."
   },
   "storage": {
-    "memoryOnly": "Trình duyệt của bạn không lưu ván chơi này, nên nó sẽ mất khi bạn đóng trang."
+    "memoryOnly": "Trình duyệt của bạn không lưu ván chơi này, nên nó sẽ mất khi bạn đóng trang.",
+    "dismiss": "Đóng"
   },
   "download": {
     "teaser": "InkCity là ứng dụng máy tính đặt một thành phố mới làm hình nền cho bạn mỗi ngày.",

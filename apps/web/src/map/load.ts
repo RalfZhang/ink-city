@@ -34,28 +34,46 @@ export type LoadDeps = {
   /** Whether the browser can gunzip (`.json.gz` is skipped without it) and gzip what rung 3 caches. */
   gzip: boolean;
   onStage?: (stage: Stage) => void;
-  /** How long a host may take to start answering before the ladder moves on. */
-  headersTimeoutMs?: number;
+  /**
+   * How long a host may send nothing — before its headers, or between chunks of its
+   * body — before the ladder gives up on it.
+   */
+  stallTimeoutMs?: number;
 };
 
 export type LoadedDay = { manifest: Manifest; source: Stage };
 
 /**
- * GET `url` without the HTTP cache. Null for anything but a 2xx, and for a host
- * that hasn't started answering within `timeoutMs` — a stalled host must not hold
- * up the ones behind it. Only the wait for headers is bounded: once a host is
- * sending, a slow connection gets to finish the body.
+ * GET `url` without the HTTP cache: the body, `"failed"` for an answer that isn't
+ * one (a non-2xx, a network error), or `"stalled"` for a host that went quiet for
+ * `stallMs` — a stalled host must not hold up the ones behind it. Silence is what's
+ * bounded, not the whole request: a slow connection that keeps sending gets to
+ * finish a big day's body.
  */
-async function get(fetchFn: typeof fetch, url: string, timeoutMs: number): Promise<Uint8Array | null> {
+async function get(fetchFn: typeof fetch, url: string, stallMs: number): Promise<Uint8Array | "failed" | "stalled"> {
   const abort = new AbortController();
-  const timer = setTimeout(() => abort.abort(), timeoutMs);
-  try {
-    const res = await fetchFn(url, { cache: "no-store", signal: abort.signal });
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Restarted by each sign of life. Aborting errors the body stream too, so a read
+  // waiting on a host gone quiet ends up in the catch below.
+  const alive = () => {
     clearTimeout(timer);
-    if (!res.ok) return null;
-    return new Uint8Array(await res.arrayBuffer());
+    timer = setTimeout(() => abort.abort(), stallMs);
+  };
+  try {
+    alive();
+    const res = await fetchFn(url, { cache: "no-store", signal: abort.signal });
+    if (!res.ok) return "failed";
+    if (!res.body) return new Uint8Array(await res.arrayBuffer());
+    alive();
+    const chunks: Uint8Array[] = [];
+    const reader = res.body.getReader();
+    for (let r = await reader.read(); !r.done; r = await reader.read()) {
+      alive();
+      chunks.push(r.value);
+    }
+    return new Uint8Array(await new Blob(chunks).arrayBuffer());
   } catch {
-    return null;
+    return abort.signal.aborted ? "stalled" : "failed";
   } finally {
     clearTimeout(timer);
   }
@@ -66,10 +84,10 @@ async function get(fetchFn: typeof fetch, url: string, timeoutMs: number): Promi
  * `city-list.json` — the desktop's `cdn::fetch_schedule_city`. Never gzipped (the
  * workflow only compresses the manifest dir), so there's no `.gz` to ask for.
  */
-async function scheduledCity(date: string, fetchFn: typeof fetch, timeoutMs: number): Promise<City> {
+async function scheduledCity(date: string, fetchFn: typeof fetch, stallMs: number): Promise<City> {
   for (const url of mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`)) {
-    const bytes = await get(fetchFn, url, timeoutMs);
-    if (!bytes) continue;
+    const bytes = await get(fetchFn, url, stallMs);
+    if (typeof bytes === "string") continue;
     const { state, unreadable } = parseState(new TextDecoder().decode(bytes));
     if (unreadable) continue;
     // A readable schedule without today is an answer, not a bad host: the day
@@ -82,7 +100,7 @@ async function scheduledCity(date: string, fetchFn: typeof fetch, timeoutMs: num
 }
 
 export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> {
-  const timeoutMs = deps.headersTimeoutMs ?? 15_000;
+  const stallMs = deps.stallTimeoutMs ?? 15_000;
   // Best effort: a cache that can't be written is one the next visit refetches past.
   const keep = async (bytes: Uint8Array) => {
     try {
@@ -106,8 +124,11 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
   const files = deps.gzip ? [`${date}.json.gz`, `${date}.json`] : [`${date}.json`];
   for (const base of mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_DATA_DIR}`)) {
     for (const file of files) {
-      const bytes = await get(deps.fetch, `${base}/${file}`, timeoutMs);
-      if (!bytes) continue;
+      const bytes = await get(deps.fetch, `${base}/${file}`, stallMs);
+      // A host that went quiet is down, not missing a file: its `.json` would only
+      // cost another wait. A quick miss (a 404, a 403) is cheap to follow up.
+      if (bytes === "stalled") break;
+      if (bytes === "failed") continue;
       try {
         const manifest = await decodeManifest(bytes);
         // Not awaited: the first draw needn't wait on a disk write of several MB.
@@ -120,7 +141,7 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
   }
 
   deps.onStage?.("overpass");
-  const city = await scheduledCity(date, deps.fetch, timeoutMs);
+  const city = await scheduledCity(date, deps.fetch, stallMs);
   const manifest: Manifest = { ...(await deps.reconstruct(city)), date, city };
   const text = JSON.stringify(manifest);
   await keep(deps.gzip ? await gzip(text) : new TextEncoder().encode(text));
