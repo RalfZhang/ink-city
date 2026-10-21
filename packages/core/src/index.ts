@@ -1,9 +1,10 @@
 // `@inkcity/core` — the portable, client-safe surface, imported by the desktop
-// frontend, the CI scripts and (later) the website as a workspace package.
+// frontend, the CI scripts and the website as a workspace package.
 //
 // Two modules are deliberately absent from this barrel:
 //
-//   • ./schedule — CI-only; scripts import it as `@inkcity/core/schedule`.
+//   • ./schedule — CI's picker; scripts (and the website, for reading the
+//     schedule) import it as `@inkcity/core/schedule`.
 //   • ./mondrian — no standalone consumer, reached only through `drawScene`'s
 //     `variant`, but ./render imports it directly.
 //

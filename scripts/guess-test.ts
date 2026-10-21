@@ -43,7 +43,7 @@ import {
   type GuessStore,
 } from "@inkcity/core";
 import { SCHEDULE_POOL_RE } from "@inkcity/core/schedule";
-import { LOCALES } from "../apps/desktop/src/i18n/locales.ts";
+import { LOCALES } from "../packages/ui/src/i18n/locales.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = <T>(rel: string): T => JSON.parse(readFileSync(join(root, rel), "utf8")) as T;

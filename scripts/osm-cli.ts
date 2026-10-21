@@ -63,7 +63,7 @@ import {
   type Bbox,
   type Osm,
 } from "@inkcity/core";
-import { fetchCityData } from "@inkcity/osm";
+import { fetchCityData, PUBLISHED_COORD_PRECISION } from "@inkcity/osm";
 import {
   advanceSchedule,
   manifestWindow,
@@ -85,7 +85,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const DATA_DIR = join(ROOT, "packages", "core", "data");
 
-const COORD_PRECISION = 5;
 // Gap between consecutive Overpass fetches, so a run doesn't hammer it back-to-back.
 const THROTTLE_MS = 3000;
 
@@ -141,7 +140,7 @@ async function runFetch(args: string[]): Promise<void> {
     return n;
   };
   const bbox: Bbox = { south: need("south"), west: need("west"), north: need("north"), east: need("east") };
-  const precision = flags.precision !== undefined ? Number(flags.precision) : COORD_PRECISION;
+  const precision = flags.precision !== undefined ? Number(flags.precision) : PUBLISHED_COORD_PRECISION;
 
   const data = await fetchCityData(bbox, { coordPrecision: precision });
   process.stdout.write(JSON.stringify(data));
@@ -261,7 +260,7 @@ async function fetchEach<K>(
     // such crop (`pnpm bbox-test`), so one payload serves every screen.
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
-      onFetched(key, city, await fetchCityData(bbox, { coordPrecision: COORD_PRECISION }));
+      onFetched(key, city, await fetchCityData(bbox, { coordPrecision: PUBLISHED_COORD_PRECISION }));
       fetched++;
     } catch (e) {
       failed++;

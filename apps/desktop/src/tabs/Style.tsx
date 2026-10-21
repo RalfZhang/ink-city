@@ -15,7 +15,7 @@ import {
 } from "@inkcity/ui/components/select";
 import { Separator } from "@inkcity/ui/components/separator";
 import { ToggleGroup, ToggleGroupItem } from "@inkcity/ui/components/toggle-group";
-import { LABEL_CORNERS, STYLE_PRESETS } from "@inkcity/core";
+import { DEFAULT_COLORS, LABEL_CORNERS, STYLE_PRESETS } from "@inkcity/core";
 import type { CityLabel, ColorPair, Status, StylePreset, ThemeMode } from "../types";
 
 type Props = {
@@ -23,8 +23,6 @@ type Props = {
   busy: boolean;
   onError: (e: unknown) => void;
 };
-
-type Defaults = { light: ColorPair; dark: ColorPair };
 
 const THEMES: { id: ThemeMode; labelKey: ParseKeys }[] = [
   { id: "light", labelKey: "style.themeLight" },
@@ -67,13 +65,8 @@ export default function Style({ status, busy, onError }: Props) {
   const [light, setLight] = useState<ColorPair>(status.light);
   const [dark, setDark] = useState<ColorPair>(status.dark);
   const [cityLabel, setCityLabel] = useState<CityLabel>(status.cityLabel);
-  const [defaults, setDefaults] = useState<Defaults | null>(null);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
-
-  useEffect(() => {
-    invoke<Defaults>("get_color_defaults").then(setDefaults).catch(onError);
-  }, []);
 
   // Release the Save button only once the regen has actually completed. `sawBusy`
   // makes us wait for `busy` to flip on first, so we don't release before the
@@ -192,7 +185,7 @@ export default function Style({ status, busy, onError }: Props) {
           active={status.effectiveTheme === "light"}
           colors={light}
           onChange={setLight}
-          onReset={() => defaults && setLight(defaults.light)}
+          onReset={() => setLight(DEFAULT_COLORS.light)}
           activeLabel={t("style.active")}
           resetLabel={t("style.reset")}
           bgLabel={t("style.background")}
@@ -207,7 +200,7 @@ export default function Style({ status, busy, onError }: Props) {
           active={status.effectiveTheme === "dark"}
           colors={dark}
           onChange={setDark}
-          onReset={() => defaults && setDark(defaults.dark)}
+          onReset={() => setDark(DEFAULT_COLORS.dark)}
           activeLabel={t("style.active")}
           resetLabel={t("style.reset")}
           bgLabel={t("style.background")}

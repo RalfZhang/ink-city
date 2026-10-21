@@ -80,11 +80,10 @@ import {
   type Style,
   type StylePreset,
 } from "@inkcity/core";
-import { fetchCityData } from "@inkcity/osm";
+import { fetchCityData, PUBLISHED_COORD_PRECISION } from "@inkcity/osm";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");
-const COORD_PRECISION = 5;
 /** Width (km) of the square area a payload covers; bboxForScreen crops a
  *  screen-aspect rectangle out of it. 20km — twice MAX_HALF_KM, the square the
  *  wallpaper pipeline precaches at aspect 1 — so a payload from the `data` branch
@@ -227,7 +226,7 @@ async function main() {
 
     console.log(`[render] ${lat}/${lon}, ${areaKm}km square`);
     console.log(`[render] fetching roads + water + airports + railways + aerialways from Overpass ...`);
-    const osm = await fetchCityData(bbox, { coordPrecision: COORD_PRECISION });
+    const osm = await fetchCityData(bbox, { coordPrecision: PUBLISHED_COORD_PRECISION });
 
     mkdirSync(outDir, { recursive: true });
     // Persist the raw payload so it can be replayed offline later. `city` and

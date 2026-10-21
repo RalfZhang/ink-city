@@ -3,7 +3,7 @@ import { ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@inkcity/ui/components/button";
 import { Card, CardContent } from "@inkcity/ui/components/card";
 import { cn } from "@inkcity/ui/lib/utils";
-import { countryName, formatLatLon, mapUrl, wikipediaUrl, type City, type CountryIndex } from "@inkcity/core";
+import { captionText, countryName, formatLatLon, mapUrl, wikipediaUrl, type City, type CountryIndex } from "@inkcity/core";
 import type { Stage } from "../map/load";
 
 type Props = {
@@ -16,8 +16,6 @@ type Props = {
   onRetry: () => void;
   index: CountryIndex;
 };
-
-const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 /**
  * Today and its city — the website's counterpart of the desktop's daily city card.
@@ -38,15 +36,11 @@ export default function TodayCard({ date, city, revealed, stage, error, onRetry,
 
   let body;
   if (shown) {
-    const title = shown.localName.trim() || shown.name;
-    const country = countryName(index, shown.country, lang);
-    const parts = [!same(shown.name, title) ? shown.name : null, !same(country, title) ? country : null].filter(
-      (p): p is string => p !== null,
-    );
+    const { title, subtitle } = captionText({ ...shown, countryName: countryName(index, shown.country, lang) });
     body = (
       <>
         <div className="text-xl font-semibold leading-snug">{title}</div>
-        <div className="text-sm text-muted-foreground min-h-5">{parts.join(" · ")}</div>
+        <div className="text-sm text-muted-foreground min-h-5">{subtitle}</div>
         <div className="text-xs text-muted-foreground tabular-nums min-h-4">{formatLatLon(shown.lat, shown.lon)}</div>
         <div className="flex flex-wrap gap-2 pt-2">
           <Button variant="outline" size="sm" asChild>

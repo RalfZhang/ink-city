@@ -94,13 +94,16 @@ export function serializeGuessStore(store: GuessStore): string {
   return JSON.stringify({ ...store, v: GUESS_STORE_VERSION }, null, 2);
 }
 
+/** The website's save: its `localStorage` key. */
+export const GUESS_STORAGE_KEY = "inkcity:guess";
+
 /**
  * The website's `GuessStorage`: the save file under one `localStorage` key, with an
  * unreadable save copied to `<key>:corrupt` before it can be overwritten. Reads
  * swallow storage errors (private mode, blocked site data) and act as "nothing
  * saved"; writes let them propagate so the game knows the guess wasn't kept.
  */
-export function localStorageGuessStorage(key = "inkcity:guess"): GuessStorage {
+export function localStorageGuessStorage(key = GUESS_STORAGE_KEY): GuessStorage {
   return {
     async load() {
       try {

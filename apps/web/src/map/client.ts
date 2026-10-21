@@ -1,4 +1,5 @@
 import type { Reply, ShowRequest } from "./engine";
+import type { WorkerMessage } from "./worker";
 
 export type MapClient = {
   show(req: ShowRequest): void;
@@ -48,7 +49,7 @@ export function createMapClient(onReply: (reply: Reply) => void): MapClient {
 
   try {
     worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
-    worker.onmessage = (event: MessageEvent<Reply>) => {
+    worker.onmessage = (event: MessageEvent<WorkerMessage>) => {
       if (event.data.type === "unsupported") void fallBack();
       else onReply(event.data);
     };

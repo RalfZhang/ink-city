@@ -58,19 +58,27 @@ export function formatLatLon(lat: number, lon: number): string {
 }
 
 /**
- * The caption's lines at `short` px — title, subtitle (omitted when it would only
- * repeat the title: Singapore, Vatican City), coordinates. The subtitle drops the
- * English name when it *is* the title (Paris · France) and the country when it
- * repeats the name (Hong Kong).
+ * The caption's words, for anything that sets them — the canvas caption below, the
+ * website's city card: the title, and the subtitle, empty when it would only repeat
+ * the title (Singapore, Vatican City). The subtitle drops the English name when it
+ * *is* the title (Paris · France) and the country when it repeats the name (Hong Kong).
  */
-function lines(label: MapLabel, short: number): Line[] {
+export function captionText(
+  label: Pick<MapLabel, "name" | "localName" | "country" | "countryName">,
+): { title: string; subtitle: string } {
   const title = label.localName.trim() || label.name;
   const country = label.countryName?.trim() || label.country;
   const parts: string[] = [];
   if (label.name && !same(label.name, title)) parts.push(label.name);
   if (!parts.some((p) => same(p, country)) && !same(country, title)) parts.push(country);
+  return { title, subtitle: parts.join(" · ") };
+}
+
+/** The caption's lines at `short` px — title, subtitle (when there is one), coordinates. */
+function lines(label: MapLabel, short: number): Line[] {
+  const { title, subtitle } = captionText(label);
   const out: Line[] = [{ text: title, size: short * LABEL_TITLE_SIZE, weight: 400 }];
-  if (parts.length > 0) out.push({ text: parts.join(" · "), size: short * LABEL_SUBTITLE_SIZE, weight: 400 });
+  if (subtitle) out.push({ text: subtitle, size: short * LABEL_SUBTITLE_SIZE, weight: 400 });
   out.push({ text: formatLatLon(label.lat, label.lon), size: short * LABEL_COORDS_SIZE, weight: 400 });
   return out;
 }

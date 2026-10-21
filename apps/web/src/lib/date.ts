@@ -10,13 +10,6 @@ export function localDate(now = new Date()): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-/** The `YYYY-MM-DD` `days` calendar days from `date`. */
-export function shiftDate(date: string, days: number): string {
-  const d = new Date(`${date}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
 /** Milliseconds from `now` to the next local midnight — a DST day's 23 or 25 hours included. */
 export function msUntilMidnight(now = new Date()): number {
   const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);

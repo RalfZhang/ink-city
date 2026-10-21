@@ -1,9 +1,10 @@
 // Strings for the shared components, as their own i18next namespace (`UI_NS`),
 // plus the table of shipped locales (./locales) every host builds its i18n from.
-// A host registers `uiResources[code]` under that namespace for every locale,
-// next to its own resources — see apps/desktop/src/i18n/index.ts and
-// apps/web/src/i18n/index.ts. `pnpm check:i18n` holds these files to the same
-// parity rule as the apps': every key of en.json in every locale, nothing extra.
+// A host initialises i18next with `hostI18nOptions`, which registers
+// `uiResources[code]` under that namespace for every locale, next to the host's
+// own strings — see apps/desktop/src/i18n/index.ts and apps/web/src/i18n/index.ts.
+// `pnpm check:i18n` holds these files to the same parity rule as the apps': every
+// key of en.json in every locale, nothing extra.
 //
 // What the components can't word for every host stays with the host and comes in
 // as a prop instead — e.g. GuessCountry's `paintingLine`, which on the desktop is
@@ -29,7 +30,9 @@ import vi from "./vi.json";
 import zhHans from "./zh-Hans.json";
 import zhHant from "./zh-Hant.json";
 
-import type { LocaleCode } from "./locales";
+import type { InitOptions } from "i18next";
+import { LOCALES, SUPPORTED, type LocaleCode } from "./locales";
+import { UI_NS } from "./ns";
 
 export { UI_NS } from "./ns";
 export * from "./locales";
@@ -59,3 +62,23 @@ export const uiResources = {
   "zh-Hans": zhHans,
   "zh-Hant": zhHant,
 } as const satisfies Record<LocaleCode, UiResources>;
+
+/**
+ * A host's i18next options: its own strings (`translations`, one catalog per shipped
+ * locale) as the default namespace, this package's under `UI_NS` beside them, and
+ * `lng` to start in, English to fall back on.
+ */
+export function hostI18nOptions(
+  translations: Record<LocaleCode, Record<string, unknown>>,
+  lng: LocaleCode,
+): InitOptions {
+  return {
+    resources: Object.fromEntries(
+      LOCALES.map((l) => [l.code, { translation: translations[l.code], [UI_NS]: uiResources[l.code] }]),
+    ),
+    lng,
+    fallbackLng: "en",
+    supportedLngs: SUPPORTED as string[],
+    interpolation: { escapeValue: false },
+  };
+}

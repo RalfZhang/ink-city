@@ -6,9 +6,9 @@ import {
   type City,
   type Osm,
 } from "@inkcity/core";
-import { shiftDate } from "../lib/date";
+import { parseState, shiftStamp } from "@inkcity/core/schedule";
 import type { DayCache } from "./cache";
-import { decodeManifest, gzip, parseCity, type Manifest } from "./manifest";
+import { decodeManifest, gzip, type Manifest } from "./manifest";
 
 // Today's map, by the same ladder the desktop climbs (`pipeline::resolve_daily`):
 //
@@ -66,20 +66,15 @@ async function get(fetchFn: typeof fetch, url: string, timeoutMs: number): Promi
  * `city-list.json` — the desktop's `cdn::fetch_schedule_city`. Never gzipped (the
  * workflow only compresses the manifest dir), so there's no `.gz` to ask for.
  */
-export async function scheduledCity(date: string, fetchFn: typeof fetch, timeoutMs = 15_000): Promise<City> {
+async function scheduledCity(date: string, fetchFn: typeof fetch, timeoutMs: number): Promise<City> {
   for (const url of mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`)) {
     const bytes = await get(fetchFn, url, timeoutMs);
     if (!bytes) continue;
-    let list: unknown;
-    try {
-      list = (JSON.parse(new TextDecoder().decode(bytes)) as { list?: unknown }).list;
-    } catch {
-      continue;
-    }
-    if (typeof list !== "object" || list === null || Array.isArray(list)) continue;
+    const { state, unreadable } = parseState(new TextDecoder().decode(bytes));
+    if (unreadable) continue;
     // A readable schedule without today is an answer, not a bad host: the day
     // isn't scheduled, and no other host's copy of the same file will say otherwise.
-    const city = parseCity((list as Record<string, unknown>)[date]);
+    const city = state.list[date];
     if (!city) throw new Error(`the schedule has no city for ${date}`);
     return city;
   }
@@ -91,8 +86,7 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
   // Best effort: a cache that can't be written is one the next visit refetches past.
   const keep = async (bytes: Uint8Array) => {
     try {
-      await deps.cache.write(date, bytes);
-      await deps.cache.prune([date, shiftDate(date, -1)]);
+      await Promise.all([deps.cache.write(date, bytes), deps.cache.prune([date, shiftStamp(date, -1)])]);
     } catch {
       // nothing to do
     }
@@ -116,7 +110,8 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
       if (!bytes) continue;
       try {
         const manifest = await decodeManifest(bytes);
-        await keep(bytes);
+        // Not awaited: the first draw needn't wait on a disk write of several MB.
+        void keep(bytes);
         return { manifest, source: "cdn" };
       } catch {
         // Served, but not a day (an HTML error page, a cut-off body): next.

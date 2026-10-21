@@ -1,16 +1,31 @@
 import type { City } from "@inkcity/core";
+import { isLocaleCode, type LocaleCode } from "@inkcity/ui/i18n";
 
-/** The script each non-Latin UI language reads, for `cityName`. */
-const SCRIPT_OF: Partial<Record<string, RegExp>> = {
-  "zh-Hans": /\p{Script=Han}/u,
-  "zh-Hant": /\p{Script=Han}/u,
-  ja: /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u,
-  ko: /\p{Script=Hangul}/u,
+/**
+ * The script each UI language reads, for `cityName` — null for the Latin-script
+ * ones. Every shipped locale is listed, so a new one can't go unconsidered.
+ */
+const SCRIPT_OF: Record<LocaleCode, RegExp | null> = {
+  id: null,
+  de: null,
+  en: null,
+  es: null,
+  fr: null,
+  it: null,
+  nl: null,
+  pl: null,
+  pt: null,
+  vi: null,
+  tr: null,
   ru: /\p{Script=Cyrillic}/u,
   uk: /\p{Script=Cyrillic}/u,
   ar: /\p{Script=Arabic}/u,
   hi: /\p{Script=Devanagari}/u,
   th: /\p{Script=Thai}/u,
+  ko: /\p{Script=Hangul}/u,
+  ja: /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u,
+  "zh-Hans": /\p{Script=Han}/u,
+  "zh-Hant": /\p{Script=Han}/u,
 };
 
 /**
@@ -21,7 +36,7 @@ const SCRIPT_OF: Partial<Record<string, RegExp>> = {
  * them.
  */
 export function cityName(city: Pick<City, "name" | "localName">, lang: string): string {
-  const script = SCRIPT_OF[lang];
+  const script = isLocaleCode(lang) ? SCRIPT_OF[lang] : null;
   const local = city.localName.trim();
   return script && local && script.test(local) ? local : city.name;
 }

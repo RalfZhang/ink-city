@@ -3,9 +3,6 @@ import { cacheStorageDayCache, noDayCache } from "./cache";
 import type { LoadDeps } from "./load";
 import { gzipSupported } from "./manifest";
 
-/** The precache's coordinate rounding (scripts/osm-cli.ts), so a rebuilt day matches a published one. */
-const COORD_PRECISION = 5;
-
 /**
  * Rung 3's map data: the day's square straight from Overpass, through the same
  * `fetchCityData` the precache and the desktop's sidecar use. Imported on demand —
@@ -15,9 +12,9 @@ const COORD_PRECISION = 5;
  * our own, which a browser would turn into a CORS preflight (see `userAgent`).
  */
 async function reconstruct(city: City) {
-  const { fetchCityData } = await import("@inkcity/osm");
+  const { fetchCityData, PUBLISHED_COORD_PRECISION } = await import("@inkcity/osm");
   return fetchCityData(bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1), {
-    coordPrecision: COORD_PRECISION,
+    coordPrecision: PUBLISHED_COORD_PRECISION,
     overpass: { retries: 1, backoffMs: 5_000, userAgent: null },
   });
 }

@@ -1,16 +1,38 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { UI_NS, uiResources } from "@inkcity/ui/i18n";
-import {
-  LOCALES,
-  SUPPORTED,
-  detectLocale,
-  dirForLocale,
-  isLocaleCode,
-  type LocaleCode,
-} from "./locales";
+import { detectLocale, dirForLocale, hostI18nOptions, isLocaleCode, type LocaleCode } from "@inkcity/ui/i18n";
+import en from "./en.json";
+import zhHans from "./zh-Hans.json";
+import zhHant from "./zh-Hant.json";
+import es from "./es.json";
+import fr from "./fr.json";
+import de from "./de.json";
+import ar from "./ar.json";
+import ja from "./ja.json";
+import ko from "./ko.json";
+import pt from "./pt.json";
+import hi from "./hi.json";
+import id from "./id.json";
+import vi from "./vi.json";
+import th from "./th.json";
+import it from "./it.json";
+import tr from "./tr.json";
+import ru from "./ru.json";
+import nl from "./nl.json";
+import pl from "./pl.json";
+import uk from "./uk.json";
 
-export { LOCALES, RTL_LOCALES, dirForLocale, type LocaleCode } from "./locales";
+export { LOCALES, dirForLocale, type LocaleCode } from "@inkcity/ui/i18n";
+
+// The app's strings, per shipped locale. The locales themselves — codes, native
+// names, direction, detection — are the table every host shares (@inkcity/ui/i18n),
+// which the language picker (tabs/General.tsx) lists too, so adding a language is
+// a line there plus a JSON here.
+const TRANSLATIONS = {
+  id, de, en, es, fr, it, nl, pl, pt, vi, tr, ru, uk, ar, hi, th, ko, ja,
+  "zh-Hans": zhHans,
+  "zh-Hant": zhHant,
+} satisfies Record<LocaleCode, Record<string, unknown>>;
 
 export const STORAGE_KEY = "inkcity:lang";
 
@@ -29,15 +51,7 @@ function initialLanguage(): LocaleCode {
 
 // Two namespaces per locale: the app's own strings, and the shared components'
 // (`@inkcity/ui`), which read theirs from `UI_NS`.
-i18n.use(initReactI18next).init({
-  resources: Object.fromEntries(
-    LOCALES.map((l) => [l.code, { translation: l.translation, [UI_NS]: uiResources[l.code] }]),
-  ),
-  lng: initialLanguage(),
-  fallbackLng: "en",
-  supportedLngs: SUPPORTED as string[],
-  interpolation: { escapeValue: false },
-});
+i18n.use(initReactI18next).init(hostI18nOptions(TRANSLATIONS, initialLanguage()));
 
 /**
  * Reflect the active language's writing direction (and code) on the <html>

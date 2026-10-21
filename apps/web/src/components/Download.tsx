@@ -23,18 +23,26 @@ import type { Visitor } from "../lib/platform";
  */
 export function DownloadCard({ city, visitor }: { city: City; visitor: Visitor }) {
   const { t, i18n } = useTranslation();
-  const left = useUntilMidnight(true);
   return (
     <Card className="animate-in fade-in duration-300">
       <CardContent className="space-y-3">
         <div className="text-base font-medium">{t("download.title", { city: cityName(city, i18n.language) })}</div>
         <p className="text-sm text-muted-foreground">{t("download.body")}</p>
-        <p className="text-xs text-muted-foreground tabular-nums">
-          {t("download.countdown", { time: formatCountdown(left) })}
-        </p>
+        <Countdown />
         <DownloadOptions visitor={visitor} />
       </CardContent>
     </Card>
+  );
+}
+
+/** The countdown to the next city: its own component, so its tick re-renders only this line. */
+function Countdown() {
+  const { t } = useTranslation();
+  const left = useUntilMidnight();
+  return (
+    <p className="text-xs text-muted-foreground tabular-nums">
+      {t("download.countdown", { time: formatCountdown(left) })}
+    </p>
   );
 }
 
@@ -67,7 +75,7 @@ export function DownloadTeaser({ visitor }: { visitor: Visitor }) {
  * and the rest under "Other platforms". A phone gets no download at all — a way to
  * send the page to a computer instead.
  */
-export function DownloadOptions({ visitor }: { visitor: Visitor }) {
+function DownloadOptions({ visitor }: { visitor: Visitor }) {
   const { t } = useTranslation();
   if (visitor === "mobile") return <SendToSelf />;
 

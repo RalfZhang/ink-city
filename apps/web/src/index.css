@@ -5,7 +5,8 @@
    day, #000000 / #5e5d58 by night), so the panel reads as part of the sheet it lies
    on rather than an app window over it. The page background is the map's paper too:
    until the map is drawn, and in the strip its slide opens under the panel, what
-   shows is the same paper with no ink on it yet. */
+   shows is the same paper with no ink on it yet. pnpm web-test holds both
+   `--background`s, and index.html's theme-color, to defaults.json. */
 :root {
   --background: #eee8d6;
   --foreground: #2d2d2d;

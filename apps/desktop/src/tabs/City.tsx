@@ -12,7 +12,7 @@ import { Separator } from "@inkcity/ui/components/separator";
 import SettingRow from "@/components/SettingRow";
 import DailyCity from "@/components/DailyCity";
 import CustomCity from "@/components/CustomCity";
-import { GuessCountry, GuessResult, useGuessGame } from "@inkcity/ui/guess";
+import { DailyGuess, useGuessGame } from "@inkcity/ui/guess";
 import DailyGuessSwitch from "@/components/guess/DailyGuessSwitch";
 import { countryIndex, isRevealed } from "@inkcity/core";
 import { tauriGuessStorage } from "@/lib/guess-storage";
@@ -52,9 +52,6 @@ export default function City({ status, onError }: Props) {
   // Concealed until the save has been read, too: showing the city first would flash
   // the answer.
   const revealed = snapshot !== null && isRevealed(snapshot.state);
-  const finished =
-    snapshot !== null &&
-    (snapshot.state === "won" || snapshot.state === "lost" || snapshot.state === "gaveUp");
 
   const setMode = async (mode: UpdateMode) => {
     try {
@@ -102,19 +99,12 @@ export default function City({ status, onError }: Props) {
       {daily && (
         <>
           <DailyCity status={status} onError={onError} concealed={!revealed} />
-          {snapshot && !revealed && (
-            <GuessCountry
-              key={status.date}
-              snapshot={snapshot}
-              index={COUNTRIES}
-              saving={game.saving}
-              paintingLine={t(status.lastError ? "game.paintFailed" : "game.painting")}
-              onGuess={game.guess}
-            />
-          )}
-          {snapshot && finished && snapshot.guesses.length > 0 && (
-            <GuessResult snapshot={snapshot} index={COUNTRIES} />
-          )}
+          <DailyGuess
+            game={game}
+            date={status.date}
+            index={COUNTRIES}
+            paintingLine={t(status.lastError ? "game.paintFailed" : "game.painting")}
+          />
         </>
       )}
       {status.updateMode === "customized" && <CustomCity status={status} onError={onError} />}

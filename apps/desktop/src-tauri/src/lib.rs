@@ -379,7 +379,6 @@ pub fn run() {
             commands::set_bypass_cache,
             commands::set_dev_mode,
             commands::apply_proxy_settings,
-            commands::get_color_defaults,
             commands::regenerate_now,
             commands::guess_store_read,
             commands::guess_store_write,

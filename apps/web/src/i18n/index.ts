@@ -1,15 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import {
-  LOCALES,
-  SUPPORTED,
-  UI_NS,
-  detectLocale,
-  dirForLocale,
-  isLocaleCode,
-  uiResources,
-  type LocaleCode,
-} from "@inkcity/ui/i18n";
+import { detectLocale, dirForLocale, hostI18nOptions, isLocaleCode, type LocaleCode } from "@inkcity/ui/i18n";
 import ar from "./ar.json";
 import de from "./de.json";
 import en from "./en.json";
@@ -61,15 +52,7 @@ function initialLanguage(): LocaleCode {
   return detectLocale(navigator.language);
 }
 
-i18n.use(initReactI18next).init({
-  resources: Object.fromEntries(
-    LOCALES.map((l) => [l.code, { translation: TRANSLATIONS[l.code], [UI_NS]: uiResources[l.code] }]),
-  ),
-  lng: initialLanguage(),
-  fallbackLng: "en",
-  supportedLngs: SUPPORTED as string[],
-  interpolation: { escapeValue: false },
-});
+i18n.use(initReactI18next).init(hostI18nOptions(TRANSLATIONS, initialLanguage()));
 
 /**
  * Put the language on the document: `lang` and `dir` on <html> (the layout mirrors

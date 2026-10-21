@@ -1,9 +1,9 @@
 // The locales InkCity ships, for every host: each one's code, native name,
 // direction, and which browser/OS language tags resolve to it. An app pairs these
-// with its own strings (the desktop's apps/desktop/src/i18n/locales.ts, the
-// website's apps/web/src/i18n), and this package's `ui` namespace covers every one
-// of them too — `pnpm check:i18n` holds all three catalogs to this list, so adding
-// a language is a line here plus its JSON in each.
+// with its own strings (apps/desktop/src/i18n and apps/web/src/i18n), and this
+// package's `ui` namespace covers every one of them too — `pnpm check:i18n` holds
+// all three catalogs to this list, so adding a language is a line here plus its
+// JSON in each.
 //
 // Intentionally free of i18next, the DOM and the locale JSON, so the Node-side
 // parity check can import it.

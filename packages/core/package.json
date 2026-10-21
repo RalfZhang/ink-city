@@ -2,6 +2,7 @@
   "name": "@inkcity/core",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
     "./schedule": "./src/schedule.ts",

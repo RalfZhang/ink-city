@@ -12,15 +12,28 @@
 //   • the save's fallback to memory when the browser won't store it (lib/storage.ts),
 //   • which installer to lead with for which visitor (lib/platform.ts),
 //   • the local date and the countdown (lib/date.ts), the city's name per language
-//     (lib/city-name.ts), and the canvas size under iOS's cap (map/size.ts).
+//     (lib/city-name.ts), and the canvas size under iOS's cap (map/size.ts),
+//   • the page's paper (index.css, index.html) being the map's, from defaults.json.
 // Exits non-zero (printing every violation) on failure, so it can gate CI.
 //
 //   pnpm web-test
 
-import { mirrorUrls, SCHEDULE_DATA_DIR, SCHEDULE_ROOT, SCHEDULE_STATE_FILE, type City, type Osm } from "@inkcity/core";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  DEFAULT_COLORS,
+  mirrorUrls,
+  SCHEDULE_DATA_DIR,
+  SCHEDULE_ROOT,
+  SCHEDULE_STATE_FILE,
+  type City,
+  type Osm,
+} from "@inkcity/core";
 import type { GuessStorage } from "@inkcity/core";
+import { shiftStamp } from "@inkcity/core/schedule";
 import { cityName } from "../apps/web/src/lib/city-name";
-import { formatCountdown, localDate, msUntilMidnight, shiftDate } from "../apps/web/src/lib/date";
+import { formatCountdown, localDate, msUntilMidnight } from "../apps/web/src/lib/date";
 import { detectVisitor, type NavigatorLike, type Visitor } from "../apps/web/src/lib/platform";
 import { memoryFallback } from "../apps/web/src/lib/storage";
 import type { DayCache } from "../apps/web/src/map/cache";
@@ -140,9 +153,10 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   ];
   check(JSON.stringify(calls.map((c) => c.url)) === JSON.stringify(want), "hosts in cdn.json order, .gz before .json", calls);
   check(calls.every((c) => c.cache === "no-store"), "no request may be answered from the HTTP cache");
+  await new Promise((r) => setTimeout(r, 0)); // the write isn't awaited by the ladder
   check(cache.days[DATE] !== undefined, "the day that was fetched is cached");
   check(cache.days["2026-10-01"] === undefined, "days other than today and yesterday are pruned");
-  check(JSON.stringify(cache.kept.at(-1)) === JSON.stringify([DATE, shiftDate(DATE, -1)]), "prune keeps today and yesterday", cache.kept);
+  check(JSON.stringify(cache.kept.at(-1)) === JSON.stringify([DATE, shiftStamp(DATE, -1)]), "prune keeps today and yesterday", cache.kept);
 }
 
 {
@@ -308,7 +322,6 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
 
 {
   check(localDate(new Date(2026, 9, 20, 23, 59, 59)) === "2026-10-20", "the local date, not UTC's");
-  check(shiftDate("2026-03-01", -1) === "2026-02-28" && shiftDate("2026-12-31", 1) === "2027-01-01", "shiftDate across months and years");
   check(msUntilMidnight(new Date(2026, 9, 20, 23, 59, 30)) === 30_000, "msUntilMidnight");
   check(formatCountdown(3_723_000) === "01:02:03" && formatCountdown(-5) === "00:00:00", "formatCountdown");
 
@@ -329,8 +342,28 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   check(low.width === 800, "a pixel ratio below 1 never shrinks the canvas below its CSS size", low);
 }
 
+// ---- the page's paper --------------------------------------------------------------
+
+{
+  // Before the map is drawn, and in the strip its slide opens under the panel, the
+  // page shows bare paper — the map's, so `--background` and the browser's
+  // `theme-color` are DEFAULT_COLORS' backgrounds, spelled out because they're
+  // needed before any script runs.
+  const web = join(dirname(fileURLToPath(import.meta.url)), "..", "apps", "web");
+  const css = readFileSync(join(web, "src", "index.css"), "utf8");
+  const html = readFileSync(join(web, "index.html"), "utf8");
+  const tokens = { light: ":root", dark: "\\.dark" };
+  for (const theme of ["light", "dark"] as const) {
+    const paper = DEFAULT_COLORS[theme].background;
+    const background = new RegExp(`^${tokens[theme]} \\{[^}]*--background: (#[0-9a-f]{6});`, "m").exec(css)?.[1];
+    const themeColor = new RegExp(`name="theme-color" content="(#[0-9a-f]{6})" media="\\(prefers-color-scheme: ${theme}\\)"`).exec(html)?.[1];
+    check(background === paper, `index.css: the ${theme} --background is the map's paper, ${paper}`, background);
+    check(themeColor === paper, `index.html: the ${theme} theme-color is the map's paper, ${paper}`, themeColor);
+  }
+}
+
 if (failures > 0) {
   console.error(`✗ ${failures}/${checks} website checks failed`);
   process.exit(1);
 }
-console.log(`✓ website: ${checks} checks (fetch ladder, day decoding, engine, save fallback, visitor, dates, names, sizes)`);
+console.log(`✓ website: ${checks} checks (fetch ladder, day decoding, engine, save fallback, visitor, dates, names, sizes, paper)`);

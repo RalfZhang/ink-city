@@ -6,6 +6,8 @@
 // carrying a Rust one. fetch-city.ts composes every layer's selector into one
 // union query and POSTs it here once.
 
+import { GITHUB_REPO } from "@inkcity/core";
+
 export const MIRRORS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.openstreetmap.fr/api/interpreter",
@@ -31,7 +33,7 @@ export type FetchOptions = {
   userAgent?: string | null;
 };
 
-const USER_AGENT = "InkCity/0.1 (https://github.com/RalfZhang/ink-city)";
+const USER_AGENT = `InkCity/0.1 (${GITHUB_REPO})`;
 
 /**
  * The runtime error an Overpass response reports in-band, or `undefined`. A query

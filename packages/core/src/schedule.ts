@@ -23,12 +23,14 @@ import { dateStamp } from "./city";
 // within 30 days" needs to know the surrounding 30 days, and with random picks
 // that can't be recomputed — only remembered.
 //
-// PRODUCER-ONLY (CI). The client normally just reads `osm-v2/data/<date>.json`
-// (city + map data in one request); the one exception is Dev Mode's "bypass cache
-// & CDN", which reads `city-list.json` for the day's city precisely *because* it
-// carries no map data (see `pipeline::resolve_daily`). Either way the client never
-// recomputes a pick, so there is no Rust port to keep in lockstep. Deliberately
-// NOT re-exported from ./index (the client barrel): scripts import it as
+// PRODUCER-ONLY (CI), as far as picking goes. Clients normally just read
+// `osm-v2/data/<date>.json` (city + map data in one request); the exceptions read
+// `city-list.json` for the day's city precisely *because* it carries no map data —
+// the desktop's Dev Mode "bypass cache & CDN" (see `pipeline::resolve_daily`), and
+// the website rebuilding a day nothing has published (apps/web/src/map/load.ts,
+// which reads it with `parseState`). Either way no client recomputes a pick, so
+// there is no Rust port to keep in lockstep. Deliberately NOT re-exported from
+// ./index (the client barrel): scripts and the website import it as
 // `@inkcity/core/schedule`.
 
 // Every window below is measured in *calendar days off a date key*, never in
@@ -260,8 +262,11 @@ function isStamp(k: string): boolean {
   return !Number.isNaN(d.getTime()) && dateStamp(d) === k;
 }
 
-/** Whether a parsed value is usable as a `City` (guards the hand-edited file). */
-function isCity(v: unknown): v is City {
+/**
+ * Whether a parsed value is usable as a `City`: an entry of the hand-edited file, or
+ * the city a published day names (the website's `decodeManifest`).
+ */
+export function isCity(v: unknown): v is City {
   if (typeof v !== "object" || v === null) return false;
   const c = v as Record<string, unknown>;
   return (

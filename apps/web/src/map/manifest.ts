@@ -1,4 +1,5 @@
 import type { City, Osm } from "@inkcity/core";
+import { isCity } from "@inkcity/core/schedule";
 
 /**
  * One published day, `osm-v2/data/<date>.json[.gz]`: the map data with the day's
@@ -16,7 +17,7 @@ export function isGzip(bytes: Uint8Array): boolean {
 /** Whether this browser can (de)compress gzip itself — Chrome 80, Safari 16.4, Firefox 113. */
 export const gzipSupported = typeof DecompressionStream !== "undefined" && typeof CompressionStream !== "undefined";
 
-export async function gunzip(bytes: Uint8Array): Promise<string> {
+async function gunzip(bytes: Uint8Array): Promise<string> {
   const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
   return new Response(stream).text();
 }
@@ -28,44 +29,22 @@ export async function gzip(text: string): Promise<Uint8Array> {
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
-const isNumber = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
-
-/**
- * The city a published day names, or null if any field is missing. The same seven
- * fields `City` requires on the desktop (apps/desktop/src-tauri/src/city.rs), so a
- * payload the desktop would refuse is refused here as well.
- */
-export function parseCity(v: unknown): City | null {
-  if (!isObject(v)) return null;
-  const { id, name, localName, country, lat, lon, population } = v;
-  if (
-    !isNumber(id) ||
-    typeof name !== "string" ||
-    typeof localName !== "string" ||
-    typeof country !== "string" ||
-    !isNumber(lat) ||
-    !isNumber(lon) ||
-    !isNumber(population)
-  ) {
-    return null;
-  }
-  return { id, name, localName, country, lat, lon, population };
-}
 
 /**
  * Decode a day as fetched or as cached: gunzip it if the bytes are gzip — sniffed,
  * never taken from the URL or the headers, since a host may decompress on the way —
- * parse it, and accept it only if it carries road elements and a whole city: the
- * two checks the desktop makes too (`validate_scheduled` in
- * apps/desktop/src-tauri/src/cdn.rs). Anything else — an HTML error page served
- * with a 200, a truncated body — throws, which the fetch ladder reads as a miss.
+ * parse it, and accept it only if it carries road elements and a whole city (the
+ * seven fields `City` requires): the two checks the desktop makes too
+ * (`validate_scheduled` in apps/desktop/src-tauri/src/cdn.rs). Anything else — an
+ * HTML error page served with a 200, a truncated body — throws, which the fetch
+ * ladder reads as a miss.
  */
 export async function decodeManifest(bytes: Uint8Array): Promise<Manifest> {
   const text = isGzip(bytes) ? await gunzip(bytes) : new TextDecoder().decode(bytes);
   const json: unknown = JSON.parse(text);
   if (!isObject(json)) throw new Error("not a JSON object");
   if (!Array.isArray(json.elements) || json.elements.length === 0) throw new Error("no road elements");
-  const city = parseCity(json.city);
-  if (!city) throw new Error("no usable city");
+  const { city } = json;
+  if (!isCity(city)) throw new Error("no usable city");
   return { ...(json as Osm), city };
 }

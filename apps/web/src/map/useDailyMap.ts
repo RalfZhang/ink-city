@@ -52,7 +52,7 @@ export function useDailyMap(
 
   useEffect(() => {
     const c = createMapClient((reply) => {
-      if (reply.type === "unsupported" || reply.date !== today.current) return;
+      if (reply.date !== today.current) return;
       if (reply.type === "stage") setStatus((s) => ({ ...s, stage: reply.stage, error: null }));
       else if (reply.type === "city") setStatus((s) => ({ ...s, city: reply.city, error: null }));
       else if (reply.type === "error") setStatus((s) => ({ ...s, stage: null, error: reply.message }));

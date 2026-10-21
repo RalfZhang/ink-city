@@ -6,10 +6,13 @@ import { createEngine, type Reply, type ShowRequest } from "./engine";
 // here, on an OffscreenCanvas, so the page stays responsive while they do; the
 // finished frame crosses back as an ImageBitmap, without a copy. See ./engine.ts.
 
+/** What the worker posts: the engine's replies, or that it can't draw here (no 2D OffscreenCanvas), so the client takes over. */
+export type WorkerMessage = Reply | { type: "unsupported" };
+
 // Typed by hand rather than through the WebWorker lib, which clashes with the DOM
 // lib the rest of the app compiles against.
 const scope = self as unknown as {
-  postMessage(message: Reply, transfer?: Transferable[]): void;
+  postMessage(message: WorkerMessage, transfer?: Transferable[]): void;
   onmessage: ((event: MessageEvent<ShowRequest>) => void) | null;
 };
 

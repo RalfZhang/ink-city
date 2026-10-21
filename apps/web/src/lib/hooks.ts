@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { localDate, msUntilMidnight } from "./date";
 
 /** Whether `query` matches, kept current. */
@@ -44,49 +44,45 @@ export function useLocalDate(): string {
   return date;
 }
 
-/** Milliseconds left until local midnight, ticking every second while `on`. */
-export function useUntilMidnight(on: boolean): number {
+/** Milliseconds left until local midnight, ticking every second. */
+export function useUntilMidnight(): number {
   const [ms, setMs] = useState(msUntilMidnight);
   useEffect(() => {
-    if (!on) return;
-    setMs(msUntilMidnight());
     const id = setInterval(() => setMs(msUntilMidnight()), 1000);
     return () => clearInterval(id);
-  }, [on]);
+  }, []);
   return ms;
 }
 
-/** `ref`'s content-box size in CSS px, or null before it's laid out. */
-export function useElementSize(ref: RefObject<HTMLElement | null>): { width: number; height: number } | null {
+/**
+ * `ref`'s content-box size in CSS px, or null before it's laid out. With `settleMs`,
+ * a new size is taken up only once it has held still that long — except the first,
+ * which passes straight through, so the map's first draw doesn't wait out a resize
+ * delay — and a drag-resize re-renders the caller once, not on every frame.
+ */
+export function useElementSize(
+  ref: RefObject<HTMLElement | null>,
+  settleMs = 0,
+): { width: number; height: number } | null {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let first = true;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      setSize((s) => (s && s.width === width && s.height === height ? s : { width, height }));
+      const take = () => setSize((s) => (s && s.width === width && s.height === height ? s : { width, height }));
+      clearTimeout(timer);
+      if (first || settleMs <= 0) take();
+      else timer = setTimeout(take, settleMs);
+      first = false;
     });
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [ref]);
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [ref, settleMs]);
   return size;
-}
-
-/**
- * `value`, once it has held still for `ms` — except the first non-null value, which
- * passes straight through, so the map's first draw doesn't wait out a resize delay.
- */
-export function useSettled<T>(value: T, ms: number): T {
-  const [settled, setSettled] = useState(value);
-  const passed = useRef(false);
-  useEffect(() => {
-    if (!passed.current && value != null) {
-      passed.current = true;
-      setSettled(value);
-      return;
-    }
-    const id = setTimeout(() => setSettled(value), ms);
-    return () => clearTimeout(id);
-  }, [value, ms]);
-  return settled;
 }

@@ -18,6 +18,13 @@ import { railwaysSelector, slimRailways } from "./railways";
 import { aerialwaysSelector, slimAerialways } from "./aerialways";
 import { OSM_SCHEMA_VERSION } from "@inkcity/core";
 
+/**
+ * The decimals the published days' coordinates are rounded to (the precache,
+ * scripts/osm-cli.ts) — what anything rebuilding a day passes as `coordPrecision`,
+ * so its day matches a published one.
+ */
+export const PUBLISHED_COORD_PRECISION = 5;
+
 export type FetchCityOptions = {
   coordPrecision?: number;
   /** Passed to the Overpass transport — the website's worker spends less time and sends no User-Agent. */

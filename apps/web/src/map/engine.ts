@@ -29,9 +29,7 @@ export type Reply =
   | { type: "stage"; date: string; stage: Stage }
   | { type: "city"; date: string; city: City }
   | Frame
-  | { type: "error"; date: string; message: string }
-  /** The worker can't draw here (no 2D OffscreenCanvas); the client takes over. */
-  | { type: "unsupported" };
+  | { type: "error"; date: string; message: string };
 
 export type EngineEnv = {
   deps: Omit<LoadDeps, "onStage">;
@@ -70,6 +68,8 @@ export function createEngine(env: EngineEnv): (req: ShowRequest) => void {
       while (latest) {
         const req = latest;
         if (day?.date !== req.date) {
+          // Let go of the old day (tens of MB parsed) before parsing the next one.
+          day = null;
           const loaded = await load(req.date);
           if (!loaded) {
             // Nothing to draw; wait to be asked again (the page's retry).

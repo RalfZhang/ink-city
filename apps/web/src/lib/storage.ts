@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { localStorageGuessStorage, type GuessStorage } from "@inkcity/core";
-
-/** The save's localStorage key: core's default, the same JSON the desktop keeps in guess.json. */
-export const GUESS_KEY = "inkcity:guess";
+import { GUESS_STORAGE_KEY, localStorageGuessStorage, type GuessStorage } from "@inkcity/core";
 
 /**
  * `inner`, except that a write it refuses (storage full, site data blocked, a
@@ -38,12 +35,12 @@ export function memoryFallback(inner: GuessStorage, onMemoryOnly: () => void): G
  */
 export function useGuessStorage(): { storage: GuessStorage; memoryOnly: boolean } {
   const [memoryOnly, setMemoryOnly] = useState(false);
-  const base = useMemo(() => memoryFallback(localStorageGuessStorage(GUESS_KEY), () => setMemoryOnly(true)), []);
+  const base = useMemo(() => memoryFallback(localStorageGuessStorage(), () => setMemoryOnly(true)), []);
   const [storage, setStorage] = useState<GuessStorage>(base);
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === GUESS_KEY || e.key === null) setStorage({ ...base });
+      if (e.key === GUESS_STORAGE_KEY || e.key === null) setStorage({ ...base });
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);

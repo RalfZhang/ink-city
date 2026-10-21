@@ -1,3 +1,5 @@
+import cdn from "./cdn.json";
+
 // Opacity of the water fill/lines, composited over the background as a tint of
 // the foreground "ink" color (see mixColor in core/render.ts). Kept here so the
 // renderer and the Lab-tab water UI share one source of truth.
@@ -54,7 +56,8 @@ export const RUNWAY_ALPHA = 0.6;
 // already-cached cities; it rides on 8 because 8 hadn't shipped yet.
 export const OSM_SCHEMA_VERSION = 8;
 
-export const GITHUB_REPO = "https://github.com/RalfZhang/ink-city";
+/** The repo on GitHub — the same one ./cdn.json serves the published data from. */
+export const GITHUB_REPO = `https://github.com/${cdn.repo}`;
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
 
 export const WIKIPEDIA_BASE = "https://en.wikipedia.org/wiki/";

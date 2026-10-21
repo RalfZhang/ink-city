@@ -348,12 +348,6 @@ pub struct ApplyResult {
     pub regen_started: bool,
 }
 
-#[derive(Serialize)]
-pub struct ColorDefaults {
-    pub light: ColorPair,
-    pub dark: ColorPair,
-}
-
 /// Atomic write of all Style-tab settings. Returns whether a wallpaper
 /// re-render was triggered so the UI can decide whether to wait for
 /// pipeline:end before clearing its Save spinner.
@@ -511,11 +505,6 @@ pub fn apply_proxy_settings(
     crate::github_mirror::set_proxy(active);
     app.state::<AppState>().mark_status_dirty();
     persist(&app)
-}
-
-#[tauri::command]
-pub fn get_color_defaults() -> ColorDefaults {
-    ColorDefaults { light: ColorPair::light_default(), dark: ColorPair::dark_default() }
 }
 
 fn current_effective_colors(app: &AppHandle) -> ColorPair {

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Direction } from "radix-ui";
 import { countryIndex, isRevealed } from "@inkcity/core";
 import countries from "@inkcity/core/countries.json";
-import { GuessCountry, GuessResult, useGuessGame } from "@inkcity/ui/guess";
+import { DailyGuess, useGuessGame } from "@inkcity/ui/guess";
 import { dirForLocale } from "./i18n";
-import { useElementSize, useLocalDate, useMediaQuery, useSettled } from "./lib/hooks";
+import { useElementSize, useLocalDate, useMediaQuery } from "./lib/hooks";
 import { detectVisitor } from "./lib/platform";
 import { useGuessStorage } from "./lib/storage";
 import { useDailyMap } from "./map/useDailyMap";
@@ -64,7 +64,7 @@ export default function App() {
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   // A drag-resize settles before the map redraws; the first size draws at once.
-  const size = useSettled(useElementSize(stage), 300);
+  const size = useElementSize(stage, 300);
   const map = useDailyMap(date, dark ? "dark" : "light", size, canvas);
 
   const { storage, memoryOnly } = useGuessStorage();
@@ -74,8 +74,6 @@ export default function App() {
   const snapshot = game.snapshot;
   // Concealed until the save has been read, too: showing the city first would flash the answer.
   const revealed = snapshot !== null && isRevealed(snapshot.state);
-  const finished =
-    snapshot !== null && (snapshot.state === "won" || snapshot.state === "lost" || snapshot.state === "gaveUp");
 
   const [hidden, setHidden] = useState(readHidden);
   useEffect(() => {
@@ -119,17 +117,12 @@ export default function App() {
           index={COUNTRIES}
         />
         {memoryOnly && <MemoryOnlyNote />}
-        {snapshot && !revealed && (
-          <GuessCountry
-            key={date}
-            snapshot={snapshot}
-            index={COUNTRIES}
-            saving={game.saving}
-            paintingLine={t(map.error ? "game.paintFailed" : "game.painting")}
-            onGuess={game.guess}
-          />
-        )}
-        {snapshot && finished && snapshot.guesses.length > 0 && <GuessResult snapshot={snapshot} index={COUNTRIES} />}
+        <DailyGuess
+          game={game}
+          date={date}
+          index={COUNTRIES}
+          paintingLine={t(map.error ? "game.paintFailed" : "game.painting")}
+        />
         {revealed && map.city ? <DownloadCard city={map.city} visitor={visitor} /> : <DownloadTeaser visitor={visitor} />}
         <Footer />
       </Panel>
