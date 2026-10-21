@@ -2,11 +2,12 @@ name: CI
 # Builds the frontend and runs every test the repo has, on each pushed branch and
 # on pull requests from forks. Until this workflow existed none of them ran
 # anywhere but a developer's machine — including the Rust↔TS parity checks (the
-# guess-reveal fixture both `pnpm guess-test` and `cargo test` read, and
-# schedule-test's comparison against cdn.rs and precache.yml), which only mean
-# something when both sides run against the same commit.
+# fixtures under scripts/fixtures that a `pnpm *-test` script and `cargo test`
+# both run, and the JSON under packages/core/src that Rust compiles in and
+# `cargo test` vets for both languages), which only mean something when both
+# sides run against the same commit.
 #
-#   ts    `pnpm build` (check:i18n → tsc → vite build), the four tsx test
+#   ts    `pnpm build` (check:i18n → tsc → vite build), the tsx test
 #         scripts, and an offline run of osm-cli proving its whole import graph
 #         still resolves — the precache job and the bundled sidecar both start
 #         there.
@@ -72,6 +73,7 @@ jobs:
           pnpm schedule-test
           pnpm coords-test
           pnpm railway-test
+          pnpm bbox-test
 
       # With no arguments osm-cli throws its usage line, which it can only reach
       # once every module it imports has loaded — no Overpass request involved.

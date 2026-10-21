@@ -18,6 +18,10 @@ import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./
 // at draw time so strokes cover the same ground at any canvas size. Layer
 // opacities the Lab-tab UI also reads live in constants.ts; the aerialway ones
 // are render-only and stay here.
+//
+// Exported, read-only, for code that draws this same map its own way (../www's
+// animated road maps), so it can take the weights from here instead of restating
+// them.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -26,7 +30,7 @@ import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./
  * reads as real carriageway widths (`standard` motorway 2.5 → 30m, residential
  * 0.7 → 8.4m), which is what those weights were tuned to look like.
  */
-const METERS_PER_WEIGHT = 12;
+export const METERS_PER_WEIGHT = 12;
 
 /**
  * Road stroke weight per OSM `highway` class, per preset — the road hierarchy as
@@ -39,7 +43,7 @@ const METERS_PER_WEIGHT = 12;
  * default and draw each flight of steps as an orphan dot once the footways it
  * joins are gone.
  */
-const ROAD_WEIGHTS: Record<StylePreset, Partial<Record<string, number | null>>> = {
+export const ROAD_WEIGHTS: Readonly<Record<StylePreset, Readonly<Partial<Record<string, number | null>>>>> = {
   minimal: {
     motorway: 0.7, trunk: 0.7, primary: 0.7, secondary: 0.7, tertiary: 0.7,
   },
@@ -60,22 +64,22 @@ const ROAD_WEIGHTS: Record<StylePreset, Partial<Record<string, number | null>>> 
 };
 
 /** Weight for a `highway` class not listed in {@link ROAD_WEIGHTS} for the preset. */
-const ROAD_WEIGHT_DEFAULT: Record<StylePreset, number | null> = {
+export const ROAD_WEIGHT_DEFAULT: Readonly<Record<StylePreset, number | null>> = {
   minimal: null, // minimal draws only the majors it lists explicitly
   standard: null,
   bold: 0.8,
 };
 
 /** Linear-waterway stroke weight per class; unlisted classes (stream/drain/ditch) use the default. */
-const WATER_LINE_WEIGHTS: Record<string, number> = { river: 1.6, canal: 1.3 };
-const WATER_LINE_WEIGHT_DEFAULT = 0.7;
+export const WATER_LINE_WEIGHTS: Readonly<Record<string, number>> = { river: 1.6, canal: 1.3 };
+export const WATER_LINE_WEIGHT_DEFAULT = 0.7;
 
 /**
  * Runway/taxiway *centerline* stroke weights (fixed, not scaled by preset — see
  * drawAirports). Area-mapped runways/taxiways carry their own width and are
  * filled, not stroked.
  */
-const AIRPORT_WIDTHS = { taxiway: 1.8, runway: 6 } as const;
+export const AIRPORT_WIDTHS = { taxiway: 1.8, runway: 6 } as const;
 
 // ── The railway layer's three drawing modes ───────────────────────────────────
 //
@@ -101,7 +105,7 @@ const AIRPORT_WIDTHS = { taxiway: 1.8, runway: 6 } as const;
  * one was dashed `[4.5, 3.5]` at alpha 0.7, so the width carries over but the dash
  * does not; `banded` is now what carries a pattern.
  */
-const RAILWAY_PLAIN = {
+export const RAILWAY_PLAIN = {
   alpha: 0.7,
   width: 1.1,
 } as const;
@@ -128,7 +132,7 @@ const RAILWAY_PLAIN = {
  * coverage while the edges keep the symbol legible, so it quiets the layer
  * without narrowing it. `light == dark` is carto's own 50/50.
  */
-const RAILWAY_BANDED = {
+export const RAILWAY_BANDED = {
   alpha: 0.7,
   edge: 0.6,
   inner: 0.6,
@@ -154,7 +158,7 @@ const RAILWAY_BANDED = {
  * but for the same reason its ticks collide where tracks run parallel, and a
  * dense yard goes fuzzy. Widening `spacing` is the lever for that.
  */
-const RAILWAY_TIES = {
+export const RAILWAY_TIES = {
   alpha: 0.6,
   lineWidth: 0.8,
   tickLength: 1.8,
@@ -163,7 +167,7 @@ const RAILWAY_TIES = {
 } as const;
 
 /** Aerialway (cable car / ropeway) knobs: the cable line and the cabin dots. */
-const AERIALWAY = {
+export const AERIALWAY = {
   lineAlpha: 0.5,
   lineWidth: 0.6,
   dotAlpha: 0.5,
@@ -178,7 +182,7 @@ const AERIALWAY = {
  * is what decides how much ground the crop keeps vertically — a 21:9 monitor
  * would land a third thinner than a 16:10 one from the same weight.
  */
-function strokeScale(bbox: Bbox, height: number): number {
+export function strokeScale(bbox: Bbox, height: number): number {
   const pxPerKm = height / groundHeightKm(bbox);
   return (METERS_PER_WEIGHT / 1000) * pxPerKm;
 }

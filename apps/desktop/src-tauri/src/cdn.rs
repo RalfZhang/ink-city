@@ -24,21 +24,13 @@ use flate2::read::GzDecoder;
 use crate::city;
 use crate::github_mirror;
 
-/// The date-keyed manifests.
-///
-/// Must match `SCHEDULE_ROOT`/`SCHEDULE_DATA_DIR` in `packages/core/src/schedule.ts`,
-/// which is where the layout is defined and the producer side reads it from.
-const SCHEDULE_PATH: &str = "osm-v2/data";
-/// The schedule *state* file, one level up from the manifests: `<dir>/<stem>.json`
-/// = `osm-v2/city-list.json`. Must match `SCHEDULE_ROOT`/`SCHEDULE_STATE_FILE` in
-/// `packages/core/src/schedule.ts`.
-///
-/// Normally CI/human-facing only — the client gets city *and* map data from one
-/// manifest and never needs this. The exception is Dev Mode's "bypass cache &
-/// CDN", which wants the day's true-random city precisely *without* that day's
-/// precached map data; see `fetch_schedule_city`.
-const SCHEDULE_STATE_DIR: &str = "osm-v2";
-const SCHEDULE_STATE_STEM: &str = "city-list";
+/// The directory of date-keyed manifests, `osm-v2/data`. The layout is the table's
+/// `schedule` (`github_mirror::ScheduleLayout`, from packages/core/src/cdn.json),
+/// which is also where CI publishes it.
+fn manifest_dir() -> String {
+    let layout = &github_mirror::table().schedule;
+    format!("{}/{}", layout.root, layout.data_dir)
+}
 
 /// Fetch the date-keyed schedule manifest published by precache (issue #1):
 /// `osm-v2/data/<date>.json[.gz]` = `{ v, elements, …, date, city }`, so one
@@ -54,8 +46,9 @@ const SCHEDULE_STATE_STEM: &str = "city-list";
 /// the rotation. Validating exactly what the caller consumes is also what keeps
 /// the two from drifting apart.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
-    let bases = github_mirror::mirror_urls(github_mirror::DATA_REF, SCHEDULE_PATH);
-    let v = fetch_from_mirrors(bases, date, Gz::Prefer, validate_scheduled).await?;
+    let bases = github_mirror::mirror_urls(&manifest_dir());
+    let v =
+        fetch_from_mirrors(bases, &format!("{date}.json"), Gz::Prefer, validate_scheduled).await?;
     let city = scheduled_city(&v)?;
     Ok((city, v))
 }
@@ -86,11 +79,13 @@ pub enum Hosts {
 /// Unlike the manifests it's never gzipped by the workflow, so it's fetched plain
 /// (`Gz::Skip`) rather than spending a request on a `.gz` that can't exist.
 pub async fn fetch_schedule_city(date: &str, hosts: Hosts) -> Result<city::City> {
+    // `osm-v2/city-list.json`: beside the manifest dir, not inside it.
+    let layout = &github_mirror::table().schedule;
     let bases = match hosts {
-        Hosts::Mirrored => github_mirror::mirror_urls(github_mirror::DATA_REF, SCHEDULE_STATE_DIR),
-        Hosts::GithubOnly => github_mirror::github_only_urls(github_mirror::DATA_REF, SCHEDULE_STATE_DIR),
+        Hosts::Mirrored => github_mirror::mirror_urls(&layout.root),
+        Hosts::GithubOnly => github_mirror::github_only_urls(&layout.root),
     };
-    let v = fetch_from_mirrors(bases, SCHEDULE_STATE_STEM, Gz::Skip, validate_state).await?;
+    let v = fetch_from_mirrors(bases, &layout.state_file, Gz::Skip, validate_state).await?;
     schedule_entry(&v, date)
 }
 
@@ -145,10 +140,10 @@ enum Gz {
     Skip,
 }
 
-/// Fetch `{base}/{stem}.json` from the first of `bases` that serves a payload
+/// Fetch `{base}/{file}` from the first of `bases` that serves a payload
 /// `validate` accepts. Shared by every published read — they differ only in the
-/// host list, the file stem (date / `city-list`), whether a `.gz` sibling exists,
-/// and what "usable" means for that file.
+/// host list, the file (`<date>.json` / `city-list.json`), whether a `.gz` sibling
+/// (`<file>.gz`, as `gzip -k` names it) exists, and what "usable" means for that file.
 ///
 /// `bases` is already ordered by the caller (see `github_mirror::mirror_urls`):
 /// every CDN edge first, GitHub's raw origin last. Combined with the per-host
@@ -166,7 +161,7 @@ enum Gz {
 /// predates that) before moving to the next host entirely.
 async fn fetch_from_mirrors(
     bases: Vec<String>,
-    stem: &str,
+    file: &str,
     gz: Gz,
     validate: fn(&serde_json::Value, &str) -> Result<()>,
 ) -> Result<serde_json::Value> {
@@ -175,9 +170,9 @@ async fn fetch_from_mirrors(
     for base in bases {
         let mut attempts: Vec<(String, bool)> = Vec::with_capacity(2);
         if gz == Gz::Prefer {
-            attempts.push((format!("{base}/{stem}.json.gz"), true));
+            attempts.push((format!("{base}/{file}.gz"), true));
         }
-        attempts.push((format!("{base}/{stem}.json"), false));
+        attempts.push((format!("{base}/{file}"), false));
         for (url, gzipped) in attempts {
             let result = fetch_json(&client, &url, gzipped)
                 .await
@@ -330,5 +325,19 @@ mod tests {
         let v = json(&format!(r#"{{"list":{{"2026-07-28":{CITY},"2026-07-29":{{"lat":1}}}}}}"#));
         assert!(schedule_entry(&v, "2026-08-15").is_err());
         assert!(schedule_entry(&v, "2026-07-29").is_err());
+    }
+
+    /// Every release reads these paths with its own copy of cdn.json compiled in, and
+    /// CI publishes wherever the current copy says — so renaming one strands every
+    /// version already out there (CLAUDE.md: a `data` path any release has read is
+    /// frozen). Add a new path instead.
+    #[test]
+    fn the_published_layout_never_moves() {
+        let layout = &github_mirror::table().schedule;
+        assert_eq!(manifest_dir(), "osm-v2/data");
+        assert_eq!(
+            (layout.root.as_str(), layout.state_file.as_str()),
+            ("osm-v2", "city-list.json")
+        );
     }
 }

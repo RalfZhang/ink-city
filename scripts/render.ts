@@ -68,7 +68,9 @@ import { createCanvas } from "canvas";
 import {
   drawScene,
   bboxForScreen,
+  DEFAULT_COLORS,
   LAYER_IDS,
+  MAX_HALF_KM,
   RAILWAY_STYLES,
   STYLE_PRESETS,
   type Bbox,
@@ -84,16 +86,13 @@ const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");
 const COORD_PRECISION = 5;
 /** Width (km) of the square area a payload covers; bboxForScreen crops a
- *  screen-aspect rectangle out of it. 20km is what the wallpaper pipeline
- *  precaches (osm-cli's MAX_HALF_KM = 10 at aspect 1), so a payload from the
- *  `data` branch replays here unchanged. `--km` overrides it. */
-const DEFAULT_AREA_KM = 20;
+ *  screen-aspect rectangle out of it. 20km — twice MAX_HALF_KM, the square the
+ *  wallpaper pipeline precaches at aspect 1 — so a payload from the `data` branch
+ *  replays here unchanged. `--km` overrides it. */
+const DEFAULT_AREA_KM = 2 * MAX_HALF_KM;
 
-type ThemeName = "light" | "dark";
-const THEMES: Record<ThemeName, { background: string; foreground: string }> = {
-  light: { background: "#eee8d6", foreground: "#2d2d2d" },
-  dark: { background: "#000000", foreground: "#5e5d58" },
-};
+/** The desktop's two themes, each drawn in a fresh install's colors. */
+type ThemeName = keyof typeof DEFAULT_COLORS;
 
 /** A lat/lon argument, e.g. "34.25668/108.95738". If it doesn't match, the
  *  positional is treated as a .json path instead. */
@@ -299,7 +298,7 @@ async function main() {
 
     for (const preset of presets) {
       for (const name of themes) {
-        const theme = THEMES[name];
+        const theme = DEFAULT_COLORS[name];
         for (const type of types) {
           const canvas = type === "svg" ? createCanvas(width, height, "svg") : createCanvas(width, height);
           const ctx = canvas.getContext("2d") as unknown as CanvasRenderingContext2D;

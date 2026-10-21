@@ -6,9 +6,11 @@ A Tauri (Rust + React/TS) desktop app shipping signed bundles for macOS (univers
 
 A pnpm workspace. The desktop app is `apps/desktop` (`@inkcity/desktop`: `src/` is the React UI, `src-tauri/` the Rust side); the code it shares with CI and the future website lives in packages, imported as TypeScript source with no build step. The repo root holds the product version (`package.json`, which release-please bumps), the repo-level `scripts/`, and `pnpm dev` / `pnpm build` / `pnpm tauri …`, which forward to the desktop app — `pnpm build` also type-checks every package with `tsc -p`.
 
-- `@inkcity/core` (`packages/core`) — portable logic: rendering, bbox, the schedule, the guess-the-country rules, plus `data/` (the city pools, and `countries.json`, exported as `@inkcity/core/countries.json`).
+- `@inkcity/core` (`packages/core`) — portable logic: rendering, bbox, the schedule, the guess-the-country rules, plus `data/` (the city pools, and `countries.json`, exported as `@inkcity/core/countries.json`) and the two JSON files the desktop's Rust compiles in: `src/defaults.json` (the default colors and style, and the map's 20 km span) and `src/cdn.json` (the data CDN's hosts, and the schedule's paths on `data`).
 - `@inkcity/osm` (`packages/osm`) — Overpass fetch and layer extraction. Node/Bun only, kept out of client bundles (it pulls in `polygon-clipping`); `scripts/osm-cli.ts` is its entry point and stays in `scripts/`.
 - `@inkcity/ui` (`packages/ui`) — the shadcn components (`@inkcity/ui/components/*`), `cn`, the theme stylesheet (`@inkcity/ui/globals.css`) and the game's React layer (`@inkcity/ui/guess`). Its strings are the `ui` i18next namespace in `packages/ui/src/i18n`, held to the same parity check as the app's; wording only a host can give comes in as a prop (GuessCountry's `paintingLine`). Desktop-only settings UI — `SettingRow`, the "Daily guess" switch — stays in `apps/desktop/src/`.
+
+Anything Rust and TypeScript both need is written once. A value lives in a JSON file under `packages/core` that Rust `include_str!`s and TS imports, never restated in the other language; a formula ported to both is pinned by a fixture in `scripts/fixtures/` that a `pnpm *-test` script and `cargo test` both run (today: the guess game's reveal rule, and `bboxForScreen`).
 
 Inside a package, files import each other relatively; packages never use the app's `@/` alias (CI rejects it). `shadcn add` (run in `apps/desktop`, or with `-c packages/ui`) writes into `packages/ui/src/components/` — switch its `cn` import to `../lib/utils` like the rest.
 

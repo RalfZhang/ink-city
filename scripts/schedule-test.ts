@@ -74,19 +74,16 @@ console.log(
     `= ${SCHEDULE_DAYS}d, exactly covering the ${CITY_COOLDOWN_DAYS}d city cooldown`,
 );
 
-// ---- the layout's copies in Rust and YAML ----
+// ---- the layout's copy in the workflow ----
 
-// SCHEDULE_ROOT / SCHEDULE_DATA_DIR / SCHEDULE_STATE_FILE define the published
-// layout, but the two consumers that can't import them — the client
-// (apps/desktop/src-tauri/src/cdn.rs) and the workflow that publishes the branch
-// (.github/workflows/precache.yml) — repeat the strings literally. A comment alone
-// does not hold five copies together: one of cdn.rs's stores the state file
-// *without* its extension, so it matches neither `grep osm-v2` nor
-// `grep city-list.json`, and it drifted unnoticed.
+// SCHEDULE_ROOT / SCHEDULE_DATA_DIR / SCHEDULE_STATE_FILE come from
+// packages/core/src/cdn.json, which the client compiles in too, so the two sides
+// that read the layout share one definition. The workflow that publishes the
+// branch (.github/workflows/precache.yml) can read neither and spells the paths out
+// in its gzip glob and its publish guard — the copies checked here.
 //
-// So parse the real declarations and compare values. Substring-searching the files
-// would let a stale comment mentioning `osm-v2` satisfy the check — the exact
-// failure mode this guards against.
+// Parse the real declarations and compare values: substring-searching the file
+// would let a stale comment mentioning `osm-v2` satisfy the check.
 
 /** The one capture group of `re` in `text`, or a failed run naming what's missing. */
 function capture(text: string, re: RegExp, what: string): string {
@@ -101,28 +98,6 @@ function readSibling(...parts: string[]): string {
   } catch {
     return fail(`cannot read ${parts.join("/")}, which the layout check needs`);
   }
-}
-
-// cdn.rs keeps the state file as a stem and re-adds the extension per attempt
-// (`.json.gz` then `.json`), so the split is only valid while this holds.
-const STATE_STEM = SCHEDULE_STATE_FILE.replace(/\.json$/, "");
-check(
-  STATE_STEM !== SCHEDULE_STATE_FILE,
-  `SCHEDULE_STATE_FILE must end in .json — cdn.rs stores it as a stem and re-adds the extension`,
-);
-
-const cdnRs = readSibling("apps", "desktop", "src-tauri", "src", "cdn.rs");
-for (const [name, expected] of [
-  ["SCHEDULE_PATH", `${SCHEDULE_ROOT}/${SCHEDULE_DATA_DIR}`],
-  ["SCHEDULE_STATE_DIR", SCHEDULE_ROOT],
-  ["SCHEDULE_STATE_STEM", STATE_STEM],
-] as const) {
-  const actual = capture(
-    cdnRs,
-    new RegExp(`const ${name}:\\s*&str\\s*=\\s*"([^"]*)"`),
-    `cdn.rs no longer declares ${name}`,
-  );
-  check(actual === expected, `cdn.rs ${name} is "${actual}", schedule.ts says "${expected}"`);
 }
 
 const precacheYml = readSibling(".github", "workflows", "precache.yml");
@@ -152,7 +127,7 @@ check(
   `precache.yml publish guard checks [${guarded.join(", ")}], none of them ${SCHEDULE_ROOT}`,
 );
 console.log(
-  `✓ layout: cdn.rs (3 constants) + precache.yml (gzip glob, publish guard) agree on ` +
+  `✓ layout: precache.yml (gzip glob, publish guard) agrees with cdn.json on ` +
     `${SCHEDULE_ROOT}/{${SCHEDULE_STATE_FILE}, ${SCHEDULE_DATA_DIR}/}`,
 );
 

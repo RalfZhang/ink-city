@@ -75,10 +75,9 @@ OSM's `wikidata` tag.** `cities.json` is unaffected — it stays GeoNames.
 
 This matters more here than it would elsewhere, because the coordinate is not a
 label point: it is simultaneously the Overpass download area, the render crop and
-the projection origin ([`pipeline.rs`](../../../apps/desktop/src-tauri/src/pipeline.rs)'s
-`bbox_for_screen(lat, lon, 10.0, aspect)`, `MAX_HALF_KM` in
-[`osm-cli.ts`](../../../scripts/osm-cli.ts), `RENDER_RADIUS_KM` in
-[`render.ts`](../../../scripts/render.ts) — all three must agree on 10). The long side
+the projection origin ([`bboxForScreen`](../src/bbox.ts) around it, with the
+`maxHalfKm` of 10 in [`defaults.json`](../src/defaults.json) that the desktop, CI's
+precache and `pnpm render` all read). The long side
 is a fixed 20 km, so a 16:9 frame is only **11.25 km tall** and a 21:9 one 8.6 km.
 Nothing recenters on failure: a bad coordinate just renders empty.
 

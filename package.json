@@ -21,7 +21,8 @@
     "schedule-test": "tsx scripts/schedule-test.ts",
     "coords-test": "tsx scripts/coords-test.ts",
     "guess-test": "tsx scripts/guess-test.ts",
-    "railway-test": "tsx scripts/railway-test.ts"
+    "railway-test": "tsx scripts/railway-test.ts",
+    "bbox-test": "tsx scripts/bbox-test.ts"
   },
   "devDependencies": {
     "@inkcity/core": "workspace:*",

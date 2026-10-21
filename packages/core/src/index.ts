@@ -18,6 +18,9 @@ export * from "./layers";
 export * from "./render";
 export * from "./label";
 export * from "./constants";
+// The defaults the desktop's Rust compiles in from the same ./defaults.json: each
+// theme's colors, a fresh install's style, and the ground every map spans.
+export * from "./defaults";
 // The guess-the-country game — rules, save format and country lookup, written once
 // for the desktop app and the website; only its storage differs per host (see
 // ./guess/store.ts).

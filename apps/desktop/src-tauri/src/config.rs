@@ -5,6 +5,8 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
+use crate::defaults;
+
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum ThemeMode {
@@ -62,11 +64,13 @@ impl UpdateCheck {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+/// How heavily the roads are inked. A fresh install's preset — like the rest of its
+/// map, see `Config::default()` — comes from packages/core/src/defaults.json, so
+/// none of these style enums carries a `Default` of its own to disagree with it.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StylePreset {
     Minimal,
-    #[default]
     Standard,
     Bold,
 }
@@ -78,27 +82,25 @@ pub enum StylePreset {
 /// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18).
 /// Mirrors `StyleVariant` in packages/core/src/types.ts and is serialized straight into
 /// the renderer's `Style` payload.
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum StyleVariant {
-    #[default]
     Ink,
     Mondrian,
 }
 
 /// How the railway layer is drawn — the Lab-tab selector. One dimension rather
 /// than a `show_railways` boolean plus a separate style field, so "hidden" and
-/// "which symbol" can never contradict each other. `Off` by default, like every
-/// other optional layer. Mirrors `RailwayStyle` in packages/core/src/types.ts and is
+/// "which symbol" can never contradict each other. `Off` on a fresh install, like
+/// every other optional layer. Mirrors `RailwayStyle` in packages/core/src/types.ts and is
 /// serialized straight into the renderer's `Style` payload; the drawable modes are
 /// dispatched through `RAILWAY_MODES` in packages/core/src/render.ts, where each one's
 /// weights and opacity live too.
 ///
 /// Replaces the legacy `show_railways: bool`, which `parse_config` migrates.
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum RailwayStyle {
-    #[default]
     Off,
     Plain,
     Banded,
@@ -163,18 +165,21 @@ pub struct ColorPair {
 }
 
 impl ColorPair {
+    /// Each theme's colors on a fresh install (packages/core/src/defaults.json).
     pub fn light_default() -> Self {
-        Self { background: "#eee8d6".into(), foreground: "#2d2d2d".into() }
+        defaults::get().colors.light.clone()
     }
     pub fn dark_default() -> Self {
-        Self { background: "#000000".into(), foreground: "#5e5d58".into() }
+        defaults::get().colors.dark.clone()
     }
 }
 
 /// Persisted user settings. The container-level `#[serde(default)]` fills any
 /// field absent from `config.json` from `Config::default()` below, so every
-/// default lives in exactly one place — the `Default` impl — with no per-field
-/// serde mirror to keep in sync.
+/// default is decided in exactly one place — the `Default` impl — with no
+/// per-field serde mirror to keep in sync. The look it starts from (the colors and
+/// the map's style) is shared with the website, so that part of it is read from
+/// packages/core/src/defaults.json (`defaults`).
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {
@@ -247,6 +252,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
+        let style = &defaults::get().style;
         Self {
             update_mode: UpdateMode::default(),
             custom: None,
@@ -254,14 +260,14 @@ impl Default for Config {
             theme: ThemeMode::default(),
             light: ColorPair::light_default(),
             dark: ColorPair::dark_default(),
-            style: StylePreset::default(),
+            style: style.preset,
             update_check: UpdateCheck::default(),
             auto_update: true,
-            show_water: false,
-            show_airports: false,
-            railway_style: RailwayStyle::default(),
-            show_aerialways: false,
-            variant: StyleVariant::default(),
+            show_water: style.show_water,
+            show_airports: style.show_airports,
+            railway_style: style.railway_style,
+            show_aerialways: style.show_aerialways,
+            variant: style.variant,
             dev_mode: false,
             proxy_enabled: false,
             proxy_url: String::new(),
@@ -382,6 +388,23 @@ mod tests {
         assert_eq!(parse_config("{}").update_mode, UpdateMode::Daily);
         assert_eq!(parse_config("not json").update_mode, UpdateMode::Daily);
         assert_eq!(Config::default().update_mode, UpdateMode::Daily);
+    }
+
+    /// The look a fresh install ships with, pinned. The values live in
+    /// packages/core/src/defaults.json, shared with the website, and a user who never
+    /// changed a setting has no config.json (see `is_first_run`), so they take on any
+    /// edit there at their next launch — which makes changing one a decision this test
+    /// has to be told about, not a side effect of tidying the file.
+    #[test]
+    fn a_fresh_install_draws_the_standard_ink_map_in_the_shipped_colors() {
+        let cfg = Config::default();
+        let pair = |bg: &str, fg: &str| ColorPair { background: bg.into(), foreground: fg.into() };
+        assert_eq!(cfg.light, pair("#eee8d6", "#2d2d2d"));
+        assert_eq!(cfg.dark, pair("#000000", "#5e5d58"));
+        assert_eq!(cfg.style, StylePreset::Standard);
+        assert_eq!(cfg.variant, StyleVariant::Ink);
+        assert!(!cfg.show_water && !cfg.show_airports && !cfg.show_aerialways);
+        assert_eq!(cfg.railway_style, RailwayStyle::Off);
     }
 
     #[test]

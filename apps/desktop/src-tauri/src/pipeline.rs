@@ -13,6 +13,7 @@ use crate::bbox::{bbox_for_screen, Bbox};
 use crate::cdn;
 use crate::city;
 use crate::config::{ColorPair, RailwayStyle, StylePreset, StyleVariant, ThemeMode, UpdateMode};
+use crate::defaults;
 use crate::events::FrontendEvent;
 use crate::guess_store;
 use crate::osm_sidecar;
@@ -860,11 +861,12 @@ async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) 
     let renderer = ensure_renderer(app).await?;
     let ((w, h), screens) = screen_geometry(&renderer)?;
     let aspect = w as f64 / h as f64;
-    // 10km half = 20km long side. MUST match MAX_HALF_KM in scripts/osm-cli.ts:
-    // the precached square (aspect=1) is the superset every screen-aspect
-    // rectangle here must fit inside, so the CDN data always covers the wallpaper.
+    // A 20km long side: the same `max_half_km` (packages/core/src/defaults.json) that
+    // osm-cli precaches each day's square with, at aspect 1 — the superset every
+    // screen-aspect rectangle here fits inside, so the CDN data always covers the
+    // wallpaper (`pnpm bbox-test` checks the square contains them all).
     let Resolved { city, osm: preloaded, stamp } = resolved;
-    let bbox = bbox_for_screen(city.lat, city.lon, 10.0, aspect);
+    let bbox = bbox_for_screen(city.lat, city.lon, defaults::get().max_half_km, aspect);
 
     // The back half of the acquisition ladder `resolve_daily` documents: its first
     // two rungs (cache, schedule manifest) arrive here already resolved as

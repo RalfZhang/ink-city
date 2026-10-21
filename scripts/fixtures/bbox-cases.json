@@ -1,0 +1,14 @@
+{
+  "_comment": "The map's crop around a city, for given inputs: bboxForScreen in packages/core/src/bbox.ts and its Rust port bbox_for_screen in apps/desktop/src-tauri/src/bbox.rs. Read by BOTH scripts/bbox-test.ts and cargo test, because CI precaches with the TS one and the client crops with the Rust one — two formulas that drift apart draw the wallpaper past the edge of the data it was given. `aspect` is width:height; every edge must match to 1e-9 degrees. Centres are the pools' own (packages/core/data).",
+  "cases": [
+    { "name": "the square CI precaches (aspect 1) — Shenzhen", "lat": 22.5445741, "lon": 114.0545429, "maxHalfKm": 10, "aspect": [1, 1], "bbox": { "south": 22.454742982500896, "west": 113.95727902698708, "north": 22.6344052174991, "east": 114.15180677301292 } },
+    { "name": "16:10 laptop — Paris", "lat": 48.8534951, "lon": 2.3483915, "maxHalfKm": 10, "aspect": [2880, 1800], "bbox": { "south": 48.797350651563065, "west": 2.2118672789077594, "north": 48.90963954843694, "east": 2.4849157210922406 } },
+    { "name": "16:9 monitor, west of Greenwich — New York City", "lat": 40.7127281, "lon": -74.0060152, "maxHalfKm": 10, "aspect": [1920, 1080], "bbox": { "south": 40.662198096406755, "west": -74.1245275577019, "north": 40.763258103593245, "east": -73.88750284229809 } },
+    { "name": "21:9 ultrawide, southern hemisphere — Sydney", "lat": -33.8698439, "lon": 151.2082848, "maxHalfKm": 10, "aspect": [3440, 1440], "bbox": { "south": -33.90744762360428, "west": 151.10009438908625, "north": -33.83224017639572, "east": 151.31647521091375 } },
+    { "name": "portrait phone, the long side vertical — Hong Kong", "lat": 22.2818333, "lon": 114.1582831, "maxHalfKm": 10, "aspect": [390, 844], "bbox": { "south": 22.192002182500897, "west": 114.11342381709503, "north": 22.3716644174991, "east": 114.20314238290499 } },
+    { "name": "the pools' highest latitude — Longyearbyen", "lat": 78.2231558, "lon": 15.6463656, "maxHalfKm": 10, "aspect": [2560, 1664], "bbox": { "south": 78.16476557362559, "west": 15.206233665296514, "north": 78.28154602637441, "east": 16.086497534703486 } },
+    { "name": "next to the antimeridian — Suva", "lat": -18.1415884, "lon": 178.4421662, "maxHalfKm": 10, "aspect": [2560, 1664], "bbox": { "south": -18.199978626374417, "west": 178.34763598308936, "north": -18.083198173625583, "east": 178.53669641691064 } },
+    { "name": "just south of the equator, square — Quito", "lat": -0.2201641, "lon": -78.5123274, "maxHalfKm": 10, "aspect": [1, 1], "bbox": { "south": -0.3099952174991017, "west": -78.60215918070324, "north": -0.1303329825008983, "east": -78.42249561929677 } },
+    { "name": "a smaller area (pnpm render --km 6) — La Paz", "lat": -16.4955455, "lon": -68.1336229, "maxHalfKm": 3, "aspect": [2560, 1664], "bbox": { "south": -16.513062567912325, "west": -68.16172903271767, "north": -16.478028432087672, "east": -68.10551676728234 } }
+  ]
+}

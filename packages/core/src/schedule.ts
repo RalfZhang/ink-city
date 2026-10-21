@@ -1,5 +1,6 @@
 import type { City } from "./types";
 import { dateStamp } from "./city";
+import cdn from "./cdn.json";
 
 // The daily city schedule (issue #1) — carried forward as CI *state*, not derived
 // from a formula.
@@ -81,23 +82,20 @@ export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
  * the manifest prune and the workflow's gzip pass both sweep that dir — one
  * level up is what keeps them off it.
  *
- * Two files outside TypeScript repeat this layout literally, because neither can
- * import it:
+ * Defined in ./cdn.json, the data branch's table, which the client compiles in
+ * as well (`ScheduleLayout` in apps/desktop/src-tauri/src/github_mirror.rs), so the
+ * producer here and the reader there are one definition rather than two kept in
+ * step. The copy left over is `.github/workflows/precache.yml`, which can read
+ * neither: its gzip glob and publish guard spell the paths out, and
+ * `pnpm schedule-test` parses both and fails if either disagrees with these.
  *
- *   - `apps/desktop/src-tauri/src/cdn.rs` — `SCHEDULE_PATH` (root + data dir),
- *     `SCHEDULE_STATE_DIR` (the root) and `SCHEDULE_STATE_STEM` (the state file
- *     *without* its `.json`, which `fetch_from_mirrors` re-adds along with the
- *     `.gz` variant).
- *   - `.github/workflows/precache.yml` — the gzip glob and the publish guard.
- *
- * Don't go looking for those five copies by grep — the stem above matches neither
- * `osm-v2` nor `city-list.json`. `pnpm schedule-test` parses all five
- * declarations out of the two files and fails if any disagrees with the values
- * here, so a layout change is caught rather than merely documented.
+ * Every release reads these paths with its own copy of the table compiled in, so
+ * renaming one strands the versions already out there (CLAUDE.md, "Files clients
+ * fetch at runtime") — add a new path instead.
  */
-export const SCHEDULE_ROOT = "osm-v2";
-export const SCHEDULE_STATE_FILE = "city-list.json";
-export const SCHEDULE_DATA_DIR = "data";
+export const SCHEDULE_ROOT = cdn.schedule.root;
+export const SCHEDULE_STATE_FILE = cdn.schedule.stateFile;
+export const SCHEDULE_DATA_DIR = cdn.schedule.dataDir;
 
 /**
  * `osm-v2/city-list.json` — the schedule itself, keyed by `YYYY-MM-DD`.

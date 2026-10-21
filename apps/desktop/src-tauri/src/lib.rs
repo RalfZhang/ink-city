@@ -13,9 +13,11 @@
 //!     fallback order.
 //!   - `city` — the compiled-in schedule pool, for the Customized-mode name search
 //!     (the daily city comes from the published schedule, not from here). `bbox`
-//!     is a port of `packages/core/src/bbox.ts`; keep the two in sync.
-//!   - `config` (persisted) vs `state` (live). `tray`, `updates` — the windowless
-//!     surfaces, whose user-facing strings are pushed in from the frontend's i18n.
+//!     is a port of `packages/core/src/bbox.ts`, held to it by a shared fixture.
+//!   - `config` (persisted) vs `state` (live), and `defaults` — the colors, style
+//!     and map span shared with the TypeScript side. `tray`, `updates` — the
+//!     windowless surfaces, whose user-facing strings are pushed in from the
+//!     frontend's i18n.
 //!   - `guess_store` — keeps the guess-the-country game's save on disk. The game
 //!     itself runs in the frontend (`packages/core/src/guess`, shared with the website);
 //!     the backend only reads whether today is revealed, to gate the wallpaper's
@@ -25,6 +27,7 @@ mod cdn;
 mod city;
 mod commands;
 mod config;
+mod defaults;
 mod events;
 mod github_mirror;
 mod guess_store;

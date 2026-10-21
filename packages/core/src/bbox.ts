@@ -7,7 +7,9 @@ const KM_PER_DEG_LAT = 111.32;
  * the shorter side is scaled down by the aspect ratio (width / height). Sizing
  * the bbox to the screen up front means the fetched roads cover-fit the
  * wallpaper without stretching, and we don't pull OSM data we'd crop away.
- * Mirrors `bbox_for_screen` in apps/desktop/src-tauri/src/bbox.rs.
+ * Mirrors `bbox_for_screen` in apps/desktop/src-tauri/src/bbox.rs; both are tested
+ * against the same cases (scripts/fixtures/bbox-cases.json), so neither can change
+ * alone. The wallpaper and CI's precache both pass `MAX_HALF_KM` (./defaults.ts).
  */
 export function bboxForScreen(lat: number, lon: number, maxHalfKm: number, aspect: number): Bbox {
   const [halfWKm, halfHKm] = aspect >= 1

@@ -5,6 +5,10 @@ import type { MapLabel, Style } from "./types";
 // on Earth it is. Drawn over everything else in the map's own ink, ringed by a
 // paper-coloured halo: the cartographic way to keep type legible over linework
 // without boxing it in.
+//
+// Its typeface and proportions are exported (`LABEL_*`) for anything that sets the
+// same caption in another medium — ../www lays it out in CSS — so it can take them
+// from here instead of restating them.
 
 /**
  * Geist first — the settings window's typeface, bundled with the app (the renderer
@@ -19,18 +23,18 @@ import type { MapLabel, Style } from "./types";
 export const LABEL_FONT_FAMILY = `"Geist Variable", system-ui, "Segoe UI", "Noto Sans", sans-serif`;
 
 /** Type sizes, as fractions of the image's short side. */
-const TITLE_SIZE = 0.034;
-const SUBTITLE_SIZE = 0.0165;
-const COORDS_SIZE = 0.0125;
+export const LABEL_TITLE_SIZE = 0.034;
+export const LABEL_SUBTITLE_SIZE = 0.0165;
+export const LABEL_COORDS_SIZE = 0.0125;
 /**
  * Extra gap below each line, as a fraction of that line's size, on top of the font's
  * own ascent + descent (which already carry most of the leading).
  */
-const GAP_AFTER = [0.1, 0.22];
+export const LABEL_GAP_AFTER: readonly number[] = [0.1, 0.22];
 /** Distance from the edge (on top of any insets), as a fraction of the short side. */
-const MARGIN = 0.04;
+export const LABEL_MARGIN = 0.04;
 /** Widest the caption may get, as a fraction of the image width; longer names shrink. */
-const MAX_WIDTH = 0.42;
+export const LABEL_MAX_WIDTH = 0.42;
 /**
  * Width of the paper-coloured halo stroke, as a fraction of the *coordinates* line's
  * size — one width for every line, however big its type. Sized off the smallest
@@ -40,7 +44,7 @@ const MAX_WIDTH = 0.42;
  * outline and the fill covers its inner half, so half of it shows: about 3.6 px on a
  * 5K screen, 1.4 px at 1080p.
  */
-const HALO = 0.2;
+export const LABEL_HALO = 0.2;
 
 type Line = { text: string; size: number; weight: number };
 
@@ -65,9 +69,9 @@ function lines(label: MapLabel, short: number): Line[] {
   const parts: string[] = [];
   if (label.name && !same(label.name, title)) parts.push(label.name);
   if (!parts.some((p) => same(p, country)) && !same(country, title)) parts.push(country);
-  const out: Line[] = [{ text: title, size: short * TITLE_SIZE, weight: 400 }];
-  if (parts.length > 0) out.push({ text: parts.join(" · "), size: short * SUBTITLE_SIZE, weight: 400 });
-  out.push({ text: formatLatLon(label.lat, label.lon), size: short * COORDS_SIZE, weight: 400 });
+  const out: Line[] = [{ text: title, size: short * LABEL_TITLE_SIZE, weight: 400 }];
+  if (parts.length > 0) out.push({ text: parts.join(" · "), size: short * LABEL_SUBTITLE_SIZE, weight: 400 });
+  out.push({ text: formatLatLon(label.lat, label.lon), size: short * LABEL_COORDS_SIZE, weight: 400 });
   return out;
 }
 
@@ -115,7 +119,7 @@ export function drawLabel(
   const short = Math.min(width, height);
   const ls = lines(label, short);
   const insets = label.insets ?? { top: 0, right: 0, bottom: 0, left: 0 };
-  const margin = short * MARGIN;
+  const margin = short * LABEL_MARGIN;
   const leftSide = label.corner.endsWith("left");
   const topSide = label.corner.startsWith("top");
 
@@ -127,7 +131,7 @@ export function drawLabel(
       setFont(ctx, l, 1);
       widest = Math.max(widest, ctx.measureText(l.text).width);
     }
-    const room = Math.min(width * MAX_WIDTH, width - insets.left - insets.right - 2 * margin);
+    const room = Math.min(width * LABEL_MAX_WIDTH, width - insets.left - insets.right - 2 * margin);
     const scale = widest > room && widest > 0 ? room / widest : 1;
 
     const x = leftSide ? insets.left + margin : width - insets.right - margin;
@@ -149,7 +153,7 @@ export function drawLabel(
         // Absent in older engines and node-canvas, which read it as undefined or 0.
         ascent: m.fontBoundingBoxAscent || size * 0.9,
         descent: m.fontBoundingBoxDescent || size * 0.25,
-        gap: i < ls.length - 1 ? size * GAP_AFTER[Math.min(i, GAP_AFTER.length - 1)] : 0,
+        gap: i < ls.length - 1 ? size * LABEL_GAP_AFTER[Math.min(i, LABEL_GAP_AFTER.length - 1)] : 0,
       };
     });
     // A bottom caption starts one block-height up, so it ends at the bottom margin.
@@ -164,7 +168,7 @@ export function drawLabel(
 
     // The coordinates are always the last line (see `lines`); after any shrink-to-fit,
     // so a squeezed caption gets a proportionally finer halo too.
-    ctx.lineWidth = placed[placed.length - 1].size * HALO;
+    ctx.lineWidth = placed[placed.length - 1].size * LABEL_HALO;
     placed.forEach((p, i) => {
       setFont(ctx, p.l, scale);
       ctx.direction = RTL_FIRST.test(p.l.text) ? "rtl" : "ltr";

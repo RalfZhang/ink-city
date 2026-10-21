@@ -19,47 +19,77 @@ pub fn set_proxy(url: Option<String>) {
     *PROXY.write().unwrap() = normalized;
 }
 
-/// Repo these mirrors serve. Update if the repo moves.
-pub const REPO: &str = "RalfZhang/ink-city";
+/// Where installed clients fetch published files from — `packages/core/src/cdn.json`,
+/// compiled in and shared with the TypeScript side, whose CI publishes the schedule
+/// where `schedule` says (packages/core/src/schedule.ts). Every value ships inside
+/// each release, so none that a release has read can be renamed (CLAUDE.md, "Files
+/// clients fetch at runtime"). Read at build time only, unlike `update-mirrors.json`
+/// below: a host table fetched at runtime would need a host from the table to reach it.
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CdnTable {
+    /// `owner/name` of the repo every host mirrors.
+    pub repo: String,
+    /// The branch every repo file installed clients fetch is read from: the
+    /// CI-published `data` branch, never `main`.
+    pub branch: String,
+    /// jsDelivr (and friends) rather than raw.githubusercontent.com directly,
+    /// because the latter is frequently DNS-poisoned in mainland China and
+    /// unreliable for users there.
+    ///
+    /// jsDelivr itself can still have a partial or regional outage, so we also
+    /// try its alternate hostnames (all serve the same GitHub-backed content,
+    /// just different edge networks — testingcf.jsdelivr.net is jsDelivr's own
+    /// Cloudflare-only fallback domain, jsdelivr.b-cdn.net is Bunny-CDN-backed,
+    /// fastly.jsdelivr.net is Fastly-backed) plus cdn.statically.io, an
+    /// independent GitHub-CDN operator using the same "/gh/user/repo@ref/path"
+    /// URL convention, before dropping to `raw_style_hosts`: raw.githack.com (an
+    /// independent Cloudflare-backed proxy of GitHub raw content with correct
+    /// Content-Type headers) and finally raw.githubusercontent.com directly —
+    /// that one's last because it's the one known to be DNS-poisoned in mainland
+    /// China. Hosts are tried in order (`mirror_urls`); the first that returns a
+    /// valid payload wins.
+    ///
+    /// Deliberately not included: community mirrors like JSDMirror
+    /// (jsdmirror.com) — unlike the above, they're run by an unaudited single
+    /// operator rather than jsDelivr/GitHub/a CDN company, and mainland-China
+    /// ones are bound to content-compliance rules that could alter/pull content.
+    ///
+    /// Each serves `{host}/gh/{repo}@{branch}/{path}`.
+    pub jsdelivr_style_hosts: Vec<String>,
+    /// Each serves `{host}/{repo}/{branch}/{path}`, tried after every host above,
+    /// with GitHub's own origin (`GITHUB_RAW_HOST`) last.
+    pub raw_style_hosts: Vec<String>,
+    pub schedule: ScheduleLayout,
+}
 
-/// The branch every repo file installed clients fetch is read from (CLAUDE.md,
-/// "Files clients fetch at runtime"): the CI-published `data` branch, never
-/// `main`. Shipped versions have it compiled in, so it can't be renamed.
-pub const DATA_REF: &str = "data";
+/// Where on the data branch the daily schedule is published: `<root>/<state_file>`
+/// is the schedule itself and `<root>/<data_dir>/<date>.json[.gz]` its manifests —
+/// `osm-v2/city-list.json` and `osm-v2/data/`. Read by `cdn.rs`; CI publishes it
+/// from `SCHEDULE_*` in packages/core/src/schedule.ts, which reads this same block.
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScheduleLayout {
+    pub root: String,
+    pub state_file: String,
+    pub data_dir: String,
+}
 
-/// jsDelivr (and friends) rather than raw.githubusercontent.com directly,
-/// because the latter is frequently DNS-poisoned in mainland China and
-/// unreliable for users there.
-///
-/// jsDelivr itself can still have a partial or regional outage, so we also
-/// try its alternate hostnames (all serve the same GitHub-backed content,
-/// just different edge networks — testingcf.jsdelivr.net is jsDelivr's own
-/// Cloudflare-only fallback domain, jsdelivr.b-cdn.net is Bunny-CDN-backed,
-/// fastly.jsdelivr.net is Fastly-backed) plus cdn.statically.io, an
-/// independent GitHub-CDN operator using the same "/gh/user/repo@ref/path"
-/// URL convention, before dropping to raw.githack.com (an independent
-/// Cloudflare-backed proxy of GitHub raw content with correct Content-Type
-/// headers) and finally raw.githubusercontent.com directly — that one's last
-/// because it's the one known to be DNS-poisoned in mainland China. Hosts
-/// are tried in order; the first that returns a valid payload wins.
-///
-/// Deliberately not included: community mirrors like JSDMirror
-/// (jsdmirror.com) — unlike the above, they're run by an unaudited single
-/// operator rather than jsDelivr/GitHub/a CDN company, and mainland-China
-/// ones are bound to content-compliance rules that could alter/pull content.
-pub const JSDELIVR_STYLE_HOSTS: &[&str] = &[
-    "https://cdn.jsdelivr.net",
-    "https://testingcf.jsdelivr.net",
-    "https://jsdelivr.b-cdn.net",
-    "https://fastly.jsdelivr.net",
-    "https://cdn.statically.io",
-];
-/// GitHub's own raw host — the origin everything above mirrors. It sits last in
-/// `RAW_STYLE_HOSTS` because it's the one known to be DNS-poisoned in mainland
+/// The parsed table. It's compiled in, so the only build that could fail to parse it
+/// is one `cargo test` has already failed (`the_bundled_cdn_table_is_usable`).
+pub fn table() -> &'static CdnTable {
+    static TABLE: OnceLock<CdnTable> = OnceLock::new();
+    TABLE.get_or_init(|| {
+        serde_json::from_str(include_str!("../../../../packages/core/src/cdn.json"))
+            .expect("bundled cdn.json invalid")
+    })
+}
+
+/// GitHub's own raw host — the origin everything in the table mirrors. It sits last
+/// in `raw_style_hosts` because it's the one known to be DNS-poisoned in mainland
 /// China, but it's also the only entry that *isn't* a cache or a CDN edge, which
 /// is why Dev Mode's "bypass cache & CDN" asks for it by name (`github_only_urls`).
 pub const GITHUB_RAW_HOST: &str = "https://raw.githubusercontent.com";
-pub const RAW_STYLE_HOSTS: &[&str] = &["https://raw.githack.com", GITHUB_RAW_HOST];
 
 /// Host serving GitHub *releases* — the updater's manifest and bundles, as
 /// opposed to the repo files every host above serves. Sole input to
@@ -71,7 +101,7 @@ const RELEASE_ORIGIN_HOST: &str = "github.com";
 /// that decides which hosts are admissible:
 ///
 ///   • Reach. jsDelivr and friends only serve files that live in the git tree,
-///     and a release asset isn't one — `cdn.jsdelivr.net/gh/{REPO}@v0.12.1/`
+///     and a release asset isn't one — `cdn.jsdelivr.net/gh/{repo}@v0.12.1/`
 ///     `<asset>` answers 403 — so not one host above can carry an update. Nor
 ///     could they carry ours anyway: the per-file cap is 20 MB and the macOS
 ///     bundle is 70.
@@ -110,8 +140,9 @@ const RELEASE_ORIGIN_HOST: &str = "github.com";
 /// desktop app moved to apps/desktop; they keep their cached or compiled-in
 /// list and only stopped receiving updates to it.
 ///
-/// Read from `DATA_REF`. The source of truth is still `main` (reviewed, never
-/// force-pushed); `data` is where CI publishes it.
+/// Read from the data branch, like every path `mirror_urls` builds. The source of
+/// truth is still `main` (reviewed, never force-pushed); `data` is where CI
+/// publishes it.
 const MIRRORS_FILE: &str = "client/update-mirrors.json";
 /// The compiled-in copy of the very same file — one source of truth, so the
 /// shipped default can't drift from what's published.
@@ -219,7 +250,7 @@ pub async fn refresh_release_proxies() -> Option<String> {
             return None;
         }
     };
-    for url in mirror_urls(DATA_REF, MIRRORS_FILE) {
+    for url in mirror_urls(MIRRORS_FILE) {
         let fetched = match client.get(&url).send().await {
             Ok(response) if response.status().is_success() => response.text().await,
             Ok(response) => {
@@ -289,23 +320,26 @@ pub fn download_client() -> Result<reqwest::Client> {
     Ok(proxied_builder().read_timeout(DOWNLOAD_READ_TIMEOUT).build()?)
 }
 
-/// Ordered candidate URLs mirroring `{REPO}@{git_ref}/{path}` across the
-/// hosts above, jsDelivr-style hosts first, then raw-content-style hosts.
-pub fn mirror_urls(git_ref: &str, path: &str) -> Vec<String> {
-    JSDELIVR_STYLE_HOSTS
+/// Ordered candidate URLs for `path` on the data branch, across every host in the
+/// table: jsDelivr-style hosts first, then raw-content-style hosts. The branch isn't
+/// a parameter because no file an installed client reads lives anywhere else.
+pub fn mirror_urls(path: &str) -> Vec<String> {
+    let CdnTable { repo, branch, jsdelivr_style_hosts, raw_style_hosts, .. } = table();
+    jsdelivr_style_hosts
         .iter()
-        .map(|host| format!("{host}/gh/{REPO}@{git_ref}/{path}"))
-        .chain(RAW_STYLE_HOSTS.iter().map(|host| format!("{host}/{REPO}/{git_ref}/{path}")))
+        .map(|host| format!("{host}/gh/{repo}@{branch}/{path}"))
+        .chain(raw_style_hosts.iter().map(|host| format!("{host}/{repo}/{branch}/{path}")))
         .collect()
 }
 
-/// `{REPO}@{git_ref}/{path}` at GitHub's raw host only — no CDN edge, no proxy
+/// `path` on the data branch at GitHub's raw host only — no CDN edge, no proxy
 /// mirror. For Dev Mode's "bypass cache & CDN", which still has to read one small
 /// file (the schedule state, see `cdn::fetch_schedule_city`) and must read it from
 /// the origin: a CDN edge could serve a cached copy, and a cached copy is the
 /// exact thing that switch exists to avoid.
-pub fn github_only_urls(git_ref: &str, path: &str) -> Vec<String> {
-    vec![format!("{GITHUB_RAW_HOST}/{REPO}/{git_ref}/{path}")]
+pub fn github_only_urls(path: &str) -> Vec<String> {
+    let CdnTable { repo, branch, .. } = table();
+    vec![format!("{GITHUB_RAW_HOST}/{repo}/{branch}/{path}")]
 }
 
 /// A release URL to try in order: `url` itself first, then the same URL through
@@ -355,27 +389,43 @@ mod tests {
 
     #[test]
     fn github_only_urls_is_the_origin_alone() {
-        let urls = github_only_urls("data", "osm-v2");
+        let urls = github_only_urls("osm-v2");
         assert_eq!(urls, ["https://raw.githubusercontent.com/RalfZhang/ink-city/data/osm-v2"]);
         // Nothing cache-y may sneak in — that's the point of the bypass.
         for url in &urls {
-            assert!(!JSDELIVR_STYLE_HOSTS.iter().any(|h| url.starts_with(h)));
+            assert!(!table().jsdelivr_style_hosts.iter().any(|h| url.starts_with(h.as_str())));
             assert!(!url.starts_with("https://raw.githack.com"));
         }
     }
 
     #[test]
     fn mirror_urls_covers_all_hosts_jsdelivr_style_first() {
-        let urls = mirror_urls(DATA_REF, MIRRORS_FILE);
-        assert_eq!(urls.len(), JSDELIVR_STYLE_HOSTS.len() + RAW_STYLE_HOSTS.len());
+        let urls = mirror_urls(MIRRORS_FILE);
+        let jsdelivr = table().jsdelivr_style_hosts.len();
+        assert_eq!(urls.len(), jsdelivr + table().raw_style_hosts.len());
         assert_eq!(
             urls[0],
             "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@data/client/update-mirrors.json"
         );
         assert_eq!(
-            urls[JSDELIVR_STYLE_HOSTS.len()],
+            urls[jsdelivr],
             "https://raw.githack.com/RalfZhang/ink-city/data/client/update-mirrors.json"
         );
+    }
+
+    /// The table is hand-edited JSON and every host in it is joined straight into a
+    /// URL, so a trailing slash or a plain `http://` would cost that host every fetch —
+    /// and since the next host then quietly takes over, nothing would ever report it.
+    #[test]
+    fn the_bundled_cdn_table_is_usable() {
+        let t = table();
+        assert!(!t.jsdelivr_style_hosts.is_empty() && !t.raw_style_hosts.is_empty());
+        for host in t.jsdelivr_style_hosts.iter().chain(&t.raw_style_hosts) {
+            let url = reqwest::Url::parse(host).unwrap_or_else(|e| panic!("{host}: {e}"));
+            assert_eq!(url.scheme(), "https", "{host}");
+            // A bare origin: `Url` reads both `https://h` and `https://h/` as path "/".
+            assert!(url.path() == "/" && !host.ends_with('/'), "{host} must have no path");
+        }
     }
 
     const ASSET: &str =
@@ -421,11 +471,11 @@ mod tests {
         assert!(BAKED_IN_MIRRORS.contains("\"note\""));
     }
 
-    /// Nothing but precache.yml puts the list where `DATA_REF`/`MIRRORS_FILE`
-    /// look, and a path renamed on either side would fail silently: every client
-    /// would get a 404, keep its old list, and log at debug level. So compare the
-    /// workflow's actual assignments, not a substring a comment could satisfy —
-    /// including that it publishes the same file this module compiles in.
+    /// Nothing but precache.yml puts the list where the table's `branch` and
+    /// `MIRRORS_FILE` look, and a path renamed on either side would fail silently:
+    /// every client would get a 404, keep its old list, and log at debug level. So
+    /// compare the workflow's actual assignments, not a substring a comment could
+    /// satisfy — including that it publishes the same file this module compiles in.
     #[test]
     fn precache_publishes_the_list_where_clients_read_it() {
         const WORKFLOW: &str = include_str!("../../../../.github/workflows/precache.yml");
@@ -437,7 +487,7 @@ mod tests {
                 .find_map(|line| line.strip_prefix(prefix.as_str()))
                 .unwrap_or_else(|| panic!("precache.yml no longer assigns `{var}`"))
         };
-        assert_eq!(DATA_REF, "data", "precache.yml publishes to the data branch only");
+        assert_eq!(table().branch, "data", "precache.yml publishes to the data branch only");
         assert_eq!(assigned("mirrors_dest"), format!("data-out/{MIRRORS_FILE}"));
         // The repo-root path of `BAKED_IN_MIRRORS`'s `../update-mirrors.json`.
         assert_eq!(assigned("mirrors_src"), "apps/desktop/src-tauri/update-mirrors.json");
@@ -499,9 +549,9 @@ mod tests {
     // every CDN edge is tried before anything GitHub-side, and the origin is last.
     #[test]
     fn mirror_urls_puts_every_cdn_edge_before_github() {
-        let urls = mirror_urls("data", "osm-v2/data");
+        let urls = mirror_urls("osm-v2/data");
         let first_raw = urls.iter().position(|u| u.contains("raw.")).unwrap();
-        assert_eq!(first_raw, JSDELIVR_STYLE_HOSTS.len());
+        assert_eq!(first_raw, table().jsdelivr_style_hosts.len());
         assert!(urls.last().unwrap().starts_with(GITHUB_RAW_HOST));
     }
 }

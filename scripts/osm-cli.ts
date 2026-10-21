@@ -57,6 +57,7 @@ import {
   pickCityForDate,
   bboxForScreen,
   dateStamp,
+  MAX_HALF_KM,
   OSM_SCHEMA_VERSION,
   type City,
   type Bbox,
@@ -85,9 +86,6 @@ const ROOT = join(__dirname, "..");
 const DATA_DIR = join(ROOT, "packages", "core", "data");
 
 const COORD_PRECISION = 5;
-// Match the client: bbox_for_screen(lat, lon, max_half_km = 10, aspect = 1)
-// yields a 20km square that is a superset of every screen-aspect rectangle.
-const MAX_HALF_KM = 10;
 // Gap between consecutive Overpass fetches, so a run doesn't hammer it back-to-back.
 const THROTTLE_MS = 3000;
 
@@ -258,6 +256,9 @@ async function fetchEach<K>(
   for (const [key, city] of jobs) {
     if (!first) await new Promise((r) => setTimeout(r, THROTTLE_MS));
     first = false;
+    // The 20km square around the city (aspect 1): the client crops its screen's
+    // rectangle out of it with the same MAX_HALF_KM, and the square contains every
+    // such crop (`pnpm bbox-test`), so one payload serves every screen.
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
       onFetched(key, city, await fetchCityData(bbox, { coordPrecision: COORD_PRECISION }));

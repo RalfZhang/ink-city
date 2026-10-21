@@ -1,0 +1,16 @@
+{
+  "_comment": "The defaults the desktop app and the TypeScript side share, kept only here: Rust compiles this file in (apps/desktop/src-tauri/src/defaults.rs) and TS imports it (./defaults.ts — the website, CI and the scripts). colors + style are the map a fresh install draws; maxHalfKm sizes every map and is a contract with data already published, so read MAX_HALF_KM in ./defaults.ts before changing it.",
+  "colors": {
+    "light": { "background": "#eee8d6", "foreground": "#2d2d2d" },
+    "dark": { "background": "#000000", "foreground": "#5e5d58" }
+  },
+  "style": {
+    "preset": "standard",
+    "showWater": false,
+    "showAirports": false,
+    "railwayStyle": "off",
+    "showAerialways": false,
+    "variant": "ink"
+  },
+  "maxHalfKm": 10
+}

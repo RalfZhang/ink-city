@@ -1,0 +1,14 @@
+{
+  "_comment": "Where installed clients fetch published data from: the repo, its `data` branch (CLAUDE.md, 'Files clients fetch at runtime'), the hosts that serve it in the order they are tried — every jsDelivr-style host (<host>/gh/<repo>@<branch>/<path>) first, then the raw-style ones (<host>/<repo>/<branch>/<path>), GitHub's own origin last — and the schedule's paths on that branch. Compiled into the desktop app (apps/desktop/src-tauri/src/github_mirror.rs, which explains the choice of hosts) and read by CI through ./schedule.ts. Build time only: a host table fetched at runtime would need a host from the table to reach it. Each release keeps the values it was built with, so a path or name here that a release has read can't be renamed.",
+  "repo": "RalfZhang/ink-city",
+  "branch": "data",
+  "jsdelivrStyleHosts": [
+    "https://cdn.jsdelivr.net",
+    "https://testingcf.jsdelivr.net",
+    "https://jsdelivr.b-cdn.net",
+    "https://fastly.jsdelivr.net",
+    "https://cdn.statically.io"
+  ],
+  "rawStyleHosts": ["https://raw.githack.com", "https://raw.githubusercontent.com"],
+  "schedule": { "root": "osm-v2", "stateFile": "city-list.json", "dataDir": "data" }
+}
