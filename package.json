@@ -6,8 +6,9 @@
   "packageManager": "pnpm@11.11.0",
   "scripts": {
     "dev": "pnpm -F @inkcity/desktop dev",
-    "build": "tsc -p packages/core && tsc -p packages/osm && tsc -p packages/ui && pnpm -F @inkcity/desktop build",
+    "build": "tsc -p packages/core && tsc -p packages/osm && tsc -p packages/ui && pnpm -F @inkcity/desktop build && pnpm -F @inkcity/web build",
     "tauri": "pnpm -F @inkcity/desktop tauri",
+    "web": "pnpm -F @inkcity/web",
     "check:i18n": "tsx scripts/check-i18n.ts",
     "build:cities": "node scripts/build-cities.mjs",
     "precache": "tsx scripts/osm-cli.ts precache",
@@ -22,14 +23,16 @@
     "coords-test": "tsx scripts/coords-test.ts",
     "guess-test": "tsx scripts/guess-test.ts",
     "railway-test": "tsx scripts/railway-test.ts",
-    "bbox-test": "tsx scripts/bbox-test.ts"
+    "bbox-test": "tsx scripts/bbox-test.ts",
+    "cdn-test": "tsx scripts/cdn-test.ts",
+    "web-test": "tsx scripts/web-test.ts"
   },
   "devDependencies": {
     "@inkcity/core": "workspace:*",
     "@inkcity/osm": "workspace:*",
-    "@types/node": "^26.1.1",
+    "@types/node": "catalog:",
     "canvas": "^3.1.0",
     "tsx": "^4.20.6",
-    "typescript": "~5.8.3"
+    "typescript": "catalog:"
   }
 }

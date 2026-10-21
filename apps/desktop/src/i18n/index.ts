@@ -1,7 +1,14 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { UI_NS, uiResources } from "@inkcity/ui/i18n";
-import { LOCALES, SUPPORTED, dirForLocale, type LocaleCode } from "./locales";
+import {
+  LOCALES,
+  SUPPORTED,
+  detectLocale,
+  dirForLocale,
+  isLocaleCode,
+  type LocaleCode,
+} from "./locales";
 
 export { LOCALES, RTL_LOCALES, dirForLocale, type LocaleCode } from "./locales";
 
@@ -9,21 +16,9 @@ export const STORAGE_KEY = "inkcity:lang";
 
 export type LocaleChoice = "auto" | LocaleCode;
 
-function isLocaleCode(v: unknown): v is LocaleCode {
-  return typeof v === "string" && (SUPPORTED as readonly string[]).includes(v);
-}
-
-/**
- * Resolve the OS locale to one of our supported codes via each locale's own
- * `detect` predicate (see locales.ts). Predicates are mutually exclusive, so
- * the first match wins; nothing matching falls back to English. Chinese branches
- * on script/region: Traditional for Taiwan / Hong Kong / Macau (or an explicit
- * `Hant` script), Simplified otherwise. Spanish / French / German match on the
- * primary subtag (any region — `es-419`, `fr-CA`, `de-AT`, … all collapse).
- */
+/** The OS locale, resolved to a shipped code (see `detectLocale`). */
 function detectFromNavigator(): LocaleCode {
-  const lang = (navigator.language || "en").toLowerCase();
-  return LOCALES.find((l) => l.detect(lang))?.code ?? "en";
+  return detectLocale(navigator.language);
 }
 
 function initialLanguage(): LocaleCode {

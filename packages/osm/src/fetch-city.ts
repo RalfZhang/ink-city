@@ -4,12 +4,13 @@
 // single-shot "fetch" (the latter invoked live by the desktop app's sidecar) — so
 // the CDN and the live fallback always produce the same shape for the same bbox.
 //
-// Runs in Node/Deno/Bun — never on the client (see water.ts's note on
-// polygon-clipping), which is what keeps this package separate from
-// `@inkcity/core`.
+// Runs in Node/Deno/Bun, and in one client: the website's map worker, which loads
+// it lazily for the last rung of its fetch ladder (see water.ts's note on
+// polygon-clipping, which is what keeps this package separate from
+// `@inkcity/core`).
 
 import type { Bbox, Osm } from "@inkcity/core";
-import { fetchOverpass } from "./overpass";
+import { fetchOverpass, type FetchOptions } from "./overpass";
 import { roadsSelector, slimRoads } from "./roads";
 import { waterSelector, slimWater } from "./water";
 import { airportsSelector, slimAirports } from "./airports";
@@ -19,6 +20,8 @@ import { OSM_SCHEMA_VERSION } from "@inkcity/core";
 
 export type FetchCityOptions = {
   coordPrecision?: number;
+  /** Passed to the Overpass transport — the website's worker spends less time and sends no User-Agent. */
+  overpass?: FetchOptions;
 };
 
 // All five layers share one timeout budget, so it has to be generous — this is
@@ -48,7 +51,7 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
     railwaysSelector(bbox) +
     aerialwaysSelector(bbox) +
     `);out geom;`;
-  const raw = await fetchOverpass(query);
+  const raw = await fetchOverpass(query, undefined, opts.overpass);
 
   const elements = slimRoads(raw as Parameters<typeof slimRoads>[0], precision).elements ?? [];
   return {

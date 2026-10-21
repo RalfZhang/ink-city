@@ -5,3 +5,26 @@ packages:
 allowBuilds:
   canvas: true
   esbuild: true
+
+# One version of every dependency more than one workspace package uses; each
+# lists it as `catalog:`. It matters most for React and i18next: `@inkcity/ui`
+# takes them as peers and must share the host app's copy, and pnpm keys a
+# package's copy on its peers' versions — so two apps on different versions
+# would quietly hand the shared components a second instance.
+catalog:
+  "@fontsource-variable/geist": ^5.2.9
+  "@tailwindcss/vite": ^4.3.0
+  "@types/node": ^26.1.1
+  "@types/react": ^19.1.8
+  "@types/react-dom": ^19.1.6
+  "@vitejs/plugin-react": ^4.6.0
+  i18next: ^26.3.0
+  lucide-react: ^1.17.0
+  radix-ui: ^1.4.3
+  react: ^19.1.0
+  react-dom: ^19.1.0
+  react-i18next: ^17.0.8
+  shadcn: ^4.8.2
+  tailwindcss: ^4.3.0
+  typescript: ~5.8.3
+  vite: ^7.0.4

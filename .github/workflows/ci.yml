@@ -7,10 +7,10 @@ name: CI
 # `cargo test` vets for both languages), which only mean something when both
 # sides run against the same commit.
 #
-#   ts    `pnpm build` (check:i18n → tsc → vite build), the tsx test
-#         scripts, and an offline run of osm-cli proving its whole import graph
-#         still resolves — the precache job and the bundled sidecar both start
-#         there.
+#   ts    `pnpm build` (check:i18n → tsc → vite build, for the desktop app and
+#         the website), the tsx test scripts, and an offline run of osm-cli
+#         proving its whole import graph still resolves — the precache job and
+#         the bundled sidecar both start there.
 #   rust  `cargo test` on all three OSes. Development happens on a Mac, so the
 #         Linux-only (tray_linux, wallpaper_linux) and Windows-only modules are
 #         otherwise first compiled by a release build. tauri-build refuses to
@@ -74,6 +74,8 @@ jobs:
           pnpm coords-test
           pnpm railway-test
           pnpm bbox-test
+          pnpm cdn-test
+          pnpm web-test
 
       # With no arguments osm-cli throws its usage line, which it can only reach
       # once every module it imports has loaded — no Overpass request involved.

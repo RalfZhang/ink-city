@@ -1,8 +1,9 @@
-// Strings for the shared components, as their own i18next namespace (`UI_NS`).
-// A host registers `uiResources[code]` under that namespace for every locale it
-// ships, next to its own resources — see apps/desktop/src/i18n/index.ts in the desktop app.
-// `pnpm check:i18n` holds these files to the same parity rule as the desktop's:
-// every key of en.json in every locale, nothing extra.
+// Strings for the shared components, as their own i18next namespace (`UI_NS`),
+// plus the table of shipped locales (./locales) every host builds its i18n from.
+// A host registers `uiResources[code]` under that namespace for every locale,
+// next to its own resources — see apps/desktop/src/i18n/index.ts and
+// apps/web/src/i18n/index.ts. `pnpm check:i18n` holds these files to the same
+// parity rule as the apps': every key of en.json in every locale, nothing extra.
 //
 // What the components can't word for every host stays with the host and comes in
 // as a prop instead — e.g. GuessCountry's `paintingLine`, which on the desktop is
@@ -28,7 +29,10 @@ import vi from "./vi.json";
 import zhHans from "./zh-Hans.json";
 import zhHant from "./zh-Hant.json";
 
+import type { LocaleCode } from "./locales";
+
 export { UI_NS } from "./ns";
+export * from "./locales";
 
 /** The namespace's shape, for a host's i18next type augmentation. */
 export type UiResources = typeof en;
@@ -54,4 +58,4 @@ export const uiResources = {
   vi,
   "zh-Hans": zhHans,
   "zh-Hant": zhHant,
-} as const;
+} as const satisfies Record<LocaleCode, UiResources>;

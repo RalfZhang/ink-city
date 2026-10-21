@@ -413,6 +413,29 @@ mod tests {
         );
     }
 
+    /// The URLs the website's `mirrorUrls` (packages/core/src/cdn.ts) builds from the
+    /// same table, in the same order — the cases `pnpm cdn-test` runs too, so the
+    /// desktop's ladder and the website's can't drift apart.
+    #[test]
+    fn mirror_urls_match_the_shared_fixture() {
+        #[derive(Deserialize)]
+        struct Case {
+            path: String,
+            urls: Vec<String>,
+        }
+        #[derive(Deserialize)]
+        struct Fixture {
+            cases: Vec<Case>,
+        }
+        let fixture: Fixture =
+            serde_json::from_str(include_str!("../../../../scripts/fixtures/mirror-urls.json"))
+                .unwrap();
+        assert!(!fixture.cases.is_empty());
+        for c in fixture.cases {
+            assert_eq!(mirror_urls(&c.path), c.urls, "{}", c.path);
+        }
+    }
+
     /// The table is hand-edited JSON and every host in it is joined straight into a
     /// URL, so a trailing slash or a plain `http://` would cost that host every fetch —
     /// and since the next host then quietly takes over, nothing would ever report it.

@@ -8,9 +8,10 @@ import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "@in
 import { TOL, isClosed, dedupeAdjacent, roundPts } from "./geom";
 
 // The "water" layer's selector + slim, dispatched by fetch-city.ts. Runs at
-// PRECACHE/FETCH time (Node/Deno/Bun), never on the client. Its dependency on
-// `polygon-clipping`, which must stay out of the desktop/website bundle, is the
-// main reason OSM acquisition is a package of its own rather than part of
+// PRECACHE/FETCH time (Node/Deno/Bun) — on the web only in the website's map
+// worker, which loads it lazily for its last rung. Its dependency on
+// `polygon-clipping`, which must stay out of the apps' main bundles, is the main
+// reason OSM acquisition is a package of its own rather than part of
 // `@inkcity/core`.
 //
 // This is where all the fiddly geometry lives, worked in geographic (lat/lon) space

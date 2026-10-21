@@ -4,6 +4,57 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@fontsource-variable/geist':
+      specifier: ^5.2.9
+      version: 5.2.9
+    '@tailwindcss/vite':
+      specifier: ^4.3.0
+      version: 4.3.2
+    '@types/node':
+      specifier: ^26.1.1
+      version: 26.1.1
+    '@types/react':
+      specifier: ^19.1.8
+      version: 19.2.17
+    '@types/react-dom':
+      specifier: ^19.1.6
+      version: 19.2.3
+    '@vitejs/plugin-react':
+      specifier: ^4.6.0
+      version: 4.7.0
+    i18next:
+      specifier: ^26.3.0
+      version: 26.3.6
+    lucide-react:
+      specifier: ^1.17.0
+      version: 1.24.0
+    radix-ui:
+      specifier: ^1.4.3
+      version: 1.6.2
+    react:
+      specifier: ^19.1.0
+      version: 19.2.7
+    react-dom:
+      specifier: ^19.1.0
+      version: 19.2.7
+    react-i18next:
+      specifier: ^17.0.8
+      version: 17.0.9
+    shadcn:
+      specifier: ^4.8.2
+      version: 4.13.0
+    tailwindcss:
+      specifier: ^4.3.0
+      version: 4.3.2
+    typescript:
+      specifier: ~5.8.3
+      version: 5.8.3
+    vite:
+      specifier: ^7.0.4
+      version: 7.3.6
+
 importers:
 
   .:
@@ -15,7 +66,7 @@ importers:
         specifier: workspace:*
         version: link:packages/osm
       '@types/node':
-        specifier: ^26.1.1
+        specifier: 'catalog:'
         version: 26.1.1
       canvas:
         specifier: ^3.1.0
@@ -24,13 +75,13 @@ importers:
         specifier: ^4.20.6
         version: 4.23.0
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
 
   apps/desktop:
     dependencies:
       '@fontsource-variable/geist':
-        specifier: ^5.2.9
+        specifier: 'catalog:'
         version: 5.2.9
       '@inkcity/core':
         specifier: workspace:*
@@ -51,53 +102,105 @@ importers:
         specifier: ^2
         version: 2.5.4
       i18next:
-        specifier: ^26.3.0
+        specifier: 'catalog:'
         version: 26.3.6(typescript@5.8.3)
       lucide-react:
-        specifier: ^1.17.0
+        specifier: 'catalog:'
         version: 1.24.0(react@19.2.7)
       radix-ui:
-        specifier: ^1.4.3
+        specifier: 'catalog:'
         version: 1.6.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.2.7
       react-dom:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
       react-i18next:
-        specifier: ^17.0.8
+        specifier: 'catalog:'
         version: 17.0.9(i18next@26.3.6(typescript@5.8.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.8.3)
       shadcn:
-        specifier: ^4.8.2
+        specifier: 'catalog:'
         version: 4.13.0(typescript@5.8.3)
     devDependencies:
       '@tailwindcss/vite':
-        specifier: ^4.3.0
+        specifier: 'catalog:'
         version: 4.3.2(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
       '@tauri-apps/cli':
         specifier: ^2
         version: 2.11.4
       '@types/node':
-        specifier: ^26.1.1
+        specifier: 'catalog:'
         version: 26.1.1
       '@types/react':
-        specifier: ^19.1.8
+        specifier: 'catalog:'
         version: 19.2.17
       '@types/react-dom':
-        specifier: ^19.1.6
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
       '@vitejs/plugin-react':
-        specifier: ^4.6.0
+        specifier: 'catalog:'
         version: 4.7.0(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
       tailwindcss:
-        specifier: ^4.3.0
+        specifier: 'catalog:'
         version: 4.3.2
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: ^7.0.4
+        specifier: 'catalog:'
+        version: 7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0)
+
+  apps/web:
+    dependencies:
+      '@inkcity/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@inkcity/osm':
+        specifier: workspace:*
+        version: link:../../packages/osm
+      '@inkcity/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      i18next:
+        specifier: 'catalog:'
+        version: 26.3.6(typescript@5.8.3)
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.24.0(react@19.2.7)
+      radix-ui:
+        specifier: 'catalog:'
+        version: 1.6.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
+      react-i18next:
+        specifier: 'catalog:'
+        version: 17.0.9(i18next@26.3.6(typescript@5.8.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.8.3)
+    devDependencies:
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.2(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.17)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.7.0(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0))
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.3.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vite:
+        specifier: 'catalog:'
         version: 7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0)
 
   packages/core: {}
@@ -114,7 +217,7 @@ importers:
   packages/ui:
     dependencies:
       '@fontsource-variable/geist':
-        specifier: ^5.2.9
+        specifier: 'catalog:'
         version: 5.2.9
       '@inkcity/core':
         specifier: workspace:*
@@ -126,41 +229,41 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^1.17.0
+        specifier: 'catalog:'
         version: 1.24.0(react@19.2.7)
       radix-ui:
-        specifier: ^1.4.3
+        specifier: 'catalog:'
         version: 1.6.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       shadcn:
-        specifier: ^4.8.2
+        specifier: 'catalog:'
         version: 4.13.0(typescript@5.8.3)
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
       tailwindcss:
-        specifier: ^4.3.0
+        specifier: 'catalog:'
         version: 4.3.2
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
       '@types/react':
-        specifier: ^19.1.8
+        specifier: 'catalog:'
         version: 19.2.17
       '@types/react-dom':
-        specifier: ^19.1.6
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
       i18next:
-        specifier: ^26.3.0
+        specifier: 'catalog:'
         version: 26.3.6(typescript@5.8.3)
       react:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.2.7
       react-dom:
-        specifier: ^19.1.0
+        specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
       react-i18next:
-        specifier: ^17.0.8
+        specifier: 'catalog:'
         version: 17.0.9(i18next@26.3.6(typescript@5.8.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.8.3)
 
 packages:

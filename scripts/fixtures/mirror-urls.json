@@ -1,0 +1,29 @@
+{
+  "_comment": "The ordered URLs a client tries for a file on the data branch, from packages/core/src/cdn.json: mirrorUrls in packages/core/src/cdn.ts (the website) and mirror_urls in apps/desktop/src-tauri/src/github_mirror.rs (the desktop). Read by BOTH scripts/cdn-test.ts and cargo test, so the two fetch ladders can't drift apart. Spelled out in full on purpose: editing a host in cdn.json means editing these too.",
+  "cases": [
+    {
+      "path": "osm-v2/data/2026-10-20.json.gz",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/data/2026-10-20.json.gz",
+        "https://testingcf.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/data/2026-10-20.json.gz",
+        "https://jsdelivr.b-cdn.net/gh/RalfZhang/ink-city@data/osm-v2/data/2026-10-20.json.gz",
+        "https://fastly.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/data/2026-10-20.json.gz",
+        "https://cdn.statically.io/gh/RalfZhang/ink-city@data/osm-v2/data/2026-10-20.json.gz",
+        "https://raw.githack.com/RalfZhang/ink-city/data/osm-v2/data/2026-10-20.json.gz",
+        "https://raw.githubusercontent.com/RalfZhang/ink-city/data/osm-v2/data/2026-10-20.json.gz"
+      ]
+    },
+    {
+      "path": "osm-v2/city-list.json",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/city-list.json",
+        "https://testingcf.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/city-list.json",
+        "https://jsdelivr.b-cdn.net/gh/RalfZhang/ink-city@data/osm-v2/city-list.json",
+        "https://fastly.jsdelivr.net/gh/RalfZhang/ink-city@data/osm-v2/city-list.json",
+        "https://cdn.statically.io/gh/RalfZhang/ink-city@data/osm-v2/city-list.json",
+        "https://raw.githack.com/RalfZhang/ink-city/data/osm-v2/city-list.json",
+        "https://raw.githubusercontent.com/RalfZhang/ink-city/data/osm-v2/city-list.json"
+      ]
+    }
+  ]
+}

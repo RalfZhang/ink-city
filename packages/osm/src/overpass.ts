@@ -1,8 +1,9 @@
 // The Overpass HTTP transport: mirror rotation + rate-limit retry. Uses the global
-// `fetch`, so it runs in the browser, in Node 18+ (the CI pre-cache script), and in
-// Deno. This is the codebase's only Overpass client — apps/desktop/src-tauri's live fallback
-// shells out to it via scripts/osm-cli.ts (see apps/desktop/src-tauri/src/osm_sidecar.rs) rather
-// than carrying a Rust one. fetch-city.ts composes every layer's selector into one
+// `fetch`, so it runs in Node 18+ (the CI pre-cache script and the desktop's
+// sidecar), in Deno, and in the website's map worker. This is the codebase's only
+// Overpass client — apps/desktop/src-tauri's live fallback shells out to it via
+// scripts/osm-cli.ts (see apps/desktop/src-tauri/src/osm_sidecar.rs) rather than
+// carrying a Rust one. fetch-city.ts composes every layer's selector into one
 // union query and POSTs it here once.
 
 export const MIRRORS = [
@@ -19,7 +20,18 @@ export type FetchOptions = {
   retries?: number;
   /** Base backoff between rounds (doubles each round). */
   backoffMs?: number;
+  /**
+   * The `User-Agent` to send, or `null` for none of our own. Overpass rejects a
+   * request with no User-Agent at all (HTTP 406) and Node's fetch sends none, hence
+   * the default. A browser always sends its own, and naming another backfires there:
+   * Chrome drops it, while Firefox sends it — which turns the POST into a non-simple
+   * request that needs a CORS preflight the mirrors may not answer. The website's map
+   * worker passes `null`.
+   */
+  userAgent?: string | null;
 };
+
+const USER_AGENT = "InkCity/0.1 (https://github.com/RalfZhang/ink-city)";
 
 /**
  * The runtime error an Overpass response reports in-band, or `undefined`. A query
@@ -55,6 +67,7 @@ export async function fetchOverpass(
 ): Promise<unknown> {
   const retries = opts.retries ?? 4;
   const backoffMs = opts.backoffMs ?? 15_000;
+  const userAgent = opts.userAgent === undefined ? USER_AGENT : opts.userAgent;
   let lastErr: unknown;
 
   for (let round = 0; round <= retries; round++) {
@@ -63,12 +76,11 @@ export async function fetchOverpass(
       try {
         const res = await fetch(url, {
           method: "POST",
+          // A CORS-safelisted content type, so a browser sends this as a simple
+          // request (see `userAgent` for the one header that wouldn't be).
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            // Overpass rejects requests without a User-Agent (HTTP 406). Node's
-            // fetch sends none by default; browsers ignore this header (the
-            // website fetches from the CDN, not Overpass, so it's moot there).
-            "User-Agent": "InkCity/0.1 (https://github.com/RalfZhang/ink-city)",
+            ...(userAgent === null ? {} : { "User-Agent": userAgent }),
           },
           body: `data=${encodeURIComponent(query)}`,
         });

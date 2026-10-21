@@ -2,12 +2,13 @@
 // Guards locale parity: every key in the source-of-truth locale (en) must exist
 // in every other locale, and no locale may carry stray keys. Without this a
 // missing translation silently falls back to English in the UI and nothing in
-// the build complains. The locale list is imported from `apps/desktop/src/i18n/locales.ts`,
-// so it tracks the shipped locales with no manual sync.
+// the build complains. The locale list is the shared table in
+// `packages/ui/src/i18n/locales.ts`, so it tracks the shipped locales with no
+// manual sync.
 //
-// It checks each catalog the app loads: its own strings (apps/desktop/src/i18n) and the
-// shared components' `ui` namespace (packages/ui/src/i18n), which has to cover
-// every locale the app ships too — a missing file there is a failure, not a skip.
+// It checks every catalog an app loads: each app's own strings (apps/desktop/src/i18n,
+// apps/web/src/i18n) and the shared components' `ui` namespace (packages/ui/src/i18n).
+// Each has to cover every shipped locale — a missing file is a failure, not a skip.
 //
 //   pnpm check:i18n
 //
@@ -17,10 +18,10 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { LOCALES } from "../apps/desktop/src/i18n/locales";
+import { LOCALES } from "../packages/ui/src/i18n/locales";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const CATALOGS = ["apps/desktop/src/i18n", "packages/ui/src/i18n"];
+const CATALOGS = ["apps/desktop/src/i18n", "apps/web/src/i18n", "packages/ui/src/i18n"];
 
 // Codes come straight from the shipped-locales table, so this stays in lockstep
 // with the app automatically. "en" is the source of truth (matches `fallbackLng`

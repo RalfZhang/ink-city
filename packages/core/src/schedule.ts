@@ -1,6 +1,5 @@
 import type { City } from "./types";
 import { dateStamp } from "./city";
-import cdn from "./cdn.json";
 
 // The daily city schedule (issue #1) — carried forward as CI *state*, not derived
 // from a formula.
@@ -72,30 +71,9 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
  */
 export const SCHEDULE_POOL_RE = /^cities-.+\.json$/;
 
-/**
- * Where the schedule is published on the `data` branch:
- *
- *     <SCHEDULE_ROOT>/<SCHEDULE_STATE_FILE>          the schedule itself
- *     <SCHEDULE_ROOT>/<SCHEDULE_DATA_DIR>/<date>.json[.gz]
- *
- * The state file sits *beside* the manifest dir rather than inside it because
- * the manifest prune and the workflow's gzip pass both sweep that dir — one
- * level up is what keeps them off it.
- *
- * Defined in ./cdn.json, the data branch's table, which the client compiles in
- * as well (`ScheduleLayout` in apps/desktop/src-tauri/src/github_mirror.rs), so the
- * producer here and the reader there are one definition rather than two kept in
- * step. The copy left over is `.github/workflows/precache.yml`, which can read
- * neither: its gzip glob and publish guard spell the paths out, and
- * `pnpm schedule-test` parses both and fails if either disagrees with these.
- *
- * Every release reads these paths with its own copy of the table compiled in, so
- * renaming one strands the versions already out there (CLAUDE.md, "Files clients
- * fetch at runtime") — add a new path instead.
- */
-export const SCHEDULE_ROOT = cdn.schedule.root;
-export const SCHEDULE_STATE_FILE = cdn.schedule.stateFile;
-export const SCHEDULE_DATA_DIR = cdn.schedule.dataDir;
+// The layout on the `data` branch — documented where it's defined, in ./cdn.ts,
+// and re-exported for the CI scripts that import this module.
+export { SCHEDULE_DATA_DIR, SCHEDULE_ROOT, SCHEDULE_STATE_FILE } from "./cdn";
 
 /**
  * `osm-v2/city-list.json` — the schedule itself, keyed by `YYYY-MM-DD`.

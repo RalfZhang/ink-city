@@ -6,6 +6,9 @@
       "include-component-in-tag": false,
       "draft": true,
       "force-tag-creation": true,
+      "exclude-paths": [
+        "apps/web"
+      ],
       "extra-files": [
         {
           "type": "json",
