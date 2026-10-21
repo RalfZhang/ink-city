@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — adivina la ciudad de hoy",
+    "description": "Cada día una ciudad nueva, dibujada con tinta a partir de OpenStreetMap. Adivina en qué país está y ponla de fondo de pantalla."
+  },
+  "panel": {
+    "tagline": "Una ciudad nueva cada día, dibujada con tinta",
+    "showMap": "Ver el mapa completo",
+    "showGame": "Volver al juego"
+  },
+  "today": {
+    "label": "Hoy",
+    "concealed": "Se revela tras la partida de hoy",
+    "loading": "Cargando el mapa de hoy…",
+    "rebuilding": "El mapa de hoy aún no se ha publicado: se está dibujando directamente desde OpenStreetMap y puede tardar un minuto…",
+    "failed": "No se pudo cargar el mapa de hoy.",
+    "retry": "Reintentar",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Podrás adivinar en cuanto el mapa esté dibujado.",
+    "paintFailed": "Podrás adivinar en cuanto el mapa se haya cargado."
+  },
+  "storage": {
+    "memoryOnly": "Tu navegador no guarda esta partida, así que se perderá al cerrar la página."
+  },
+  "download": {
+    "teaser": "InkCity es una aplicación de escritorio que pone una ciudad nueva en tu fondo de pantalla cada día.",
+    "teaserLink": "Descárgala",
+    "title": "Pon {{city}} de fondo de pantalla hoy",
+    "body": "Una ciudad nueva en tu escritorio cada medianoche, dibujada para tu pantalla. El fondo es el acertijo: el nombre aparece en la esquina cuando lo adivinas.",
+    "countdown": "Próxima ciudad en {{time}}. La aplicación la cambia por ti",
+    "button": "Descargar para {{os}}",
+    "alsoOn": "Gratis y de código abierto, también para {{others}}",
+    "free": "Gratis y de código abierto",
+    "otherPlatforms": "Otras plataformas",
+    "mobile": "InkCity es una aplicación de escritorio. Abre esta página en tu ordenador para descargarla.",
+    "share": "Enviármelo",
+    "copied": "Enlace copiado",
+    "kind": {
+      "dmg": "Apple silicon e Intel",
+      "exe": "Instalador",
+      "msi": "Paquete MSI",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Datos del mapa de carreteras © colaboradores de <0>OpenStreetMap</0>, con licencia <1>ODbL</1>.",
+    "geonames": "Lista de ciudades de <0>GeoNames</0>, con licencia <1>CC BY 4.0</1>.",
+    "credit": "Icono de la aplicación y diseño visual del mapa por {{name}}",
+    "source": "Código fuente",
+    "language": "Idioma"
+  }
+}

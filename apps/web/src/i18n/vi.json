@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — đoán thành phố hôm nay",
+    "description": "Mỗi ngày một thành phố mới, vẽ bằng nét mực từ dữ liệu OpenStreetMap. Hãy đoán nó thuộc quốc gia nào, rồi đặt làm hình nền máy tính của bạn."
+  },
+  "panel": {
+    "tagline": "Mỗi ngày một thành phố mới, vẽ bằng nét mực",
+    "showMap": "Xem toàn bộ bản đồ",
+    "showGame": "Quay lại trò chơi"
+  },
+  "today": {
+    "label": "Hôm nay",
+    "concealed": "Tiết lộ sau lượt chơi hôm nay",
+    "loading": "Đang tải bản đồ hôm nay…",
+    "rebuilding": "Bản đồ hôm nay chưa được phát hành — đang vẽ trực tiếp từ OpenStreetMap, có thể mất khoảng một phút…",
+    "failed": "Không tải được bản đồ hôm nay.",
+    "retry": "Thử lại",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Có thể đoán khi bản đồ đã vẽ xong.",
+    "paintFailed": "Có thể đoán khi bản đồ đã tải xong."
+  },
+  "storage": {
+    "memoryOnly": "Trình duyệt của bạn không lưu ván chơi này, nên nó sẽ mất khi bạn đóng trang."
+  },
+  "download": {
+    "teaser": "InkCity là ứng dụng máy tính đặt một thành phố mới làm hình nền cho bạn mỗi ngày.",
+    "teaserLink": "Tải về",
+    "title": "Đặt {{city}} làm hình nền hôm nay",
+    "body": "Mỗi nửa đêm, một thành phố mới trên màn hình máy tính, được vẽ vừa với màn hình của bạn. Hình nền chính là câu đố: tên thành phố hiện ở góc khi bạn đoán đúng.",
+    "countdown": "Thành phố tiếp theo sau {{time}}. Ứng dụng sẽ tự đổi cho bạn",
+    "button": "Tải về cho {{os}}",
+    "alsoOn": "Miễn phí & mã nguồn mở, có cả cho {{others}}",
+    "free": "Miễn phí & mã nguồn mở",
+    "otherPlatforms": "Nền tảng khác",
+    "mobile": "InkCity là ứng dụng máy tính. Hãy mở trang này trên máy tính để tải về.",
+    "share": "Gửi cho chính mình",
+    "copied": "Đã sao chép liên kết",
+    "kind": {
+      "dmg": "Apple silicon & Intel",
+      "exe": "Trình cài đặt",
+      "msi": "Gói MSI",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Dữ liệu bản đồ đường phố © những người đóng góp cho <0>OpenStreetMap</0>, được cấp phép theo <1>ODbL</1>.",
+    "geonames": "Danh sách thành phố từ <0>GeoNames</0>, được cấp phép theo <1>CC BY 4.0</1>.",
+    "credit": "Biểu tượng ứng dụng và thiết kế hình ảnh bản đồ bởi {{name}}",
+    "source": "Mã nguồn",
+    "language": "Ngôn ngữ"
+  }
+}

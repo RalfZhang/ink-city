@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — adivinhe a cidade de hoje",
+    "description": "Todo dia uma cidade nova, desenhada a tinta com dados do OpenStreetMap. Adivinhe em que país ela fica e use-a como papel de parede."
+  },
+  "panel": {
+    "tagline": "Uma cidade nova todo dia, desenhada a tinta",
+    "showMap": "Ver o mapa inteiro",
+    "showGame": "Voltar ao jogo"
+  },
+  "today": {
+    "label": "Hoje",
+    "concealed": "Revelada após a partida de hoje",
+    "loading": "Carregando o mapa de hoje…",
+    "rebuilding": "O mapa de hoje ainda não foi publicado — ele está sendo desenhado direto do OpenStreetMap, o que pode levar um minuto…",
+    "failed": "Não foi possível carregar o mapa de hoje.",
+    "retry": "Tentar de novo",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Dá para adivinhar assim que o mapa estiver desenhado.",
+    "paintFailed": "Dá para adivinhar assim que o mapa carregar."
+  },
+  "storage": {
+    "memoryOnly": "Seu navegador não salva esta partida, então ela termina quando você fechar a página."
+  },
+  "download": {
+    "teaser": "InkCity é um aplicativo de desktop que coloca uma cidade nova no seu papel de parede todo dia.",
+    "teaserLink": "Baixe agora",
+    "title": "Use {{city}} como papel de parede hoje",
+    "body": "Uma cidade nova na sua área de trabalho toda meia-noite, desenhada para a sua tela. O papel de parede é o enigma: o nome aparece no canto quando você acerta.",
+    "countdown": "Próxima cidade em {{time}}. O aplicativo troca para você",
+    "button": "Baixar para {{os}}",
+    "alsoOn": "Grátis e de código aberto, também para {{others}}",
+    "free": "Grátis e de código aberto",
+    "otherPlatforms": "Outras plataformas",
+    "mobile": "InkCity é um aplicativo de desktop. Abra esta página no computador para baixar.",
+    "share": "Enviar para mim",
+    "copied": "Link copiado",
+    "kind": {
+      "dmg": "Apple silicon e Intel",
+      "exe": "Instalador",
+      "msi": "Pacote MSI",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Dados do mapa de ruas © colaboradores do <0>OpenStreetMap</0>, licenciados sob <1>ODbL</1>.",
+    "geonames": "Lista de cidades do <0>GeoNames</0>, licenciada sob <1>CC BY 4.0</1>.",
+    "credit": "Ícone do aplicativo e design visual do mapa por {{name}}",
+    "source": "Código-fonte",
+    "language": "Idioma"
+  }
+}

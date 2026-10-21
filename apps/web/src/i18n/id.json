@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — tebak kota hari ini",
+    "description": "Setiap hari kota baru, digambar dengan tinta dari data OpenStreetMap. Tebak di negara mana kota itu berada, lalu jadikan wallpaper desktop Anda."
+  },
+  "panel": {
+    "tagline": "Kota baru setiap hari, digambar dengan tinta",
+    "showMap": "Tampilkan seluruh peta",
+    "showGame": "Kembali ke permainan"
+  },
+  "today": {
+    "label": "Hari ini",
+    "concealed": "Terungkap setelah permainan hari ini",
+    "loading": "Memuat peta hari ini…",
+    "rebuilding": "Peta hari ini belum diterbitkan — sedang digambar langsung dari OpenStreetMap, bisa memakan waktu sekitar semenit…",
+    "failed": "Tidak dapat memuat peta hari ini.",
+    "retry": "Coba lagi",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Tebakan dibuka setelah peta selesai digambar.",
+    "paintFailed": "Tebakan dibuka setelah peta selesai dimuat."
+  },
+  "storage": {
+    "memoryOnly": "Browser Anda tidak menyimpan permainan ini, jadi permainan berakhir saat halaman ditutup."
+  },
+  "download": {
+    "teaser": "InkCity adalah aplikasi desktop yang memasang kota baru sebagai wallpaper Anda setiap hari.",
+    "teaserLink": "Unduh",
+    "title": "Jadikan {{city}} wallpaper Anda hari ini",
+    "body": "Kota baru di desktop Anda setiap tengah malam, digambar untuk layar Anda. Wallpaper-nya adalah teka-teki: nama kota muncul di sudut setelah Anda menebaknya.",
+    "countdown": "Kota berikutnya dalam {{time}}. Aplikasi akan menggantinya untuk Anda",
+    "button": "Unduh untuk {{os}}",
+    "alsoOn": "Gratis & open source, juga untuk {{others}}",
+    "free": "Gratis & open source",
+    "otherPlatforms": "Platform lain",
+    "mobile": "InkCity adalah aplikasi desktop. Buka halaman ini di komputer Anda untuk mengunduhnya.",
+    "share": "Kirim ke saya",
+    "copied": "Tautan disalin",
+    "kind": {
+      "dmg": "Apple silicon & Intel",
+      "exe": "Penginstal",
+      "msi": "Paket MSI",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Data peta jalan © kontributor <0>OpenStreetMap</0>, dilisensikan di bawah <1>ODbL</1>.",
+    "geonames": "Daftar kota dari <0>GeoNames</0>, dilisensikan di bawah <1>CC BY 4.0</1>.",
+    "credit": "Ikon aplikasi dan desain visual peta oleh {{name}}",
+    "source": "Kode sumber",
+    "language": "Bahasa"
+  }
+}

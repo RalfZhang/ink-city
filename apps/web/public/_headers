@@ -1,0 +1,5 @@
+# Vite fingerprints everything under /assets/, so a file there never changes under
+# its name. index.html keeps Cloudflare's default (revalidate every load), which is
+# what makes a new build reach visitors at once.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

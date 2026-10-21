@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — guess today's city",
+    "description": "Every day a new city, drawn in ink from OpenStreetMap. Guess which country it's in, then make it your desktop wallpaper."
+  },
+  "panel": {
+    "tagline": "A new city every day, drawn in ink",
+    "showMap": "Show the whole map",
+    "showGame": "Back to the game"
+  },
+  "today": {
+    "label": "Today",
+    "concealed": "Revealed after today's guess",
+    "loading": "Loading today's map…",
+    "rebuilding": "Today's map isn't published yet — drawing it from OpenStreetMap, which can take a minute…",
+    "failed": "Couldn't load today's map.",
+    "retry": "Try again",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Guessing opens once the map is drawn.",
+    "paintFailed": "Guessing opens once the map has loaded."
+  },
+  "storage": {
+    "memoryOnly": "Your browser isn't keeping this game, so it ends when you close the page."
+  },
+  "download": {
+    "teaser": "InkCity is a desktop app that puts a new city on your wallpaper every day.",
+    "teaserLink": "Get it",
+    "title": "Make {{city}} your wallpaper today",
+    "body": "A new city on your desktop every midnight, drawn for your screen. The wallpaper is the puzzle: the name appears in the corner once you've guessed it.",
+    "countdown": "Next city in {{time}}. The app swaps it in for you",
+    "button": "Download for {{os}}",
+    "alsoOn": "Free & open source, also on {{others}}",
+    "free": "Free & open source",
+    "otherPlatforms": "Other platforms",
+    "mobile": "InkCity is a desktop app. Open this page on your computer to download it.",
+    "share": "Send to myself",
+    "copied": "Link copied",
+    "kind": {
+      "dmg": "Apple silicon & Intel",
+      "exe": "Installer",
+      "msi": "MSI package",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Road map data © <0>OpenStreetMap</0> contributors, licensed under <1>ODbL</1>.",
+    "geonames": "City list from <0>GeoNames</0>, licensed under <1>CC BY 4.0</1>.",
+    "credit": "App icon and map visual design by {{name}}",
+    "source": "Source code",
+    "language": "Language"
+  }
+}

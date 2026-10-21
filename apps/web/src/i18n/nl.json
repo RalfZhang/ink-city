@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — raad de stad van vandaag",
+    "description": "Elke dag een nieuwe stad, met inkt getekend uit OpenStreetMap-gegevens. Raad in welk land ze ligt en maak er je achtergrond van."
+  },
+  "panel": {
+    "tagline": "Elke dag een nieuwe stad, met inkt getekend",
+    "showMap": "Hele kaart tonen",
+    "showGame": "Terug naar het spel"
+  },
+  "today": {
+    "label": "Vandaag",
+    "concealed": "Bekend na het spel van vandaag",
+    "loading": "De kaart van vandaag wordt geladen…",
+    "rebuilding": "De kaart van vandaag is nog niet gepubliceerd — hij wordt rechtstreeks uit OpenStreetMap getekend, dat kan een minuut duren…",
+    "failed": "De kaart van vandaag kon niet worden geladen.",
+    "retry": "Opnieuw proberen",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Raden kan zodra de kaart getekend is.",
+    "paintFailed": "Raden kan zodra de kaart geladen is."
+  },
+  "storage": {
+    "memoryOnly": "Je browser bewaart dit spel niet, dus het eindigt als je de pagina sluit."
+  },
+  "download": {
+    "teaser": "InkCity is een desktop-app die elke dag een nieuwe stad als achtergrond instelt.",
+    "teaserLink": "Downloaden",
+    "title": "Maak {{city}} vandaag je achtergrond",
+    "body": "Elke middernacht een nieuwe stad op je bureaublad, getekend voor jouw scherm. De achtergrond is de puzzel: de naam verschijnt in de hoek zodra je hem hebt geraden.",
+    "countdown": "Volgende stad over {{time}}. De app wisselt hem voor je",
+    "button": "Downloaden voor {{os}}",
+    "alsoOn": "Gratis en open source, ook voor {{others}}",
+    "free": "Gratis en open source",
+    "otherPlatforms": "Andere platforms",
+    "mobile": "InkCity is een desktop-app. Open deze pagina op je computer om hem te downloaden.",
+    "share": "Naar mezelf sturen",
+    "copied": "Link gekopieerd",
+    "kind": {
+      "dmg": "Apple silicon en Intel",
+      "exe": "Installatieprogramma",
+      "msi": "MSI-pakket",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Wegenkaartgegevens © <0>OpenStreetMap</0>-medewerkers, gelicentieerd onder <1>ODbL</1>.",
+    "geonames": "Stedenlijst van <0>GeoNames</0>, gelicentieerd onder <1>CC BY 4.0</1>.",
+    "credit": "App-pictogram en visueel ontwerp van de kaart door {{name}}",
+    "source": "Broncode",
+    "language": "Taal"
+  }
+}

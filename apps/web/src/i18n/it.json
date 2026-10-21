@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — indovina la città di oggi",
+    "description": "Ogni giorno una nuova città, disegnata a inchiostro dai dati di OpenStreetMap. Indovina in quale Paese si trova, poi mettila come sfondo del desktop."
+  },
+  "panel": {
+    "tagline": "Una nuova città ogni giorno, disegnata a inchiostro",
+    "showMap": "Mostra tutta la mappa",
+    "showGame": "Torna al gioco"
+  },
+  "today": {
+    "label": "Oggi",
+    "concealed": "Svelata dopo la partita di oggi",
+    "loading": "Caricamento della mappa di oggi…",
+    "rebuilding": "La mappa di oggi non è ancora pubblicata: la stiamo disegnando direttamente da OpenStreetMap, può richiedere un minuto…",
+    "failed": "Impossibile caricare la mappa di oggi.",
+    "retry": "Riprova",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Potrai indovinare appena la mappa sarà disegnata.",
+    "paintFailed": "Potrai indovinare appena la mappa sarà caricata."
+  },
+  "storage": {
+    "memoryOnly": "Il tuo browser non salva questa partita: finirà quando chiudi la pagina."
+  },
+  "download": {
+    "teaser": "InkCity è un'app desktop che ogni giorno mette una nuova città come sfondo.",
+    "teaserLink": "Scaricala",
+    "title": "Metti {{city}} come sfondo oggi",
+    "body": "Una nuova città sul tuo desktop ogni mezzanotte, disegnata per il tuo schermo. Lo sfondo è l'indovinello: il nome compare nell'angolo quando l'hai indovinato.",
+    "countdown": "Prossima città tra {{time}}. L'app la cambia per te",
+    "button": "Scarica per {{os}}",
+    "alsoOn": "Gratis e open source, anche per {{others}}",
+    "free": "Gratis e open source",
+    "otherPlatforms": "Altre piattaforme",
+    "mobile": "InkCity è un'app desktop. Apri questa pagina sul computer per scaricarla.",
+    "share": "Invia a me",
+    "copied": "Link copiato",
+    "kind": {
+      "dmg": "Apple silicon e Intel",
+      "exe": "Programma di installazione",
+      "msi": "Pacchetto MSI",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Dati della mappa stradale © contributori di <0>OpenStreetMap</0>, concessi in licenza <1>ODbL</1>.",
+    "geonames": "Elenco città da <0>GeoNames</0>, concesso in licenza <1>CC BY 4.0</1>.",
+    "credit": "Icona dell'app e design visivo della mappa di {{name}}",
+    "source": "Codice sorgente",
+    "language": "Lingua"
+  }
+}

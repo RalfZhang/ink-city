@@ -1,0 +1,15 @@
+// The website, on Cloudflare Workers with static assets only — no Worker script,
+// the same setup as ralfz.com. Built from the repo root, where the workspace and
+// its lockfile are:
+//
+//   build:  pnpm -F @inkcity/web build
+//   deploy: npx wrangler deploy --config apps/web/wrangler.jsonc
+//
+// Paths here resolve against this file, so `./dist` is apps/web/dist.
+{
+  "name": "inkcity",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}

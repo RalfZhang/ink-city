@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — 猜猜今天的城市",
+    "description": "每天一座新城市，以 OpenStreetMap 的資料用墨線繪成。猜猜它在哪個國家，再把它設為你的桌面桌布。"
+  },
+  "panel": {
+    "tagline": "每天一座新城市，墨線繪成",
+    "showMap": "查看完整地圖",
+    "showGame": "回到遊戲"
+  },
+  "today": {
+    "label": "今日",
+    "concealed": "猜完後揭曉",
+    "loading": "正在載入今天的地圖…",
+    "rebuilding": "今天的地圖還沒發布，正從 OpenStreetMap 即時繪製，可能需要一分鐘…",
+    "failed": "今天的地圖載入失敗。",
+    "retry": "重試",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "地圖畫好後就可以開始猜了。",
+    "paintFailed": "地圖載入後就可以開始猜了。"
+  },
+  "storage": {
+    "memoryOnly": "你的瀏覽器沒有保存這局遊戲，關閉頁面後進度就會消失。"
+  },
+  "download": {
+    "teaser": "InkCity 是一款桌面應用程式，每天把一座新城市設為你的桌布。",
+    "teaserLink": "下載",
+    "title": "把{{city}}設為今天的桌面桌布",
+    "body": "InkCity 每天午夜自動換上一座新城市，依你的螢幕尺寸繪製。猜國家就在桌布上玩，猜中後城市名稱才會出現在角落。",
+    "countdown": "下一座城市將在 {{time}} 後揭曉，桌面版會自動換上",
+    "button": "下載 {{os}} 版",
+    "alsoOn": "免費開源，也支援 {{others}}",
+    "free": "免費開源",
+    "otherPlatforms": "其他平台",
+    "mobile": "InkCity 是桌面應用程式，請在電腦上開啟本頁下載。",
+    "share": "傳給自己",
+    "copied": "已複製連結",
+    "kind": {
+      "dmg": "Apple 晶片與 Intel",
+      "exe": "安裝程式",
+      "msi": "MSI 安裝套件",
+      "deb": "Debian、Ubuntu",
+      "rpm": "Fedora、openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "道路地圖資料 © <0>OpenStreetMap</0> 貢獻者，依 <1>ODbL</1> 協議授權。",
+    "geonames": "城市清單來自 <0>GeoNames</0>，依 <1>CC BY 4.0</1> 授權。",
+    "credit": "應用程式圖示與地圖視覺設計：{{name}}",
+    "source": "原始碼",
+    "language": "語言"
+  }
+}

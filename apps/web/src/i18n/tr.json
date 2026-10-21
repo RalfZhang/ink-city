@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "InkCity — bugünün şehrini tahmin edin",
+    "description": "Her gün OpenStreetMap verilerinden mürekkeple çizilmiş yeni bir şehir. Hangi ülkede olduğunu tahmin edin, sonra onu duvar kağıdınız yapın."
+  },
+  "panel": {
+    "tagline": "Her gün mürekkeple çizilmiş yeni bir şehir",
+    "showMap": "Haritanın tamamını göster",
+    "showGame": "Oyuna dön"
+  },
+  "today": {
+    "label": "Bugün",
+    "concealed": "Bugünkü oyun bitince açıklanacak",
+    "loading": "Bugünün haritası yükleniyor…",
+    "rebuilding": "Bugünün haritası henüz yayımlanmadı; doğrudan OpenStreetMap'ten çiziliyor, bu bir dakika sürebilir…",
+    "failed": "Bugünün haritası yüklenemedi.",
+    "retry": "Tekrar dene",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "game": {
+    "painting": "Harita çizilince tahmin edebilirsiniz.",
+    "paintFailed": "Harita yüklenince tahmin edebilirsiniz."
+  },
+  "storage": {
+    "memoryOnly": "Tarayıcınız bu oyunu kaydetmiyor; sayfayı kapattığınızda oyun biter."
+  },
+  "download": {
+    "teaser": "InkCity, her gün duvar kağıdınıza yeni bir şehir koyan bir masaüstü uygulamasıdır.",
+    "teaserLink": "İndirin",
+    "title": "{{city}} bugün duvar kağıdınız olsun",
+    "body": "Her gece yarısı masaüstünüzde, ekranınıza göre çizilmiş yeni bir şehir. Duvar kağıdı bilmecenin ta kendisi: doğru tahmin ettiğinizde şehrin adı köşede belirir.",
+    "countdown": "Sonraki şehre {{time}} kaldı. Uygulama sizin için değiştirir",
+    "button": "{{os}} için indir",
+    "alsoOn": "Ücretsiz ve açık kaynak; {{others}} için de var",
+    "free": "Ücretsiz ve açık kaynak",
+    "otherPlatforms": "Diğer platformlar",
+    "mobile": "InkCity bir masaüstü uygulamasıdır. İndirmek için bu sayfayı bilgisayarınızda açın.",
+    "share": "Kendime gönder",
+    "copied": "Bağlantı kopyalandı",
+    "kind": {
+      "dmg": "Apple silicon ve Intel",
+      "exe": "Yükleyici",
+      "msi": "MSI paketi",
+      "deb": "Debian, Ubuntu",
+      "rpm": "Fedora, openSUSE"
+    }
+  },
+  "footer": {
+    "osm": "Yol haritası verileri © <0>OpenStreetMap</0> katkıda bulunanları, <1>ODbL</1> lisansı altındadır.",
+    "geonames": "Şehir listesi <0>GeoNames</0> kaynaklıdır, <1>CC BY 4.0</1> lisansı altındadır.",
+    "credit": "Uygulama simgesi ve harita görsel tasarımı: {{name}}",
+    "source": "Kaynak kodu",
+    "language": "Dil"
+  }
+}
