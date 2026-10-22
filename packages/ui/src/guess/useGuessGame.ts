@@ -16,6 +16,8 @@ import {
 export type GuessGame = {
   /** Today's game, or null until the save has been read — draw nothing that could reveal the city yet. */
   snapshot: GameSnapshot | null;
+  /** The whole save, every day of it, as last read or written — or null until it's been read. */
+  store: GuessStore | null;
   /** A write is in flight; input waits, so saves land in the order they were made. */
   saving: boolean;
   /** Submit a guess. `"failed"` means it couldn't be saved, and so didn't count. */
@@ -98,5 +100,5 @@ export function useGuessGame(
   };
 
   const snapshot = store ? gameSnapshot(store, inputs, index) : null;
-  return { snapshot, saving, guess, setPlaying };
+  return { snapshot, store, saving, guess, setPlaying };
 }
