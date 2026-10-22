@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/RalfZhang/ink-city/compare/v0.13.0...v0.14.0) (2026-10-22)
+
+
+### Features
+
+* remove cities.json from client ([62eb36f](https://github.com/RalfZhang/ink-city/commit/62eb36f7dfc3ede6318742b8013ec5850365c7ca))
+
 ## [0.13.0](https://github.com/RalfZhang/ink-city/compare/v0.12.3...v0.13.0) (2026-10-18)
 
 
