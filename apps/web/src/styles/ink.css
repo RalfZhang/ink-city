@@ -1,0 +1,232 @@
+/* The site's components, drawn rather than rendered: what a pen can make on paper.
+   Square corners and 1px rules in the map's ink, no shadows; shade as hatching
+   (lines 45° apart, the way a pen shades). Pointed at, a control's frame is ruled a
+   second time just inside the first — a map's neatline — rather than lifting off the
+   page. In the `components` layer, so a utility class still wins over any of it. */
+
+:root {
+  /* A damped spring — a needle swinging round to its bearing, and anything else that
+     should arrive with a little overshoot and settle. A single overshoot where the
+     browser can't draw the curve (below). */
+  --spring: cubic-bezier(0.3, 1.6, 0.5, 1);
+  /* The pen's own easing: quick off the mark, slowing to a stop. */
+  --draw: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Hatching in the frame's ink, for bars. */
+  --hatch: repeating-linear-gradient(-45deg, var(--line) 0 1px, transparent 0 4px);
+  /* The neatline a control pointed at is ruled with, just inside its frame: on paper,
+     and on an ink fill. */
+  --neatline: inset 0 0 0 2px var(--pop), inset 0 0 0 3px var(--line);
+  --neatline-on-ink: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--on-ink);
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring: linear(0, 0.058, 0.207, 0.407, 0.623, 0.827, 0.999, 1.128, 1.211, 1.249, 1.25, 1.223, 1.178, 1.124,
+      1.07, 1.022, 0.983, 0.956, 0.941, 0.936, 0.939, 0.948, 0.961, 0.975, 0.988, 0.999, 1.008, 1.013, 1.016, 1.016,
+      1.014, 1.012, 1.008, 1.005, 1.002, 0.999, 0.997, 0.996, 0.996, 0.996, 1);
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- type */
+
+  /* A legend's small caps: what a thing is, above or beside it. */
+  .ink-label {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  /* Spacing that would part a script's own letters — Arabic's joins, Devanagari's
+     and Thai's clusters — isn't used on them; CJK takes a little. */
+  :lang(zh-Hans) .ink-label,
+  :lang(zh-Hant) .ink-label,
+  :lang(ja) .ink-label,
+  :lang(ko) .ink-label {
+    letter-spacing: 0.06em;
+  }
+  :lang(ar) .ink-label,
+  :lang(hi) .ink-label,
+  :lang(th) .ink-label {
+    letter-spacing: 0;
+  }
+
+  .ink-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--ink-3);
+    cursor: pointer;
+    transition: text-decoration-color 0.2s;
+  }
+  .ink-link:hover {
+    text-decoration-color: currentColor;
+  }
+  .ink-link svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+  /* ---------------------------------------------------------------- buttons */
+
+  /* The second rule a control gets when it's pointed at: inside the frame, a hair
+     of the page's colour, then a hair of ink — paper on an ink fill, ink on paper. */
+  .ink-btn,
+  .chip-btn {
+    transition:
+      box-shadow 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  /* Ink, solid. */
+  .ink-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--on-ink);
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ink-btn:hover {
+    box-shadow: var(--neatline-on-ink);
+  }
+  .ink-btn:active {
+    opacity: 0.82;
+  }
+  .ink-btn svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+  }
+
+  /* A small framed mark on paper — the corner's controls — so it reads over any map. */
+  .chip-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: var(--ink);
+    background: var(--pop);
+    border: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .chip-btn:hover,
+  .chip-btn[aria-expanded="true"] {
+    box-shadow: var(--neatline);
+  }
+  .chip-btn:active {
+    opacity: 0.82;
+  }
+  .chip-btn svg {
+    width: 17px;
+    height: 17px;
+  }
+  .chip-btn--bare {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  /* Anything that floats over the page, and a card laid on the map: paper, framed in ink. */
+  .ink-pop,
+  .card {
+    background: var(--pop);
+    border: 1px solid var(--line);
+  }
+
+  /* ---------------------------------------------------------------- the name */
+
+  /* The mark and the name (components/Brand.tsx): stacked and centred on each other
+     at the head of the sheet, side by side in the header. */
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+  }
+  .brand__logo {
+    display: block;
+    height: auto;
+  }
+  .brand__name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .brand--large {
+    gap: 12px;
+  }
+  .brand--large .brand__logo {
+    width: 96px;
+  }
+  .brand--large .brand__name {
+    font-size: 30px;
+  }
+  .brand--header {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .brand--header .brand__logo {
+    width: 31px;
+  }
+  .brand--header .brand__name {
+    font-size: 21px;
+  }
+}
+
+/* ------------------------------------------------------------------ motion
+   The pen's moves, shared: a thing set down, a stroke drawn along its path. Each
+   component times its own. */
+
+@keyframes ink-rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@keyframes ink-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A stroke drawn along its path (an SVG path with pathLength="1"). */
+@keyframes ink-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Anyone who'd rather nothing moved gets every end state at once. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}

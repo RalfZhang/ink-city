@@ -3,14 +3,11 @@
     "title": "InkCity — 오늘의 도시를 맞혀 보세요",
     "description": "매일 새로운 도시를 OpenStreetMap 데이터로 잉크처럼 그립니다. 어느 나라인지 맞혀 보고 데스크톱 배경화면으로 써 보세요."
   },
-  "panel": {
-    "tagline": "매일 새로운 도시를 잉크로 그립니다",
-    "showMap": "지도 전체 보기",
-    "showGame": "게임으로 돌아가기"
+  "intro": {
+    "question": "이 도시는 어느 나라에 있을까요?"
   },
   "today": {
     "label": "오늘",
-    "concealed": "오늘 게임이 끝나면 공개",
     "loading": "오늘의 지도를 불러오는 중…",
     "rebuilding": "오늘의 지도가 아직 게시되지 않아 OpenStreetMap에서 직접 그리고 있어요. 1분 정도 걸릴 수 있어요…",
     "failed": "오늘의 지도를 불러오지 못했습니다.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "지도를 다 그리면 맞힐 수 있어요.",
-    "paintFailed": "지도를 불러오면 맞힐 수 있어요."
+  "play": {
+    "guess": "맞혀 보기",
+    "wallpaper": "배경화면으로 설정",
+    "more": "아래로 스크롤해 더 알아보기"
+  },
+  "dir": {
+    "n": "북쪽",
+    "ne": "북동쪽",
+    "e": "동쪽",
+    "se": "남동쪽",
+    "s": "남쪽",
+    "sw": "남서쪽",
+    "w": "서쪽",
+    "nw": "북서쪽"
+  },
+  "result": {
+    "share": "공유",
+    "copied": "클립보드에 복사했습니다",
+    "details": "자세히 보기",
+    "back": "돌아가기",
+    "collapse": "접기",
+    "expand": "펼치기",
+    "nextCity": "다음 도시까지"
+  },
+  "globe": {
+    "label": "오늘의 추측을 순서대로 이은 지구본입니다. 드래그해서 돌릴 수 있어요.",
+    "failed": "지구본을 불러오지 못했습니다."
   },
   "storage": {
     "memoryOnly": "이 브라우저는 게임을 저장하지 않으므로 페이지를 닫으면 기록이 사라집니다.",
     "dismiss": "닫기"
   },
+  "app": {
+    "tagline": "매일 새로운 도시를 잉크로 그립니다"
+  },
   "download": {
-    "teaser": "InkCity는 매일 새로운 도시를 배경화면으로 바꿔 주는 데스크톱 앱입니다.",
-    "teaserLink": "다운로드",
     "title": "{{city}}, 오늘 바로 배경화면으로",
-    "body": "매일 자정, 화면 크기에 맞춰 그린 새로운 도시가 데스크톱에 나타납니다. 배경화면이 곧 퀴즈예요. 맞히면 모서리에 도시 이름이 나타납니다.",
+    "body": "매일 자정, 화면 크기에 맞춰 그린 새로운 도시가 데스크톱에 나타납니다.",
     "countdown": "다음 도시까지 {{time}}. 앱이 알아서 바꿔 줍니다",
     "button": "{{os}}용 다운로드",
-    "alsoOn": "무료 오픈 소스, {{others}}도 지원",
     "free": "무료 오픈 소스",
-    "otherPlatforms": "다른 플랫폼",
     "mobile": "InkCity는 데스크톱 앱입니다. 컴퓨터에서 이 페이지를 열어 다운로드하세요.",
     "share": "나에게 보내기",
     "copied": "링크를 복사했습니다",
@@ -53,5 +73,8 @@
     "credit": "앱 아이콘 및 지도 비주얼 디자인: {{name}}",
     "source": "소스 코드",
     "language": "언어"
+  },
+  "corner": {
+    "credit": "© <0>OpenStreetMap</0> 기여자 · <1>GeoNames</1>"
   }
 }

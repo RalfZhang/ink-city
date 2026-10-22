@@ -1,0 +1,838 @@
+/* The first page (game/Stage.tsx): the opening words, and at the foot the bar the
+   whole game runs through, with what's been played stacked up above it. Set on the
+   map itself, so anything without paper of its own under it is ringed by the
+   paper's colour (a halo: the stroke behind the fill, half of it showing), the
+   cartographic way to keep type legible over lines. */
+
+@layer components {
+  /* ---------------------------------------------------------------- the opening */
+
+  /* The page clips what slides off it: the curtain going down, out of view. */
+  .page--play {
+    overflow: hidden;
+  }
+
+  /* The curtain (game/Curtain.tsx): the sheet over the page — all but its foot and
+     the fixed corners — until the map starts; then down off it with the ink front.
+     Opaque, the sheet's colour laid on the paper: nothing waiting under it should
+     show through, and the map it slides over isn't drawn yet anyway. */
+  /* Over everything on the page but the bar (and what's said over it while the map
+     comes): the cards, the countdown and the question wait under it with the map. */
+  .curtain {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .curtain .sheet {
+    height: 100%;
+    background: linear-gradient(var(--sheet), var(--sheet)) var(--paper);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .curtain.is-open {
+    animation: curtain-down var(--spread) var(--front-ease) forwards;
+  }
+
+  /* The question, in the middle of the page, uncovered with the map. */
+  .intro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 0 24px 40px;
+    text-align: center;
+    pointer-events: none;
+    transition:
+      opacity 0.3s ease,
+      visibility 0s linear 0s;
+  }
+  .intro.is-gone {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+  .intro__question {
+    max-width: 680px;
+    margin: 0;
+    font-size: clamp(24px, 3.3vw, 36px);
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    -webkit-text-stroke: 6px var(--paper);
+    paint-order: stroke fill;
+  }
+
+  /* ---------------------------------------------------------------- the foot */
+
+  /* Everything at the foot, stacked up from the bar, in the page below the header:
+     the stack takes what room is left and scrolls past it. With a phone's keyboard
+     up, the foot is lifted to just above it (--kb, App.tsx). */
+  .stage {
+    position: absolute;
+    inset: calc(84px + env(safe-area-inset-top)) 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px max(calc(64px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px));
+    pointer-events: none;
+  }
+  .stage > * {
+    pointer-events: auto;
+  }
+
+  /* Why the map's taking a while, or isn't coming: over the curtain, above the bar. */
+  .status {
+    position: relative;
+    z-index: 2;
+    max-width: 440px;
+    margin: 0 0 6px;
+    font-size: 13px;
+    line-height: 19px;
+    text-align: center;
+    color: var(--ink-2);
+    text-wrap: balance;
+    animation: ink-fade 0.4s var(--draw) backwards;
+  }
+  .status.is-error {
+    color: var(--brick);
+  }
+
+  /* What's been played, stacked up over the bar: the newest at the foot. Past the
+     room there is, it scrolls — and at its end the scroll goes on to the page, so a
+     scroll past the last card turns to the page below — and what's scrolled up fades
+     out under its top edge: the fade covers the top padding only, so nothing in place
+     is ever faded. As wide as the bar at its widest, so a row stands exactly over the
+     line it was written on; the padding (room for the frames inside the scroll's
+     clip) is taken back by the margins. */
+  .stack {
+    flex: 0 1 auto;
+    min-height: 0;
+    width: min(440px + 8px, 100% + 8px);
+    overflow-y: auto;
+    padding: 18px 4px 4px;
+    margin: -18px -4px -4px;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px);
+    mask-image: linear-gradient(to bottom, transparent, #000 18px);
+  }
+  .stack::-webkit-scrollbar {
+    display: none;
+  }
+  .stack__cards {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The record and the guesses under the city (game/Fold.tsx): folded, they slide
+     down behind the bar — the stack is held at its foot, so as the fold's height runs
+     down its contents go down with it and out at the bottom, the card above coming
+     down after — and unfolded, up out from behind it. The gap above them is inside
+     the fold, so it closes too. */
+  .fold {
+    overflow: hidden;
+    transition: height 0.45s var(--draw);
+  }
+  .fold__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  .stack__cards > .fold:first-child .fold__inner {
+    padding-top: 0;
+  }
+
+  /* The time to the next city, over a finished day's cards: large, and what it's
+     the time to, small. Out of the stack, so it stays put when that scrolls; it
+     steps out while the cards fold, and back in where they've left it. */
+  .next {
+    flex-shrink: 0;
+    margin-bottom: 4px;
+    text-align: center;
+    -webkit-text-stroke: 5px var(--paper);
+    paint-order: stroke fill;
+    transition:
+      opacity 0.3s ease,
+      visibility 0s;
+    animation: ink-fade 0.5s 0.3s var(--draw) backwards;
+  }
+  .next.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.15s ease,
+      visibility 0s 0.15s;
+  }
+  .next__time {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .next__label {
+    margin: 2px 0 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ink-2);
+    -webkit-text-stroke-width: 3px;
+  }
+
+  /* ---------------------------------------------------------------- the bar
+     Two halves of one box (game/Bar.tsx): one button while they meet, two once they
+     part, the line to write on when the first takes the whole width. Every change
+     is the halves' widths moving, and the bar's own. */
+
+  /* Over the curtain, while the map comes: the one thing on the page that is. */
+  .bar {
+    --w: 300px;
+    position: relative;
+    z-index: 2;
+    width: min(var(--w), 100%);
+    height: 50px;
+    flex-shrink: 0;
+    transition: width 0.5s var(--draw);
+  }
+  .bar--choice {
+    --w: 400px;
+  }
+  /* As wide as what's stacked over it. */
+  .bar--input,
+  .bar--done,
+  .bar--revealed {
+    --w: 440px;
+  }
+
+  .bar__half {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    display: grid;
+    place-items: center;
+    padding: 0 10px;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink);
+    background: var(--pop);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      width 0.5s var(--draw),
+      opacity 0.3s ease,
+      color 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.15s ease;
+  }
+  .bar__half:disabled {
+    cursor: default;
+  }
+  .bar__half--a {
+    inset-inline-start: 0;
+  }
+  .bar__half--b {
+    inset-inline-end: 0;
+  }
+  /* Parted. */
+  .bar--choice .bar__half,
+  .bar--done .bar__half {
+    width: calc(50% - 6px);
+  }
+  /* The first takes it all; the second folds away into the end. */
+  .bar--input .bar__half--a,
+  .bar--revealed .bar__half--a {
+    width: 100%;
+  }
+  .bar--input .bar__half--b,
+  .bar--revealed .bar__half--b {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  .bar__half[data-tone="ink"] {
+    color: var(--on-ink);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  /* Pointed at: the frame ruled again just inside itself (ink.css). */
+  .bar__half[data-tone="ink"]:hover:not(:disabled) {
+    box-shadow: var(--neatline-on-ink);
+  }
+  .bar__half[data-tone="line"]:hover:not(:disabled) {
+    box-shadow: var(--neatline);
+  }
+  .bar__half:active:not(:disabled) {
+    opacity: 0.82;
+  }
+  /* Written in: the line's frame drawn heavier. */
+  .bar--input:focus-within .bar__half--a {
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+  .bar__label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: ink-fade 0.35s 0.15s var(--draw) backwards;
+  }
+
+  /* What the bar holds while its halves are one: the wait, the retry, the line. */
+  .bar__over {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    font-size: 15px;
+    animation: ink-fade 0.3s var(--draw) backwards;
+  }
+  /* Met, the halves are one box: the wait and the retry draw that box whole over
+     them, and the halves are found under it, ready to part, when it goes. */
+  .bar__waiting,
+  .bar__retry {
+    overflow: hidden;
+    background: var(--pop);
+    border: 1px solid var(--line);
+    animation: none;
+  }
+  .bar__waiting {
+    color: var(--ink-2);
+  }
+  /* A stroke running along the bar's foot, again and again, while the map comes. */
+  .bar__waiting::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background: var(--ink);
+    animation: waiting 1.6s ease-in-out infinite;
+  }
+  .bar__retry {
+    width: 100%;
+    height: 100%;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .bar__retry:hover {
+    box-shadow: var(--neatline);
+  }
+
+  /* A word over the bar for a moment: copied, or what was wrong with a guess. */
+  .bar__note {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    inset-inline: 0;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 7px 12px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--on-ink);
+    background: var(--ink);
+    animation: ink-rise 0.25s var(--draw) backwards;
+    pointer-events: none;
+  }
+  .bar__note.is-error {
+    background: var(--brick);
+  }
+
+  /* ---------------------------------------------------------------- the line */
+
+  /* Comes in once the box has grown to take it. */
+  .line {
+    place-items: stretch;
+    animation-delay: 0.35s;
+  }
+  .line__input {
+    width: 100%;
+    height: 100%;
+    padding-inline: 16px 64px;
+    /* 16px at least: iOS zooms the page into a smaller field it's typed in. */
+    font-size: 16px;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+  }
+  .line__input::placeholder {
+    color: var(--ink-3);
+  }
+  .line__count {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 16px;
+    translate: 0 -50%;
+    font-size: 13px;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+  .line__go {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 6px;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    color: var(--on-ink);
+    background: var(--ink);
+    cursor: pointer;
+    animation: ink-fade 0.2s var(--draw) backwards;
+  }
+  .line__go:hover {
+    box-shadow: var(--neatline-on-ink);
+  }
+  .line__go svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* The matches, opening upward from the line: the best one nearest it. Laid out
+     bottom to top, so a list too long for its room starts scrolled to its foot —
+     there, rather than the worst matches showing and the best out of view. */
+  .matches {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    inset-inline: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column-reverse;
+    max-height: min(320px, 50dvh);
+    overflow-y: auto;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+  }
+  .matches__item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 15px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+  .matches__item[aria-selected="true"] {
+    color: var(--on-ink);
+    background: var(--ink);
+  }
+  .matches__en {
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .matches__item[aria-selected="true"] .matches__en {
+    color: inherit;
+    opacity: 0.7;
+  }
+  .matches__mark {
+    color: inherit;
+    background: none;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+
+  /* The name of a guess on its way up from the line (game/fly.ts). */
+  .flight {
+    position: fixed;
+    z-index: 50;
+    margin: 0;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ---------------------------------------------------------------- the rows */
+
+  .rows {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 15px;
+    background: var(--pop);
+    border: 1px solid var(--line);
+  }
+  .row__n {
+    width: 12px;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .row__name {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .row.is-correct .row__name {
+    font-weight: 600;
+  }
+  /* The dotted run from a name to its distance, as an old atlas's index has. */
+  .row__leader {
+    flex: 1;
+    min-width: 12px;
+    height: 2px;
+    margin-top: 6px;
+    background-image: radial-gradient(circle, var(--ink-3) 0.7px, transparent 0.9px);
+    background-size: 5px 2px;
+    background-repeat: repeat-x;
+  }
+  .row__reading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .row__km {
+    font-size: 14px;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .row__arrow {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+  .row__arrow path {
+    fill: var(--ink);
+  }
+  .row__arrow line {
+    stroke: var(--ink);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+  }
+  /* Turned about the needle's middle: the viewBox's origin. */
+  .row__arrow g {
+    transform-box: view-box;
+    transform-origin: 0 0;
+  }
+  .row__check {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+  }
+
+  /* The ink scale: five cells, inked from the first. */
+  .warmth {
+    display: inline-flex;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .warmth i {
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--ink-3);
+  }
+  .warmth i.is-on {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* A row just made: its frame comes in under the name as it lands, then the rest
+     is written in — the distance, the needle swinging round, the cells one by one. */
+  .row.is-fresh {
+    animation: ink-fade 0.35s var(--draw) backwards;
+  }
+  .row.is-fresh .row__n,
+  .row.is-fresh .row__leader,
+  .row.is-fresh .row__km {
+    animation: ink-fade 0.4s 0.45s var(--draw) backwards;
+  }
+  .row.is-fresh .row__arrow g {
+    animation: arrow-swing 1.1s 0.5s var(--spring) backwards;
+  }
+  .row.is-fresh .warmth i.is-on {
+    animation: cell-ink 0.35s calc(0.6s + var(--i) * 0.08s) var(--draw) backwards;
+  }
+  .row.is-fresh .row__check path {
+    animation: ink-draw 0.5s 0.55s var(--draw) backwards;
+  }
+
+  /* ---------------------------------------------------------------- the result */
+
+  /* A result that was already there when the page opened comes in quietly; one
+     that just happened is set down (below). */
+  .city,
+  .stats {
+    padding: 14px 16px;
+    animation: ink-fade 0.5s 0.1s var(--draw) backwards;
+  }
+  .city.is-fresh {
+    animation: ink-rise 0.6s 0.15s var(--draw) backwards;
+  }
+  .stats.is-fresh {
+    animation: ink-rise 0.6s 0.3s var(--draw) backwards;
+  }
+  .city__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .city__fold {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .city__title {
+    margin: 4px 0 0;
+    font-size: 26px;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .city__subtitle {
+    margin: 3px 0 0;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .city__coords {
+    margin: 0;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .city__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 10px 0 0;
+    font-size: 13px;
+  }
+
+  .stats__headline {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .stats__tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 12px 0 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--hair);
+  }
+  .stats__tile {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 8px 2px 7px;
+    text-align: center;
+  }
+  .stats__tile + .stats__tile {
+    border-inline-start: 1px solid var(--hair);
+  }
+  .stats__tile .ink-label {
+    font-size: 10px;
+    line-height: 13px;
+    letter-spacing: 0.06em;
+  }
+  .stats__n {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats__dist-label {
+    margin: 12px 0 0;
+  }
+
+  /* How many guesses each win took: bars hatched as a legend's swatches, today's in
+     solid ink; the count after each bar, which never runs past the room it needs. */
+  .dist {
+    display: grid;
+    gap: 4px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dist__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  .dist__n {
+    width: 10px;
+    text-align: end;
+    color: var(--ink-2);
+  }
+  .dist__track {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .dist__bar {
+    width: calc((100% - 30px) * var(--f));
+    min-width: 6px;
+    height: 12px;
+    border: 1px solid var(--line);
+    background-color: var(--pop);
+    background-image: var(--hatch);
+    transform-origin: left center;
+    animation: bar-grow 0.7s calc(0.4s + var(--i) * 0.06s) var(--draw) backwards;
+  }
+  [dir="rtl"] .dist__bar {
+    transform-origin: right center;
+  }
+  .dist__count {
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .dist__row.is-zero .dist__count {
+    color: var(--ink-3);
+  }
+  .dist__row.is-today .dist__bar {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .dist__row.is-today .dist__n,
+  .dist__row.is-today .dist__count {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ---------------------------------------------------------------- further down */
+
+  /* On paper of its own: grey type ringed by paper still drowns in a dense map. */
+  .more {
+    position: absolute;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ink);
+    white-space: nowrap;
+    background: var(--pop);
+    border: 1px solid var(--hair);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.6s 0.4s ease,
+      visibility 0s linear 1s;
+  }
+  .more.is-in {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.6s 0.4s ease,
+      visibility 0s;
+  }
+  .more:hover {
+    border-color: var(--line);
+  }
+  .more svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.75;
+    animation: nudge 1.8s ease-in-out infinite;
+  }
+
+  /* ---------------------------------------------------------------- narrow screens */
+
+  @media not all and (min-width: 768px) {
+    .stage {
+      padding-bottom: max(calc(76px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px));
+    }
+    .more {
+      bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+  }
+}
+
+@keyframes waiting {
+  from {
+    inset-inline: 0 100%;
+  }
+  50% {
+    inset-inline: 25% 25%;
+  }
+  to {
+    inset-inline: 100% 0;
+  }
+}
+
+/* A row's needle comes round from north to its bearing. */
+@keyframes arrow-swing {
+  from {
+    rotate: calc(-1 * var(--from, 0deg));
+  }
+}
+
+@keyframes cell-ink {
+  from {
+    scale: 0.2;
+    opacity: 0;
+  }
+}
+
+@keyframes bar-grow {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* Down off the page, the ink coming out from under it (game/Curtain.tsx). */
+@keyframes curtain-down {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 3px;
+  }
+}

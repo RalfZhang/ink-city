@@ -1,5 +1,6 @@
-import { bboxForScreen, DEFAULT_COLORS, DEFAULT_STYLE, drawScene, MAX_HALF_KM } from "@inkcity/core";
+import { DEFAULT_COLORS, DEFAULT_STYLE, drawScene } from "@inkcity/core";
 import type { Manifest } from "./manifest";
+import { mapBBox } from "./size";
 
 export type Theme = "light" | "dark";
 
@@ -16,9 +17,8 @@ export function drawMap(
   width: number,
   height: number,
 ): void {
-  const { lat, lon } = manifest.city;
   drawScene(ctx, {
-    bbox: bboxForScreen(lat, lon, MAX_HALF_KM, width / height),
+    bbox: mapBBox(manifest, width, height),
     width,
     height,
     style: { ...DEFAULT_COLORS[theme], ...DEFAULT_STYLE },

@@ -3,14 +3,11 @@
     "title": "InkCity — adivinhe a cidade de hoje",
     "description": "Todo dia uma cidade nova, desenhada a tinta com dados do OpenStreetMap. Adivinhe em que país ela fica e use-a como papel de parede."
   },
-  "panel": {
-    "tagline": "Uma cidade nova todo dia, desenhada a tinta",
-    "showMap": "Ver o mapa inteiro",
-    "showGame": "Voltar ao jogo"
+  "intro": {
+    "question": "Em que país fica esta cidade?"
   },
   "today": {
     "label": "Hoje",
-    "concealed": "Revelada após a partida de hoje",
     "loading": "Carregando o mapa de hoje…",
     "rebuilding": "O mapa de hoje ainda não foi publicado — ele está sendo desenhado direto do OpenStreetMap, o que pode levar um minuto…",
     "failed": "Não foi possível carregar o mapa de hoje.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Dá para adivinhar assim que o mapa estiver desenhado.",
-    "paintFailed": "Dá para adivinhar assim que o mapa carregar."
+  "play": {
+    "guess": "Adivinhar",
+    "wallpaper": "Usar de fundo",
+    "more": "Role para baixo para saber mais"
+  },
+  "dir": {
+    "n": "Norte",
+    "ne": "Nordeste",
+    "e": "Leste",
+    "se": "Sudeste",
+    "s": "Sul",
+    "sw": "Sudoeste",
+    "w": "Oeste",
+    "nw": "Noroeste"
+  },
+  "result": {
+    "share": "Compartilhar",
+    "copied": "Copiado para a área de transferência",
+    "details": "Ver detalhes",
+    "back": "Voltar",
+    "collapse": "Recolher",
+    "expand": "Expandir",
+    "nextCity": "até a próxima cidade"
+  },
+  "globe": {
+    "label": "Um globo com os palpites de hoje, ligados em ordem. Arraste para girá-lo.",
+    "failed": "Não foi possível carregar o globo."
   },
   "storage": {
     "memoryOnly": "Seu navegador não salva esta partida, então ela termina quando você fechar a página.",
     "dismiss": "Fechar"
   },
+  "app": {
+    "tagline": "Uma cidade nova todo dia, desenhada a tinta"
+  },
   "download": {
-    "teaser": "InkCity é um aplicativo de desktop que coloca uma cidade nova no seu papel de parede todo dia.",
-    "teaserLink": "Baixe agora",
     "title": "Use {{city}} como papel de parede hoje",
-    "body": "Uma cidade nova na sua área de trabalho toda meia-noite, desenhada para a sua tela. O papel de parede é o enigma: o nome aparece no canto quando você acerta.",
+    "body": "Uma cidade nova na sua área de trabalho toda meia-noite, desenhada para a sua tela.",
     "countdown": "Próxima cidade em {{time}}. O aplicativo troca para você",
     "button": "Baixar para {{os}}",
-    "alsoOn": "Grátis e de código aberto, também para {{others}}",
     "free": "Grátis e de código aberto",
-    "otherPlatforms": "Outras plataformas",
     "mobile": "InkCity é um aplicativo de desktop. Abra esta página no computador para baixar.",
     "share": "Enviar para mim",
     "copied": "Link copiado",
@@ -53,5 +73,8 @@
     "credit": "Ícone do aplicativo e design visual do mapa por {{name}}",
     "source": "Código-fonte",
     "language": "Idioma"
+  },
+  "corner": {
+    "credit": "© colaboradores do <0>OpenStreetMap</0> · <1>GeoNames</1>"
   }
 }

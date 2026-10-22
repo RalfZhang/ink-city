@@ -1,7 +1,9 @@
 import type { City } from "@inkcity/core";
 import type { Theme } from "./draw";
+import { growthBuffers, growthFor, type Growth } from "./growth";
 import { loadDay, type LoadDeps, type Stage } from "./load";
 import type { Manifest } from "./manifest";
+import type { View } from "./size";
 
 // The map's work, wherever it runs: in the map worker (./worker.ts) normally, on
 // the main thread where a worker can't draw (./client.ts). Asked to `show` a day
@@ -9,9 +11,9 @@ import type { Manifest } from "./manifest";
 // asks — a resize or a theme switch redraws from memory and never refetches.
 
 /**
- * Draw the day at `width`×`height` device pixels, in `theme`, for a canvas laid out
- * at `cssWidth`×`cssHeight` — passed through to the frame, so the page knows what
- * size to show it at.
+ * Draw the day at `width`×`height` device pixels, in `theme` — the page asks for
+ * the square that holds every screen's crop (./size.ts), and lays it over the screen
+ * itself.
  */
 export type ShowRequest = {
   type: "show";
@@ -19,13 +21,16 @@ export type ShowRequest = {
   theme: Theme;
   width: number;
   height: number;
-  cssWidth: number;
-  cssHeight: number;
   /** The page's retry: load the day again though it failed — the one thing that does. */
   retry?: boolean;
+  /**
+   * Lay the roads out for inking in (./growth.ts), from the top of `view`, the part
+   * of the frame on screen: asked for until the day's first frame is on screen.
+   */
+  grow?: { view: View };
 };
 
-export type Frame = Omit<ShowRequest, "type"> & { type: "frame"; bitmap: ImageBitmap };
+export type Frame = Omit<ShowRequest, "type"> & { type: "frame"; bitmap: ImageBitmap; growth?: Growth };
 
 export type Reply =
   | { type: "stage"; date: string; stage: Stage }
@@ -98,7 +103,8 @@ export function createEngine(env: EngineEnv): (req: ShowRequest) => void {
         latest = null;
         try {
           const bitmap = await env.render(day.manifest, draw.theme, draw.width, draw.height);
-          env.post({ ...draw, type: "frame", bitmap }, [bitmap]);
+          const growth = draw.grow ? growthFor(day.manifest, draw.width, draw.height, draw.grow.view) : undefined;
+          env.post({ ...draw, type: "frame", bitmap, growth }, [bitmap, ...(growth ? growthBuffers(growth) : [])]);
         } catch (e) {
           env.post({ type: "error", date: draw.date, message: e instanceof Error ? e.message : String(e) });
         }

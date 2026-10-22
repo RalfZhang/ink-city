@@ -3,14 +3,11 @@
     "title": "InkCity — zgadnij dzisiejsze miasto",
     "description": "Codziennie nowe miasto narysowane tuszem na podstawie danych OpenStreetMap. Zgadnij, w jakim kraju leży, a potem ustaw je jako tapetę."
   },
-  "panel": {
-    "tagline": "Codziennie nowe miasto, narysowane tuszem",
-    "showMap": "Pokaż całą mapę",
-    "showGame": "Wróć do gry"
+  "intro": {
+    "question": "W jakim kraju jest to miasto?"
   },
   "today": {
     "label": "Dziś",
-    "concealed": "Odkryte po dzisiejszej grze",
     "loading": "Wczytywanie dzisiejszej mapy…",
     "rebuilding": "Dzisiejsza mapa nie została jeszcze opublikowana — rysujemy ją prosto z OpenStreetMap, to może potrwać minutę…",
     "failed": "Nie udało się wczytać dzisiejszej mapy.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Zgadywać można, gdy mapa będzie narysowana.",
-    "paintFailed": "Zgadywać można, gdy mapa się wczyta."
+  "play": {
+    "guess": "Zgadnij",
+    "wallpaper": "Ustaw jako tapetę",
+    "more": "Przewiń w dół, by dowiedzieć się więcej"
+  },
+  "dir": {
+    "n": "Północ",
+    "ne": "Północny wschód",
+    "e": "Wschód",
+    "se": "Południowy wschód",
+    "s": "Południe",
+    "sw": "Południowy zachód",
+    "w": "Zachód",
+    "nw": "Północny zachód"
+  },
+  "result": {
+    "share": "Udostępnij",
+    "copied": "Skopiowano do schowka",
+    "details": "Zobacz szczegóły",
+    "back": "Wróć",
+    "collapse": "Zwiń",
+    "expand": "Rozwiń",
+    "nextCity": "do następnego miasta"
+  },
+  "globe": {
+    "label": "Globus z dzisiejszymi odpowiedziami połączonymi po kolei. Przeciągnij, by go obrócić.",
+    "failed": "Nie udało się wczytać globusa."
   },
   "storage": {
     "memoryOnly": "Twoja przeglądarka nie zapisuje tej gry, więc skończy się po zamknięciu strony.",
     "dismiss": "Zamknij"
   },
+  "app": {
+    "tagline": "Codziennie nowe miasto, narysowane tuszem"
+  },
   "download": {
-    "teaser": "InkCity to aplikacja na komputer, która codziennie ustawia nowe miasto jako tapetę.",
-    "teaserLink": "Pobierz",
     "title": "Ustaw {{city}} jako dzisiejszą tapetę",
-    "body": "Codziennie o północy nowe miasto na pulpicie, narysowane pod twój ekran. Tapeta jest zagadką: nazwa pojawia się w rogu, gdy ją zgadniesz.",
+    "body": "Codziennie o północy nowe miasto na pulpicie, narysowane pod twój ekran.",
     "countdown": "Następne miasto za {{time}}. Aplikacja sama je podmieni",
     "button": "Pobierz na {{os}}",
-    "alsoOn": "Za darmo i open source, także na {{others}}",
     "free": "Za darmo i open source",
-    "otherPlatforms": "Inne platformy",
     "mobile": "InkCity to aplikacja na komputer. Otwórz tę stronę na komputerze, aby ją pobrać.",
     "share": "Wyślij do siebie",
     "copied": "Skopiowano link",
@@ -53,5 +73,8 @@
     "credit": "Ikona aplikacji i oprawa wizualna mapy: {{name}}",
     "source": "Kod źródłowy",
     "language": "Język"
+  },
+  "corner": {
+    "credit": "© współtwórcy <0>OpenStreetMap</0> · <1>GeoNames</1>"
   }
 }

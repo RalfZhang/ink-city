@@ -3,14 +3,11 @@
     "title": "InkCity — indovina la città di oggi",
     "description": "Ogni giorno una nuova città, disegnata a inchiostro dai dati di OpenStreetMap. Indovina in quale Paese si trova, poi mettila come sfondo del desktop."
   },
-  "panel": {
-    "tagline": "Una nuova città ogni giorno, disegnata a inchiostro",
-    "showMap": "Mostra tutta la mappa",
-    "showGame": "Torna al gioco"
+  "intro": {
+    "question": "In che Paese si trova questa città?"
   },
   "today": {
     "label": "Oggi",
-    "concealed": "Svelata dopo la partita di oggi",
     "loading": "Caricamento della mappa di oggi…",
     "rebuilding": "La mappa di oggi non è ancora pubblicata: la stiamo disegnando direttamente da OpenStreetMap, può richiedere un minuto…",
     "failed": "Impossibile caricare la mappa di oggi.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Potrai indovinare appena la mappa sarà disegnata.",
-    "paintFailed": "Potrai indovinare appena la mappa sarà caricata."
+  "play": {
+    "guess": "Indovina",
+    "wallpaper": "Usa come sfondo",
+    "more": "Scorri in giù per saperne di più"
+  },
+  "dir": {
+    "n": "Nord",
+    "ne": "Nord-est",
+    "e": "Est",
+    "se": "Sud-est",
+    "s": "Sud",
+    "sw": "Sud-ovest",
+    "w": "Ovest",
+    "nw": "Nord-ovest"
+  },
+  "result": {
+    "share": "Condividi",
+    "copied": "Copiato negli appunti",
+    "details": "Vedi dettagli",
+    "back": "Indietro",
+    "collapse": "Comprimi",
+    "expand": "Espandi",
+    "nextCity": "alla prossima città"
+  },
+  "globe": {
+    "label": "Un globo con i tentativi di oggi, collegati in ordine. Trascinalo per ruotarlo.",
+    "failed": "Impossibile caricare il globo."
   },
   "storage": {
     "memoryOnly": "Il tuo browser non salva questa partita: finirà quando chiudi la pagina.",
     "dismiss": "Chiudi"
   },
+  "app": {
+    "tagline": "Una nuova città ogni giorno, disegnata a inchiostro"
+  },
   "download": {
-    "teaser": "InkCity è un'app desktop che ogni giorno mette una nuova città come sfondo.",
-    "teaserLink": "Scaricala",
     "title": "Metti {{city}} come sfondo oggi",
-    "body": "Una nuova città sul tuo desktop ogni mezzanotte, disegnata per il tuo schermo. Lo sfondo è l'indovinello: il nome compare nell'angolo quando l'hai indovinato.",
+    "body": "Una nuova città sul tuo desktop ogni mezzanotte, disegnata per il tuo schermo.",
     "countdown": "Prossima città tra {{time}}. L'app la cambia per te",
     "button": "Scarica per {{os}}",
-    "alsoOn": "Gratis e open source, anche per {{others}}",
     "free": "Gratis e open source",
-    "otherPlatforms": "Altre piattaforme",
     "mobile": "InkCity è un'app desktop. Apri questa pagina sul computer per scaricarla.",
     "share": "Invia a me",
     "copied": "Link copiato",
@@ -53,5 +73,8 @@
     "credit": "Icona dell'app e design visivo della mappa di {{name}}",
     "source": "Codice sorgente",
     "language": "Lingua"
+  },
+  "corner": {
+    "credit": "© contributori di <0>OpenStreetMap</0> · <1>GeoNames</1>"
   }
 }

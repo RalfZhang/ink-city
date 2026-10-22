@@ -3,14 +3,11 @@
     "title": "InkCity — bugünün şehrini tahmin edin",
     "description": "Her gün OpenStreetMap verilerinden mürekkeple çizilmiş yeni bir şehir. Hangi ülkede olduğunu tahmin edin, sonra onu duvar kağıdınız yapın."
   },
-  "panel": {
-    "tagline": "Her gün mürekkeple çizilmiş yeni bir şehir",
-    "showMap": "Haritanın tamamını göster",
-    "showGame": "Oyuna dön"
+  "intro": {
+    "question": "Bu şehir hangi ülkede?"
   },
   "today": {
     "label": "Bugün",
-    "concealed": "Bugünkü oyun bitince açıklanacak",
     "loading": "Bugünün haritası yükleniyor…",
     "rebuilding": "Bugünün haritası henüz yayımlanmadı; doğrudan OpenStreetMap'ten çiziliyor, bu bir dakika sürebilir…",
     "failed": "Bugünün haritası yüklenemedi.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Harita çizilince tahmin edebilirsiniz.",
-    "paintFailed": "Harita yüklenince tahmin edebilirsiniz."
+  "play": {
+    "guess": "Tahmin et",
+    "wallpaper": "Duvar kâğıdı yap",
+    "more": "Daha fazlası için aşağı kaydır"
+  },
+  "dir": {
+    "n": "Kuzey",
+    "ne": "Kuzeydoğu",
+    "e": "Doğu",
+    "se": "Güneydoğu",
+    "s": "Güney",
+    "sw": "Güneybatı",
+    "w": "Batı",
+    "nw": "Kuzeybatı"
+  },
+  "result": {
+    "share": "Paylaş",
+    "copied": "Panoya kopyalandı",
+    "details": "Ayrıntıları gör",
+    "back": "Geri",
+    "collapse": "Daralt",
+    "expand": "Genişlet",
+    "nextCity": "sonraki şehre kadar"
+  },
+  "globe": {
+    "label": "Bugünkü tahminlerin sırayla birleştirildiği bir küre. Döndürmek için sürükle.",
+    "failed": "Küre yüklenemedi."
   },
   "storage": {
     "memoryOnly": "Tarayıcınız bu oyunu kaydetmiyor; sayfayı kapattığınızda oyun biter.",
     "dismiss": "Kapat"
   },
+  "app": {
+    "tagline": "Her gün mürekkeple çizilmiş yeni bir şehir"
+  },
   "download": {
-    "teaser": "InkCity, her gün duvar kağıdınıza yeni bir şehir koyan bir masaüstü uygulamasıdır.",
-    "teaserLink": "İndirin",
     "title": "{{city}} bugün duvar kağıdınız olsun",
-    "body": "Her gece yarısı masaüstünüzde, ekranınıza göre çizilmiş yeni bir şehir. Duvar kağıdı bilmecenin ta kendisi: doğru tahmin ettiğinizde şehrin adı köşede belirir.",
+    "body": "Her gece yarısı masaüstünüzde, ekranınıza göre çizilmiş yeni bir şehir.",
     "countdown": "Sonraki şehre {{time}} kaldı. Uygulama sizin için değiştirir",
     "button": "{{os}} için indir",
-    "alsoOn": "Ücretsiz ve açık kaynak; {{others}} için de var",
     "free": "Ücretsiz ve açık kaynak",
-    "otherPlatforms": "Diğer platformlar",
     "mobile": "InkCity bir masaüstü uygulamasıdır. İndirmek için bu sayfayı bilgisayarınızda açın.",
     "share": "Kendime gönder",
     "copied": "Bağlantı kopyalandı",
@@ -53,5 +73,8 @@
     "credit": "Uygulama simgesi ve harita görsel tasarımı: {{name}}",
     "source": "Kaynak kodu",
     "language": "Dil"
+  },
+  "corner": {
+    "credit": "© <0>OpenStreetMap</0> katkıda bulunanları · <1>GeoNames</1>"
   }
 }

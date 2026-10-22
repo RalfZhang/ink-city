@@ -3,14 +3,11 @@
     "title": "InkCity — raad de stad van vandaag",
     "description": "Elke dag een nieuwe stad, met inkt getekend uit OpenStreetMap-gegevens. Raad in welk land ze ligt en maak er je achtergrond van."
   },
-  "panel": {
-    "tagline": "Elke dag een nieuwe stad, met inkt getekend",
-    "showMap": "Hele kaart tonen",
-    "showGame": "Terug naar het spel"
+  "intro": {
+    "question": "In welk land ligt deze stad?"
   },
   "today": {
     "label": "Vandaag",
-    "concealed": "Bekend na het spel van vandaag",
     "loading": "De kaart van vandaag wordt geladen…",
     "rebuilding": "De kaart van vandaag is nog niet gepubliceerd — hij wordt rechtstreeks uit OpenStreetMap getekend, dat kan een minuut duren…",
     "failed": "De kaart van vandaag kon niet worden geladen.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Raden kan zodra de kaart getekend is.",
-    "paintFailed": "Raden kan zodra de kaart geladen is."
+  "play": {
+    "guess": "Raden",
+    "wallpaper": "Als achtergrond",
+    "more": "Scroll naar beneden voor meer"
+  },
+  "dir": {
+    "n": "Noord",
+    "ne": "Noordoost",
+    "e": "Oost",
+    "se": "Zuidoost",
+    "s": "Zuid",
+    "sw": "Zuidwest",
+    "w": "West",
+    "nw": "Noordwest"
+  },
+  "result": {
+    "share": "Delen",
+    "copied": "Gekopieerd naar het klembord",
+    "details": "Details bekijken",
+    "back": "Terug",
+    "collapse": "Inklappen",
+    "expand": "Uitklappen",
+    "nextCity": "tot de volgende stad"
+  },
+  "globe": {
+    "label": "Een wereldbol met de gokken van vandaag, op volgorde verbonden. Sleep om hem te draaien.",
+    "failed": "De wereldbol kon niet worden geladen."
   },
   "storage": {
     "memoryOnly": "Je browser bewaart dit spel niet, dus het eindigt als je de pagina sluit.",
     "dismiss": "Sluiten"
   },
+  "app": {
+    "tagline": "Elke dag een nieuwe stad, met inkt getekend"
+  },
   "download": {
-    "teaser": "InkCity is een desktop-app die elke dag een nieuwe stad als achtergrond instelt.",
-    "teaserLink": "Downloaden",
     "title": "Maak {{city}} vandaag je achtergrond",
-    "body": "Elke middernacht een nieuwe stad op je bureaublad, getekend voor jouw scherm. De achtergrond is de puzzel: de naam verschijnt in de hoek zodra je hem hebt geraden.",
+    "body": "Elke middernacht een nieuwe stad op je bureaublad, getekend voor jouw scherm.",
     "countdown": "Volgende stad over {{time}}. De app wisselt hem voor je",
     "button": "Downloaden voor {{os}}",
-    "alsoOn": "Gratis en open source, ook voor {{others}}",
     "free": "Gratis en open source",
-    "otherPlatforms": "Andere platforms",
     "mobile": "InkCity is een desktop-app. Open deze pagina op je computer om hem te downloaden.",
     "share": "Naar mezelf sturen",
     "copied": "Link gekopieerd",
@@ -53,5 +73,8 @@
     "credit": "App-pictogram en visueel ontwerp van de kaart door {{name}}",
     "source": "Broncode",
     "language": "Taal"
+  },
+  "corner": {
+    "credit": "© <0>OpenStreetMap</0>-medewerkers · <1>GeoNames</1>"
   }
 }

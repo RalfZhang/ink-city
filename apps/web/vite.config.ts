@@ -16,5 +16,5 @@ export default defineConfig({
   // the last rung of its fetch ladder needs it (src/map/load.ts).
   worker: { format: "es" },
   build: { target: "es2022" },
-  server: { port: 5174, strictPort: true },
+  server: { port: 5174, strictPort: true, host: '0.0.0.0' },
 });

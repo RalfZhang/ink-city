@@ -3,14 +3,11 @@
     "title": "InkCity — devinez la ville du jour",
     "description": "Chaque jour, une nouvelle ville dessinée à l'encre d'après OpenStreetMap. Devinez dans quel pays elle se trouve, puis faites-en votre fond d'écran."
   },
-  "panel": {
-    "tagline": "Une nouvelle ville chaque jour, dessinée à l'encre",
-    "showMap": "Afficher toute la carte",
-    "showGame": "Revenir au jeu"
+  "intro": {
+    "question": "Dans quel pays est cette ville ?"
   },
   "today": {
     "label": "Aujourd'hui",
-    "concealed": "Révélée après la partie du jour",
     "loading": "Chargement de la carte du jour…",
     "rebuilding": "La carte du jour n'est pas encore publiée : elle est dessinée directement depuis OpenStreetMap, ce qui peut prendre une minute…",
     "failed": "Impossible de charger la carte du jour.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Vous pourrez deviner dès que la carte sera dessinée.",
-    "paintFailed": "Vous pourrez deviner dès que la carte sera chargée."
+  "play": {
+    "guess": "Deviner",
+    "wallpaper": "En fond d'écran",
+    "more": "Faites défiler pour en savoir plus"
+  },
+  "dir": {
+    "n": "Nord",
+    "ne": "Nord-est",
+    "e": "Est",
+    "se": "Sud-est",
+    "s": "Sud",
+    "sw": "Sud-ouest",
+    "w": "Ouest",
+    "nw": "Nord-ouest"
+  },
+  "result": {
+    "share": "Partager",
+    "copied": "Copié dans le presse-papiers",
+    "details": "Voir les détails",
+    "back": "Retour",
+    "collapse": "Réduire",
+    "expand": "Développer",
+    "nextCity": "avant la prochaine ville"
+  },
+  "globe": {
+    "label": "Un globe avec les propositions du jour, reliées dans l'ordre. Faites-le glisser pour le tourner.",
+    "failed": "Impossible de charger le globe."
   },
   "storage": {
     "memoryOnly": "Votre navigateur ne conserve pas cette partie : elle s'arrête quand vous fermez la page.",
     "dismiss": "Fermer"
   },
+  "app": {
+    "tagline": "Une nouvelle ville chaque jour, dessinée à l'encre"
+  },
   "download": {
-    "teaser": "InkCity est une application de bureau qui met chaque jour une nouvelle ville en fond d'écran.",
-    "teaserLink": "La télécharger",
     "title": "Mettez {{city}} en fond d'écran aujourd'hui",
-    "body": "Une nouvelle ville sur votre bureau chaque nuit à minuit, dessinée pour votre écran. Le fond d'écran est l'énigme : le nom apparaît dans le coin une fois que vous l'avez deviné.",
+    "body": "Une nouvelle ville sur votre bureau chaque nuit à minuit, dessinée pour votre écran.",
     "countdown": "Prochaine ville dans {{time}}. L'application la change pour vous",
     "button": "Télécharger pour {{os}}",
-    "alsoOn": "Gratuit et open source, aussi sur {{others}}",
     "free": "Gratuit et open source",
-    "otherPlatforms": "Autres plateformes",
     "mobile": "InkCity est une application de bureau. Ouvrez cette page sur votre ordinateur pour la télécharger.",
     "share": "M'envoyer le lien",
     "copied": "Lien copié",
@@ -53,5 +73,8 @@
     "credit": "Icône de l'application et conception visuelle de la carte par {{name}}",
     "source": "Code source",
     "language": "Langue"
+  },
+  "corner": {
+    "credit": "© les contributeurs d'<0>OpenStreetMap</0> · <1>GeoNames</1>"
   }
 }

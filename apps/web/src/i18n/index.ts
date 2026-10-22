@@ -22,7 +22,7 @@ import vi from "./vi.json";
 import zhHans from "./zh-Hans.json";
 import zhHant from "./zh-Hant.json";
 
-export { LOCALES, dirForLocale, type LocaleCode } from "@inkcity/ui/i18n";
+export { LOCALES, type LocaleCode } from "@inkcity/ui/i18n";
 
 // The site's strings, per shipped locale (the shared table, @inkcity/ui/i18n), next
 // to the shared components' `ui` namespace — the desktop's i18n, minus everything
@@ -56,8 +56,8 @@ i18n.use(initReactI18next).init(hostI18nOptions(TRANSLATIONS, initialLanguage())
 
 /**
  * Put the language on the document: `lang` and `dir` on <html> (the layout mirrors
- * under RTL through logical properties; Radix reads direction from the provider in
- * App.tsx), and the title and description in that language.
+ * under RTL through logical properties), and the title and description in that
+ * language.
  */
 function applyToDocument(lng: string): void {
   const root = document.documentElement;

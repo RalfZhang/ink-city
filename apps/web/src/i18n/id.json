@@ -3,14 +3,11 @@
     "title": "InkCity — tebak kota hari ini",
     "description": "Setiap hari kota baru, digambar dengan tinta dari data OpenStreetMap. Tebak di negara mana kota itu berada, lalu jadikan wallpaper desktop Anda."
   },
-  "panel": {
-    "tagline": "Kota baru setiap hari, digambar dengan tinta",
-    "showMap": "Tampilkan seluruh peta",
-    "showGame": "Kembali ke permainan"
+  "intro": {
+    "question": "Kota ini ada di negara mana?"
   },
   "today": {
     "label": "Hari ini",
-    "concealed": "Terungkap setelah permainan hari ini",
     "loading": "Memuat peta hari ini…",
     "rebuilding": "Peta hari ini belum diterbitkan — sedang digambar langsung dari OpenStreetMap, bisa memakan waktu sekitar semenit…",
     "failed": "Tidak dapat memuat peta hari ini.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Tebakan dibuka setelah peta selesai digambar.",
-    "paintFailed": "Tebakan dibuka setelah peta selesai dimuat."
+  "play": {
+    "guess": "Tebak",
+    "wallpaper": "Jadikan wallpaper",
+    "more": "Gulir ke bawah untuk selengkapnya"
+  },
+  "dir": {
+    "n": "Utara",
+    "ne": "Timur laut",
+    "e": "Timur",
+    "se": "Tenggara",
+    "s": "Selatan",
+    "sw": "Barat daya",
+    "w": "Barat",
+    "nw": "Barat laut"
+  },
+  "result": {
+    "share": "Bagikan",
+    "copied": "Disalin ke papan klip",
+    "details": "Lihat detail",
+    "back": "Kembali",
+    "collapse": "Ciutkan",
+    "expand": "Bentangkan",
+    "nextCity": "menuju kota berikutnya"
+  },
+  "globe": {
+    "label": "Bola dunia dengan tebakan hari ini, dihubungkan berurutan. Seret untuk memutarnya.",
+    "failed": "Tidak dapat memuat bola dunia."
   },
   "storage": {
     "memoryOnly": "Browser Anda tidak menyimpan permainan ini, jadi permainan berakhir saat halaman ditutup.",
     "dismiss": "Tutup"
   },
+  "app": {
+    "tagline": "Kota baru setiap hari, digambar dengan tinta"
+  },
   "download": {
-    "teaser": "InkCity adalah aplikasi desktop yang memasang kota baru sebagai wallpaper Anda setiap hari.",
-    "teaserLink": "Unduh",
     "title": "Jadikan {{city}} wallpaper Anda hari ini",
-    "body": "Kota baru di desktop Anda setiap tengah malam, digambar untuk layar Anda. Wallpaper-nya adalah teka-teki: nama kota muncul di sudut setelah Anda menebaknya.",
+    "body": "Kota baru di desktop Anda setiap tengah malam, digambar untuk layar Anda.",
     "countdown": "Kota berikutnya dalam {{time}}. Aplikasi akan menggantinya untuk Anda",
     "button": "Unduh untuk {{os}}",
-    "alsoOn": "Gratis & open source, juga untuk {{others}}",
     "free": "Gratis & open source",
-    "otherPlatforms": "Platform lain",
     "mobile": "InkCity adalah aplikasi desktop. Buka halaman ini di komputer Anda untuk mengunduhnya.",
     "share": "Kirim ke saya",
     "copied": "Tautan disalin",
@@ -53,5 +73,8 @@
     "credit": "Ikon aplikasi dan desain visual peta oleh {{name}}",
     "source": "Kode sumber",
     "language": "Bahasa"
+  },
+  "corner": {
+    "credit": "© kontributor <0>OpenStreetMap</0> · <1>GeoNames</1>"
   }
 }

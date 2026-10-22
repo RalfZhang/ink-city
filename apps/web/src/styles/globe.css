@@ -1,0 +1,45 @@
+/* The result's details: the day's guesses on a globe (game/globe/Globe.tsx), in a
+   square frame that the Earth fills once it's zoomed in — as wide as the cards, or as
+   tall as the page has room for, whichever is less. The frame is up while the globe
+   loads (game/Stage.tsx), and the globe fades in inside it. */
+
+@layer components {
+  .globe {
+    width: min(100%, calc(100dvh - 230px));
+    aspect-ratio: 1;
+    margin-inline: auto;
+    padding: 0;
+    overflow: hidden;
+    animation: ink-rise 0.45s var(--draw) backwards;
+  }
+  .globe__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: ink-fade 0.3s var(--draw) backwards;
+    cursor: grab;
+    /* A drag turns the globe; it mustn't also scroll the page. */
+    touch-action: none;
+    outline-offset: -3px;
+  }
+  .globe__canvas:active {
+    cursor: grabbing;
+  }
+  /* A globe that couldn't be fetched: why, and the button to fetch it again. */
+  .globe__failed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: var(--ink-2);
+  }
+  .globe__failed p {
+    margin: 0;
+  }
+}

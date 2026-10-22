@@ -3,14 +3,11 @@
     "title": "InkCity — errate die Stadt des Tages",
     "description": "Jeden Tag eine neue Stadt, mit Tinte gezeichnet aus OpenStreetMap-Daten. Errate, in welchem Land sie liegt – und mach sie zu deinem Hintergrundbild."
   },
-  "panel": {
-    "tagline": "Jeden Tag eine neue Stadt, mit Tinte gezeichnet",
-    "showMap": "Ganze Karte anzeigen",
-    "showGame": "Zurück zum Spiel"
+  "intro": {
+    "question": "In welchem Land liegt diese Stadt?"
   },
   "today": {
     "label": "Heute",
-    "concealed": "Wird nach dem heutigen Rätsel aufgedeckt",
     "loading": "Die Karte von heute wird geladen…",
     "rebuilding": "Die heutige Karte ist noch nicht veröffentlicht – sie wird direkt aus OpenStreetMap gezeichnet, das kann eine Minute dauern…",
     "failed": "Die heutige Karte konnte nicht geladen werden.",
@@ -18,24 +15,47 @@
     "wikipedia": "Wikipedia",
     "openMap": "OpenStreetMap"
   },
-  "game": {
-    "painting": "Raten geht los, sobald die Karte gezeichnet ist.",
-    "paintFailed": "Raten geht los, sobald die Karte geladen ist."
+  "play": {
+    "guess": "Raten",
+    "wallpaper": "Als Hintergrund",
+    "more": "Nach unten scrollen für mehr"
+  },
+  "dir": {
+    "n": "Norden",
+    "ne": "Nordosten",
+    "e": "Osten",
+    "se": "Südosten",
+    "s": "Süden",
+    "sw": "Südwesten",
+    "w": "Westen",
+    "nw": "Nordwesten"
+  },
+  "result": {
+    "share": "Teilen",
+    "copied": "In die Zwischenablage kopiert",
+    "details": "Details ansehen",
+    "back": "Zurück",
+    "collapse": "Einklappen",
+    "expand": "Ausklappen",
+    "nextCity": "bis zur nächsten Stadt"
+  },
+  "globe": {
+    "label": "Ein Globus mit den heutigen Tipps, der Reihe nach verbunden. Zum Drehen ziehen.",
+    "failed": "Der Globus konnte nicht geladen werden."
   },
   "storage": {
     "memoryOnly": "Dein Browser speichert dieses Spiel nicht – es endet, wenn du die Seite schließt.",
     "dismiss": "Schließen"
   },
+  "app": {
+    "tagline": "Jeden Tag eine neue Stadt, mit Tinte gezeichnet"
+  },
   "download": {
-    "teaser": "InkCity ist eine Desktop-App, die dir jeden Tag eine neue Stadt als Hintergrundbild setzt.",
-    "teaserLink": "Herunterladen",
     "title": "Mach {{city}} heute zu deinem Hintergrundbild",
-    "body": "Jeden Tag um Mitternacht eine neue Stadt auf deinem Desktop, passend für deinen Bildschirm gezeichnet. Das Hintergrundbild ist das Rätsel: Der Name erscheint in der Ecke, sobald du ihn erraten hast.",
+    "body": "Jeden Tag um Mitternacht eine neue Stadt auf deinem Desktop, passend für deinen Bildschirm gezeichnet.",
     "countdown": "Nächste Stadt in {{time}}. Die App tauscht sie für dich aus",
     "button": "Für {{os}} herunterladen",
-    "alsoOn": "Kostenlos & Open Source, auch für {{others}}",
     "free": "Kostenlos & Open Source",
-    "otherPlatforms": "Andere Plattformen",
     "mobile": "InkCity ist eine Desktop-App. Öffne diese Seite auf deinem Computer, um sie herunterzuladen.",
     "share": "An mich senden",
     "copied": "Link kopiert",
@@ -53,5 +73,8 @@
     "credit": "App-Symbol und visuelle Kartengestaltung von {{name}}",
     "source": "Quellcode",
     "language": "Sprache"
+  },
+  "corner": {
+    "credit": "© <0>OpenStreetMap</0>-Mitwirkende · <1>GeoNames</1>"
   }
 }
