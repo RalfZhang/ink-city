@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.1](https://github.com/RalfZhang/ink-city/compare/v0.14.0...v0.14.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* Mondrian style with dark mode ([73cc4a3](https://github.com/RalfZhang/ink-city/commit/73cc4a3e15ef46bdd188feb930cb73cbf3ee02b5))
+* Wallpaper cache ([2e5e375](https://github.com/RalfZhang/ink-city/commit/2e5e375ce8394ac931779c0bbacd6b5bf98b2edc))
+
 ## [0.14.0](https://github.com/RalfZhang/ink-city/compare/v0.13.0...v0.14.0) (2026-10-22)
 
 
