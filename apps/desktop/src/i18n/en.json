@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
     "proxyDesc": "Route map data and app update requests through a proxy, for networks where OpenStreetMap or GitHub is unreachable directly. Supports http:// and socks5:// URLs.",
+    "wallpaperCacheLabel": "Wallpaper cache",
+    "wallpaperCacheDesc": "macOS keeps its own copy of every wallpaper InkCity sets, and some versions never clear them, so these folders can grow by gigabytes over time. You can delete the files inside.",
+    "wallpaperCacheOpen": "Show in Finder",
     "quit": "Quit",
     "closeWindow": "Close window"
   },

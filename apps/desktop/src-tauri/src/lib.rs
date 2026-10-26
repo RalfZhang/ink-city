@@ -389,6 +389,8 @@ pub fn run() {
             commands::hide_window,
             commands::update_tray_labels,
             commands::open_log_dir,
+            commands::has_wallpaper_cache,
+            commands::open_wallpaper_cache,
             commands::preview_city,
             commands::clean_cache,
             commands::open_preview_image,

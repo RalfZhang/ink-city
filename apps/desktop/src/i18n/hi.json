@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "प्रॉक्सी",
     "proxyDesc": "उन नेटवर्क के लिए जहाँ OpenStreetMap या GitHub सीधे उपलब्ध नहीं है, मानचित्र डेटा और ऐप अपडेट अनुरोधों को प्रॉक्सी के माध्यम से भेजता है। http:// और socks5:// URL समर्थित हैं।",
+    "wallpaperCacheLabel": "वॉलपेपर कैश",
+    "wallpaperCacheDesc": "macOS, InkCity द्वारा सेट किए गए हर वॉलपेपर की अपनी एक प्रति रखता है, और कुछ संस्करण इन्हें कभी नहीं हटाते, इसलिए ये फ़ोल्डर समय के साथ कई GB तक बढ़ सकते हैं। इनके अंदर की फ़ाइलें आप हटा सकते हैं।",
+    "wallpaperCacheOpen": "Finder में दिखाएँ",
     "quit": "बंद करें",
     "closeWindow": "विंडो बंद करें"
   },

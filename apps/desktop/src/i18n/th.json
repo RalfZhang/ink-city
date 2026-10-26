@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "พร็อกซี",
     "proxyDesc": "ส่งคำขอข้อมูลแผนที่และการอัปเดตแอปผ่านพร็อกซี สำหรับเครือข่ายที่ไม่สามารถเข้าถึง OpenStreetMap หรือ GitHub ได้โดยตรง รองรับ URL แบบ http:// และ socks5://",
+    "wallpaperCacheLabel": "แคชวอลเปเปอร์",
+    "wallpaperCacheDesc": "macOS เก็บสำเนาของวอลเปเปอร์ทุกภาพที่ InkCity ตั้งไว้ และบางเวอร์ชันไม่เคยลบออก โฟลเดอร์เหล่านี้จึงอาจใหญ่ขึ้นหลาย GB เมื่อเวลาผ่านไป คุณลบไฟล์ข้างในได้",
+    "wallpaperCacheOpen": "แสดงใน Finder",
     "quit": "ออก",
     "closeWindow": "ปิดหน้าต่าง"
   },

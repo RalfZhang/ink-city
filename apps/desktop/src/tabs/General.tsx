@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { useTranslation } from "react-i18next";
+import { Button } from "@inkcity/ui/components/button";
 import { Card, CardContent } from "@inkcity/ui/components/card";
 import { Switch } from "@inkcity/ui/components/switch";
 import { Separator } from "@inkcity/ui/components/separator";
@@ -28,9 +29,12 @@ export default function General({ status, refresh, onError }: Props) {
   const { t } = useTranslation();
   const [autostart, setAutostart] = useState<boolean | null>(null);
   const [locale, setLocale] = useState<LocaleChoice>(getLocaleChoice());
+  // macOS only — see `wallpaper_cache_dirs` in commands.rs.
+  const [hasWallpaperCache, setHasWallpaperCache] = useState(false);
 
   useEffect(() => {
     isEnabled().then(setAutostart).catch(onError);
+    invoke<boolean>("has_wallpaper_cache").then(setHasWallpaperCache).catch(onError);
   }, []);
 
   const toggleHideTray = async (hide: boolean) => {
@@ -63,6 +67,14 @@ export default function General({ status, refresh, onError }: Props) {
   const pickLocale = (v: LocaleChoice) => {
     setLocaleChoice(v);
     setLocale(v);
+  };
+
+  const openWallpaperCache = async () => {
+    try {
+      await invoke("open_wallpaper_cache");
+    } catch (e) {
+      onError(e);
+    }
   };
 
   return (
@@ -138,6 +150,25 @@ export default function General({ status, refresh, onError }: Props) {
             refresh={refresh}
             onError={onError}
           />
+          {hasWallpaperCache && (
+            <>
+              <Separator />
+              <SettingRow
+                label={t("general.wallpaperCacheLabel")}
+                description={t("general.wallpaperCacheDesc")}
+                control={
+                  <Button
+                    className="min-w-28"
+                    variant="outline"
+                    size="sm"
+                    onClick={openWallpaperCache}
+                  >
+                    {t("general.wallpaperCacheOpen")}
+                  </Button>
+                }
+              />
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

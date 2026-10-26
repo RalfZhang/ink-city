@@ -39,6 +39,9 @@
     "mapGoogle": "Google マップ",
     "proxyLabel": "プロキシ",
     "proxyDesc": "OpenStreetMapやGitHubに直接アクセスできないネットワーク向けに、地図データとアプリ更新のリクエストをプロキシ経由で送信します。http:// と socks5:// のURLに対応しています。",
+    "wallpaperCacheLabel": "壁紙キャッシュ",
+    "wallpaperCacheDesc": "macOS は InkCity が設定した壁紙ごとに独自のコピーを保存し、バージョンによっては削除しないため、これらのフォルダは時間とともに数 GB に膨らむことがあります。中のファイルは削除してかまいません。",
+    "wallpaperCacheOpen": "Finderで表示",
     "quit": "終了",
     "closeWindow": "ウィンドウを閉じる"
   },

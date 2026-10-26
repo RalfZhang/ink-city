@@ -39,6 +39,9 @@
     "mapGoogle": "Google 地图",
     "proxyLabel": "代理",
     "proxyDesc": "通过代理请求地图数据与应用更新，适用于无法直连 OpenStreetMap 或 GitHub 的网络。支持 http:// 与 socks5:// 地址。",
+    "wallpaperCacheLabel": "壁纸缓存",
+    "wallpaperCacheDesc": "macOS 会为 InkCity 设置的每张壁纸另存一份副本，部分版本从不清理，这些文件夹可能随时间增长到数 GB。其中的文件可以删除。",
+    "wallpaperCacheOpen": "在访达中显示",
     "quit": "退出",
     "closeWindow": "关闭窗口"
   },

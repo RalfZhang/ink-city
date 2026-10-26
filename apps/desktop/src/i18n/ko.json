@@ -39,6 +39,9 @@
     "mapGoogle": "Google 지도",
     "proxyLabel": "프록시",
     "proxyDesc": "OpenStreetMap 또는 GitHub에 직접 접속할 수 없는 네트워크에서 지도 데이터 및 앱 업데이트 요청을 프록시를 통해 전달합니다. http:// 및 socks5:// URL을 지원합니다.",
+    "wallpaperCacheLabel": "배경 캐시",
+    "wallpaperCacheDesc": "macOS는 InkCity가 설정한 배경마다 별도의 사본을 보관하며, 일부 버전은 이를 지우지 않아 이 폴더들이 시간이 지나면서 수 GB까지 커질 수 있습니다. 안의 파일은 삭제해도 됩니다.",
+    "wallpaperCacheOpen": "Finder에서 보기",
     "quit": "종료",
     "closeWindow": "창 닫기"
   },

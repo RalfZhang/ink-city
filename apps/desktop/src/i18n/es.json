@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
     "proxyDesc": "Enruta las solicitudes de datos del mapa y de actualizaciones de la aplicación a través de un proxy, para redes donde OpenStreetMap o GitHub no son accesibles directamente. Admite URL http:// y socks5://.",
+    "wallpaperCacheLabel": "Caché de fondos",
+    "wallpaperCacheDesc": "macOS guarda su propia copia de cada fondo que establece InkCity, y algunas versiones nunca las borran, así que estas carpetas pueden crecer varios GB con el tiempo. Puedes eliminar los archivos que contienen.",
+    "wallpaperCacheOpen": "Mostrar en Finder",
     "quit": "Salir",
     "closeWindow": "Cerrar ventana"
   },

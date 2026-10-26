@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::Ordering;
 
 use serde::{Deserialize, Serialize};
@@ -695,6 +695,45 @@ pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
 fn open_dir(app: &AppHandle, dir: &Path) -> Result<(), String> {
     std::fs::create_dir_all(dir).map_err(|e| e.to_string())?;
     app.opener().open_path(dir.to_string_lossy(), None::<&str>).map_err(|e| e.to_string())
+}
+
+/// Whether General shows its "Wallpaper cache" row — see `wallpaper_cache_dirs`.
+#[tauri::command]
+pub fn has_wallpaper_cache(app: AppHandle) -> bool {
+    !wallpaper_cache_dirs(&app).is_empty()
+}
+
+/// General's "Show in Finder": open each of macOS's wallpaper cache folders, so the
+/// user can empty them by hand.
+#[tauri::command]
+pub fn open_wallpaper_cache(app: AppHandle) -> Result<(), String> {
+    for dir in wallpaper_cache_dirs(&app) {
+        app.opener().open_path(dir.to_string_lossy(), None::<&str>).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+/// macOS's own caches of the images it's handed as wallpaper: the wallpaper agent
+/// keeps a decoded `.bmp` (W×H×4 bytes, ~30 MB on a laptop screen) and the image
+/// extension a copy of each source file. Every daily set adds to both, and since
+/// macOS 27 neither is ever evicted — gigabytes within weeks (reported to Apple as
+/// FB25321510). Both sit in other apps' containers, which TCC won't let us read or
+/// prune, but `is_dir` is only a stat (allowed) and Finder can open them. Macs
+/// before Sonoma have neither folder, and the other platforms nothing like them, so
+/// an empty list hides the row.
+fn wallpaper_cache_dirs(app: &AppHandle) -> Vec<PathBuf> {
+    if !cfg!(target_os = "macos") {
+        return Vec::new();
+    }
+    let Ok(home) = app.path().home_dir() else { return Vec::new() };
+    [
+        "Library/Containers/com.apple.wallpaper.agent/Data/Library/Caches/com.apple.wallpaper.caches/extension-com.apple.wallpaper.extension.image",
+        "Library/Containers/com.apple.wallpaper.extension.image/Data/Library/Caches",
+    ]
+    .iter()
+    .map(|p| home.join(p))
+    .filter(|p| p.is_dir())
+    .collect()
 }
 
 #[derive(Serialize)]

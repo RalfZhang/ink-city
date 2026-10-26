@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
     "proxyDesc": "Định tuyến các yêu cầu dữ liệu bản đồ và cập nhật ứng dụng qua proxy, dành cho các mạng không thể truy cập trực tiếp OpenStreetMap hoặc GitHub. Hỗ trợ URL http:// và socks5://.",
+    "wallpaperCacheLabel": "Bộ nhớ đệm hình nền",
+    "wallpaperCacheDesc": "macOS giữ một bản sao riêng của mỗi hình nền mà InkCity đặt, và một số phiên bản không bao giờ xóa chúng, nên các thư mục này có thể lớn thêm vài GB theo thời gian. Bạn có thể xóa các tệp bên trong.",
+    "wallpaperCacheOpen": "Hiển thị trong Finder",
     "quit": "Thoát",
     "closeWindow": "Đóng cửa sổ"
   },

@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Проксі",
     "proxyDesc": "Спрямовує запити даних карти та оновлень програми через проксі — для мереж, де OpenStreetMap або GitHub недоступні напряму. Підтримує URL-адреси http:// та socks5://.",
+    "wallpaperCacheLabel": "Кеш шпалер",
+    "wallpaperCacheDesc": "macOS зберігає власну копію всіх шпалер, які встановлює InkCity, і деякі версії ніколи їх не видаляють, тож ці папки з часом можуть вирости на кілька ГБ. Файли всередині можна видалити.",
+    "wallpaperCacheOpen": "Показати у Finder",
     "quit": "Вийти",
     "closeWindow": "Закрити вікно"
   },

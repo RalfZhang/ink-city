@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proxy",
     "proxyDesc": "OpenStreetMap veya GitHub'a doğrudan erişilemeyen ağlar için harita verisi ve uygulama güncellemesi isteklerini bir proxy üzerinden yönlendirir. http:// ve socks5:// URL'lerini destekler.",
+    "wallpaperCacheLabel": "Duvar kağıdı önbelleği",
+    "wallpaperCacheDesc": "macOS, InkCity'nin ayarladığı her duvar kağıdının kendi kopyasını saklar ve bazı sürümler bunları hiç silmez; bu yüzden bu klasörler zamanla birkaç GB büyüyebilir. İçlerindeki dosyaları silebilirsiniz.",
+    "wallpaperCacheOpen": "Finder'da Göster",
     "quit": "Çık",
     "closeWindow": "Pencereyi kapat"
   },

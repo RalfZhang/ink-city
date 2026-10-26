@@ -39,6 +39,9 @@
     "mapGoogle": "Google Maps",
     "proxyLabel": "Proksi",
     "proxyDesc": "Merutekan permintaan data peta dan pembaruan aplikasi melalui proksi, untuk jaringan yang tidak dapat mengakses OpenStreetMap atau GitHub secara langsung. Mendukung URL http:// dan socks5://.",
+    "wallpaperCacheLabel": "Cache wallpaper",
+    "wallpaperCacheDesc": "macOS menyimpan salinannya sendiri untuk setiap wallpaper yang dipasang InkCity, dan beberapa versi tidak pernah menghapusnya, sehingga folder ini bisa bertambah hingga beberapa GB seiring waktu. Anda dapat menghapus file di dalamnya.",
+    "wallpaperCacheOpen": "Tampilkan di Finder",
     "quit": "Keluar",
     "closeWindow": "Tutup jendela"
   },

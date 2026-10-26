@@ -39,6 +39,9 @@
     "mapGoogle": "Google 地圖",
     "proxyLabel": "代理",
     "proxyDesc": "透過代理請求地圖資料與應用程式更新，適用於無法直連 OpenStreetMap 或 GitHub 的網路。支援 http:// 與 socks5:// 位址。",
+    "wallpaperCacheLabel": "桌布快取",
+    "wallpaperCacheDesc": "macOS 會為 InkCity 設定的每張桌布另存一份副本，部分版本從不清理，這些資料夾可能隨時間增長到數 GB。其中的檔案可以刪除。",
+    "wallpaperCacheOpen": "在 Finder 中顯示",
     "quit": "結束",
     "closeWindow": "關閉視窗"
   },
