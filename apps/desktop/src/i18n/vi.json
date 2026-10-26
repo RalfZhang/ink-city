@@ -80,13 +80,13 @@
     "themeLight": "Sáng",
     "themeDark": "Tối",
     "themeSystem": "Theo hệ thống",
+    "palette": "Bảng màu",
+    "paletteCustom": "Tùy chỉnh",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Kiểu bản đồ",
     "presetMinimal": "Tối giản",
     "presetStandard": "Tiêu chuẩn",
     "presetBold": "Đậm",
-    "hintMinimal": "Chỉ đường chính",
-    "hintStandard": "Độ rộng theo loại đường",
-    "hintBold": "Phân cấp tương phản cao",
     "cityLabel": "Thông tin thành phố trên màn hình nền",
     "cityLabelHint": "Chỉ áp dụng cho chế độ Hằng ngày. Được vẽ lên hình nền khi thành phố hôm nay đã được tiết lộ — khi lượt chơi hôm nay đã kết thúc, hoặc khi tắt “Đoán mỗi ngày”.",
     "cityLabelOff": "Tắt",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Cáp treo và tuyến cáp được vẽ dưới dạng đường chấm theo màu của đường nét.",
     "showWater": "Hiển thị vùng nước",
     "waterHint": "Sông, hồ và biển được tô theo màu của đường nét.",
-    "save": "Lưu",
-    "mondrian": "Phong cách Mondrian",
-    "mondrianHint": "Vẽ bản đồ như một tác phẩm Mondrian: đường màu đen trên nền trắng, một số khối phố được tô bằng màu cơ bản. Thay thế màu của chủ đề; các lớp phía trên vẫn được áp dụng."
+    "save": "Lưu"
   },
   "about": {
     "p1": "InkCity đặt hình nền màn hình của bạn thành bản đồ đường phố của một thành phố khác mỗi ngày.",

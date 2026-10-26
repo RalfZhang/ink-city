@@ -20,22 +20,25 @@ use crate::osm_sidecar;
 use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
 
-/// How many days of rendered Daily PNGs (`<date>-<theme>.png`) the cache keeps.
+/// How many days of rendered Daily PNGs (`<date>.png`) the cache keeps.
 /// Everything older is swept by `cleanup_daily` after each render.
 const KEEP_DAYS: i64 = 7;
 
 /// How many days *back* a day's downloaded OSM payload (`<date>.osm.json`) is
 /// kept. Retention is split from `KEEP_DAYS` because the two artifacts have
-/// wildly different costs and lifetimes: a rendered PNG is a few MB and stays
-/// useful (a previewed future day is reapplied verbatim when it arrives), while
-/// an `.osm.json` runs to tens of MB — big city days hit 20 MB — and is only
-/// ever re-read to re-render *the day it belongs to*, on a theme flip or a
-/// style edit. Past days are never re-rendered, so keeping a week of them was
-/// ~85 MB of pure dead weight. One day back covers the timezone/midnight edge
-/// where "today" has just rolled over but the wallpaper hasn't caught up.
+/// wildly different costs: a rendered PNG is a few MB, while an `.osm.json` runs
+/// to tens of MB — big city days hit 20 MB — and is only ever re-read to render
+/// *the day it belongs to*, which every apply does afresh (`apply_target`). Past
+/// days are never rendered again, so keeping a week of them was ~85 MB of pure
+/// dead weight. One day back covers the timezone/midnight edge where "today" has
+/// just rolled over but the wallpaper hasn't caught up.
 const KEEP_OSM_DAYS: i64 = 1;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// The theme a render is drawn for: `ThemeMode` with `System` resolved. Serialized
+/// as the renderer's `Style.theme` and as `Status::effective_theme` (both `Theme`
+/// in packages/core/src/types.ts).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum EffectiveTheme {
     Light,
     Dark,
@@ -55,6 +58,9 @@ struct Style {
     #[serde(rename = "showAerialways")]
     show_aerialways: bool,
     variant: StyleVariant,
+    /// Which of the variant's palettes to draw in. The ink variant's colors are
+    /// `background`/`foreground` above already; Mondrian has its own per theme.
+    theme: EffectiveTheme,
 }
 
 #[derive(Serialize, Clone)]
@@ -108,15 +114,15 @@ struct Insets {
 //                                 platform reliably re-reads it (macOS caches the
 //                                 desktop image by URL). See wallpaper_set::set.
 //     daily/                    ← the Daily rotation cache, swept by cleanup_daily.
-//       <date>-<theme>.png        ← kept KEEP_DAYS back (and any future preview).
-//       <date>-<theme>-label-<corner>.png
-//                                 ← the same day with the city caption, once revealed
-//                                   (see `daily_names`). Same retention.
+//       <date>.png                ← that day's latest render, whatever its theme,
+//                                   palette or caption: rewritten by every apply,
+//                                   never read back as a cache hit (`apply_target`).
+//                                   Kept KEEP_DAYS back (and any future preview).
 //       <date>.osm.json           ← kept only KEEP_OSM_DAYS back; it's the heavy half.
 //     customized/               ← the Customized-pin cache. Writing a new
 //                                 coordinate wipes every other coordinate's
 //                                 files, so only the active pin is kept.
-//       <lat>_<lon>-<theme>.png
+//       <lat>_<lon>.png           ← the pin's latest render, like <date>.png.
 //       <lat>_<lon>.osm.json
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -161,7 +167,7 @@ fn system_theme(app: &AppHandle) -> EffectiveTheme {
     }
 }
 
-fn colors_for(app: &AppHandle, theme: EffectiveTheme) -> ColorPair {
+pub fn colors_for(app: &AppHandle, theme: EffectiveTheme) -> ColorPair {
     let state = app.state::<AppState>();
     match theme {
         EffectiveTheme::Light => state.light.lock().unwrap().clone(),
@@ -196,8 +202,9 @@ fn coord_key(lat: f64, lon: f64) -> String {
 //
 // Note what a `Target` deliberately does *not* carry: the city. For the Daily
 // flow the city and its map data have to be resolved *together* (see
-// `resolve_daily`), and that resolution costs a CDN round trip — so it happens
-// only once the target's cached PNG has been ruled out. See `Resolved`.
+// `resolve_daily`), and that resolution can cost a CDN round trip — so it happens
+// only in a run that renders, never in the scheduler's poll, which builds a
+// target just for its signature. See `Resolved`.
 // ─────────────────────────────────────────────────────────────────────────────
 
 enum TargetKind {
@@ -217,44 +224,41 @@ struct Target {
     osm_path: PathBuf,
     kind: TargetKind,
     /// The city caption this render carries, as its corner's tag (`CityLabel::tag`),
-    /// if any (`label_for`). Part of the signature and filename, so it's decided
-    /// here, before anything renders.
+    /// if any (`label_for`). Part of the signature, so it's decided here, before
+    /// anything renders.
     label: Option<&'static str>,
 }
 
 fn daily_target(app: &AppHandle, date: NaiveDate, theme: EffectiveTheme) -> Result<Target> {
     let dir = daily_dir(app)?;
     let label = label_for(app, date);
-    let (signature, png) = daily_names(date, theme_suffix(theme), label);
     Ok(Target {
-        signature,
-        png_path: dir.join(png),
+        signature: daily_signature(date, theme_suffix(theme), label),
+        png_path: dir.join(daily_png_name(date)),
         osm_path: dir.join(daily_osm_name(date)),
         kind: TargetKind::Daily(date),
         label,
     })
 }
 
-/// A Daily render's `last_applied` signature and PNG filename.
-///
-/// A captioned render is a different target — `daily:<date>:<theme>:label-<corner>`
-/// in `<date>-<theme>-label-<corner>.png` — rather than a redraw of the same file,
-/// because a cached PNG is reapplied with no staleness check (`apply_target`):
-///   • revealing the day moves the *desired signature*, so the scheduler's poll
-///     keeps repainting until the captioned image is actually up — even if the
-///     render the reveal kicked off fails;
-///   • the unlabeled PNG cached earlier for the other theme can never be reapplied
-///     after the reveal, because the reveal changed which file the theme flip asks
-///     for.
-/// Unlabeled names are exactly what they were before captions existed, so caches
-/// from older versions keep hitting.
-fn daily_names(date: NaiveDate, theme: &str, label: Option<&str>) -> (String, String) {
+/// A Daily render's `last_applied` signature: `daily:<date>:<theme>`, plus
+/// `:label-<corner>` once the day is revealed. Only the signature tells the two
+/// apart — the PNG is `<date>.png` either way — and that's where it matters:
+/// revealing the day moves the *desired signature*, so the scheduler's poll keeps
+/// repainting until the captioned image is actually up, even if the render the
+/// reveal kicked off fails.
+fn daily_signature(date: NaiveDate, theme: &str, label: Option<&str>) -> String {
     match label {
-        Some(tag) => {
-            (format!("daily:{date}:{theme}:label-{tag}"), format!("{date}-{theme}-label-{tag}.png"))
-        }
-        None => (format!("daily:{date}:{theme}"), format!("{date}-{theme}.png")),
+        Some(tag) => format!("daily:{date}:{theme}:label-{tag}"),
+        None => format!("daily:{date}:{theme}"),
     }
+}
+
+/// A Daily render's PNG: the date alone. What it looks like — theme, palette,
+/// caption — is never read off the name, because nothing reuses a PNG; every apply
+/// renders afresh and rewrites it (`apply_target`).
+fn daily_png_name(date: NaiveDate) -> String {
+    format!("{date}.png")
 }
 
 /// The caption the Daily wallpaper for `date` should carry — the Style tab's corner,
@@ -277,10 +281,9 @@ fn label_for(app: &AppHandle, date: NaiveDate) -> Option<&'static str> {
 fn custom_target(app: &AppHandle, lat: f64, lon: f64, theme: EffectiveTheme) -> Result<Target> {
     let dir = custom_dir(app)?;
     let key = coord_key(lat, lon);
-    let suffix = theme_suffix(theme);
     Ok(Target {
-        signature: format!("custom:{key}:{suffix}"),
-        png_path: dir.join(format!("{key}-{suffix}.png")),
+        signature: format!("custom:{key}:{}", theme_suffix(theme)),
+        png_path: dir.join(format!("{key}.png")),
         osm_path: dir.join(format!("{key}.osm.json")),
         kind: TargetKind::Custom { key, lat, lon },
         // A pin is coordinates, not a city — there's nothing to caption.
@@ -352,20 +355,12 @@ pub fn up_to_date(app: &AppHandle) -> bool {
     })
 }
 
-/// Whether the wallpaper the current settings ask for is already rendered, so
-/// applying it is a reapply from cache rather than a render. `false` when there's
-/// nothing to render.
-pub fn target_cached(app: &AppHandle) -> bool {
-    resolve_target(app, city::today(), effective_theme(app))
-        .ok()
-        .flatten()
-        .is_some_and(|t| t.png_path.exists())
-}
-
-/// What a caller of `run_now` needs. `Apply` shows the current target, reusing its
-/// cached PNG if there is one; `Force` first deletes today's cached PNGs so the
-/// target is really redrawn (`clear_for_force`). Declared weakest first, so queued
-/// requests merge to the stronger one with `max` — see `AppState::rerun`.
+/// What a caller of `run_now` needs. Both render the current target afresh and set
+/// it (`apply_target`). `Force` also forgets what was last applied, and a queued
+/// `Force` always runs where a queued `Apply` is skipped once up to date — so use it
+/// when the look changed, which the signature doesn't encode. Declared weakest
+/// first, so queued requests merge to the stronger one with `max` — see
+/// `AppState::rerun`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RunKind {
     Apply,
@@ -405,7 +400,7 @@ pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
             Ok(())
         } else {
             if kind == RunKind::Force {
-                clear_for_force(&app);
+                forget_applied(&app);
             }
             run_now_inner(&app).await
         };
@@ -444,28 +439,13 @@ pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
     r
 }
 
-/// `RunKind::Force`'s extra step: delete the current target's PNG — and every other
-/// PNG cached for today — and forget what was last applied, so the run that follows
-/// really redraws and reapplies. Runs only while holding `state.running` (from inside
-/// `run_now`'s loop): done before taking it, a render already in flight could write
-/// its pre-change PNG back under the same name right after the delete, and mark it
-/// applied.
-///
-/// Today's *other* PNGs go too (the other theme, the other caption variants) because
-/// a cached PNG is reapplied with no staleness check: left behind, one drawn before a
-/// style edit would come back the moment the caption is switched off or the theme
-/// flips. Wiping them keeps "every PNG on disk for today was drawn with the current
-/// settings" true, which is what makes reusing them safe. They re-render from the
-/// cached payload, so the cost is a render, never a download.
-fn clear_for_force(app: &AppHandle) {
-    let date = city::today();
-    let theme = effective_theme(app);
-    if let Ok(Some(target)) = resolve_target(app, date, theme) {
-        let _ = fs::remove_file(&target.png_path);
-    }
-    if let Ok(dir) = daily_dir(app) {
-        let _ = remove_day_pngs(&dir, date);
-    }
+/// `RunKind::Force`'s extra step: forget what was last applied. The signature names
+/// the target, not its look, so after a style edit it still matches the old image —
+/// and if the render that edit asked for fails, the poll would take the old image
+/// for up to date and never retry. Runs only while holding `state.running` (from
+/// inside `run_now`'s loop): done before taking it, a render already in flight could
+/// mark its pre-change image applied right after.
+fn forget_applied(app: &AppHandle) {
     *app.state::<AppState>().last_applied.lock().unwrap() = None;
 }
 
@@ -495,26 +475,19 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
     r
 }
 
-/// Everything `run_now_inner` does once it knows *what* to render: reapply the
-/// cached PNG if there is one, else resolve + render + cache it, then set it as the
-/// wallpaper. Split out from its caller only so the outcome can be recorded against
-/// `target.kind` without wrapping this whole body in a closure.
+/// Everything `run_now_inner` does once it knows *what* to render: resolve, render
+/// and cache it, then set it as the wallpaper. Split out from its caller only so the
+/// outcome can be recorded against `target.kind` without wrapping this whole body in
+/// a closure.
+///
+/// Always a fresh render, even when the target's PNG is already on disk: its name is
+/// just the date (or the pin), so nothing on disk says which theme, palette, preset
+/// or caption it was drawn with, and reapplying it could put back a look the user
+/// has since changed. The map data is still reused — `resolve_and_record` reads the
+/// cached `.osm.json` first — so switching Customized → Daily and back to the same
+/// pin, or a theme flip, costs a render, never a download.
 async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
     let live = wallpaper_dir(app)?;
-
-    // Fast path: the render for this exact target is already on disk — just
-    // reapply it. This is what makes switching Customized → Daily/Disable and
-    // back to the *same* pin free: the customized cache is only pruned when a
-    // *different* coordinate is applied (see `prune_other_custom`), never on a
-    // mode switch, so the pin's PNG survives and we reapply it here without
-    // touching the CDN or Overpass. (Even if only the PNG were missing,
-    // `render_bytes_for` would still reuse the cached `.osm.json` and not refetch.)
-    if target.png_path.exists() {
-        wallpaper_set::set(&target.png_path, &live)?;
-        mark_applied(app, &target.signature);
-        mark_painted(app, target);
-        return Ok(());
-    }
 
     // A new Customized coordinate supersedes any previous pin — drop the old
     // pin's files before writing the new ones so only the active pin is kept.
@@ -539,7 +512,7 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
 }
 
 /// Resolve `target`, render it, and write both halves to its cache — the day's
-/// (or pin's) `.osm.json` (inside `render_bytes_for`) and its `<…>-<theme>.png`.
+/// (or pin's) `.osm.json` (inside `render_bytes_for`) and its `.png`.
 /// Everything the pipeline does for a target *except* applying the wallpaper, so
 /// `run_now_inner` and Dev Mode's Advance Preview can share one path and can't
 /// drift apart. Returns the city drawn plus the PNG bytes.
@@ -555,8 +528,8 @@ async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::Cit
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// City + OSM resolution. Only reached once a target's cached PNG has been ruled
-// out, because it can cost a CDN round trip.
+// City + OSM resolution. Only reached by a run that renders, never by the poll's
+// `desired_signature`, because it can cost a CDN round trip.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// A day's OSM payload when resolution already had it in hand, tagged with
@@ -919,6 +892,7 @@ async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) 
         railway_style,
         show_aerialways,
         variant,
+        theme,
     };
 
     let (tx, rx) = oneshot::channel::<Vec<u8>>();
@@ -987,15 +961,10 @@ fn write_osm(path: &Path, v: &serde_json::Value) -> Result<()> {
 ///
 /// Deliberately just the ordinary Daily path with a date handed to it: same
 /// `resolve_daily` ladder (so it shows the scheduled city, and honours the bypass
-/// switch), same `wallpaper/daily/` cache for both the payload and the PNG. Those
-/// files are what that day will want in a day or two anyway, so caching them is a
-/// head start rather than pollution — and Clean cache sits directly above this
-/// control if you'd rather start over.
-///
-/// The one consequence worth knowing: the real pipeline treats a cached
-/// `{date}-{theme}.png` as "already rendered, just reapply it" with no staleness
-/// check, so a day previewed *before* a style/colour change will reapply the
-/// pre-change PNG when it arrives. Clean cache (or previewing again) is the fix.
+/// switch), same `wallpaper/daily/` cache for both the payload and the PNG. The PNG
+/// lands at that day's `<date>.png`, but nothing reuses it: when the day arrives the
+/// pipeline renders it afresh like any other (`apply_target`), so a preview drawn
+/// before a style change can't stand in for the real wallpaper.
 ///
 /// The only thing it doesn't do is apply the wallpaper or touch `last_applied`.
 /// Shares `state.running` with the real pipeline — both drive the same single
@@ -1187,10 +1156,10 @@ fn label_insets(w: f64, h: f64, screens: &[Screen]) -> Insets {
 }
 
 /// Visit every date-keyed artifact in `dir` — the downloaded OSM data
-/// (`YYYY-MM-DD.osm.json`) and rendered wallpapers (`YYYY-MM-DD-<theme>.png`).
-/// Matches on the leading 10-char ISO date prefix (slicing, not splitting on
-/// '.'), so it never touches anything that isn't ours. Used by `cleanup_daily`,
-/// `remove_day_pngs` and `wipe_cache`.
+/// (`YYYY-MM-DD.osm.json`) and rendered wallpapers (`YYYY-MM-DD.png`, or the
+/// `YYYY-MM-DD-<theme>….png` names older versions wrote). Matches on the leading
+/// 10-char ISO date prefix (slicing, not splitting on '.'), so it never touches
+/// anything that isn't ours. Used by `cleanup_daily` and `wipe_cache`.
 fn for_each_daily_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDate)) -> Result<()> {
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
@@ -1208,12 +1177,11 @@ fn for_each_daily_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDat
 /// tighter `KEEP_OSM_DAYS` to the `.osm.json` payloads.
 ///
 /// The asymmetry at the *future* end is deliberate too. Dev Mode's advance
-/// preview renders up to five days out and the pipeline reapplies that PNG
-/// verbatim when the day arrives, so a future-dated PNG is a cache hit worth
-/// keeping (it ages out normally once its day passes). Its payload isn't:
-/// re-previewing the same day forces a fresh render anyway, which re-resolves
-/// through the CDN. So a future date fails the `0..=KEEP_OSM_DAYS` window and
-/// its payload goes.
+/// preview renders up to five days out; its PNG is kept, since that's the file
+/// Dev Mode opens full-size (it ages out normally once its day passes, and is
+/// rewritten when the day itself renders). Its payload isn't: re-previewing the
+/// same day re-resolves through the CDN anyway. So a future date fails the
+/// `0..=KEEP_OSM_DAYS` window and its payload goes.
 ///
 /// `today` is a parameter rather than a `city::today()` call so the windows are
 /// testable without moving the clock.
@@ -1231,27 +1199,18 @@ fn cleanup_daily(dir: &Path, today: NaiveDate) -> Result<()> {
     })
 }
 
-/// Delete every rendered PNG for `date` in the Daily cache — `<date>-*.png`, all
-/// themes and caption variants — leaving its OSM payload for the re-render.
-fn remove_day_pngs(dir: &Path, date: NaiveDate) -> Result<()> {
-    for_each_daily_artifact(dir, |entry, d| {
-        if d == date && entry.file_name().to_string_lossy().ends_with(".png") {
-            let _ = fs::remove_file(entry.path());
-        }
-    })
-}
-
 /// Drop every file in the customized cache that doesn't belong to `key` (the
 /// active pin), so applying a new coordinate leaves only that coordinate's
-/// files. A pin's files are `<key>.osm.json` and `<key>-<theme>.png`.
+/// files. A pin's files are `<key>.osm.json` and `<key>.png`; the
+/// `<key>-<theme>.png` names older versions wrote go too, since nothing reads them.
 fn prune_other_custom(dir: &Path, key: &str) -> Result<()> {
     let osm = format!("{key}.osm.json");
-    let png_prefix = format!("{key}-");
+    let png = format!("{key}.png");
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
         let name = entry.file_name();
         let name = name.to_string_lossy();
-        let belongs = name == osm || name.starts_with(&png_prefix);
+        let belongs = name == osm || name == png;
         if !belongs {
             let _ = fs::remove_file(entry.path());
         }
@@ -1307,18 +1266,17 @@ fn spawn_run(app: AppHandle, kind: RunKind) {
     });
 }
 
-/// Apply the current mode's wallpaper without forcing a re-render — reuses a
-/// cached PNG if one exists, otherwise renders it. Fire-and-forget; errors are
-/// logged. Used on mode switches / applying a pin / revealing today's city or moving
-/// its caption, where the goal is to show the right wallpaper, not necessarily a fresh
-/// render. A no-op when disabled / no pin.
+/// Render + apply the current mode's wallpaper (OSM data is reused if cached).
+/// Fire-and-forget; errors are logged. Used on mode switches / applying a pin /
+/// revealing today's city or moving its caption — changes that move the target, so
+/// the signature alone tells the poll whether they landed. A no-op when disabled /
+/// no pin.
 pub fn spawn_apply(app: AppHandle) {
     spawn_run(app, RunKind::Apply);
 }
 
-/// Re-render + reapply today's wallpaper even though its filename may not change
-/// (OSM data is reused if cached) — see `clear_for_force` for what gets deleted
-/// first, and why it's every PNG cached for today. Used for theme switches,
+/// Render + apply today's wallpaper when what changed is its look, which the
+/// signature doesn't encode — see `forget_applied`. Used for theme switches,
 /// style/color/layer edits, and "regenerate now".
 /// Fire-and-forget: errors are logged. A no-op when updates are disabled / no pin.
 pub fn spawn_force_regen(app: AppHandle) {
@@ -1345,7 +1303,8 @@ mod tests {
             show_airports: false,
             railway_style: RailwayStyle::Ties,
             show_aerialways: true,
-            variant: StyleVariant::Ink,
+            variant: StyleVariant::Mondrian,
+            theme: EffectiveTheme::Dark,
         };
         let v = serde_json::to_value(&style).unwrap();
         let obj = v.as_object().unwrap();
@@ -1353,7 +1312,10 @@ mod tests {
         assert_eq!(obj["showAirports"], serde_json::json!(false));
         assert_eq!(obj["showAerialways"], serde_json::json!(true));
         assert_eq!(obj["railwayStyle"], serde_json::json!("ties"));
-        assert_eq!(obj["variant"], serde_json::json!("ink"));
+        assert_eq!(obj["variant"], serde_json::json!("mondrian"));
+        // Absent, the renderer would draw Mondrian's light palette at night.
+        assert_eq!(obj["theme"], serde_json::json!("dark"));
+        assert_eq!(serde_json::to_value(EffectiveTheme::Light).unwrap(), "light");
         // No stale boolean left behind for the renderer to prefer.
         assert!(!obj.contains_key("showRailways"), "showRailways must be gone");
     }
@@ -1514,8 +1476,14 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("inkcity-prune-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
-        let keep = ["51.5_-0.12.osm.json", "51.5_-0.12-light.png", "51.5_-0.12-dark.png"];
-        let drop = ["48.85_2.35.osm.json", "48.85_2.35-light.png"];
+        let keep = ["51.5_-0.12.osm.json", "51.5_-0.12.png"];
+        let drop = [
+            "48.85_2.35.osm.json",
+            "48.85_2.35.png",
+            // The active pin's names from older versions: never read, so swept.
+            "51.5_-0.12-light.png",
+            "51.5_-0.12-dark.png",
+        ];
         for f in keep.iter().chain(drop.iter()) {
             fs::write(dir.join(f), b"x").unwrap();
         }
@@ -1531,8 +1499,8 @@ mod tests {
 
     /// The whole point of splitting the retention: a week of `.osm.json` was
     /// tens of MB of payload nothing re-reads, while the PNGs it shared a window
-    /// with are cheap and stay useful — including the future-dated ones Dev
-    /// Mode's advance preview writes, which the pipeline reapplies on the day.
+    /// with are cheap — including the future-dated ones Dev Mode's advance preview
+    /// writes and opens full-size.
     #[test]
     fn cleanup_daily_keeps_pngs_a_week_but_payloads_a_day() {
         let dir = std::env::temp_dir().join(format!("inkcity-daily-{}", std::process::id()));
@@ -1545,16 +1513,16 @@ mod tests {
         let keep = [
             // Today and yesterday: both halves live.
             format!("{}.osm.json", day(0)),
-            format!("{}-light.png", day(0)),
+            format!("{}.png", day(0)),
             format!("{}.osm.json", day(-1)),
-            format!("{}-dark.png", day(-1)),
+            format!("{}.png", day(-1)),
             // Still inside the PNG window.
-            format!("{}-light.png", day(-7)),
-            // A captioned variant ages exactly like the plain one: the date prefix
-            // is all the sweep reads.
+            format!("{}.png", day(-7)),
+            // An older version's name ages exactly like the current one: the date
+            // prefix is all the sweep reads.
             format!("{}-dark-label-bottom-right.png", day(-7)),
-            // An advance preview five days out — reapplied verbatim when it lands.
-            format!("{}-light.png", day(5)),
+            // An advance preview five days out.
+            format!("{}.png", day(5)),
             // Not ours: no leading ISO date, so nothing should touch it.
             "notes.txt".to_string(),
         ];
@@ -1562,7 +1530,7 @@ mod tests {
             // Two days back: the payload is dead weight, its PNG is not.
             format!("{}.osm.json", day(-2)),
             format!("{}.osm.json", day(-7)),
-            format!("{}-light.png", day(-8)),
+            format!("{}.png", day(-8)),
             format!("{}-light-label-top-left.png", day(-8)),
             // A future preview's payload: re-previewing re-resolves anyway.
             format!("{}.osm.json", day(5)),
@@ -1582,28 +1550,21 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
     }
 
-    /// Unlabeled names must stay byte-for-byte what they were before captions
-    /// existed — every cache already on disk is keyed by them — and a caption must
-    /// change both the signature (so the scheduler repaints) and the file (so the
-    /// uncaptioned PNG can't be reapplied in its place).
+    /// A caption (and each corner) must move the signature, so the scheduler repaints
+    /// once the day is revealed; the PNG stays the bare date whatever it shows.
     #[test]
-    fn daily_names_are_unchanged_without_a_caption_and_distinct_with_one() {
+    fn a_caption_moves_the_signature_but_not_the_png() {
         let date = NaiveDate::from_ymd_opt(2026, 10, 16).unwrap();
+        assert_eq!(daily_signature(date, "light", None), "daily:2026-10-16:light");
         assert_eq!(
-            daily_names(date, "light", None),
-            ("daily:2026-10-16:light".to_string(), "2026-10-16-light.png".to_string())
-        );
-        assert_eq!(
-            daily_names(date, "dark", Some("bottom-right")),
-            (
-                "daily:2026-10-16:dark:label-bottom-right".to_string(),
-                "2026-10-16-dark-label-bottom-right.png".to_string()
-            )
+            daily_signature(date, "dark", Some("bottom-right")),
+            "daily:2026-10-16:dark:label-bottom-right"
         );
         assert_ne!(
-            daily_names(date, "dark", Some("top-left")),
-            daily_names(date, "dark", Some("bottom-right"))
+            daily_signature(date, "dark", Some("top-left")),
+            daily_signature(date, "dark", Some("bottom-right"))
         );
+        assert_eq!(daily_png_name(date), "2026-10-16.png");
     }
 
     /// Queued requests merge with `max`, so the declaration order is the merge order: a
@@ -1612,32 +1573,6 @@ mod tests {
     fn queued_run_kinds_merge_to_the_stronger_one() {
         assert_eq!(Some(RunKind::Apply).max(Some(RunKind::Force)), Some(RunKind::Force));
         assert_eq!(None.max(Some(RunKind::Apply)), Some(RunKind::Apply));
-    }
-
-    #[test]
-    fn remove_day_pngs_clears_every_variant_of_that_day_only() {
-        let dir = std::env::temp_dir().join(format!("inkcity-daypngs-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir).unwrap();
-        let today = NaiveDate::from_ymd_opt(2026, 10, 16).unwrap();
-        let gone =
-            ["2026-10-16-light.png", "2026-10-16-dark.png", "2026-10-16-light-label-top-left.png"];
-        let kept = [
-            "2026-10-16.osm.json",
-            "2026-10-15-light.png",
-            "2026-10-17-dark-label-bottom-right.png",
-        ];
-        for f in gone.iter().chain(kept.iter()) {
-            fs::write(dir.join(f), b"x").unwrap();
-        }
-        remove_day_pngs(&dir, today).unwrap();
-        for f in gone {
-            assert!(!dir.join(f).exists(), "{f} should be gone");
-        }
-        for f in kept {
-            assert!(dir.join(f).exists(), "{f} should be kept");
-        }
-        let _ = fs::remove_dir_all(&dir);
     }
 
     /// Same reasoning as the `Style` payload test: nothing type-checks the IPC
@@ -1674,6 +1609,7 @@ mod tests {
                 railway_style: RailwayStyle::Off,
                 show_aerialways: false,
                 variant: StyleVariant::Ink,
+                theme: EffectiveTheme::Light,
             },
             osm: serde_json::json!({}),
             label,

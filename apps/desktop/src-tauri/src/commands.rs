@@ -70,7 +70,7 @@ pub struct Status {
     pub last_error: Option<String>,
     pub date: String,
     pub theme: ThemeMode,
-    pub effective_theme: String,
+    pub effective_theme: EffectiveTheme,
     pub light: ColorPair,
     pub dark: ColorPair,
     pub style: StylePreset,
@@ -150,10 +150,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
     // this drives the City tab's name, coordinates and Wikipedia / Maps links.
     let city = pipeline::city_for_status(app, date);
     let running = *state.running.lock().await;
-    let effective = match pipeline::effective_theme(app) {
-        EffectiveTheme::Light => "light",
-        EffectiveTheme::Dark => "dark",
-    };
+    let effective = pipeline::effective_theme(app);
     // Every lock is read into a local *before* the literal, and the literal itself
     // must stay free of `.lock()` calls. A guard created in a field initializer
     // lives until the end of the whole `let` statement (struct fields are not
@@ -188,7 +185,7 @@ pub async fn build_status(app: &AppHandle) -> Status {
         last_error,
         date: date.to_string(),
         theme,
-        effective_theme: effective.into(),
+        effective_theme: effective,
         light,
         dark,
         style,
@@ -221,9 +218,9 @@ pub async fn get_status(app: AppHandle) -> Result<Status, String> {
 
 /// Set the wallpaper update mode (Disable / Daily / Customized) — the City-tab
 /// selector. Persists, syncs the tray, and applies the wallpaper for the new
-/// mode: Daily and Customized reapply the current cached render (or render it if
-/// missing); Customized is a no-op until a pin is applied; Disable leaves the
-/// current wallpaper untouched.
+/// mode: Daily and Customized render it afresh from the cached map data;
+/// Customized is a no-op until a pin is applied; Disable leaves the current
+/// wallpaper untouched.
 #[tauri::command]
 pub fn set_update_mode(app: AppHandle, mode: UpdateMode) -> Result<(), String> {
     *app.state::<AppState>().update_mode.lock().unwrap() = mode;
@@ -352,31 +349,35 @@ pub struct ApplyResult {
 /// re-render was triggered so the UI can decide whether to wait for
 /// pipeline:end before clearing its Save spinner.
 ///
-/// A new look (colours, preset) forces a regen. Otherwise only a new *target* needs
-/// work — the city caption moved, or a theme flip with identical palettes. The
+/// A save re-renders when it changed the look (colours, preset, palette — see
+/// `current_look`) or the *target* (the theme, or the city caption's corner). The
 /// caption counts only once it's actually on screen: moving it while today is still
 /// unrevealed leaves the target as it was, so the corner just applies once the day
-/// is revealed. A new target is a plain apply, since every PNG cached for today was
-/// drawn with the current look (`pipeline::clear_for_force`), and it reports a
-/// re-render only when its PNG isn't cached: a reapply from cache can fire
-/// `pipeline:start`/`:end` too close together for the Save spinner to ever see busy.
+/// is revealed. Either way it's a force regen, and it reports one only when there's
+/// a target to render: with updates disabled or no pin, `pipeline:start`/`:end` fire
+/// back to back, too close together for the Save spinner to ever see busy.
+///
+/// `variant` is the palette: the user's own `light`/`dark`, or Mondrian's. It moved
+/// here from the Lab tab with the setting itself, and persists as the same
+/// `variant` it always has (`config::Config::variant`).
 #[tauri::command]
 pub fn apply_style_settings(
     app: AppHandle,
     theme: ThemeMode,
     style: StylePreset,
+    variant: StyleVariant,
     light: ColorPair,
     dark: ColorPair,
     city_label: CityLabel,
 ) -> Result<ApplyResult, String> {
-    let before_colors = current_effective_colors(&app);
-    let before_style = *app.state::<AppState>().style.lock().unwrap();
+    let before_look = current_look(&app);
     let before_target = pipeline::desired_signature(&app);
 
     {
         let s = app.state::<AppState>();
         *s.theme.lock().unwrap() = theme;
         *s.style.lock().unwrap() = style;
+        *s.variant.lock().unwrap() = variant;
         *s.light.lock().unwrap() = light;
         *s.dark.lock().unwrap() = dark;
         *s.city_label.lock().unwrap() = city_label;
@@ -386,27 +387,21 @@ pub fn apply_style_settings(
     // triggered below (a render, if any, will mark dirty again on completion).
     app.state::<AppState>().mark_status_dirty();
 
-    let after_colors = current_effective_colors(&app);
-    let after_style = *app.state::<AppState>().style.lock().unwrap();
-
-    let regen_started = if before_colors != after_colors || before_style != after_style {
+    let target = pipeline::desired_signature(&app);
+    let regen_started =
+        target.is_some() && (current_look(&app) != before_look || target != before_target);
+    if regen_started {
         pipeline::spawn_force_regen(app);
-        true
-    } else if pipeline::desired_signature(&app) != before_target {
-        let cached = pipeline::target_cached(&app);
-        pipeline::spawn_apply(app);
-        !cached
-    } else {
-        false
-    };
+    }
     Ok(ApplyResult { regen_started })
 }
 
-/// Every Lab-tab setting as one value: the optional data-layer toggles plus the
-/// map's visual variant. Deliberately one struct rather than a parameter list —
-/// it doubles as the command payload and as the before/after snapshot
-/// `apply_lab_settings` diffs, so a new Lab setting is one field here instead of
-/// a parameter, a `before_*` local and another `||` clause.
+/// Every Lab-tab setting as one value: the optional data-layer toggles. (The
+/// Mondrian variant was one too, until it became the Style tab's palette.)
+/// Deliberately one struct rather than a parameter list — it doubles as the
+/// command payload and as the before/after snapshot `apply_lab_settings` diffs, so
+/// a new Lab setting is one field here instead of a parameter, a `before_*` local
+/// and another `||` clause.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct LabSettings {
@@ -414,7 +409,6 @@ pub struct LabSettings {
     pub show_water: bool,
     pub railway_style: RailwayStyle,
     pub show_aerialways: bool,
-    pub variant: StyleVariant,
 }
 
 /// The Lab settings as currently held in `AppState`.
@@ -424,30 +418,28 @@ fn lab_settings(state: &AppState) -> LabSettings {
         show_water: state.show_water.load(Ordering::Acquire),
         railway_style: *state.railway_style.lock().unwrap(),
         show_aerialways: state.show_aerialways.load(Ordering::Acquire),
-        variant: *state.variant.lock().unwrap(),
     }
 }
 
 /// Atomic write of the Lab-tab settings (see `LabSettings`). Same return
-/// contract as `apply_style_settings`: whether a re-render started.
+/// contract as `apply_style_settings`: whether a re-render started — never with
+/// nothing to render (updates disabled, or no pin), for the same reason.
 #[tauri::command]
 pub fn apply_lab_settings(app: AppHandle, settings: LabSettings) -> Result<ApplyResult, String> {
     let state = app.state::<AppState>();
     let before = lab_settings(&state);
-    let LabSettings { show_airports, show_water, railway_style, show_aerialways, variant } =
-        settings;
+    let LabSettings { show_airports, show_water, railway_style, show_aerialways } = settings;
 
     state.show_airports.store(show_airports, Ordering::Release);
     state.show_water.store(show_water, Ordering::Release);
     *state.railway_style.lock().unwrap() = railway_style;
     state.show_aerialways.store(show_aerialways, Ordering::Release);
-    *state.variant.lock().unwrap() = variant;
     persist(&app)?;
     // Push the new flags immediately, even when no re-render is triggered below
     // (a render, if any, will mark dirty again on completion).
     app.state::<AppState>().mark_status_dirty();
 
-    let regen_started = before != settings;
+    let regen_started = before != settings && pipeline::desired_signature(&app).is_some();
     if regen_started {
         pipeline::spawn_force_regen(app);
     }
@@ -507,12 +499,17 @@ pub fn apply_proxy_settings(
     persist(&app)
 }
 
-fn current_effective_colors(app: &AppHandle) -> ColorPair {
+/// What the Style tab decides about how the wallpaper looks: the current theme's
+/// colours, the preset and the palette. `apply_style_settings` compares it across a
+/// save, since the signature doesn't encode it. Only the colours in use count: the
+/// other theme's are drawn when the theme next flips, which re-renders anyway. Under
+/// Mondrian they aren't drawn but still count — at worst a needless render.
+fn current_look(app: &AppHandle) -> (ColorPair, StylePreset, StyleVariant) {
+    let colors = pipeline::colors_for(app, pipeline::effective_theme(app));
     let state = app.state::<AppState>();
-    match pipeline::effective_theme(app) {
-        EffectiveTheme::Light => state.light.lock().unwrap().clone(),
-        EffectiveTheme::Dark => state.dark.lock().unwrap().clone(),
-    }
+    let style = *state.style.lock().unwrap();
+    let variant = *state.variant.lock().unwrap();
+    (colors, style, variant)
 }
 
 #[tauri::command]
@@ -542,8 +539,8 @@ pub fn guess_store_read(app: AppHandle) -> Result<Option<String>, String> {
 ///
 /// Writing is also how the backend learns that today has been revealed — a guess
 /// that ended the game, or the game being switched off (`showCityInfo`). If that moves
-/// the wallpaper's caption, the captioned render is a new cache target
-/// (`pipeline::daily_names`), so an ordinary apply renders it — queued behind any
+/// the wallpaper's caption, the captioned render is a new target
+/// (`pipeline::daily_signature`), so an ordinary apply renders it — queued behind any
 /// render already running (`pipeline::run_now`), and backed by the scheduler's
 /// poll, which sees the signature change if that render fails.
 #[tauri::command]
@@ -595,7 +592,7 @@ pub struct PreviewResult {
     /// Base64-encoded PNG, ready for an `<img src="data:image/png;base64,...">`.
     pub png_base64: String,
     /// Where the same PNG landed in the day cache
-    /// (`wallpaper/daily/<date>-<theme>.png`). Handed back so double-clicking the
+    /// (`wallpaper/daily/<date>.png`). Handed back so double-clicking the
     /// preview can open that file — see `open_preview_image`.
     pub png_path: String,
 }
@@ -725,8 +722,7 @@ pub fn clean_cache(app: AppHandle) -> Result<CleanCacheResult, String> {
 /// Open a cached render in the OS default image viewer, so the Dev Mode Advance
 /// Preview can be inspected full-size. Nothing is exported: `render_preview`
 /// already wrote this PNG into the day cache, and `path` is the `pngPath` its
-/// `PreviewResult` carried back — the file the viewer shows is the very one the
-/// pipeline will reapply when that day arrives.
+/// `PreviewResult` carried back.
 ///
 /// Refuses anything outside the app cache dir (canonicalized on both sides, so a
 /// symlinked cache root still matches), and reports a missing file as such: Clean

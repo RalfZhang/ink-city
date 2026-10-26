@@ -80,13 +80,13 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "themeSystem": "Segui il sistema",
+    "palette": "Palette",
+    "paletteCustom": "Personalizzata",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Stile mappa",
     "presetMinimal": "Minimale",
     "presetStandard": "Standard",
     "presetBold": "Grassetto",
-    "hintMinimal": "Solo strade principali",
-    "hintStandard": "Spessore in base alla classe stradale",
-    "hintBold": "Gerarchia ad alto contrasto",
     "cityLabel": "Info città sul desktop",
     "cityLabelHint": "Solo in modalità Giornaliero. Le info vengono disegnate sullo sfondo quando la città di oggi è svelata: a partita di oggi finita o con «Indovinello del giorno» disattivato.",
     "cityLabelOff": "Disattivato",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Funivie e teleferiche sono disegnate come linea punteggiata con il colore delle linee.",
     "showWater": "Mostra specchi d'acqua",
     "waterHint": "Fiumi, laghi e mari sono colorati con il colore delle linee.",
-    "save": "Salva",
-    "mondrian": "Stile Mondrian",
-    "mondrianHint": "Disegna la mappa come una composizione di Mondrian: strade nere su bianco, con alcuni blocchi riempiti di colori primari. Sostituisce i colori del tema; i livelli sopra restano validi."
+    "save": "Salva"
   },
   "about": {
     "p1": "InkCity imposta ogni giorno lo sfondo del desktop con la mappa stradale di una città diversa.",

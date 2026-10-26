@@ -120,8 +120,9 @@ function App() {
   }, []);
 
   // The settings-page UI always follows the OS theme. The user-visible "Map
-  // Theme" toggle in Style only controls which color pair the wallpaper
-  // renderer uses; it doesn't override the app chrome's appearance.
+  // Theme" toggle in Style only controls which palette the wallpaper renderer
+  // draws in — the user's light or dark colors, or Mondrian's light or dark one;
+  // it doesn't override the app chrome's appearance.
   useEffect(() => {
     const root = document.documentElement;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");

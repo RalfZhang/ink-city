@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@inkcity/ui/components/select";
 import { Switch } from "@inkcity/ui/components/switch";
+import { Separator } from "@inkcity/ui/components/separator";
 import SettingRow from "@/components/SettingRow";
 import {
   emptyGuessStore,
@@ -170,11 +171,7 @@ export default function DevMode({ status, onError }: Props) {
           {cleanResult && (
             <div className="text-xs text-muted-foreground">{cleanResult}</div>
           )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="space-y-2">
+          <Separator />
           <SettingRow
             label={t("devMode.bypassCacheTitle")}
             description={t("devMode.bypassCacheDesc")}
@@ -260,6 +257,7 @@ export default function DevMode({ status, onError }: Props) {
               </Button>
             }
           />
+          <Separator />
           <SettingRow
             label={t("devMode.clearGuessTitle")}
             description={t("devMode.clearGuessDesc")}
@@ -275,6 +273,7 @@ export default function DevMode({ status, onError }: Props) {
               </Button>
             }
           />
+          <Separator />
           <SettingRow
             label={t("devMode.guessFileTitle")}
             description={t("devMode.guessFileDesc")}

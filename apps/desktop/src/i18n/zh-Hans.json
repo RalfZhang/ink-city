@@ -80,13 +80,13 @@
     "themeLight": "浅色",
     "themeDark": "深色",
     "themeSystem": "跟随系统",
+    "palette": "配色",
+    "paletteCustom": "自定义",
+    "paletteMondrian": "蒙德里安",
     "mapStyle": "地图样式",
     "presetMinimal": "极简",
     "presetStandard": "标准",
     "presetBold": "粗体",
-    "hintMinimal": "仅显示主干道",
-    "hintStandard": "按道路等级分级线宽",
-    "hintBold": "高对比度层级",
     "cityLabel": "桌面展示城市信息",
     "cityLabelHint": "仅在「每日」模式下生效：当天猜完，或关闭「每日一猜」后，才会绘制到壁纸上。",
     "cityLabelOff": "关闭",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "缆车与索道以线条色的点线绘制。",
     "showWater": "显示水体",
     "waterHint": "河流、湖泊与海洋以线条色淡染。",
-    "save": "保存",
-    "mondrian": "蒙德里安风格",
-    "mondrianHint": "把地图画成蒙德里安式构图:白底黑路,少量街区填充三原色。会替换主题配色,上面的图层仍然生效。"
+    "save": "保存"
   },
   "about": {
     "p1": "InkCity 每天把你的桌面壁纸切换成一座不同城市的道路地图。",

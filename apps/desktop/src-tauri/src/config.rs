@@ -79,7 +79,9 @@ pub enum StylePreset {
 /// of independent flags, so exactly one variant is ever in effect and a second
 /// art style is a new arm here instead of another boolean that can contradict
 /// this one. `Ink` is the default ink-on-paper map in the theme's colors;
-/// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18).
+/// `Mondrian` is the De Stijl repaint of the same real street grid (issue #18), in
+/// a palette of its own for each theme. The Style tab offers the two as the
+/// palette: the user's own colors, or Mondrian's.
 /// Mirrors `StyleVariant` in packages/core/src/types.ts and is serialized straight into
 /// the renderer's `Style` payload.
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -223,10 +225,13 @@ pub struct Config {
     pub railway_style: RailwayStyle,
     /// Cable car / ropeway centerlines.
     pub show_aerialways: bool,
-    /// Which visual language the wallpaper is drawn in (see `StyleVariant`).
-    /// `Ink` by default. A Lab-tab experiment for now: `Mondrian` replaces the
-    /// theme colors with the Mondrian paper/ink pair, but the layer toggles above
-    /// still apply. See packages/core/src/mondrian.ts.
+    /// Which visual language the wallpaper is drawn in (see `StyleVariant`) — the
+    /// Style tab's palette. `Ink` by default, drawn in `light`/`dark` above;
+    /// `Mondrian` replaces those with its own paper/ink pair for the theme, while
+    /// the layer toggles above still apply. See packages/core/src/mondrian.ts.
+    ///
+    /// It was a Lab-tab switch before Mondrian had a dark palette, under this same
+    /// key and values, so every version reads every other's setting as it was meant.
     pub variant: StyleVariant,
     /// Whether the hidden Dev Mode tab is unlocked. Off by default; toggled by
     /// the 7-click gesture on the version number in About. Persisted so the tab
@@ -494,6 +499,20 @@ mod tests {
         assert_eq!(cfg.custom, Some(CustomCity { lat: 36.44297, lon: 28.22868 }));
         assert!(cfg.dev_mode && cfg.show_water && cfg.show_airports && cfg.show_aerialways);
         assert_eq!(cfg.theme, ThemeMode::System);
+    }
+
+    /// `variant` is persisted, and versions on either side of the move from the Lab
+    /// tab to the Style tab's palette read each other's config.json: pin its key and
+    /// wire values, and that a config without it (older than Mondrian) reads as ink.
+    #[test]
+    fn every_style_variant_round_trips() {
+        for (json, expected) in [("ink", StyleVariant::Ink), ("mondrian", StyleVariant::Mondrian)] {
+            let cfg = parse_config(&format!(r#"{{"variant":"{json}"}}"#));
+            assert_eq!(cfg.variant, expected, "parsing {json}");
+            let out = serde_json::to_value(&cfg).unwrap();
+            assert_eq!(out["variant"], serde_json::json!(json));
+        }
+        assert_eq!(parse_config(r#"{"theme":"dark"}"#).variant, StyleVariant::Ink);
     }
 
     #[test]

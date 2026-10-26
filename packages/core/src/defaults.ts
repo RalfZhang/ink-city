@@ -1,4 +1,4 @@
-import type { ColorPair, Style } from "./types";
+import type { ColorPair, Style, Theme } from "./types";
 import defaults from "./defaults.json";
 
 // The defaults the TypeScript side shares with the desktop's Rust, kept once in
@@ -13,10 +13,10 @@ import defaults from "./defaults.json";
 // both languages.
 
 /** Each theme's paper (`background`) and ink (`foreground`) on a fresh install. */
-export const DEFAULT_COLORS: Readonly<Record<"light" | "dark", Readonly<ColorPair>>> = defaults.colors;
+export const DEFAULT_COLORS: Readonly<Record<Theme, Readonly<ColorPair>>> = defaults.colors;
 
-/** Everything in a {@link Style} but its colors, every key present. */
-type StyleDefaults = Readonly<Required<Omit<Style, "background" | "foreground">>>;
+/** Everything in a {@link Style} but its colors and the theme they're for, every key present. */
+type StyleDefaults = Readonly<Required<Omit<Style, "background" | "foreground" | "theme">>>;
 
 /**
  * The map a fresh install draws: the `standard` weights, every optional layer

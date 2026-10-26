@@ -113,7 +113,7 @@ pub struct AppState {
     /// whether that's today (`today_painted`), and the game waits for it, so nobody
     /// is asked to guess a map that isn't up yet (it can lag the city by a render,
     /// or never arrive if setting the wallpaper fails). In-memory only: on launch the
-    /// first reconcile reapplies the cached PNG within moments and sets it again. A
+    /// first reconcile renders the day again (from its cached map data) and sets it. A
     /// force regen doesn't clear it — the old image stays up until the new one
     /// replaces it, so the game shouldn't close in between.
     pub painted_day: StdMutex<Option<chrono::NaiveDate>>,

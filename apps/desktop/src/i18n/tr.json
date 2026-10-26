@@ -80,13 +80,13 @@
     "themeLight": "Açık",
     "themeDark": "Koyu",
     "themeSystem": "Sistemi izle",
+    "palette": "Palet",
+    "paletteCustom": "Özel",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Harita stili",
     "presetMinimal": "Minimal",
     "presetStandard": "Standart",
     "presetBold": "Kalın",
-    "hintMinimal": "Yalnızca ana yollar",
-    "hintStandard": "Yol sınıfına göre kalınlık",
-    "hintBold": "Yüksek kontrastlı hiyerarşi",
     "cityLabel": "Masaüstünde şehir bilgisi",
     "cityLabelHint": "Yalnızca Günlük modda. Bugünün şehri açıklandığında duvar kağıdına çizilir — bugünkü oyun bittiyse ya da “Günlük tahmin” kapalıysa.",
     "cityLabelOff": "Kapalı",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Teleferikler ve halatlı hatlar çizgi renginde noktalı çizgi olarak çizilir.",
     "showWater": "Su kütlelerini göster",
     "waterHint": "Nehirler, göller ve denizler çizgi rengiyle tonlanır.",
-    "save": "Kaydet",
-    "mondrian": "Mondrian tarzı",
-    "mondrianHint": "Haritayı bir Mondrian kompozisyonu gibi çizer: beyaz üzerine siyah yollar, bazı adalar ana renklerle doldurulur. Tema renklerinin yerine geçer; yukarıdaki katmanlar geçerli kalır."
+    "save": "Kaydet"
   },
   "about": {
     "p1": "InkCity her gün masaüstü duvar kağıdınızı farklı bir şehrin yol haritasıyla ayarlar.",

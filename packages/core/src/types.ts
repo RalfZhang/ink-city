@@ -19,7 +19,10 @@ export type City = {
 
 export type Bbox = { south: number; west: number; north: number; east: number };
 
-export type ThemeMode = "light" | "dark" | "system";
+/** One of the two themes a map is drawn for — what a {@link ThemeMode} resolves to. */
+export type Theme = "light" | "dark";
+
+export type ThemeMode = Theme | "system";
 
 /**
  * How heavily the road network is inked — which `highway` classes get drawn and
@@ -43,9 +46,14 @@ export type StylePreset = (typeof STYLE_PRESETS)[number];
  * independent flags, so exactly one variant is ever in effect:
  *   • `ink`      — the default ink-on-paper map, drawn in the theme's colors.
  *   • `mondrian` — a De Stijl repaint of the same real street grid (issue #18,
- *                  see core/mondrian.ts).
+ *                  see core/mondrian.ts), in its own palette for each theme.
+ *
+ * A const tuple with the type derived from it (the `LAYER_IDS` pattern, as with
+ * {@link STYLE_PRESETS}) because the desktop's Style tab enumerates it: it offers the
+ * variants as the palette, your own colors or Mondrian's, in this order.
  */
-export type StyleVariant = "ink" | "mondrian";
+export const STYLE_VARIANTS = ["ink", "mondrian"] as const;
+export type StyleVariant = (typeof STYLE_VARIANTS)[number];
 
 /**
  * How the railway layer is drawn — one dimension rather than a boolean plus a
@@ -93,10 +101,16 @@ export type Style = {
   /**
    * Which visual language to draw in (see {@link StyleVariant}). Absent ⇒
    * `"ink"`. `"mondrian"` overrides the theme colors — `background`/`foreground`
-   * are replaced by the Mondrian paper/ink pair — but the layer toggles above
-   * still apply, tinted from that ink. Issue #18.
+   * are replaced by the Mondrian paper/ink pair for {@link theme} — but the layer
+   * toggles above still apply, tinted from that ink. Issue #18.
    */
   variant?: StyleVariant;
+  /**
+   * The theme the map is drawn for. Absent ⇒ `"light"`. The `ink` variant doesn't
+   * read it — its colors arrive as `background`/`foreground` — but `mondrian` has a
+   * palette per theme and picks one by it.
+   */
+  theme?: Theme;
 };
 
 /**

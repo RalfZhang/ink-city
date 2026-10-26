@@ -80,13 +80,13 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "Follow system",
+    "palette": "Palette",
+    "paletteCustom": "Custom",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Map style",
     "presetMinimal": "Minimal",
     "presetStandard": "Standard",
     "presetBold": "Bold",
-    "hintMinimal": "Major roads only",
-    "hintStandard": "Width by road class",
-    "hintBold": "High contrast hierarchy",
     "cityLabel": "City info on desktop",
     "cityLabelHint": "Daily mode only. Drawn on the wallpaper once today's city is revealed — today's guess is over, or Daily guess is off.",
     "cityLabelOff": "Off",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Cable cars and ropeways are drawn as a dotted line in the line color.",
     "showWater": "Show water bodies",
     "waterHint": "Rivers, lakes and sea are tinted with the line color.",
-    "save": "Save",
-    "mondrian": "Mondrian style",
-    "mondrianHint": "Paint the map as a Mondrian composition: black roads on white, with a few blocks filled in primary colors. Replaces the theme colors; the layers above still apply."
+    "save": "Save"
   },
   "about": {
     "p1": "InkCity sets your desktop wallpaper to a road map of a different city every day.",

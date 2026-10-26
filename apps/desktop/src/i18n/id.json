@@ -80,13 +80,13 @@
     "themeLight": "Terang",
     "themeDark": "Gelap",
     "themeSystem": "Ikuti sistem",
+    "palette": "Palet",
+    "paletteCustom": "Kustom",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Gaya peta",
     "presetMinimal": "Minimal",
     "presetStandard": "Standar",
     "presetBold": "Tebal",
-    "hintMinimal": "Hanya jalan utama",
-    "hintStandard": "Lebar berdasarkan kelas jalan",
-    "hintBold": "Hierarki kontras tinggi",
     "cityLabel": "Info kota di desktop",
     "cityLabelHint": "Hanya untuk mode Harian. Digambar di wallpaper setelah kota hari ini terungkap — saat permainan hari ini sudah selesai, atau “Tebakan harian” nonaktif.",
     "cityLabelOff": "Nonaktif",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Kereta gantung dan ropeway digambar sebagai garis titik-titik dengan warna garis.",
     "showWater": "Tampilkan badan air",
     "waterHint": "Sungai, danau, dan laut diberi warna sesuai warna garis.",
-    "save": "Simpan",
-    "mondrian": "Gaya Mondrian",
-    "mondrianHint": "Menggambar peta sebagai komposisi Mondrian: jalan hitam di atas putih, dengan beberapa blok diisi warna primer. Menggantikan warna tema; lapisan di atas tetap berlaku."
+    "save": "Simpan"
   },
   "about": {
     "p1": "InkCity mengatur wallpaper desktop Anda menjadi peta jalan dari kota yang berbeda setiap hari.",

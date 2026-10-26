@@ -3,7 +3,7 @@ import type { LayerId } from "./layers";
 import { drawLabel } from "./label";
 import { groundHeightKm, project } from "./bbox";
 import { WATER_ALPHA, RUNWAY_ALPHA } from "./constants";
-import { fillMondrianBlocks, MONDRIAN_BACKGROUND, MONDRIAN_FOREGROUND } from "./mondrian";
+import { fillMondrianBlocks, MONDRIAN_COLORS } from "./mondrian";
 
 // Pure canvas-drawing logic, decoupled from any IO. Takes a 2D context so it
 // works with a DOM canvas (desktop renderer + website) and with a headless
@@ -807,25 +807,17 @@ export type SceneCounts = { roads: number; blocks: number; label: number } & Rec
  *
  * The `mondrian` variant (issue #18) is this same pipeline with two
  * substitutions, not a second pipeline: the palette is forced to the Mondrian
- * paper/ink pair — so every optional layer's tint derives from it exactly as the
- * `ink` variant's derives from the theme — and one extra step paints De Stijl
- * color planes into the enclosed city blocks just before the roads are stroked
- * over them (the strokes mask the block boundaries, which is what makes the
- * fills read as planes between the streets). Layer *selection* is untouched:
- * every optional layer still self-gates on its own toggle.
+ * paper/ink pair for `style.theme` — so every optional layer's tint derives from
+ * it exactly as the `ink` variant's derives from the theme — and one extra step
+ * paints De Stijl color planes into the enclosed city blocks just before the roads
+ * are stroked over them (the strokes mask the block boundaries, which is what
+ * makes the fills read as planes between the streets). Layer *selection* is
+ * untouched: every optional layer still self-gates on its own toggle.
  */
 export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCounts {
   const mondrian = req.style.variant === "mondrian";
-  const r: DrawReq = mondrian
-    ? {
-        ...req,
-        style: {
-          ...req.style,
-          background: MONDRIAN_BACKGROUND,
-          foreground: MONDRIAN_FOREGROUND,
-        },
-      }
-    : req;
+  const theme = req.style.theme ?? "light";
+  const r: DrawReq = mondrian ? { ...req, style: { ...req.style, ...MONDRIAN_COLORS[theme] } } : req;
   const { width, height, style } = r;
 
   ctx.fillStyle = style.background;
@@ -840,7 +832,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCou
   // The block-bounding road set has to match what `drawRoads` actually strokes
   // below, so it's derived from the same width table rather than a second list.
   if (mondrian) {
-    counts.blocks = fillMondrianBlocks(ctx, r, (hw) => widthFor(hw, style.preset, 1) !== null);
+    counts.blocks = fillMondrianBlocks(ctx, r, theme, (hw) => widthFor(hw, style.preset, 1) !== null);
   }
   counts.roads = drawRoads(ctx, r);
   for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, r);

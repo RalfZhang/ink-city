@@ -80,13 +80,13 @@
     "themeLight": "Claro",
     "themeDark": "Oscuro",
     "themeSystem": "Automático",
+    "palette": "Paleta",
+    "paletteCustom": "Personalizada",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Estilo del mapa",
     "presetMinimal": "Minimalista",
     "presetStandard": "Estándar",
     "presetBold": "Negrita",
-    "hintMinimal": "Solo vías principales",
-    "hintStandard": "Grosor según la clase de vía",
-    "hintBold": "Jerarquía de alto contraste",
     "cityLabel": "Información de la ciudad en el escritorio",
     "cityLabelHint": "Solo en el modo Diario. Se dibuja en el fondo de pantalla cuando se revela la ciudad de hoy: al terminar la partida de hoy o con «Adivinanza diaria» desactivada.",
     "cityLabelOff": "Desactivado",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Los teleféricos y funiculares se dibujan como una línea punteada con el color de las líneas.",
     "showWater": "Mostrar masas de agua",
     "waterHint": "Los ríos, lagos y mares se tiñen con el color de las líneas.",
-    "save": "Guardar",
-    "mondrian": "Estilo Mondrian",
-    "mondrianHint": "Dibuja el mapa como una composición de Mondrian: calles negras sobre blanco y algunas manzanas rellenas con colores primarios. Sustituye los colores del tema; las capas de arriba siguen aplicándose."
+    "save": "Guardar"
   },
   "about": {
     "p1": "InkCity cambia el fondo de escritorio cada día por el mapa de carreteras de una ciudad distinta.",

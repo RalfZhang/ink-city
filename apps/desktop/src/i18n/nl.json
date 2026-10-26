@@ -80,13 +80,13 @@
     "themeLight": "Licht",
     "themeDark": "Donker",
     "themeSystem": "Systeem volgen",
+    "palette": "Palet",
+    "paletteCustom": "Eigen",
+    "paletteMondrian": "Mondriaan",
     "mapStyle": "Kaartstijl",
     "presetMinimal": "Minimaal",
     "presetStandard": "Standaard",
     "presetBold": "Vet",
-    "hintMinimal": "Alleen hoofdwegen",
-    "hintStandard": "Breedte per wegklasse",
-    "hintBold": "Hoogcontrast-hiërarchie",
     "cityLabel": "Stadsinfo op het bureaublad",
     "cityLabelHint": "Alleen in de modus Dagelijks. Wordt op de achtergrond getekend zodra de stad van vandaag bekend is — als het spel van vandaag voorbij is of “Dagelijks raden” uitstaat.",
     "cityLabelOff": "Uit",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Kabelbanen en kabelspoorwegen worden getekend als gestippelde lijn in de lijnkleur.",
     "showWater": "Waterpartijen tonen",
     "waterHint": "Rivieren, meren en zeeën krijgen een tint in de lijnkleur.",
-    "save": "Opslaan",
-    "mondrian": "Mondriaan-stijl",
-    "mondrianHint": "Tekent de kaart als een Mondriaan-compositie: zwarte wegen op wit, met een paar blokken in primaire kleuren. Vervangt de themakleuren; de lagen hierboven blijven gelden."
+    "save": "Opslaan"
   },
   "about": {
     "p1": "InkCity stelt elke dag uw bureaubladachtergrond in op de wegenkaart van een andere stad.",

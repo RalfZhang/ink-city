@@ -5,6 +5,7 @@ import type { ParseKeys } from "i18next";
 import { Loader2 } from "lucide-react";
 import { Button } from "@inkcity/ui/components/button";
 import { Card, CardContent, CardFooter } from "@inkcity/ui/components/card";
+import { Collapsible, CollapsibleContent } from "@inkcity/ui/components/collapsible";
 import { Label } from "@inkcity/ui/components/label";
 import {
   Select,
@@ -15,8 +16,8 @@ import {
 } from "@inkcity/ui/components/select";
 import { Separator } from "@inkcity/ui/components/separator";
 import { ToggleGroup, ToggleGroupItem } from "@inkcity/ui/components/toggle-group";
-import { DEFAULT_COLORS, LABEL_CORNERS, STYLE_PRESETS } from "@inkcity/core";
-import type { CityLabel, ColorPair, Status, StylePreset, ThemeMode } from "../types";
+import { DEFAULT_COLORS, LABEL_CORNERS, STYLE_PRESETS, STYLE_VARIANTS } from "@inkcity/core";
+import type { CityLabel, ColorPair, Status, StylePreset, StyleVariant, ThemeMode } from "../types";
 
 type Props = {
   status: Status;
@@ -24,23 +25,31 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
-const THEMES: { id: ThemeMode; labelKey: ParseKeys }[] = [
-  { id: "light", labelKey: "style.themeLight" },
-  { id: "dark", labelKey: "style.themeDark" },
-  { id: "system", labelKey: "style.themeSystem" },
-];
+// Each row's labels are a `Record` over its union, so a value added to the union is
+// a missing-key error here rather than an option the row silently lacks. The order
+// is the theme's own (this toggle group is the only place that enumerates
+// `ThemeMode` at runtime), but the presets' stays in core, so the CLI's `--preset`
+// and this row can't disagree. (Same shape and reasoning as `RAILWAY_LABELS` in
+// Lab.tsx.)
+const THEME_LABELS: Record<ThemeMode, ParseKeys> = {
+  light: "style.themeLight",
+  dark: "style.themeDark",
+  system: "style.themeSystem",
+};
+const THEME_ORDER: ThemeMode[] = ["light", "dark", "system"];
 
-// A `Record` over the union, iterated in `STYLE_PRESETS` order, rather than a
-// hand-ordered list like `THEMES` above: a preset added to `StylePreset` should be
-// a missing-key error here — in a list it would just be silently absent from the
-// toggle group. Order stays in core so the CLI's `--preset` and this row can't
-// disagree. (Same shape and reasoning as `RAILWAY_LABELS` in Lab.tsx.) `THEMES`
-// stays a plain list because this toggle group is the only place that enumerates
-// `ThemeMode` at runtime — there's no second copy for it to drift against.
-const PRESET_LABELS: Record<StylePreset, { labelKey: ParseKeys; hintKey: ParseKeys }> = {
-  minimal: { labelKey: "style.presetMinimal", hintKey: "style.hintMinimal" },
-  standard: { labelKey: "style.presetStandard", hintKey: "style.hintStandard" },
-  bold: { labelKey: "style.presetBold", hintKey: "style.hintBold" },
+const PRESET_LABELS: Record<StylePreset, ParseKeys> = {
+  minimal: "style.presetMinimal",
+  standard: "style.presetStandard",
+  bold: "style.presetBold",
+};
+
+// The palette: your own colors (the `ink` variant) or Mondrian's, which has its own
+// for each theme. A `Record` iterated in `STYLE_VARIANTS` order, for the same reason
+// as `PRESET_LABELS`.
+const PALETTE_LABELS: Record<StyleVariant, ParseKeys> = {
+  ink: "style.paletteCustom",
+  mondrian: "style.paletteMondrian",
 };
 
 // The desktop city caption's corner, "off" first, then `LABEL_CORNERS` order. A
@@ -62,6 +71,7 @@ export default function Style({ status, busy, onError }: Props) {
   // later status push, which would clobber an in-progress edit (same rule as Lab).
   const [theme, setTheme] = useState<ThemeMode>(status.theme);
   const [preset, setPreset] = useState<StylePreset>(status.style);
+  const [variant, setVariant] = useState<StyleVariant>(status.variant);
   const [light, setLight] = useState<ColorPair>(status.light);
   const [dark, setDark] = useState<ColorPair>(status.dark);
   const [cityLabel, setCityLabel] = useState<CityLabel>(status.cityLabel);
@@ -92,6 +102,7 @@ export default function Style({ status, busy, onError }: Props) {
   const dirty =
     theme !== status.theme ||
     preset !== status.style ||
+    variant !== status.variant ||
     light.background !== status.light.background ||
     light.foreground !== status.light.foreground ||
     dark.background !== status.dark.background ||
@@ -105,6 +116,7 @@ export default function Style({ status, busy, onError }: Props) {
       const result = await invoke<{ regenStarted: boolean }>("apply_style_settings", {
         theme,
         style: preset,
+        variant,
         light,
         dark,
         cityLabel,
@@ -122,39 +134,82 @@ export default function Style({ status, busy, onError }: Props) {
     <Card className="max-w-2xl">
       <CardContent className="space-y-4">
         <Section label={t("style.theme")}>
-          <ToggleGroup
-            type="single"
+          <ChoiceGroup
+            ids={THEME_ORDER}
+            labels={THEME_LABELS}
             value={theme}
-            onValueChange={(v) => v && setTheme(v as ThemeMode)}
-            variant="outline"
-            size="sm"
+            onChange={setTheme}
             disabled={saving}
-          >
-            {THEMES.map((it) => (
-              <ToggleGroupItem key={it.id} value={it.id}>
-                {t(it.labelKey)}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+          />
         </Section>
 
         <Separator />
 
-        <Section label={t("style.mapStyle")} hint={t(PRESET_LABELS[preset].hintKey)}>
-          <ToggleGroup
-            type="single"
+        {/* The palette row and the color table under it are one item of the stack,
+            so a folded table leaves no gap of its own behind. */}
+        <div>
+          <Section label={t("style.palette")}>
+            <ChoiceGroup
+              ids={STYLE_VARIANTS}
+              labels={PALETTE_LABELS}
+              value={variant}
+              onChange={setVariant}
+              disabled={saving}
+            />
+          </Section>
+
+          {/* Your own colors fold away while Mondrian, which brings its own, is
+              picked. They keep any edit meanwhile, and Save stores them either way.
+              The fold animates the height, which needs overflow-hidden; the 4px of
+              padding, offset by as much negative margin, keeps the 3px focus rings
+              of the controls at its edges (Reset, the color inputs) inside it. */}
+          <Collapsible open={variant === "ink"}>
+            <CollapsibleContent className="-m-1 overflow-hidden p-1 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+              <div className="space-y-4 pt-4">
+                <Separator />
+
+                <PaletteSection
+                  title={t("style.lightColors")}
+                  active={status.effectiveTheme === "light"}
+                  colors={light}
+                  onChange={setLight}
+                  onReset={() => setLight(DEFAULT_COLORS.light)}
+                  activeLabel={t("style.active")}
+                  resetLabel={t("style.reset")}
+                  bgLabel={t("style.background")}
+                  fgLabel={t("style.foreground")}
+                  disabled={saving}
+                />
+
+                <Separator />
+
+                <PaletteSection
+                  title={t("style.darkColors")}
+                  active={status.effectiveTheme === "dark"}
+                  colors={dark}
+                  onChange={setDark}
+                  onReset={() => setDark(DEFAULT_COLORS.dark)}
+                  activeLabel={t("style.active")}
+                  resetLabel={t("style.reset")}
+                  bgLabel={t("style.background")}
+                  fgLabel={t("style.foreground")}
+                  disabled={saving}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+
+        <Separator />
+
+        <Section label={t("style.mapStyle")}>
+          <ChoiceGroup
+            ids={STYLE_PRESETS}
+            labels={PRESET_LABELS}
             value={preset}
-            onValueChange={(v) => v && setPreset(v as StylePreset)}
-            variant="outline"
-            size="sm"
+            onChange={setPreset}
             disabled={saving}
-          >
-            {STYLE_PRESETS.map((id) => (
-              <ToggleGroupItem key={id} value={id}>
-                {t(PRESET_LABELS[id].labelKey)}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+          />
         </Section>
 
         <Separator />
@@ -177,36 +232,6 @@ export default function Style({ status, busy, onError }: Props) {
             </SelectContent>
           </Select>
         </Section>
-
-        <Separator />
-
-        <PaletteSection
-          title={t("style.lightColors")}
-          active={status.effectiveTheme === "light"}
-          colors={light}
-          onChange={setLight}
-          onReset={() => setLight(DEFAULT_COLORS.light)}
-          activeLabel={t("style.active")}
-          resetLabel={t("style.reset")}
-          bgLabel={t("style.background")}
-          fgLabel={t("style.foreground")}
-          disabled={saving}
-        />
-
-        <Separator />
-
-        <PaletteSection
-          title={t("style.darkColors")}
-          active={status.effectiveTheme === "dark"}
-          colors={dark}
-          onChange={setDark}
-          onReset={() => setDark(DEFAULT_COLORS.dark)}
-          activeLabel={t("style.active")}
-          resetLabel={t("style.reset")}
-          bgLabel={t("style.background")}
-          fgLabel={t("style.foreground")}
-          disabled={saving}
-        />
       </CardContent>
 
       <CardFooter className="justify-end">
@@ -234,6 +259,41 @@ function Section({
       {children}
       {hint && <p className="text-xs text-muted-foreground mt-2">{hint}</p>}
     </div>
+  );
+}
+
+// One row of mutually exclusive choices — the theme, the palette, the map style.
+// A single ToggleGroup reports "" when its pressed item is clicked again; that's
+// dropped, so a row always has exactly one value.
+function ChoiceGroup<T extends string>({
+  ids,
+  labels,
+  value,
+  onChange,
+  disabled,
+}: {
+  ids: readonly T[];
+  labels: Record<T, ParseKeys>;
+  value: T;
+  onChange: (v: T) => void;
+  disabled: boolean;
+}) {
+  const { t } = useTranslation();
+  return (
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={(v) => v && onChange(v as T)}
+      variant="outline"
+      size="sm"
+      disabled={disabled}
+    >
+      {ids.map((id) => (
+        <ToggleGroupItem key={id} value={id}>
+          {t(labels[id])}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   );
 }
 

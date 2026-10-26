@@ -28,9 +28,9 @@
 //                                          (default 20, the pipeline's cache).
 //       --rail <off|plain|banded|ties>    railway symbol    (default banded)
 //       --theme <light|dark|both>         which themes      (default both)
-//       --mondrian                         Mondrian style (issue #18). Overrides
-//                                          the theme colors, so it renders once
-//                                          and tags the file `_mondrian`.
+//       --mondrian                         Mondrian style (issue #18): each theme
+//                                          in its own Mondrian palette instead of
+//                                          the theme colors, tagged `_mondrian-<theme>`.
 //       --fetch-only                       download + cache the payload, then
 //                                          stop — no rendering (coords only).
 //       --no-stamp                         drop the timestamp from output names,
@@ -79,6 +79,7 @@ import {
   type RailwayStyle,
   type Style,
   type StylePreset,
+  type Theme,
 } from "@inkcity/core";
 import { fetchCityData, PUBLISHED_COORD_PRECISION } from "@inkcity/osm";
 
@@ -89,9 +90,6 @@ const REPO_DIR = join(SCRIPT_DIR, "..");
  *  wallpaper pipeline precaches at aspect 1 — so a payload from the `data` branch
  *  replays here unchanged. `--km` overrides it. */
 const DEFAULT_AREA_KM = 2 * MAX_HALF_KM;
-
-/** The desktop's two themes, each drawn in a fresh install's colors. */
-type ThemeName = keyof typeof DEFAULT_COLORS;
 
 /** A lat/lon argument, e.g. "34.25668/108.95738". If it doesn't match, the
  *  positional is treated as a .json path instead. */
@@ -196,15 +194,11 @@ async function main() {
 
   const themeArg = (flags.theme ?? "both").toLowerCase();
   if (!["light", "dark", "both"].includes(themeArg)) fail(`--theme must be light/dark/both`);
-  // Mondrian replaces `background`/`foreground` (see core/mondrian.ts), so both
-  // themes would render byte-identical output — render once and label it as the
-  // style rather than as a theme.
+  const themes: Theme[] = themeArg === "both" ? ["light", "dark"] : [themeArg as Theme];
+  // Mondrian draws in its own palette for each theme (see core/mondrian.ts), so its
+  // files are tagged with both — a plain `_dark` would read as the ink theme's.
   const mondrian = flags.mondrian === "true";
-  const themes: ThemeName[] = mondrian
-    ? ["light"]
-    : themeArg === "both"
-      ? ["light", "dark"]
-      : [themeArg as ThemeName];
+  const tag = (theme: Theme) => (mondrian ? `mondrian-${theme}` : theme);
 
   // --- Resolve the input into the list of payload files to render ---
   const ts = stamp();
@@ -247,10 +241,9 @@ async function main() {
     files.push(input);
   }
 
-  const labels = mondrian ? ["mondrian"] : themes;
   console.log(
     `[render] ${files.length} payload(s) @ ${width}x${height} → ${types.join("+")}` +
-      ` × ${presets.join("/")} × ${labels.join("/")}`,
+      ` × ${presets.join("/")} × ${themes.map(tag).join("/")}`,
   );
 
   for (const file of files) {
@@ -296,8 +289,7 @@ async function main() {
     const bbox = bboxForScreen(lat, lon, km / 2, width / height);
 
     for (const preset of presets) {
-      for (const name of themes) {
-        const theme = DEFAULT_COLORS[name];
+      for (const theme of themes) {
         for (const type of types) {
           const canvas = type === "svg" ? createCanvas(width, height, "svg") : createCanvas(width, height);
           const ctx = canvas.getContext("2d") as unknown as CanvasRenderingContext2D;
@@ -306,17 +298,17 @@ async function main() {
             width,
             height,
             style: {
-              background: theme.background,
-              foreground: theme.foreground,
+              ...DEFAULT_COLORS[theme],
               preset,
               ...allLayersOn(),
               railwayStyle: rail,
               variant: mondrian ? "mondrian" : "ink",
+              theme,
             },
             osm,
           });
           const buf = type === "svg" ? canvas.toBuffer() : canvas.toBuffer("image/png");
-          const label = mondrian ? "mondrian" : name;
+          const label = tag(theme);
           const outFile = join(outDir, `${base}_${preset}_${label}${suffix}.${type}`);
           writeFileSync(outFile, buf);
           const summary = Object.entries(counts)

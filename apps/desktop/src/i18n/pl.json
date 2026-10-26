@@ -80,13 +80,13 @@
     "themeLight": "Jasny",
     "themeDark": "Ciemny",
     "themeSystem": "Zgodnie z systemem",
+    "palette": "Paleta",
+    "paletteCustom": "Własna",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Styl mapy",
     "presetMinimal": "Minimalny",
     "presetStandard": "Standardowy",
     "presetBold": "Pogrubiony",
-    "hintMinimal": "Tylko główne drogi",
-    "hintStandard": "Szerokość według klasy drogi",
-    "hintBold": "Hierarchia wysokiego kontrastu",
     "cityLabel": "Informacje o mieście na pulpicie",
     "cityLabelHint": "Tylko w trybie Codziennie. Pojawiają się na tapecie, gdy dzisiejsze miasto zostało odkryte — czyli gdy dzisiejsza gra się zakończyła lub opcja „Zagadka dnia” jest wyłączona.",
     "cityLabelOff": "Wyłączone",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Kolejki linowe i wyciągi są rysowane jako kropkowana linia w kolorze linii.",
     "showWater": "Pokaż zbiorniki wodne",
     "waterHint": "Rzeki, jeziora i morza są zabarwione kolorem linii.",
-    "save": "Zapisz",
-    "mondrian": "Styl Mondriana",
-    "mondrianHint": "Rysuje mapę jako kompozycję Mondriana: czarne ulice na białym tle, kilka kwartałów wypełnionych kolorami podstawowymi. Zastępuje kolory motywu; warstwy powyżej nadal działają."
+    "save": "Zapisz"
   },
   "about": {
     "p1": "InkCity codziennie ustawia tapetę pulpitu na mapę drogową innego miasta.",

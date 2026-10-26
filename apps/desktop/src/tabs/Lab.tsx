@@ -16,7 +16,7 @@ import {
 } from "@inkcity/ui/components/select";
 import SettingRow from "@/components/SettingRow";
 import { RAILWAY_STYLES } from "@inkcity/core";
-import type { RailwayStyle, Status, StyleVariant } from "../types";
+import type { RailwayStyle, Status } from "../types";
 
 // The railway row is a selector rather than a switch: "don't draw" is one of the
 // symbol choices, not a separate dimension (see RailwayStyle). Each option's own
@@ -42,12 +42,13 @@ type Props = {
   onError: (e: unknown) => void;
 };
 
-// "Lab": the experimental map settings — the four optional data layers plus the
-// Mondrian variant. Every control is shown unconditionally, whether or not today's
-// city carries that layer: a city without the data just renders nothing for it, so
-// nothing has to probe the OSM payload first. Mirrors the Style tab's save/regen
-// lifecycle: Save stays disabled until an edit is made, then spins until the
-// wallpaper re-render (triggered by apply_lab_settings) completes.
+// "Lab": the experimental map settings — the four optional data layers. (The
+// Mondrian variant lived here too, until it became the Style tab's palette.) Every
+// control is shown unconditionally, whether or not today's city carries that layer:
+// a city without the data just renders nothing for it, so nothing has to probe the
+// OSM payload first. Mirrors the Style tab's save/regen lifecycle: Save stays
+// disabled until an edit is made, then spins until the wallpaper re-render
+// (triggered by apply_lab_settings) completes.
 export default function Lab({ status, busy, onError }: Props) {
   const { t } = useTranslation();
 
@@ -56,7 +57,6 @@ export default function Lab({ status, busy, onError }: Props) {
   const [showWater, setShowWater] = useState<boolean>(status.showWater);
   const [railwayStyle, setRailwayStyle] = useState<RailwayStyle>(status.railwayStyle);
   const [showAerialways, setShowAerialways] = useState<boolean>(status.showAerialways);
-  const [variant, setVariant] = useState<StyleVariant>(status.variant);
   const [saving, setSaving] = useState(false);
   const sawBusy = useRef(false);
 
@@ -84,15 +84,14 @@ export default function Lab({ status, busy, onError }: Props) {
     showAirports !== status.showAirports ||
     showWater !== status.showWater ||
     railwayStyle !== status.railwayStyle ||
-    showAerialways !== status.showAerialways ||
-    variant !== status.variant;
+    showAerialways !== status.showAerialways;
 
   const save = async () => {
     setSaving(true);
     sawBusy.current = false;
     try {
       const result = await invoke<{ regenStarted: boolean }>("apply_lab_settings", {
-        settings: { showAirports, showWater, railwayStyle, showAerialways, variant },
+        settings: { showAirports, showWater, railwayStyle, showAerialways },
       });
       if (!result.regenStarted) setSaving(false);
     } catch (e) {
@@ -154,20 +153,6 @@ export default function Lab({ status, busy, onError }: Props) {
           description={t("lab.aerialwaysHint")}
           control={
             <Switch checked={showAerialways} onCheckedChange={setShowAerialways} disabled={saving} />
-          }
-        />
-
-        <Separator />
-
-        <SettingRow
-          label={t("lab.mondrian")}
-          description={t("lab.mondrianHint")}
-          control={
-            <Switch
-              checked={variant === "mondrian"}
-              onCheckedChange={(on) => setVariant(on ? "mondrian" : "ink")}
-              disabled={saving}
-            />
           }
         />
       </CardContent>

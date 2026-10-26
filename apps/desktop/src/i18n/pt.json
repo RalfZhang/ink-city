@@ -80,13 +80,13 @@
     "themeLight": "Claro",
     "themeDark": "Escuro",
     "themeSystem": "Seguir o sistema",
+    "palette": "Paleta",
+    "paletteCustom": "Personalizada",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Estilo do mapa",
     "presetMinimal": "Minimalista",
     "presetStandard": "Padrão",
     "presetBold": "Negrito",
-    "hintMinimal": "Apenas vias principais",
-    "hintStandard": "Largura por classe de via",
-    "hintBold": "Hierarquia de alto contraste",
     "cityLabel": "Informações da cidade na área de trabalho",
     "cityLabelHint": "Apenas no modo Diário. As informações são desenhadas no papel de parede quando a cidade de hoje é revelada — ao fim da partida de hoje ou com “Palpite do dia” desativado.",
     "cityLabelOff": "Desativado",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Teleféricos e funiculares são desenhados como linha pontilhada na cor das linhas.",
     "showWater": "Mostrar corpos d'água",
     "waterHint": "Rios, lagos e mares são coloridos com a cor das linhas.",
-    "save": "Salvar",
-    "mondrian": "Estilo Mondrian",
-    "mondrianHint": "Desenha o mapa como uma composição de Mondrian: ruas negras sobre branco, com alguns quarteirões preenchidos com cores primárias. Substitui as cores do tema; as camadas acima continuam a valer."
+    "save": "Salvar"
   },
   "about": {
     "p1": "O InkCity define o papel de parede da área de trabalho todos os dias com o mapa de ruas de uma cidade diferente.",

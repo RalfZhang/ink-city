@@ -3,8 +3,8 @@
 // streets carve the map into) are the canvas, a small random subset of them is
 // filled with Mondrian primaries (red / blue / yellow, plus rare black/gray
 // accents), and everything else — the road lines and the unfilled blocks — is
-// left black-on-white. It is a recoloring of the actual map geometry, NOT an
-// abstract full-canvas grid.
+// left black-on-white (gray-on-black in the dark theme, see MONDRIAN_COLORS). It
+// is a recoloring of the actual map geometry, NOT an abstract full-canvas grid.
 //
 // The heart of it is extracting those enclosed blocks: we build a graph from the
 // road polylines and walk its half-edges with the "clockwise-most turn" rule,
@@ -30,33 +30,60 @@
 //
 // Determinism: seeded from the bbox, so re-rendering the *same payload* at the
 // *same canvas size* reproduces the poster exactly (the wallpaper must be stable
-// across a theme switch or a restart). It is not stable across a refetch that
-// reorders `osm.elements`, nor across canvas sizes — both change which faces are
-// eligible and in what order.
+// across a theme switch or a restart — the two themes even share the composition,
+// see FILLS). It is not stable across a refetch that reorders `osm.elements`, nor
+// across canvas sizes — both change which faces are eligible and in what order.
 //
 // Runs on the CLIENT (in the renderer window), same as the rest of ./render.
 // Kept dependency-free and canvas-agnostic.
 
 import type { DrawReq } from "./render";
+import type { ColorPair, Theme } from "./types";
 import { project } from "./bbox";
 
-/** Warm off-white paper and near-black ink — the Mondrian "black/white". Named
- *  for the `Style` fields they replace (see `drawScene`). */
-export const MONDRIAN_BACKGROUND = "#F5F2EA";
-export const MONDRIAN_FOREGROUND = "#141414";
+/**
+ * The Mondrian "black/white" for each theme — the paper and ink that replace the
+ * theme's own pair (see `drawScene`). Light is warm off-white paper under
+ * near-black ink. Dark turns that over: warm near-black paper with the streets in
+ * a mid warm gray, light enough to frame the color planes but well short of white,
+ * so a night desktop doesn't glare.
+ */
+export const MONDRIAN_COLORS: Readonly<Record<Theme, Readonly<ColorPair>>> = {
+  light: { background: "#F5F2EA", foreground: "#141414" },
+  dark: { background: "#141311", foreground: "#827D73" },
+};
 
-/** De Stijl fill palette, weighted toward blue → red → yellow like the
- *  reference posters; black/gray are rare accents. */
-const PALETTE: { color: string; weight: number }[] = [
-  { color: "#1652C0", weight: 36 }, // blue
-  { color: "#D62828", weight: 30 }, // red
-  { color: "#F5C400", weight: 23 }, // yellow
-  { color: "#141414", weight: 5 }, // black accent
-  { color: "#D9D5CB", weight: 6 }, // light-gray accent
+/**
+ * De Stijl block fills, weighted toward blue → red → yellow like the reference
+ * posters; the two neutrals are rare accents — a block in the ink, and one a
+ * shade off the paper.
+ *
+ * Each entry is a role with a color per theme, rather than a palette per theme, so
+ * the themes can't pick differently: same weights, same seeded draws, so a city's
+ * dark poster is its light one block for block with every color swapped for its
+ * night counterpart, and a theme switch recolors the composition rather than
+ * reshuffling it. The night primaries are the day ones darkened — yellow the most,
+ * as the one that would glare on near-black — keeping their hues and their order
+ * of lightness.
+ *
+ * `null` leaves the block bare paper, as the dark theme does with its ink accent.
+ * The day's ink block works because near-black is an extreme no other mark on the
+ * map reaches; the night ink is a mid gray instead, and a mid-gray plane reads as
+ * water — the dark map tints its water from that same gray, only lighter than the
+ * paper. A cream plane, the extreme on that side, reads right too, but is the
+ * brightest thing in a night poster. A bare block still takes its draw, so every
+ * other block keeps the color it has in the light poster.
+ */
+const FILLS: readonly { weight: number; color: Readonly<Record<Theme, string | null>> }[] = [
+  { weight: 36, color: { light: "#1652C0", dark: "#1F4AA3" } }, // blue
+  { weight: 30, color: { light: "#D62828", dark: "#AA2622" } }, // red
+  { weight: 23, color: { light: "#F5C400", dark: "#B88C00" } }, // yellow
+  { weight: 5, color: { light: MONDRIAN_COLORS.light.foreground, dark: null } }, // ink accent
+  { weight: 6, color: { light: "#D9D5CB", dark: "#2A2824" } }, // paper accent
 ];
-const TOTAL_WEIGHT = PALETTE.reduce((s, p) => s + p.weight, 0);
+const TOTAL_WEIGHT = FILLS.reduce((s, f) => s + f.weight, 0);
 
-/** Fraction of eligible blocks to fill with color; the rest stay white. */
+/** Fraction of eligible blocks to fill with color; the rest stay bare paper. */
 const COLOR_FRAC = 0.16;
 
 /** Keep only blocks whose area is within this fraction-of-canvas range. Below
@@ -234,8 +261,8 @@ function extractFaces(req: DrawReq, isStroked: StrokeTest): [number, number][][]
 }
 
 /**
- * Fill a random subset of the road network's enclosed blocks with Mondrian
- * colors onto `ctx`, and return how many planes were painted (the scene's
+ * Fill a random subset of the road network's enclosed blocks with `theme`'s
+ * Mondrian colors onto `ctx`, and return how many planes were painted (the scene's
  * `blocks` count — the only window onto a layer whose output is otherwise hard
  * to tell apart from bad data). Assumes the background is already painted; the
  * road lines are drawn on top afterward (see render.ts `drawScene`), which masks
@@ -245,6 +272,7 @@ function extractFaces(req: DrawReq, isStroked: StrokeTest): [number, number][][]
 export function fillMondrianBlocks(
   ctx: CanvasRenderingContext2D,
   req: DrawReq,
+  theme: Theme,
   isStroked: StrokeTest,
 ): number {
   const { width, height } = req;
@@ -268,25 +296,31 @@ export function fillMondrianBlocks(
   }
   const count = Math.floor(eligible.length * COLOR_FRAC);
 
+  let painted = 0;
   for (let i = 0; i < count; i++) {
     const f = eligible[i];
-    ctx.fillStyle = pickColor(rng);
+    // Picked before a bare block is skipped, so the draws stay in step with the
+    // other theme's (see FILLS).
+    const color = pickColor(rng, theme);
+    if (color === null) continue;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(f[0][0], f[0][1]);
     for (let k = 1; k < f.length; k++) ctx.lineTo(f[k][0], f[k][1]);
     ctx.closePath();
     ctx.fill();
+    painted++;
   }
-  return count;
+  return painted;
 }
 
-/** Weighted pick from {@link PALETTE}. */
-function pickColor(rng: () => number): string {
+/** Weighted pick from {@link FILLS}, in `theme`'s color — `null` for a block left bare. */
+function pickColor(rng: () => number, theme: Theme): string | null {
   const r = rng() * TOTAL_WEIGHT;
   let acc = 0;
-  for (const p of PALETTE) {
-    acc += p.weight;
-    if (r < acc) return p.color;
+  for (const f of FILLS) {
+    acc += f.weight;
+    if (r < acc) return f.color[theme];
   }
-  return PALETTE[0].color;
+  return FILLS[0].color[theme];
 }

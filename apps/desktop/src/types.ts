@@ -9,6 +9,7 @@ export type {
   RailwayStyle,
   StylePreset,
   StyleVariant,
+  Theme,
   ThemeMode,
 } from "@inkcity/core";
 
@@ -20,6 +21,7 @@ import type {
   RailwayStyle,
   StylePreset,
   StyleVariant,
+  Theme,
   ThemeMode,
 } from "@inkcity/core";
 
@@ -61,7 +63,7 @@ export type Status = {
   lastError: string | null;
   date: string;
   theme: ThemeMode;
-  effectiveTheme: "light" | "dark";
+  effectiveTheme: Theme;
   light: ColorPair;
   dark: ColorPair;
   style: StylePreset;

@@ -80,13 +80,13 @@
     "themeLight": "Clair",
     "themeDark": "Sombre",
     "themeSystem": "Automatique",
+    "palette": "Palette",
+    "paletteCustom": "Personnalisée",
+    "paletteMondrian": "Mondrian",
     "mapStyle": "Style de carte",
     "presetMinimal": "Minimaliste",
     "presetStandard": "Standard",
     "presetBold": "Gras",
-    "hintMinimal": "Routes principales uniquement",
-    "hintStandard": "Largeur selon la catégorie de route",
-    "hintBold": "Hiérarchie à fort contraste",
     "cityLabel": "Infos de la ville sur le bureau",
     "cityLabelHint": "Mode Quotidien uniquement. Les infos sont dessinées sur le fond d'écran une fois la ville du jour révélée — si la partie du jour est terminée ou si « Devinette du jour » est désactivée.",
     "cityLabelOff": "Désactivé",
@@ -116,9 +116,7 @@
     "aerialwaysHint": "Les téléphériques et remontées mécaniques sont tracés en pointillés dans la couleur des lignes.",
     "showWater": "Afficher les plans d'eau",
     "waterHint": "Les rivières, lacs et mers sont teintés avec la couleur des lignes.",
-    "save": "Enregistrer",
-    "mondrian": "Style Mondrian",
-    "mondrianHint": "Dessine la carte comme une composition de Mondrian : rues noires sur blanc, quelques îlots remplis de couleurs primaires. Remplace les couleurs du thème ; les couches ci-dessus s'appliquent toujours."
+    "save": "Enregistrer"
   },
   "about": {
     "p1": "InkCity remplace chaque jour votre fond d'écran par la carte routière d'une ville différente.",

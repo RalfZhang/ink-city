@@ -274,18 +274,14 @@ Daily path with a date handed to it — same `resolve_daily` ladder, same
 `wallpaper/daily/` cache for both the payload and the PNG, same
 `render_and_cache` helper the real pipeline uses, so the two cannot drift apart.
 The only thing it skips is applying the wallpaper and touching `last_applied`.
-Caching the result is the point: that day wants those files within a day or two
-anyway. The consequence to know is that the real pipeline treats a cached
-`{date}-{theme}.png` as "already rendered, just reapply it" with no staleness
-check, so a day previewed *before* a style/colour change reapplies the pre-change
-PNG when it arrives — Clean cache (directly above the control) or previewing again
-is the fix.
+The preview's PNG is never reused: the pipeline renders every apply afresh, so
+when the day arrives it is drawn again with whatever the settings are by then,
+and a preview made before a style/colour change can't stand in for it.
 
 Because the PNG is already on disk, double-clicking the preview just opens that
-cached file (`wallpaper/daily/<date>-<theme>.png`) in the OS image viewer — the
-render carries its path back and `commands::open_preview_image` opens it, refusing
-anything outside the cache dir. No copy is exported to Pictures or anywhere else,
-so what you inspect full-size is exactly the file the pipeline will reapply.
+cached file (`wallpaper/daily/<date>.png`) in the OS image viewer — the render
+carries its path back and `commands::open_preview_image` opens it, refusing
+anything outside the cache dir. No copy is exported to Pictures or anywhere else.
 
 **Bypass cache & CDN** jumps straight to rung 3 and keeps the schedule's city: it
 skips the day cache and every manifest, reads `osm-v2/city-list.json` from
