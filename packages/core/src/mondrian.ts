@@ -54,6 +54,16 @@ export const MONDRIAN_COLORS: Readonly<Record<Theme, Readonly<ColorPair>>> = {
 };
 
 /**
+ * The three primaries, day and night: the blocks' fills below, and the desktop
+ * window's accents when it wears a Mondrian map (@inkcity/ui/game/tokens.ts).
+ */
+export const MONDRIAN_PRIMARIES: Readonly<Record<"blue" | "red" | "yellow", Readonly<Record<Theme, string>>>> = {
+  blue: { light: "#1652C0", dark: "#1F4AA3" },
+  red: { light: "#D62828", dark: "#AA2622" },
+  yellow: { light: "#F5C400", dark: "#B88C00" },
+};
+
+/**
  * De Stijl block fills, weighted toward blue → red → yellow like the reference
  * posters; the two neutrals are rare accents — a block in the ink, and one a
  * shade off the paper.
@@ -75,9 +85,9 @@ export const MONDRIAN_COLORS: Readonly<Record<Theme, Readonly<ColorPair>>> = {
  * other block keeps the color it has in the light poster.
  */
 const FILLS: readonly { weight: number; color: Readonly<Record<Theme, string | null>> }[] = [
-  { weight: 36, color: { light: "#1652C0", dark: "#1F4AA3" } }, // blue
-  { weight: 30, color: { light: "#D62828", dark: "#AA2622" } }, // red
-  { weight: 23, color: { light: "#F5C400", dark: "#B88C00" } }, // yellow
+  { weight: 36, color: MONDRIAN_PRIMARIES.blue },
+  { weight: 30, color: MONDRIAN_PRIMARIES.red },
+  { weight: 23, color: MONDRIAN_PRIMARIES.yellow },
   { weight: 5, color: { light: MONDRIAN_COLORS.light.foreground, dark: null } }, // ink accent
   { weight: 6, color: { light: "#D9D5CB", dark: "#2A2824" } }, // paper accent
 ];

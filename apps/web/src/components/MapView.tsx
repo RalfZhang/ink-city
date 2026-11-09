@@ -1,6 +1,8 @@
 import { useLayoutEffect, type RefObject } from "react";
+import { layCover } from "@inkcity/core";
+import { useDevicePixelRatio } from "@inkcity/ui/lib/hooks";
 import { cn } from "@inkcity/ui/lib/utils";
-import { cover } from "../map/size";
+import { maxSide } from "../map/size";
 
 type Props = {
   /** The box the map fills — measured by the page to size the drawing. */
@@ -26,23 +28,19 @@ type Props = {
  * `dvh` isn't known: the transform is dropped).
  */
 export default function MapView({ stageRef, canvasRef, painted }: Props) {
-  // Centred on whole device pixels, so a fresh frame lands pixel for pixel.
+  // Laid again for a new pixel ratio too: a move to another screen resizes nothing.
+  const dpr = useDevicePixelRatio();
   useLayoutEffect(() => {
     const stage = stageRef.current;
     const canvas = canvasRef.current;
     if (!stage || !canvas) return;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const dpr = window.devicePixelRatio || 1;
-      const { css } = cover(width, height, dpr);
-      const snap = (v: number) => Math.round(v * dpr) / dpr;
-      canvas.style.width = canvas.style.height = `${css}px`;
-      canvas.style.left = `${snap((width - css) / 2)}px`;
-      canvas.style.top = `${snap((height - css) / 2)}px`;
+      layCover(canvas, width, height, dpr, maxSide);
     });
     observer.observe(stage);
     return () => observer.disconnect();
-  }, [stageRef, canvasRef]);
+  }, [stageRef, canvasRef, dpr]);
 
   return (
     <div ref={stageRef} aria-hidden className="fixed inset-x-0 top-0 h-lvh overflow-hidden">

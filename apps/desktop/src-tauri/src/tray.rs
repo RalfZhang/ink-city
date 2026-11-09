@@ -16,9 +16,9 @@ use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}
 use tauri::{AppHandle, Manager, Wry};
 
 use crate::city;
-use crate::commands::Status;
+use crate::commands::{self, Status};
 use crate::config::UpdateMode;
-use crate::events::{FrontendEvent, Tab};
+use crate::events::{FrontendEvent, View};
 use crate::guess_store;
 use crate::pipeline;
 use crate::state::AppState;
@@ -44,14 +44,15 @@ static OPEN_LABELS: Mutex<(String, String)> = Mutex::new((String::new(), String:
 static GAME_OPEN: AtomicBool = AtomicBool::new(false);
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
-    let initial_daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
+    let syncing = app.state::<AppState>().sync_wallpaper.load(Ordering::Acquire);
 
     let open_item = MenuItemBuilder::with_id("open", "Open Settings").build(app)?;
-    let toggle_item = CheckMenuItemBuilder::with_id("toggle_enabled", "Daily Updates")
-        .checked(initial_daily)
+    let toggle_item = CheckMenuItemBuilder::with_id("toggle_sync", "Sync to Wallpaper")
+        .checked(syncing)
         .build(app)?;
     let sep1 = PredefinedMenuItem::separator(app)?;
-    let regen_item = MenuItemBuilder::with_id("regen", "Regenerate Now").build(app)?;
+    // Regenerating means drawing the wallpaper again, which only syncing does.
+    let regen_item = MenuItemBuilder::with_id("regen", "Regenerate Now").enabled(syncing).build(app)?;
     let sep2 = PredefinedMenuItem::separator(app)?;
     let quit_item = MenuItemBuilder::with_id("quit", "Quit InkCity").build(app)?;
 
@@ -104,14 +105,6 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
     {
         builder = builder.icon(tauri::include_image!("icons/32x32.png"));
     }
-    #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
-    {
-        let icon = app
-            .default_window_icon()
-            .ok_or_else(|| tauri::Error::AssetNotFound("default icon".into()))?
-            .clone();
-        builder = builder.icon(icon);
-    }
 
     let _tray = builder
         .on_menu_event(|app, event| {
@@ -119,41 +112,26 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
             match event.id().as_ref() {
                 "open" => {
                     show_settings(&app);
-                    // Land on City — the day-to-day view, and the frontend's own
-                    // default on a fresh mount. Worth emitting anyway: the window is
-                    // only hidden when closed, so without this it reopens on
-                    // whatever tab it was left on. Deliberately not in
-                    // `show_settings`, so the tray icon click and the
-                    // relaunch/reopen paths keep the user where they were.
-                    FrontendEvent::OpenTab(Tab::City).emit(&app);
+                    // Where the label said: the game on the home, or the settings
+                    // sheet. Deliberately not in `show_settings`, so the tray icon
+                    // click and the relaunch/reopen paths keep the user where they
+                    // were.
+                    let view = if GAME_OPEN.load(Ordering::Acquire) { View::Home } else { View::Settings };
+                    FrontendEvent::OpenView(view).emit(&app);
                 }
                 "update" => {
                     // Short path: confirm and install in place via a native
                     // dialog — no need to open the settings window at all.
                     crate::updates::prompt_and_install(&app);
                 }
-                "toggle_enabled" => {
-                    // Toggle the Daily rotation on/off. Off ⇒ Disable; from a
-                    // Customized pin, "Daily Updates" switches to Daily.
-                    let now_daily = {
-                        let state = app.state::<AppState>();
-                        let mut m = state.update_mode.lock().unwrap();
-                        *m = if *m == UpdateMode::Daily {
-                            UpdateMode::Disable
-                        } else {
-                            UpdateMode::Daily
-                        };
-                        *m == UpdateMode::Daily
-                    };
-                    sync_mode_to_tray(&app);
-                    // Tray is the one path the frontend can't observe via its own
-                    // command round-trip — the push is what keeps an open window in
-                    // sync. Note this path does NOT persist the new mode, unlike
-                    // `commands::set_update_mode`: a tray toggle is forgotten on
-                    // restart.
-                    app.state::<AppState>().mark_status_dirty();
-                    if now_daily {
-                        pipeline::spawn_apply(app);
+                "toggle_sync" => {
+                    // The same switch as the home's box, persisted the same way;
+                    // the status push it sends keeps an open window in step.
+                    let on = !app.state::<AppState>().sync_wallpaper.load(Ordering::Acquire);
+                    if let Err(e) = commands::set_sync(&app, on) {
+                        log::error!("[tray] couldn't switch syncing: {e}");
+                        // The menu ticked itself on the click: put it back as it is.
+                        sync_sync_to_tray(&app);
                     }
                 }
                 "regen" => {
@@ -188,29 +166,28 @@ pub fn show_settings(app: &AppHandle) {
         let _ = w.show();
         let _ = w.unminimize();
         let _ = w.set_focus();
+        crate::events::FrontendEvent::WindowShown.emit(app);
     }
 }
 
 /// Point the tray's "open" entry at the game while there's one to play: "Open Game"
-/// exactly when the City tab's game card would take a guess (`guess_store::is_playing`
-/// — Daily mode, today neither over nor skipped, its city known and its wallpaper
-/// up), "Open Settings" otherwise. It opens the same window on the same City tab
-/// either way; only the invitation changes.
+/// exactly when the home's game would take a guess (`guess_store::is_playing` —
+/// Daily mode, today neither over nor skipped, its city known and its map to hand
+/// for the window), "Open Settings" otherwise — which opens the settings sheet.
 ///
 /// Called with every status push (`lib.rs`'s emitter), and read off that `status`,
 /// so the tray and the window agree on the mode, the city and whether it's painted.
 /// Every input already marks status dirty when it moves: a guess or the "Daily
-/// guess" switch (`commands::guess_store_write`), the mode (here and
-/// `set_update_mode`), the midnight rollover (`scheduler`), and a render resolving
-/// the city or setting the wallpaper (`pipeline::run_now`, `pipeline::mark_painted`). Only touches the menu
-/// when the answer flips.
+/// guess" switch (`commands::guess_store_write`), the mode (`set_update_mode`), the
+/// midnight rollover (`scheduler`), and a run resolving the city and caching its map
+/// (`pipeline::run_now`). Only touches the menu when the answer flips.
 pub fn sync_open_item(app: &AppHandle, status: &Status) {
     let open = status.update_mode == UpdateMode::Daily
         && guess_store::is_playing(
             &app.state::<AppState>().guess_view.lock().unwrap(),
             city::today(),
             status.city.as_ref(),
-            status.today_painted,
+            status.map_ready,
         );
     if GAME_OPEN.swap(open, Ordering::AcqRel) != open {
         apply_open_label();
@@ -229,10 +206,15 @@ fn apply_open_label() {
     let _ = item.set_text(text);
 }
 
-pub fn sync_mode_to_tray(app: &AppHandle) {
-    let daily = *app.state::<AppState>().update_mode.lock().unwrap() == UpdateMode::Daily;
+/// Mirror the sync switch onto the tray: its check mark, and Regenerate, which
+/// only means something while syncing.
+pub fn sync_sync_to_tray(app: &AppHandle) {
+    let on = app.state::<AppState>().sync_wallpaper.load(Ordering::Acquire);
     if let Some(item) = TOGGLE_ITEM.get() {
-        let _ = item.set_checked(daily);
+        let _ = item.set_checked(on);
+    }
+    if let Some(item) = REGEN_ITEM.get() {
+        let _ = item.set_enabled(on);
     }
 }
 
@@ -278,7 +260,7 @@ pub fn apply_hide_tray(app: &AppHandle, hide: bool) {
 pub fn update_labels(
     open_settings: &str,
     open_game: &str,
-    daily_updates: &str,
+    sync_wallpaper: &str,
     regenerate_now: &str,
     quit: &str,
     update_available: &str,
@@ -286,7 +268,7 @@ pub fn update_labels(
     *OPEN_LABELS.lock().unwrap() = (open_settings.to_string(), open_game.to_string());
     apply_open_label();
     if let Some(it) = TOGGLE_ITEM.get() {
-        let _ = it.set_text(daily_updates);
+        let _ = it.set_text(sync_wallpaper);
     }
     if let Some(it) = REGEN_ITEM.get() {
         let _ = it.set_text(regenerate_now);

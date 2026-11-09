@@ -3,52 +3,17 @@
     "title": "InkCity — indovina la città di oggi",
     "description": "Ogni giorno una nuova città, disegnata a inchiostro dai dati di OpenStreetMap. Indovina in quale Paese si trova, poi mettila come sfondo del desktop."
   },
-  "intro": {
-    "question": "In che Paese si trova questa città?"
-  },
-  "today": {
-    "label": "Oggi",
-    "loading": "Caricamento della mappa di oggi…",
-    "rebuilding": "La mappa di oggi non è ancora pubblicata: la stiamo disegnando direttamente da OpenStreetMap, può richiedere un minuto…",
-    "failed": "Impossibile caricare la mappa di oggi.",
-    "retry": "Riprova",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Indovina",
-    "wallpaper": "Usa come sfondo",
-    "more": "Scorri in giù per saperne di più"
-  },
-  "dir": {
-    "n": "Nord",
-    "ne": "Nord-est",
-    "e": "Est",
-    "se": "Sud-est",
-    "s": "Sud",
-    "sw": "Sud-ovest",
-    "w": "Ovest",
-    "nw": "Nord-ovest"
-  },
-  "result": {
-    "share": "Condividi",
-    "copied": "Copiato negli appunti",
-    "details": "Vedi dettagli",
-    "back": "Indietro",
-    "collapse": "Comprimi",
-    "expand": "Espandi",
-    "nextCity": "alla prossima città"
-  },
-  "globe": {
-    "label": "Un globo con i tentativi di oggi, collegati in ordine. Trascinalo per ruotarlo.",
-    "failed": "Impossibile caricare il globo."
-  },
   "storage": {
     "memoryOnly": "Il tuo browser non salva questa partita: finirà quando chiudi la pagina.",
     "dismiss": "Chiudi"
   },
   "app": {
     "tagline": "Una nuova città ogni giorno, disegnata a inchiostro"
+  },
+  "play": {
+    "guess": "Indovina",
+    "wallpaper": "Usa come sfondo",
+    "more": "Scorri in giù per saperne di più"
   },
   "download": {
     "title": "Metti {{city}} come sfondo oggi",

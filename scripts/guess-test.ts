@@ -30,6 +30,7 @@ import {
   gameSnapshot,
   guessStats,
   haversineKm,
+  isDateStamp,
   isRevealed,
   parseGuessStore,
   proximityTier,
@@ -213,6 +214,16 @@ function play(store: GuessStore, codes: string[], inputs = day()): GuessStore {
   check(wonToday.currentStreak === 3 && wonToday.maxStreak === 3, "won today extends the streak", wonToday);
   const inProgress = guessStats({ ...store, days: { ...store.days, [TODAY]: { guesses: [{ code: "DE", km: 1, deg: 0 }] } } }, TODAY);
   check(inProgress.played === 10, "today's open game isn't played yet", inProgress.played);
+  // A host renders before it knows its date: no "today" yet is no streak, never a
+  // throw (an Invalid Date's toISOString) that takes the whole window down with it.
+  let early: ReturnType<typeof guessStats> | null = null;
+  try {
+    early = guessStats(store, "");
+  } catch (e) {
+    check(false, "stats with no date yet don't throw", e);
+  }
+  check(early !== null && early.currentStreak === 0 && early.wins === 7, "no date yet → the record, but no current streak", early);
+  check(isDateStamp("2026-10-16") && !isDateStamp("") && !isDateStamp("2026-02-30") && !isDateStamp("16/10/2026"), "a date stamp is a real YYYY-MM-DD day");
 }
 
 // --- save file -------------------------------------------------------------------

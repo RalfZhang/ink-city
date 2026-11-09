@@ -15,6 +15,39 @@
     "winRate": "Taxa de vitórias",
     "streak": "Sequência atual",
     "maxStreak": "Melhor sequência",
-    "distribution": "Distribuição de tentativas"
+    "distribution": "Distribuição de tentativas",
+    "share": "Compartilhar",
+    "copied": "Copiado para a área de transferência",
+    "details": "Ver detalhes",
+    "back": "Voltar",
+    "collapse": "Recolher",
+    "expand": "Expandir",
+    "nextCity": "até a próxima cidade"
+  },
+  "intro": {
+    "question": "Em que país fica esta cidade?"
+  },
+  "today": {
+    "label": "Hoje",
+    "loading": "Carregando o mapa de hoje…",
+    "rebuilding": "O mapa de hoje ainda não foi publicado — ele está sendo desenhado direto do OpenStreetMap, o que pode levar um minuto…",
+    "failed": "Não foi possível carregar o mapa de hoje.",
+    "retry": "Tentar de novo",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Norte",
+    "ne": "Nordeste",
+    "e": "Leste",
+    "se": "Sudeste",
+    "s": "Sul",
+    "sw": "Sudoeste",
+    "w": "Oeste",
+    "nw": "Noroeste"
+  },
+  "globe": {
+    "label": "Um globo com os palpites de hoje, ligados em ordem. Arraste para girá-lo.",
+    "failed": "Não foi possível carregar o globo."
   }
 }

@@ -16,18 +16,37 @@ pub enum ThemeMode {
     System,
 }
 
-/// How the wallpaper is refreshed — the "How to update?" selector in the City
-/// tab. `Daily` rotates through the city list at midnight (the classic
-/// behavior); `Customized` pins the wallpaper to a user-entered location and
-/// never rotates; `Disable` turns automatic updates off entirely (the wallpaper
-/// stays whatever it currently is).
+/// Which map the app shows — General's "How to update?" selector. `Daily` is the
+/// day's city from the schedule, a new one at midnight; `Customized` pins a
+/// user-entered location and never rotates. Whether that map is also put on the
+/// desktop is a separate switch (`Config::sync_wallpaper`): the window draws it
+/// either way.
+///
+/// There used to be a third value, `Disable`, for "leave the wallpaper alone".
+/// That's the sync switch now, so `parse_config` reads a stored `"disable"` as
+/// `Daily` with syncing off.
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum UpdateMode {
-    Disable,
     #[default]
     Daily,
     Customized,
+}
+
+/// Where network requests go — General's Proxy selector. `Off` adds no proxy of
+/// the app's own (an HTTPS_PROXY in the environment still applies, as it always
+/// has); `System` follows the OS's proxy settings, read afresh as they change (see
+/// `proxy::system`); `Custom` routes everything through `Config::proxy_url`.
+///
+/// Replaces the old `proxy_enabled: bool`, which `parse_config` migrates: on is
+/// `Custom` (the URL was always the user's own), off is `Off`.
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ProxyMode {
+    #[default]
+    Off,
+    System,
+    Custom,
 }
 
 /// A user-pinned location for `UpdateMode::Customized` (issue #11). No GeoNames
@@ -109,7 +128,7 @@ pub enum RailwayStyle {
     Ties,
 }
 
-/// Which map service the City tab's map button opens. Mirrors `MAP_PROVIDERS` in
+/// Which map service the home's "Open map" link opens. Mirrors `MAP_PROVIDERS` in
 /// packages/core/src/constants.ts, which holds each service's label key and URL template.
 ///
 /// `Osm` by default.
@@ -130,9 +149,10 @@ pub enum MapProvider {
 /// desktop-icon column (both top-right) and of Windows' icons (top-left), while the
 /// work-area insets lift it above a Dock or taskbar (see `pipeline::label_insets`).
 ///
-/// Drawn only in Daily mode and only once the day is revealed — the "show city
-/// info" preference is on or today's guess-the-country game is over (see
-/// `guess_store::is_revealed`). The kebab-case names are also the tag in the labeled
+/// On a Daily map, drawn only once the day is revealed — the "show city info"
+/// preference is on or today's guess-the-country game is over (see
+/// `guess_store::is_revealed`); on a Customized pin, which has no game, it's the
+/// pin's coordinates, whenever the setting is on. The kebab-case names are also the tag in the labeled
 /// render's cache name (`<date>-<theme>-label-<tag>.png`), so they must stay
 /// filename-safe. Mirrors `CityLabel` in apps/desktop/src/types.ts and `LabelCorner` in
 /// packages/core/src/types.ts.
@@ -185,9 +205,14 @@ impl ColorPair {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {
-    /// How the wallpaper is refreshed (see `UpdateMode`). Replaces the old
+    /// Which map the app shows (see `UpdateMode`). Replaces the old
     /// `enabled: bool`; legacy configs are migrated in `load`.
     pub update_mode: UpdateMode,
+    /// Whether that map is also set as the desktop wallpaper — the home's "Sync to
+    /// wallpaper" box and the tray's check item. On by default. Off, the app still
+    /// fetches each day's map (the window draws it, and the game is played on it)
+    /// and leaves the desktop with whatever it last set.
+    pub sync_wallpaper: bool,
     /// The pinned location for `UpdateMode::Customized`, or `None` until the user
     /// applies one. Kept even while the mode isn't `Customized` so switching back
     /// restores the last location.
@@ -239,12 +264,13 @@ pub struct Config {
     /// inside that tab is a separate, deliberately in-memory-only flag — see
     /// `AppState::bypass_cache`.)
     pub dev_mode: bool,
-    /// Route network requests (CDN/GitHub via reqwest, and the osm-cli sidecar's
-    /// live Overpass fetch) through a proxy. Off by default. For regions where
+    /// Where network requests (CDN/GitHub via reqwest, and the osm-cli sidecar's
+    /// live Overpass fetch) go — see `ProxyMode`. Off by default. For regions where
     /// OpenStreetMap/Overpass is unreachable directly.
-    pub proxy_enabled: bool,
+    pub proxy_mode: ProxyMode,
     /// Proxy URL, e.g. `http://127.0.0.1:7890` or `socks5://127.0.0.1:1080`.
-    /// Only used when `proxy_enabled`.
+    /// Only used in `ProxyMode::Custom`, and kept while another mode is picked so
+    /// switching back finds it.
     pub proxy_url: String,
     pub map_provider: MapProvider,
     /// Where the wallpaper carries the day's city caption (see `CityLabel`). The
@@ -260,6 +286,7 @@ impl Default for Config {
         let style = &defaults::get().style;
         Self {
             update_mode: UpdateMode::default(),
+            sync_wallpaper: true,
             custom: None,
             hide_tray: false,
             theme: ThemeMode::default(),
@@ -274,7 +301,7 @@ impl Default for Config {
             show_aerialways: style.show_aerialways,
             variant: style.variant,
             dev_mode: false,
-            proxy_enabled: false,
+            proxy_mode: ProxyMode::default(),
             proxy_url: String::new(),
             map_provider: MapProvider::default(),
             city_label: CityLabel::default(),
@@ -316,15 +343,19 @@ pub fn load(app: &AppHandle) -> Config {
     parse_config(&raw)
 }
 
-/// Parse persisted config JSON, migrating two legacy fields that were replaced by
-/// richer ones. In both cases the new field wins if present, the legacy value is
+/// Parse persisted config JSON, migrating the legacy fields that were replaced by
+/// richer ones. In each case the new field wins if present, the legacy value is
 /// only consulted when it is absent, and the stale key is simply left in the JSON
 /// — serde ignores unknown fields, and the next `save` rewrites the file without
 /// it.
 ///
-///   • `enabled: bool` → the tri-state `update_mode`, so a user who had daily
-///     updates switched *off* stays on `Disable` after upgrading instead of
-///     silently reverting to the `Daily` default (`true` ⇒ `Daily`).
+///   • `enabled: bool`, and then `update_mode: "disable"` → `Daily` with
+///     `sync_wallpaper` off, so a user who had automatic updates switched *off*
+///     still has a desktop the app leaves alone after upgrading, instead of
+///     silently going back to the synced `Daily` default (`enabled: true` ⇒
+///     `Daily`). Which mode such a user picked before turning updates off was
+///     never stored, so it can't come back.
+///   • `proxy_enabled: bool` → `proxy_mode`: on is `Custom`, off `Off`.
 ///   • `show_railways: bool` → `railway_style`, mapping `true` to `Plain` and
 ///     `false` to `Off`. No mode reproduces the old drawing exactly — it was a
 ///     dashed line, and the dash did not survive the rewrite — so an upgrading
@@ -350,6 +381,16 @@ fn parse_config(raw: &str) -> Config {
                 obj.insert("update_mode".into(), serde_json::Value::String(mode.into()));
             }
         }
+        if obj.get("update_mode").and_then(|m| m.as_str()) == Some("disable") {
+            obj.insert("update_mode".into(), serde_json::Value::String("daily".into()));
+            obj.entry("sync_wallpaper").or_insert(serde_json::Value::Bool(false));
+        }
+        if !obj.contains_key("proxy_mode") {
+            if let Some(enabled) = obj.get("proxy_enabled").and_then(|e| e.as_bool()) {
+                let mode = if enabled { "custom" } else { "off" };
+                obj.insert("proxy_mode".into(), serde_json::Value::String(mode.into()));
+            }
+        }
         if !obj.contains_key("railway_style") {
             if let Some(shown) = obj.get("show_railways").and_then(|e| e.as_bool()) {
                 let style = if shown { "plain" } else { "off" };
@@ -360,9 +401,11 @@ fn parse_config(raw: &str) -> Config {
     serde_json::from_value(v).unwrap_or_default()
 }
 
+/// Write the config whole or not at all (`atomic::write`): one cut short would
+/// otherwise read back at the next launch as no config, every setting lost.
 pub fn save(app: &AppHandle, cfg: &Config) -> Result<()> {
     let path = config_path(app)?;
-    fs::write(path, serde_json::to_string_pretty(cfg)?)?;
+    crate::atomic::write(&path, serde_json::to_string_pretty(cfg)?.as_bytes())?;
     Ok(())
 }
 
@@ -371,28 +414,79 @@ mod tests {
     use super::*;
 
     #[test]
-    fn migrates_legacy_enabled_false_to_disable() {
-        assert_eq!(parse_config(r#"{"enabled": false}"#).update_mode, UpdateMode::Disable);
+    fn migrates_legacy_enabled_false_to_daily_without_syncing() {
+        let cfg = parse_config(r#"{"enabled": false}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Daily);
+        assert!(!cfg.sync_wallpaper);
     }
 
     #[test]
     fn migrates_legacy_enabled_true_to_daily() {
-        assert_eq!(parse_config(r#"{"enabled": true}"#).update_mode, UpdateMode::Daily);
+        let cfg = parse_config(r#"{"enabled": true}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Daily);
+        assert!(cfg.sync_wallpaper);
     }
 
     #[test]
     fn explicit_update_mode_wins_over_a_lingering_enabled() {
         let cfg = parse_config(r#"{"update_mode":"customized","enabled":false}"#);
         assert_eq!(cfg.update_mode, UpdateMode::Customized);
+        assert!(cfg.sync_wallpaper);
+    }
+
+    /// `Disable` was a mode until syncing became its own switch: a user who had it
+    /// keeps a desktop the app leaves alone, on the daily map — and the rest of the
+    /// file survives the read (`parse_config` falls back to the defaults whole if
+    /// any field fails, so an unknown `"disable"` would have lost everything).
+    #[test]
+    fn migrates_the_disable_mode_to_daily_without_syncing() {
+        let cfg = parse_config(r#"{"update_mode":"disable","custom":{"lat":1.5,"lon":2.5},"hide_tray":true}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Daily);
+        assert!(!cfg.sync_wallpaper);
+        assert_eq!(cfg.custom, Some(CustomCity { lat: 1.5, lon: 2.5 }));
+        assert!(cfg.hide_tray);
     }
 
     #[test]
-    fn new_or_unparseable_config_defaults_to_daily() {
+    fn an_explicit_sync_setting_wins_over_the_disable_migration() {
+        let cfg = parse_config(r#"{"update_mode":"disable","sync_wallpaper":true}"#);
+        assert_eq!(cfg.update_mode, UpdateMode::Daily);
+        assert!(cfg.sync_wallpaper);
+    }
+
+    #[test]
+    fn new_or_unparseable_config_defaults_to_daily_and_synced() {
         // New install (no config file → "{}") and any corrupt file both land on
-        // the Daily default — so a fresh user opens the app already on Daily.
+        // the Daily default — so a fresh user opens the app already on Daily, with
+        // the map on the desktop.
         assert_eq!(parse_config("{}").update_mode, UpdateMode::Daily);
         assert_eq!(parse_config("not json").update_mode, UpdateMode::Daily);
         assert_eq!(Config::default().update_mode, UpdateMode::Daily);
+        assert!(parse_config("{}").sync_wallpaper);
+        assert!(Config::default().sync_wallpaper);
+    }
+
+    #[test]
+    fn sync_off_round_trips() {
+        let cfg = parse_config(r#"{"update_mode":"customized","sync_wallpaper":false}"#);
+        let out = serde_json::to_value(&cfg).unwrap();
+        assert_eq!(out["update_mode"], serde_json::json!("customized"));
+        assert_eq!(out["sync_wallpaper"], serde_json::json!(false));
+        assert!(!parse_config(&out.to_string()).sync_wallpaper);
+    }
+
+    #[test]
+    fn migrates_the_proxy_switch_to_a_mode() {
+        let on = parse_config(r#"{"proxy_enabled":true,"proxy_url":"socks5://127.0.0.1:1080"}"#);
+        assert_eq!(on.proxy_mode, ProxyMode::Custom);
+        assert_eq!(on.proxy_url, "socks5://127.0.0.1:1080");
+        assert_eq!(parse_config(r#"{"proxy_enabled":false}"#).proxy_mode, ProxyMode::Off);
+        assert_eq!(parse_config("{}").proxy_mode, ProxyMode::Off);
+        // The mode, once there, is what counts.
+        let both = parse_config(r#"{"proxy_mode":"system","proxy_enabled":false}"#);
+        assert_eq!(both.proxy_mode, ProxyMode::System);
+        let out = serde_json::to_value(&on).unwrap();
+        assert!(!out.as_object().unwrap().contains_key("proxy_enabled"), "legacy key must not be written back");
     }
 
     /// The look a fresh install ships with, pinned. The values live in
@@ -499,6 +593,8 @@ mod tests {
         assert_eq!(cfg.custom, Some(CustomCity { lat: 36.44297, lon: 28.22868 }));
         assert!(cfg.dev_mode && cfg.show_water && cfg.show_airports && cfg.show_aerialways);
         assert_eq!(cfg.theme, ThemeMode::System);
+        assert_eq!(cfg.proxy_mode, ProxyMode::Off);
+        assert!(cfg.sync_wallpaper);
     }
 
     /// `variant` is persisted, and versions on either side of the move from the Lab

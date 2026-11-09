@@ -15,6 +15,39 @@
     "winRate": "승률",
     "streak": "현재 연승",
     "maxStreak": "최다 연승",
-    "distribution": "시도 횟수 분포"
+    "distribution": "시도 횟수 분포",
+    "share": "공유",
+    "copied": "클립보드에 복사했습니다",
+    "details": "자세히 보기",
+    "back": "돌아가기",
+    "collapse": "접기",
+    "expand": "펼치기",
+    "nextCity": "다음 도시까지"
+  },
+  "intro": {
+    "question": "이 도시는 어느 나라에 있을까요?"
+  },
+  "today": {
+    "label": "오늘",
+    "loading": "오늘의 지도를 불러오는 중…",
+    "rebuilding": "오늘의 지도가 아직 게시되지 않아 OpenStreetMap에서 직접 그리고 있어요. 1분 정도 걸릴 수 있어요…",
+    "failed": "오늘의 지도를 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "북쪽",
+    "ne": "북동쪽",
+    "e": "동쪽",
+    "se": "남동쪽",
+    "s": "남쪽",
+    "sw": "남서쪽",
+    "w": "서쪽",
+    "nw": "북서쪽"
+  },
+  "globe": {
+    "label": "오늘의 추측을 순서대로 이은 지구본입니다. 드래그해서 돌릴 수 있어요.",
+    "failed": "지구본을 불러오지 못했습니다."
   }
 }

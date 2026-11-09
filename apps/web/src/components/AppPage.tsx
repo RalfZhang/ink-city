@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { City } from "@inkcity/core";
-import { cityName } from "../lib/city-name";
+import { cityName } from "@inkcity/ui/game/city-name";
 import type { Visitor } from "../lib/platform";
 import { Countdown, DownloadOptions } from "./Download";
 import Footer from "./Footer";

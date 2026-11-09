@@ -7,40 +7,22 @@
 // same layers as the CDN.
 //
 // Usage:
-//   osm-cli precache [outDir] [days]
-//   osm-cli fetch --south=.. --west=.. --north=.. --east=.. [--precision=5]
+//   osm-cli precache [outDir]
+//   osm-cli fetch --south=.. --west=.. --north=.. --east=..
 //
-// `precache` mode publishes TWO flows side by side to the `data` branch:
+// `precache` mode publishes the date-keyed schedule (issue #1) under
+// `<outDir>/osm-v2/`, which CI pushes to the `data` branch:
+// osm-v2/data/<YYYY-MM-DD>.json is the day's city *and* its map data in one
+// payload, so the client needs no rotation logic of its own. Which city each day
+// gets is randomly drawn (under no-repeat cooldowns) and then *persisted* in
+// osm-v2/city-list.json, which is read back on the next run — see
+// packages/core/src/schedule.ts. Editing a future day in that file overrides it;
+// this script re-fetches the map data to match.
 //
-//   osm/<city.id>.json — the legacy population rotation (packages/core/data/cities.json,
-//     the same pick_for_date the desktop client used to compute offline). For the
-//     next N days it fetches a 20km square, slimmed for size. Already-present
-//     cities are skipped; cities no longer in the window are removed.
+// (The legacy id-keyed `osm/<city.id>.json` rotation that used to be published
+// next to it was retired after its 2026-11-01 deprecation date.)
 //
-//     DEPRECATED — published for already-shipped clients only. Current clients
-//     dropped the cities.json rotation entirely: their last rung is now
-//     osm-v2/city-list.json (see apps/desktop/src-tauri/src/pipeline.rs `resolve_daily`), and
-//     apps/desktop/src-tauri/src/cdn.rs no longer reads osm/ at all. RECOMMENDED REMOVAL AFTER
-//     2026-11-01, by which point anything still reading this flow is ~3 months
-//     behind. What goes with it: `loadCities`, `windowCities`, `existingIds`,
-//     `backfillCity`, the id-keyed half of `runPrecache` (and `imminentMissing`),
-//     `pickCityForDate` in packages/core/src/city.ts, the data-out/osm glob + publish guard
-//     in .github/workflows/precache.yml, and packages/core/data/cities.json itself, which
-//     nothing else reads (see packages/core/data/README.md).
-//
-//     NOT `readCachedMeta` — despite being written for this flow, it's shared:
-//     `runScheduleCache` calls it to decide which date-keyed manifests it can
-//     reuse. Deleting it takes the surviving flow's reconciliation with it.
-//
-//   osm-v2/data/<YYYY-MM-DD>.json — the date-keyed schedule (issue #1): the
-//     day's city *and* its map data in one payload, so the client needs no
-//     rotation logic of its own. Which city each day gets is randomly drawn
-//     (under no-repeat cooldowns) and then *persisted* in osm-v2/city-list.json,
-//     which is read back on the next run — see packages/core/src/schedule.ts. Editing a
-//     future day in that file overrides it; this script re-fetches the map data
-//     to match.
-//
-// Both payloads carry the same `city` envelope. The CI workflow gzips each .json
+// Each payload carries a `city` envelope. The CI workflow gzips each .json
 // into a .json.gz sibling before publishing; why that exists (jsDelivr's per-file
 // cap, not bandwidth) is documented in .github/workflows/precache.yml, and the
 // client's .gz-then-.json preference in apps/desktop/src-tauri/src/cdn.rs.
@@ -54,7 +36,6 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  pickCityForDate,
   bboxForScreen,
   dateStamp,
   MAX_HALF_KM,
@@ -63,7 +44,7 @@ import {
   type Bbox,
   type Osm,
 } from "@inkcity/core";
-import { fetchCityData, PUBLISHED_COORD_PRECISION } from "@inkcity/osm";
+import { fetchCityData } from "@inkcity/osm";
 import {
   advanceSchedule,
   manifestWindow,
@@ -95,15 +76,6 @@ const THROTTLE_MS = 3000;
 const IN_GHA = process.env.GITHUB_ACTIONS === "true";
 function warn(msg: string): void {
   console.log(IN_GHA ? `::warning::${msg}` : `[warn] ${msg}`);
-}
-
-/**
- * The legacy rotation list. DEPRECATED with the whole id-keyed flow — no client
- * reads it any more; recommended removal after 2026-11-01 (see the header).
- */
-function loadCities(): City[] {
-  const raw = readFileSync(join(DATA_DIR, "cities.json"), "utf8");
-  return JSON.parse(raw) as City[];
 }
 
 /** Every city across packages/core/data/cities-*.json, deduped by id (see mergePools). */
@@ -140,61 +112,24 @@ async function runFetch(args: string[]): Promise<void> {
     return n;
   };
   const bbox: Bbox = { south: need("south"), west: need("west"), north: need("north"), east: need("east") };
-  const precision = flags.precision !== undefined ? Number(flags.precision) : PUBLISHED_COORD_PRECISION;
 
-  const data = await fetchCityData(bbox, { coordPrecision: precision });
+  const data = await fetchCityData(bbox);
   process.stdout.write(JSON.stringify(data));
 }
 
-// ---- precache mode: batch over the rotation window, publish to outDir ----
+// ---- precache mode: advance the schedule, publish to outDir ----
 
-/**
- * Unique city ids the rotation covers over the next `days` days. DEPRECATED with
- * the id-keyed flow — no current client needs these; recommended removal after
- * 2026-11-01 (see the header).
- */
-function windowCities(cities: City[], days: number): Map<number, City> {
-  const out = new Map<number, City>();
-  const today = new Date();
-  for (let k = -2; k < days; k++) {
-    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + k));
-    const c = pickCityForDate(d, cities);
-    out.set(c.id, c);
-  }
-  return out;
-}
-
-function existingIds(dir: string): Set<number> {
-  let names: string[];
-  try {
-    names = readdirSync(dir);
-  } catch {
-    return new Set();
-  }
-  const ids = new Set<number>();
-  for (const n of names) {
-    const m = n.match(/^(\d+)\.json$/);
-    if (m) ids.add(Number(m[1]));
-  }
-  return ids;
-}
-
-/** The envelope fields both published flows stamp onto a cached payload. */
+/** The envelope fields a published manifest carries. */
 type CachedMeta = { v: number | undefined; city: { id?: unknown; name?: unknown } | undefined };
 
 /**
  * Read the `v` + `city` envelope off a cached payload in **one** parse, or
- * `undefined` when the file is missing / unreadable / corrupt. Both callers need
- * both fields, and these payloads run to tens of MB, so parsing once per file
- * per run matters.
+ * `undefined` when the file is missing / unreadable / corrupt. These payloads run
+ * to tens of MB, so parsing once per file per run matters.
  *
  * A missing/unreadable file (and a `v` that isn't a number) is treated as stale
- * by every caller → re-fetch, which is what we want: a version-less file
- * predates the `v` stamp entirely, and a corrupt one shouldn't be trusted.
- *
- * **Survives the id-keyed flow's removal** (see the header): `runScheduleCache`
- * calls it too, to decide which date-keyed manifests it can reuse. It reads like a
- * rotation helper because that's what it was written for — it isn't one any more.
+ * → re-fetch, which is what we want: a version-less file predates the `v` stamp
+ * entirely, and a corrupt one shouldn't be trusted.
  */
 function readCachedMeta(path: string): CachedMeta | undefined {
   try {
@@ -212,31 +147,8 @@ function readCachedMeta(path: string): CachedMeta | undefined {
 }
 
 /**
- * Stamp `city` into an already-cached `osm/<id>.json` that predates the field,
- * so both flows' payloads carry the same envelope without re-fetching just to
- * add it. Only called for files `readCachedMeta` found to be readable but
- * city-less, so this is a one-time migration per file, not a per-run cost. The
- * gzip step re-runs with `-f` every run, so the .gz sibling can't drift out of
- * sync with the rewrite.
- *
- * DEPRECATED with the whole id-keyed flow — the date-keyed manifests are written
- * with their envelope from the start and never need backfilling. Recommended
- * removal after 2026-11-01 (see the header).
- */
-function backfillCity(path: string, city: City): void {
-  try {
-    const parsed = JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
-    writeFileSync(path, JSON.stringify({ ...parsed, city }));
-  } catch {
-    // unreadable — leave it; the schema-version prune above already handles it.
-  }
-}
-
-/**
  * Fetch each job's 20km square, spacing requests out so we don't hammer
- * Overpass, and hand the payload to `onFetched` to write however that flow
- * publishes it. Shared by the id-keyed and date-keyed flows so both throttle and
- * count failures identically.
+ * Overpass, and hand the payload to `onFetched` to write.
  *
  * A city that fails is a `::warning::` and a counter, never a throw: the client
  * falls back to the live sidecar for anything missing from the CDN, and the job
@@ -260,7 +172,7 @@ async function fetchEach<K>(
     // such crop (`pnpm bbox-test`), so one payload serves every screen.
     const bbox = bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1);
     try {
-      onFetched(key, city, await fetchCityData(bbox, { coordPrecision: PUBLISHED_COORD_PRECISION }));
+      onFetched(key, city, await fetchCityData(bbox));
       fetched++;
     } catch (e) {
       failed++;
@@ -271,148 +183,39 @@ async function fetchEach<K>(
 }
 
 async function runPrecache(args: string[]): Promise<void> {
-  const OUT_DIR = args[0] ?? join(ROOT, "data", "osm");
-  const DAYS = Number(args[1] ?? 7);
+  const OUT_DIR = args[0] ?? join(ROOT, "data");
 
-  // ── the id-keyed rotation flow (DEPRECATED, remove after 2026-11-01) ──
-  // Kept running verbatim so clients shipped before the rotation fallback was
-  // removed keep finding their osm/<id>.json. Nothing current reads it, so its
-  // fetches cost Overpass budget that only benefits old versions — that's the
-  // whole reason it has an expiry date rather than staying indefinitely. Deleting
-  // it means dropping everything from here to the `[precache] done` log, plus its
-  // share of the alarm accounting below (see the header for the full list).
-  const cities = loadCities();
-  const wanted = windowCities(cities, DAYS);
-  mkdirSync(OUT_DIR, { recursive: true });
-  const onDisk = existingIds(OUT_DIR);
-
-  // Prune restored cache entries we can't reuse, removing both the .json and its
-  // gzip sibling (published alongside it — see .github/workflows/precache.yml) so
-  // stale ids don't linger in the data branch forever. Two reasons to drop one:
-  //
-  //   1. Out of window — the city has rolled past the precache horizon.
-  //   2. Stale schema — its `v` differs from OSM_SCHEMA_VERSION (e.g. cached
-  //      before the airports layer shipped, or ahead of a future non-additive
-  //      reshape). We re-fetch these below so a newly added layer backfills into
-  //      already-cached cities. The drop happens up front, *before* the fetch, on
-  //      purpose: if the re-fetch then fails the known-stale payload stays gone
-  //      (absent from the published branch) rather than being kept — a CDN miss
-  //      just falls back to the live sidecar, so discarding is always safe.
-  // `present` keeps each survivor's envelope from that same parse, so the
-  // city-backfill below doesn't have to re-read (and re-parse) the payload.
-  const present = new Map<number, CachedMeta>();
-  for (const id of onDisk) {
-    const outOfWindow = !wanted.has(id);
-    const meta = outOfWindow ? undefined : readCachedMeta(join(OUT_DIR, `${id}.json`));
-    if (meta !== undefined && meta.v === OSM_SCHEMA_VERSION) {
-      present.set(id, meta);
-      continue;
-    }
-    rmSync(join(OUT_DIR, `${id}.json`));
-    try {
-      rmSync(join(OUT_DIR, `${id}.json.gz`));
-    } catch {
-      // no gzip sibling to remove (e.g. published before gzip existed) — fine.
-    }
-    console.log(`[precache] pruned ${id}.json (${outOfWindow ? "out of window" : "stale schema v"})`);
-  }
-
-  // Track what's on disk after this run: start from what was restored *and
-  // survived pruning* (all in-window and current-version now), then add each
-  // city we successfully write. Used below to decide whether to alarm.
-  const cached = new Set(present.keys());
-  const jobs: [number, City][] = [];
-  for (const [id, city] of wanted) {
-    const meta = present.get(id);
-    if (meta === undefined) {
-      jobs.push([id, city]);
-      continue;
-    }
-    if (meta.city === undefined) backfillCity(join(OUT_DIR, `${id}.json`), city);
-    console.log(`[precache] keep ${id} (${city.name}) — already cached`);
-  }
-
-  const { fetched, failed } = await fetchEach(
-    "precache",
-    jobs,
-    (id, city) => `${id} (${city.name})`,
-    (id, city, out) => {
-      // Carry the same `city` envelope the schedule manifests use — harmless for
-      // existing clients (they key this flow by id and ignore the extra field).
-      writeFileSync(join(OUT_DIR, `${id}.json`), JSON.stringify({ ...out, city }));
-      cached.add(id);
-      console.log(
-        `[precache] cached ${id} (${city.name}) — ${out.elements?.length ?? 0} ways, ` +
-          `${out.water?.length ?? 0} water, ${out.airports?.length ?? 0} airports, ` +
-          `${out.railways?.length ?? 0} railways, ${out.aerialways?.length ?? 0} aerialways`,
-      );
-    },
-  );
-
-  console.log(`[precache] done — ${wanted.size} in window, ${fetched} newly fetched, ${failed} failed`);
-  // ── end of the deprecated id-keyed flow ──
-
-  // Advance + publish the date-keyed schedule (issue #1) into osm-v2/, a sibling of
-  // the id-keyed osm/ dir, so the same publish step ships both. This is the flow
-  // every current client actually reads.
-  const schedule = await runScheduleCache(join(dirname(OUT_DIR), SCHEDULE_ROOT));
+  const { fetched, failed, aborted } = await runScheduleCache(join(OUT_DIR, SCHEDULE_ROOT));
 
   // Decide whether this run should fail the CI job (→ GitHub emails on a failed
   // scheduled run).
   //
-  // A city we couldn't fetch is a *warning*, not a failure: the client falls
-  // back to the live sidecar for anything missing from the CDN, and the job runs
-  // again in 6 hours. Letting one stubborn city turn the run red forever would
-  // just train us to ignore it.
+  // A day we couldn't fetch is a *warning*, not a failure: the client falls back
+  // to the live sidecar for anything missing from the CDN, and the job runs again
+  // in 6 hours. Letting one stubborn city turn the run red forever would just
+  // train us to ignore it.
   //
   // The job fails on one condition — systemic failure: we needed to fetch at
-  // least MIN_NEEDED_TO_ALARM cities and every single attempt failed, across both
-  // flows (Overpass unreachable, a schema change, a bbox bug, …). That won't fix
-  // itself on retry.
+  // least MIN_NEEDED_TO_ALARM days and every single attempt failed (Overpass
+  // unreachable, a schema change, a bbox bug, …). That won't fix itself on retry.
   //
-  // The threshold is what keeps a *single* stubborn city quiet. Steady state
-  // needs about two fetches per calendar day (one rotation city, one schedule
-  // day), so the day's first run still catches "Overpass is down" immediately.
-  // But once the run has succeeded at everything except one city, later runs that
-  // day have nothing else left to try — without the threshold that lone failure
-  // would satisfy "all attempts failed" and turn every remaining run red. A real
-  // outage escalates past the threshold on its own within a day, as each new day
-  // adds another unfetched city and schedule day to the backlog.
-  //
-  // Retiring the id-keyed flow (after 2026-11-01) halves that steady state to one
-  // fetch per day, so `needed` will usually sit *below* the threshold and a real
-  // outage will take a second day to escalate. Re-derive the threshold then rather
-  // than carrying 2 across by inertia.
+  // The threshold is what keeps a *single* stubborn city quiet: once a run has
+  // fetched everything but that one day, later runs have nothing else to try, and
+  // without the threshold that lone failure would turn every one of them red.
+  // Steady state is one new day per calendar day, so a real outage reaches the
+  // threshold on its second day, when that day's city joins the backlog.
   const MIN_NEEDED_TO_ALARM = 2;
-  const needed = fetched + failed + schedule.fetched + schedule.failed;
-  const totalFetched = fetched + schedule.fetched;
-  const totalFailed = failed + schedule.failed;
+  const needed = fetched + failed;
 
-  // Today's or tomorrow's *rotation* city being uncached — only pre-removal clients
-  // can still be affected, and the sidecar covers them, so it's an annotation and
-  // never a job failure. Goes with the id-keyed flow after 2026-11-01.
-  const imminentMissing: City[] = [];
-  const today = new Date();
-  for (let k = 0; k < Math.min(2, DAYS); k++) {
-    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + k));
-    const c = pickCityForDate(d, cities);
-    if (!cached.has(c.id)) imminentMissing.push(c);
-  }
-  if (imminentMissing.length > 0) {
-    warn(`[precache] rotation city uncached after run: ${imminentMissing.map((c) => `${c.id} (${c.name})`).join(", ")}`);
-  }
-
-  if (schedule.aborted) {
+  if (aborted) {
     // The schedule's only copy is unreadable — a human has to fix it, so this
     // one *is* worth an email even though nothing was lost (see runScheduleCache).
     process.exitCode = 1;
-  } else if (needed >= MIN_NEEDED_TO_ALARM && totalFetched === 0) {
-    console.error(
-      `[precache] ALARM systemic failure — ${totalFailed} cities needed fetching across both flows and all failed`,
-    );
+  } else if (needed >= MIN_NEEDED_TO_ALARM && fetched === 0) {
+    console.error(`[precache] ALARM systemic failure — ${failed} days needed fetching and all failed`);
     process.exitCode = 1;
-  } else if (totalFailed > 0) {
-    warn(`[precache] ${totalFailed} of ${needed} needed cities failed this run; will retry in 6h`);
+  } else if (failed > 0) {
+    warn(`[precache] ${failed} of ${needed} needed days failed this run; will retry in 6h`);
   }
 }
 
@@ -446,8 +249,7 @@ function removePublished(dir: string, name: string): void {
  * `osm-v2/data/<YYYY-MM-DD>.json = { v, ...osm, date, city }`, so the client
  * fetches a day's wallpaper (city + map data) in one request. The schedule lives
  * one level up from the manifests so the gzip/prune passes over `data/` can't
- * touch it. Additive: the id-keyed `osm/<id>.json` flow above is untouched, so
- * old clients keep working.
+ * touch it.
  *
  * Returns fetch counts (plus `aborted`, see below) so the caller can decide
  * whether to alarm. The schedule logic itself is covered by `pnpm schedule-test`.
@@ -494,15 +296,8 @@ async function runScheduleCache(root: string): Promise<{ fetched: number; failed
   if (added === undefined) {
     console.log(`[schedule] ${shiftStamp(today, LOOKAHEAD_DAYS)} already scheduled — nothing to pick`);
   } else {
-    const { stamp, city, relaxed } = added;
-    const note =
-      relaxed === "none"
-        ? ""
-        : relaxed === "country"
-          ? " (country cooldown relaxed — no candidate satisfied both)"
-          : " (all cooldowns relaxed — pool exhausted)";
-    console.log(`[schedule] scheduled ${stamp} → ${city.name}, ${city.country}${note}`);
-    if (relaxed !== "none") warn(`[schedule] ${stamp} picked with relaxed cooldowns${note}`);
+    const { stamp, city } = added;
+    console.log(`[schedule] scheduled ${stamp} → ${city.name}, ${city.country}`);
   }
   if (dropped.length > 0) {
     console.log(
@@ -581,7 +376,7 @@ async function main() {
   const [mode, ...rest] = process.argv.slice(2).filter((a) => a !== "--");
   if (mode === "fetch") return runFetch(rest);
   if (mode === "precache") return runPrecache(rest);
-  throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir] [days]\n  fetch --south=.. --west=.. --north=.. --east=.. [--precision=5]`);
+  throw new Error(`usage: osm-cli <precache|fetch> ...\n  precache [outDir]\n  fetch --south=.. --west=.. --north=.. --east=..`);
 }
 
 main().catch((e) => {

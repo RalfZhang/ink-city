@@ -76,6 +76,7 @@ jobs:
           pnpm bbox-test
           pnpm cdn-test
           pnpm web-test
+          pnpm label-test
 
       # With no arguments osm-cli throws its usage line, which it can only reach
       # once every module it imports has loaded — no Overpass request involved.

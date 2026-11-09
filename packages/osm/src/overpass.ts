@@ -6,14 +6,7 @@
 // carrying a Rust one. fetch-city.ts composes every layer's selector into one
 // union query and POSTs it here once.
 
-import { GITHUB_REPO } from "@inkcity/core";
-
-export const MIRRORS = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.openstreetmap.fr/api/interpreter",
-  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-  "https://overpass.private.coffee/api/interpreter",
-] as const;
+import { GITHUB_REPO, OVERPASS_MIRRORS } from "@inkcity/core";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -70,7 +63,9 @@ function runtimeError(json: unknown): string | undefined {
  */
 export async function fetchOverpass(
   query: string,
-  mirrors: readonly string[] = MIRRORS,
+  // In the order they're tried: core's overpass.json, which the desktop's "Test
+  // connection" reads too.
+  mirrors: readonly string[] = OVERPASS_MIRRORS,
   opts: FetchOptions = {},
 ): Promise<unknown> {
   const retries = opts.retries ?? 4;

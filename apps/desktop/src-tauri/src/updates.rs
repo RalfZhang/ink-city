@@ -309,14 +309,10 @@ fn updater(app: &AppHandle) -> Result<Updater> {
             builder.endpoints(endpoints).map_err(|e| anyhow!("invalid updater endpoints: {e}"))?;
     }
 
-    let st = app.state::<AppState>();
-    if st.proxy_enabled.load(Ordering::Acquire) {
-        let url = st.proxy_url.lock().unwrap().trim().to_string();
-        if !url.is_empty() {
-            match reqwest::Url::parse(&url) {
-                Ok(parsed) => builder = builder.proxy(parsed),
-                Err(e) => log::warn!("[updater] ignoring invalid proxy URL {url:?}: {e}"),
-            }
+    if let Some(url) = crate::proxy::current() {
+        match reqwest::Url::parse(&url) {
+            Ok(parsed) => builder = builder.proxy(parsed),
+            Err(e) => log::warn!("[updater] ignoring invalid proxy URL {url:?}: {e}"),
         }
     }
     builder.build().map_err(|e| anyhow!("updater unavailable: {e}"))
@@ -351,6 +347,8 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
     // Record the attempt regardless of result so the cadence advances even
     // when we're already up to date or the endpoint was unreachable.
     meta.last_check = Some(chrono::Local::now().timestamp());
+    *app.state::<AppState>().last_update_check.lock().unwrap() = meta.last_check;
+    app.state::<AppState>().mark_status_dirty();
 
     let result = match update {
         Some(upd) => {
@@ -379,6 +377,11 @@ pub async fn do_check(app: &AppHandle, force: bool) -> Result<Option<String>> {
 
     save_meta(app, &meta)?;
     Ok(result)
+}
+
+/// When updates were last checked for (Unix seconds), as the persisted meta says.
+pub fn last_check(app: &AppHandle) -> Option<i64> {
+    load_meta(app).last_check
 }
 
 /// Restore the "update available" affordance on launch from persisted meta,
@@ -674,7 +677,7 @@ pub async fn run_scheduled_check(app: &AppHandle) {
     // With a proxy set those are typically unreachable directly by design, so the
     // probe would gate the check off forever. Skip it and let the proxied check
     // try — a failure just leaves `last_check` untouched and retries next tick.
-    let proxied = app.state::<AppState>().proxy_enabled.load(Ordering::Acquire);
+    let proxied = crate::proxy::current().is_some();
     if !proxied && !endpoint_reachable().await {
         return; // network not up yet (e.g. just woke) — retry on the next poll
     }

@@ -15,6 +15,39 @@
     "winRate": "勝率",
     "streak": "目前連勝",
     "maxStreak": "最長連勝",
-    "distribution": "猜中次數分布"
+    "distribution": "猜中次數分布",
+    "share": "分享",
+    "copied": "已複製到剪貼簿",
+    "details": "查看細節",
+    "back": "返回",
+    "collapse": "收合",
+    "expand": "展開",
+    "nextCity": "後揭曉下一座城市"
+  },
+  "intro": {
+    "question": "這座城市在哪個國家？"
+  },
+  "today": {
+    "label": "今日",
+    "loading": "正在載入今天的地圖…",
+    "rebuilding": "今天的地圖還沒發布，正從 OpenStreetMap 即時繪製，可能需要一分鐘…",
+    "failed": "今天的地圖載入失敗。",
+    "retry": "重試",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "正北",
+    "ne": "東北",
+    "e": "正東",
+    "se": "東南",
+    "s": "正南",
+    "sw": "西南",
+    "w": "正西",
+    "nw": "西北"
+  },
+  "globe": {
+    "label": "地球上標出了今天的每次猜測，按順序連線。拖曳可以旋轉。",
+    "failed": "地球儀載入失敗。"
   }
 }

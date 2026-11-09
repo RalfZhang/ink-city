@@ -3,52 +3,17 @@
     "title": "InkCity — adivinhe a cidade de hoje",
     "description": "Todo dia uma cidade nova, desenhada a tinta com dados do OpenStreetMap. Adivinhe em que país ela fica e use-a como papel de parede."
   },
-  "intro": {
-    "question": "Em que país fica esta cidade?"
-  },
-  "today": {
-    "label": "Hoje",
-    "loading": "Carregando o mapa de hoje…",
-    "rebuilding": "O mapa de hoje ainda não foi publicado — ele está sendo desenhado direto do OpenStreetMap, o que pode levar um minuto…",
-    "failed": "Não foi possível carregar o mapa de hoje.",
-    "retry": "Tentar de novo",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Adivinhar",
-    "wallpaper": "Usar de fundo",
-    "more": "Role para baixo para saber mais"
-  },
-  "dir": {
-    "n": "Norte",
-    "ne": "Nordeste",
-    "e": "Leste",
-    "se": "Sudeste",
-    "s": "Sul",
-    "sw": "Sudoeste",
-    "w": "Oeste",
-    "nw": "Noroeste"
-  },
-  "result": {
-    "share": "Compartilhar",
-    "copied": "Copiado para a área de transferência",
-    "details": "Ver detalhes",
-    "back": "Voltar",
-    "collapse": "Recolher",
-    "expand": "Expandir",
-    "nextCity": "até a próxima cidade"
-  },
-  "globe": {
-    "label": "Um globo com os palpites de hoje, ligados em ordem. Arraste para girá-lo.",
-    "failed": "Não foi possível carregar o globo."
-  },
   "storage": {
     "memoryOnly": "Seu navegador não salva esta partida, então ela termina quando você fechar a página.",
     "dismiss": "Fechar"
   },
   "app": {
     "tagline": "Uma cidade nova todo dia, desenhada a tinta"
+  },
+  "play": {
+    "guess": "Adivinhar",
+    "wallpaper": "Usar de fundo",
+    "more": "Role para baixo para saber mais"
   },
   "download": {
     "title": "Use {{city}} como papel de parede hoje",

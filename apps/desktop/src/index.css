@@ -1,24 +1,9 @@
 @import "@inkcity/ui/globals.css";
-
-/* The desktop's own layer over the shared theme: a window the OS shows through. */
-@layer base {
-  body {
-    /* Leave the body transparent so macOS vibrancy (NSVisualEffectMaterial::Sidebar)
-       shows through. Card / popover surfaces keep their own backgrounds. */
-    background: transparent;
-  }
-  html {
-    background: transparent;
-  }
-  /* Linux has no vibrancy to show through: window-vibrancy covers macOS
-     (Sidebar) and Windows (Mica/Acrylic) only, so the transparent window that
-     tauri.conf.json asks for would be backed by nothing — the sidebar and tab
-     strip would show the desktop straight through, or render black on a
-     compositor that doesn't blend. Paint the theme background instead. The
-     `data-os` attribute is set in index.html before this stylesheet's first
-     paint; see the comment there. */
-  html[data-os="linux"],
-  html[data-os="linux"] body {
-    background: var(--background);
-  }
-}
+/* The pen's components and the game, as the website draws them. */
+@import "@inkcity/ui/ink.css";
+@import "@inkcity/ui/game.css";
+/* The window is the map, within its frame, on every platform: an opaque window
+   that paints its own paper. */
+@import "./styles/ink.css";
+@import "./styles/home.css";
+@import "./styles/sheet.css";

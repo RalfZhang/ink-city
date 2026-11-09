@@ -4,7 +4,12 @@ import { X } from "lucide-react";
 import { countryIndex, isRevealed } from "@inkcity/core";
 import countries from "@inkcity/core/countries.json";
 import { useGuessGame } from "@inkcity/ui/guess";
-import { REDUCED_MOTION, useElementSize, useKeyboardInset, useLocalDate, useMediaQuery } from "./lib/hooks";
+import { Stage, ToastProvider } from "@inkcity/ui/game";
+import { cityName } from "@inkcity/ui/game/city-name";
+import { UI_NS } from "@inkcity/ui/i18n";
+import { REDUCED_MOTION } from "@inkcity/ui/game/motion";
+import { useElementSize, useMediaQuery } from "@inkcity/ui/lib/hooks";
+import { useKeyboardInset, useLocalDate } from "./lib/hooks";
 import { usePaging } from "./lib/paging";
 import { detectVisitor, refineVisitor } from "./lib/platform";
 import { useGuessStorage } from "./lib/storage";
@@ -14,7 +19,7 @@ import HeaderBrand from "./components/HeaderBrand";
 import TopBar from "./components/TopBar";
 import CornerCredit from "./components/CornerCredit";
 import AppPage from "./components/AppPage";
-import Stage from "./game/Stage";
+import Curtain from "./game/Curtain";
 
 const COUNTRIES = countryIndex(countries);
 
@@ -30,7 +35,8 @@ const COUNTRIES = countryIndex(countries);
  * other, and the copyright and the data's credit at the foot once there's a map.
  */
 export default function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { t: tUi } = useTranslation(UI_NS);
   const dark = useMediaQuery("(prefers-color-scheme: dark)");
   const wide = useMediaQuery("(min-width: 768px)");
   const still = useMediaQuery(REDUCED_MOTION);
@@ -71,19 +77,27 @@ export default function App() {
   const toPlay = () => pages.current?.scrollTo({ top: 0, behavior: still ? "auto" : "smooth" });
 
   return (
-    <>
+    <ToastProvider>
       <MapView stageRef={stage} canvasRef={canvas} painted={map.painted} />
       <main ref={pages} className="pages">
-        <section className="page page--play" aria-label={t("intro.question")}>
+        <section className="page page--play" aria-label={tUi("intro.question")}>
           <Stage
             key={date}
             game={game}
             date={date}
             index={COUNTRIES}
-            map={map}
+            map={{ ...map, rebuilding: map.stage === "overpass" }}
             wide={wide}
             theme={dark ? "dark" : "light"}
-            onWallpaper={toApp}
+            wallpaper={{
+              go: toApp,
+              guess: t("play.guess"),
+              set: t("play.wallpaper"),
+              more: t("play.more"),
+              label: (city) => t("download.title", { city: cityName(city, i18n.language) }),
+            }}
+            curtain={(open, onGone) => <Curtain open={open} onGone={onGone} />}
+            shareUrl={`${location.origin}/`}
           />
         </section>
         <section id="app" className="page page--app" aria-label="InkCity">
@@ -94,7 +108,7 @@ export default function App() {
       <TopBar />
       <CornerCredit shown={map.painted} />
       {memoryOnly && !noteDismissed && <MemoryOnlyNote onDismiss={() => setNoteDismissed(true)} />}
-    </>
+    </ToastProvider>
   );
 }
 

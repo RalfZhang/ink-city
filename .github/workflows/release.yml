@@ -3,7 +3,7 @@ name: Release
 # Builds signed desktop bundles for macOS (universal), Windows and Linux (x86_64)
 # on a version tag, publishes them to a GitHub Release, and generates the signed
 # updater manifest (latest.json) that the in-app updater reads. See apps/desktop/src-tauri's
-# plugins.updater config and apps/desktop/src/tabs/About.tsx.
+# plugins.updater config and apps/desktop/src/sheet/AboutTab.tsx.
 #
 # Linux ships .deb + .rpm and deliberately NOT an AppImage, so it contributes no
 # updater artifacts — `updates::supported()` reports false on Linux and the About

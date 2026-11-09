@@ -50,14 +50,9 @@ pub fn set(path: &str) -> Result<()> {
 /// `XDG_CURRENT_DESKTOP` is a colon-separated *list* — Ubuntu says
 /// `ubuntu:GNOME`, so matching the variable as a whole string (what the
 /// `wallpaper` crate does) misses it — and Cinnamon prefixes its name with the
-/// `X-` vendor marker. Falls back to the two older single-value variables for
-/// sessions that predate it.
+/// `X-` vendor marker.
 fn current_desktops() -> Vec<String> {
-    let raw = ["XDG_CURRENT_DESKTOP", "XDG_SESSION_DESKTOP", "DESKTOP_SESSION"]
-        .iter()
-        .find_map(|k| std::env::var(k).ok().filter(|v| !v.trim().is_empty()))
-        .unwrap_or_default();
-    parse_desktops(&raw)
+    parse_desktops(&std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default())
 }
 
 fn parse_desktops(raw: &str) -> Vec<String> {

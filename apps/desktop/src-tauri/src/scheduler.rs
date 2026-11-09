@@ -48,13 +48,20 @@ pub fn spawn(app: AppHandle) {
 }
 
 /// Ensure the desktop wallpaper matches what the current UpdateMode calls for
-/// (today's Daily city, or the Customized pin) in the current effective theme.
+/// (today's Daily city, or the Customized pin) in the current effective theme — or,
+/// with syncing off, that its map is fetched for the window.
 /// Skips all work when `last_applied` already records that exact render, and is
-/// a no-op when updates are disabled or a Customized pin isn't set yet — so the
-/// steady-state poll is just a couple of lock reads.
+/// a no-op when a Customized pin isn't set yet — so the
+/// steady-state poll is just a couple of lock reads. A map that failed waits out
+/// its backoff here — a Daily map five minutes, then fifteen, then an hour at a
+/// time — and a pin that failed isn't tried again here at all
+/// (`pipeline::poll_may_run`).
 async fn reconcile(app: &AppHandle) {
     if pipeline::up_to_date(app) {
-        return; // already showing it — or updates disabled, or Customized with no pin
+        return; // already showing it — or Customized with no pin
+    }
+    if !pipeline::poll_may_run(app) {
+        return;
     }
     if let Err(e) = pipeline::run_now(app.clone(), pipeline::RunKind::Apply).await {
         log::error!("[scheduler] pipeline failed: {}", e);

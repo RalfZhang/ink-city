@@ -57,7 +57,7 @@ function dedupeAdjacent(pts: RawGeom[]): RawGeom[] {
  * restricts to `way[aerialway]`, so every element carries the tag and only the
  * geometry needs guarding.
  */
-export function slimAerialways(raw: RawOsm, coordPrecision?: number): AerialwayFeature[] {
+export function slimAerialways(raw: RawOsm, coordPrecision: number): AerialwayFeature[] {
   const features: AerialwayFeature[] = [];
 
   for (const el of raw.elements ?? []) {
@@ -68,7 +68,7 @@ export function slimAerialways(raw: RawOsm, coordPrecision?: number): AerialwayF
     features.push({ line: pts });
   }
 
-  return coordPrecision === undefined ? features : roundFeatures(features, coordPrecision);
+  return roundFeatures(features, coordPrecision);
 }
 
 function roundFeatures(features: AerialwayFeature[], precision: number): AerialwayFeature[] {

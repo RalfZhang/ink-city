@@ -1,0 +1,738 @@
+/* The settings: a sheet of tracing paper drawn up over the map, its tabs along the
+   top edge. Style and Lab let it down lower, so the map they're changing shows
+   above it. Each block of settings has its name in the margin and its rows beside
+   it, ruled with hairlines. */
+
+.sheet {
+  --foot-h: 48px;
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  height: 86%;
+  background: var(--sheet);
+  backdrop-filter: blur(14px) saturate(0.9);
+  -webkit-backdrop-filter: blur(14px) saturate(0.9);
+  border-top: 1px solid var(--line);
+  transform: translateY(101%);
+  visibility: hidden;
+  transition: transform 0.55s var(--draw), height 0.45s var(--draw), visibility 0s 0.55s;
+}
+.sheet.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.55s var(--draw), height 0.45s var(--draw), visibility 0s;
+}
+.sheet.is-low {
+  height: 57%;
+}
+.sheet__head {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+  min-width: 0;
+}
+.tabs button {
+  margin-bottom: -1px;
+  padding: 12px 0 9px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+:lang(zh-Hans) .tabs button,
+:lang(zh-Hant) .tabs button,
+:lang(ja) .tabs button,
+:lang(ko) .tabs button,
+:lang(ar) .tabs button,
+:lang(hi) .tabs button,
+:lang(th) .tabs button {
+  letter-spacing: 0.02em;
+  font-size: 13px;
+}
+.tabs button[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.tabs button:hover {
+  color: var(--ink);
+}
+.sheet__head > .ink-link {
+  flex: none;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+/* Every tab ends with the save strip's height to spare, so the strip coming up
+   takes that space and not the last rows — on all tabs, so they end alike. */
+.sheet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 22px calc(22px + var(--foot-h));
+}
+.sheet__foot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  min-height: var(--foot-h);
+  padding: 8px 22px;
+  border-top: 1px solid var(--line);
+  background: var(--pop);
+}
+.sheet__foot > span {
+  margin-inline-end: auto;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.sheet__foot > span.is-bad {
+  color: var(--brick);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 7px;
+  border: 1px solid var(--ink);
+  vertical-align: 0;
+}
+.dot.is-on {
+  background: var(--ink);
+}
+.progress {
+  position: relative;
+  flex: none;
+  width: 140px;
+  height: 2px;
+  background: var(--hair);
+  overflow: hidden;
+}
+/* The stroke the game's wait runs (game.css's `waiting`): set in logical terms, so
+   it runs the way the language reads, as the pin line's does. */
+.progress::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  background: var(--ink);
+  animation: waiting 1.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------- blocks and rows */
+
+.sec {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 0 18px;
+  padding-top: 14px;
+}
+.sec + .sec {
+  margin-top: 10px;
+  border-top: 1px solid var(--hair);
+}
+.sec > .ink-label {
+  padding-top: 4px;
+}
+.sec__rows {
+  display: grid;
+  min-width: 0;
+}
+.set {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+  padding: 8px 0;
+}
+.set + .set,
+.slide-y + .set {
+  border-top: 1px solid var(--hair);
+}
+.set__t {
+  min-width: 0;
+}
+.set__k {
+  font-size: 14px;
+  font-weight: 500;
+}
+.set__k small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.set__d {
+  max-width: 36em;
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.set__d.is-bad {
+  color: var(--brick);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.set--col {
+  display: grid;
+  justify-content: stretch;
+  gap: 8px;
+}
+.set.is-off .set__k {
+  color: var(--ink-3);
+}
+.set__acts {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+.lab-intro {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+/* A question asked in place, under the row it's about, before an act that can't be undone. */
+.confirm {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  background: var(--pop);
+}
+.confirm p {
+  margin: 0;
+}
+.confirm .set__acts {
+  justify-content: flex-end;
+}
+/* What comes and goes among rows that stay (`Collapsible`): it folds open and shut
+   along its height rather than popping, as `.slide-x` does along its width. */
+.slide-y {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.4s var(--draw), opacity 0.3s var(--draw);
+}
+.slide-y.is-shut {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+/* `overflow: hidden` alone lets the row shut to 0. No `min-height: 0` on top: with
+   it, WebKit stops re-sizing the row when the window's width changes, so the
+   palette kept its first height — clipped once its swatches wrapped. */
+.slide-y > div {
+  overflow: hidden;
+}
+/* A row in a fold draws its rule inside it, so the rule folds away with it. */
+:is(.set, .slide-y) + .slide-y > div > .set:first-child {
+  border-top: 1px solid var(--hair);
+}
+
+/* ---------------------------------------------------------------- the language picker */
+
+.dd {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 210px;
+  height: 32px;
+  padding: 0 9px 0 11px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--pop);
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+.dd:hover,
+.dd[aria-expanded="true"] {
+  box-shadow: var(--neatline);
+}
+.dd__v {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.dd__v small {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.menu {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: 290px;
+  background: var(--pop);
+  border: 1px solid var(--line);
+  animation: ink-rise 0.18s var(--draw) backwards;
+}
+.menu__filter {
+  flex: none;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  outline: none;
+}
+.menu__filter::placeholder {
+  color: var(--ink-3);
+}
+.menu ul {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+.menu li[role="option"] {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.menu li small {
+  font-size: 12px;
+  color: var(--ink-2);
+  text-align: end;
+}
+.menu li .tick {
+  width: 13px;
+  height: 13px;
+  align-self: center;
+}
+.menu li[aria-selected="true"] {
+  color: var(--on-select);
+  background: var(--select);
+}
+.menu li[aria-selected="true"] small {
+  color: inherit;
+  opacity: 0.75;
+}
+.menu li.is-auto {
+  border-bottom: 1px solid var(--hair);
+}
+.menu__empty {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------- the proxy */
+
+.proxy {
+  display: grid;
+  gap: 8px;
+}
+.proxy > .pick {
+  justify-self: start;
+}
+.pline {
+  position: relative;
+  display: block;
+  height: 36px;
+  border: 1px solid var(--line);
+  background: var(--pop);
+}
+.pline input {
+  width: 100%;
+  height: 100%;
+  padding: 0 90px 0 11px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  direction: ltr;
+  text-align: left;
+}
+.pline:focus-within {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.pline.is-bad {
+  border-color: var(--brick);
+}
+.pline__go {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 0;
+  cursor: pointer;
+}
+.pline__go:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pstate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.pstate code,
+.ptest code {
+  font-family: var(--mono);
+  font-size: 12px;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.ptest {
+  display: grid;
+  gap: 4px;
+}
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0;
+  font-size: 13px;
+}
+.ptest ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+}
+.ptest li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  border-bottom: 1px solid var(--hair);
+}
+.ptest b {
+  font-weight: 500;
+}
+.ptest .r {
+  font-variant-numeric: tabular-nums;
+}
+.ptest .r.is-wait {
+  color: var(--ink-3);
+}
+
+/* ---------------------------------------------------------------- samples */
+
+/* A row of choices drawn as samples: the railway's, as a legend's swatches. Each
+   is at most --tile-w wide, however wide the window: the one value to change for a
+   bigger or smaller row. */
+.tiles {
+  --tile-w: 80px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, var(--tile-w)));
+  gap: 8px;
+}
+.tile {
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  padding: 0;
+  color: var(--ink);
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.tile__img {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 11 / 5;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.tiles--rail .tile__img {
+  aspect-ratio: 3 / 1;
+}
+/* None: the box struck through. */
+.tile__none path {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.tile__img canvas,
+.tile__img svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.tile[aria-pressed="true"] .tile__img::after,
+.tile:hover .tile__img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: var(--neatline);
+}
+.tile[aria-pressed="true"] .tile__img::after {
+  box-shadow: inset 0 0 0 2px var(--pop), inset 0 0 0 3.5px var(--ink);
+}
+/* A layer: its tick, its sample and its name. Sample.tsx picks each scene's span
+   for this 120px box, so a change here is a change there. */
+.layer {
+  display: grid;
+  grid-template-columns: 20px 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+}
+.layer + .layer {
+  border-top: 1px solid var(--hair);
+}
+.layer .tile__img {
+  aspect-ratio: 120 / 56;
+}
+/* Each palette at most --pair-w wide, however wide the window. */
+.pairs {
+  --pair-w: 300px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, var(--pair-w)));
+  gap: 10px;
+  padding: 2px 0 8px;
+}
+.pair {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--hair);
+}
+.pair.is-active {
+  border-color: var(--line);
+}
+.pair__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.pair__badge {
+  margin-inline-start: 4px;
+  padding: 0 5px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--on-ink);
+  background: var(--ink);
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+/* A legend's swatch: the colour right up to its rule, square. The engines' own
+   well pads its swatch 4px by 2px and rounds it (WebKit and WebView2 alike), so
+   both go. */
+.swatch input {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  cursor: pointer;
+}
+.swatch input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.swatch input::-webkit-color-swatch {
+  border: 0;
+  border-radius: 0;
+}
+.swatch code {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  direction: ltr;
+}
+
+/* Where on the desktop the city's name goes: a screen, its four corners. */
+.corner-pick {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.corner {
+  position: relative;
+  flex: none;
+  width: 128px;
+  height: 80px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  direction: ltr;
+}
+.corner button {
+  position: absolute;
+  display: grid;
+  gap: 2px;
+  align-content: center;
+  width: 34px;
+  height: 17px;
+  padding: 0 4px;
+  background: transparent;
+  border: 1px dashed var(--ink-3);
+  cursor: pointer;
+}
+.corner button i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--ink-3);
+}
+.corner button i:nth-child(2) {
+  width: 70%;
+}
+.corner button i:nth-child(3) {
+  width: 55%;
+}
+.corner .tl {
+  top: 6px;
+  left: 6px;
+}
+.corner .tr {
+  top: 6px;
+  right: 6px;
+  justify-items: end;
+}
+.corner .bl {
+  bottom: 6px;
+  left: 6px;
+}
+.corner .br {
+  bottom: 6px;
+  right: 6px;
+  justify-items: end;
+}
+.corner button[aria-pressed="true"] {
+  background: var(--select);
+  border: 1px solid var(--select);
+}
+.corner button[aria-pressed="true"] i {
+  background: var(--on-select);
+}
+
+/* ---------------------------------------------------------------- about */
+
+.ahead {
+  display: grid;
+  gap: 2px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--hair);
+}
+.ahead__name {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.ahead__tag {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.ahead__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.ver {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.imprint {
+  display: grid;
+  gap: 3px;
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hair);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--ink-2);
+}
+.imprint p {
+  margin: 0;
+}
+.imprint .imprint__last {
+  margin-top: 4px;
+}
+.preview-img {
+  position: relative;
+  max-width: 360px;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.preview-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+.preview-img p {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}

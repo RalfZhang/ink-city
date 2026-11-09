@@ -3,52 +3,17 @@
     "title": "InkCity — raad de stad van vandaag",
     "description": "Elke dag een nieuwe stad, met inkt getekend uit OpenStreetMap-gegevens. Raad in welk land ze ligt en maak er je achtergrond van."
   },
-  "intro": {
-    "question": "In welk land ligt deze stad?"
-  },
-  "today": {
-    "label": "Vandaag",
-    "loading": "De kaart van vandaag wordt geladen…",
-    "rebuilding": "De kaart van vandaag is nog niet gepubliceerd — hij wordt rechtstreeks uit OpenStreetMap getekend, dat kan een minuut duren…",
-    "failed": "De kaart van vandaag kon niet worden geladen.",
-    "retry": "Opnieuw proberen",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Raden",
-    "wallpaper": "Als achtergrond",
-    "more": "Scroll naar beneden voor meer"
-  },
-  "dir": {
-    "n": "Noord",
-    "ne": "Noordoost",
-    "e": "Oost",
-    "se": "Zuidoost",
-    "s": "Zuid",
-    "sw": "Zuidwest",
-    "w": "West",
-    "nw": "Noordwest"
-  },
-  "result": {
-    "share": "Delen",
-    "copied": "Gekopieerd naar het klembord",
-    "details": "Details bekijken",
-    "back": "Terug",
-    "collapse": "Inklappen",
-    "expand": "Uitklappen",
-    "nextCity": "tot de volgende stad"
-  },
-  "globe": {
-    "label": "Een wereldbol met de gokken van vandaag, op volgorde verbonden. Sleep om hem te draaien.",
-    "failed": "De wereldbol kon niet worden geladen."
-  },
   "storage": {
     "memoryOnly": "Je browser bewaart dit spel niet, dus het eindigt als je de pagina sluit.",
     "dismiss": "Sluiten"
   },
   "app": {
     "tagline": "Elke dag een nieuwe stad, met inkt getekend"
+  },
+  "play": {
+    "guess": "Raden",
+    "wallpaper": "Als achtergrond",
+    "more": "Scroll naar beneden voor meer"
   },
   "download": {
     "title": "Maak {{city}} vandaag je achtergrond",

@@ -23,6 +23,9 @@ pub struct Defaults {
     /// Half the long side of every map, in km — `bbox_for_screen`'s `max_half_km`. Also a
     /// contract with the data already published; see `MAX_HALF_KM` in defaults.ts.
     pub max_half_km: f64,
+    /// How many decimals of a pin's coordinates are kept — the pin line rounds to it,
+    /// and `pipeline::coord_key` keys the pin's cache by it.
+    pub pin_decimals: usize,
 }
 
 #[derive(Deserialize)]
@@ -82,5 +85,12 @@ mod tests {
     #[test]
     fn every_map_spans_20_km() {
         assert_eq!(get().max_half_km, 10.0);
+    }
+
+    /// About a metre. Changing it renames every pin's cache (`coord_key`): each is
+    /// fetched again, live, once.
+    #[test]
+    fn a_pin_keeps_five_decimals() {
+        assert_eq!(get().pin_decimals, 5);
     }
 }

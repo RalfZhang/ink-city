@@ -10,18 +10,21 @@
 //!   - `pipeline` — resolve what to render → get its OSM → draw it in the hidden
 //!     renderer window → `wallpaper_set` it. The core of the app.
 //!   - `cdn` / `github_mirror` / `osm_sidecar` — where OSM data comes from, in
-//!     fallback order.
+//!     fallback order. `socks_bridge` hands the sidecar a SOCKS route as the HTTP
+//!     proxy it can take.
 //!   - `city` — the compiled-in schedule pool, for the Customized-mode name search
 //!     (the daily city comes from the published schedule, not from here). `bbox`
 //!     is a port of `packages/core/src/bbox.ts`, held to it by a shared fixture.
 //!   - `config` (persisted) vs `state` (live), and `defaults` — the colors, style
-//!     and map span shared with the TypeScript side. `tray`, `updates` — the
+//!     and map span shared with the TypeScript side. `atomic` writes the files read
+//!     back later — config, save, map cache — whole or not at all. `tray`, `updates` — the
 //!     windowless surfaces, whose user-facing strings are pushed in from the
 //!     frontend's i18n.
 //!   - `guess_store` — keeps the guess-the-country game's save on disk. The game
 //!     itself runs in the frontend (`packages/core/src/guess`, shared with the website);
 //!     the backend only reads whether today is revealed, to gate the wallpaper's
 //!     city caption.
+mod atomic;
 mod bbox;
 mod cdn;
 mod city;
@@ -33,7 +36,9 @@ mod github_mirror;
 mod guess_store;
 mod osm_sidecar;
 mod pipeline;
+mod proxy;
 mod scheduler;
+mod socks_bridge;
 mod state;
 mod tray;
 #[cfg(target_os = "linux")]
@@ -131,7 +136,6 @@ mod tests {
     }
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         // single-instance must be the first plugin: a second launch (e.g. the
@@ -167,7 +171,6 @@ pub fn run() {
             Some(vec![AUTOSTART_FLAG]),
         ))
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
@@ -188,13 +191,16 @@ pub fn run() {
             let first_run = config::is_first_run(handle);
             let cfg = config::load(handle);
             let hide_tray_initial = cfg.hide_tray;
-            // Apply the persisted proxy to the shared HTTP client before any
-            // fetch runs (the sidecar reads it from env at spawn — see
-            // osm_sidecar). Empty/disabled ⇒ direct connection.
-            if cfg.proxy_enabled && !cfg.proxy_url.trim().is_empty() {
-                github_mirror::set_proxy(Some(cfg.proxy_url.clone()));
-            }
+            // Apply the persisted proxy route before any fetch runs (the HTTP
+            // clients and the sidecar's environment both read it — see `proxy`).
+            proxy::set(proxy::Route::from_setting(cfg.proxy_mode, &cfg.proxy_url));
             handle.manage(AppState::from_config(&cfg));
+            // Whether there's a tray to be reached through decides both whether an
+            // autostart launch may stay hidden (below) and whether General offers
+            // its own Quit.
+            let tray_missing = tray_would_be_invisible();
+            handle.state::<AppState>().tray_available.store(!tray_missing, Ordering::Release);
+            *handle.state::<AppState>().last_update_check.lock().unwrap() = updates::last_check(handle);
             // Whether today is already revealed decides the first render's city
             // caption, so the game's save is read before the scheduler starts.
             *handle.state::<AppState>().guess_view.lock().unwrap() = guess_store::load_view(handle);
@@ -233,8 +239,6 @@ pub fn run() {
                 #[cfg(target_os = "macos")]
                 {
                     use objc2::{msg_send, runtime::AnyObject};
-                    use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
-                    let _ = apply_vibrancy(&main, NSVisualEffectMaterial::Sidebar, None, None);
 
                     // Stop the green traffic-light button from entering
                     // Fullscreen Mode. Tauri's default collection behavior is
@@ -242,9 +246,9 @@ pub fn run() {
                     // because the app itself is fullscreen-capable.  Setting
                     // `NSWindowCollectionBehaviorFullScreenNone` (1<<9)
                     // explicitly disables fullscreen for this window, which
-                    // switches the green button to its `zoom:` (➕) variant.
-                    // `zoom:` then respects our maxWidth=732 constraint and
-                    // only grows the window vertically; a second click toggles
+                    // switches the green button to its `zoom:` (➕) variant:
+                    // the window grows to fill the screen (within its
+                    // tauri.conf.json size limits), and a second click toggles
                     // back to the previous frame.
                     if let Ok(ptr) = main.ns_window() {
                         let ns_window = ptr as *mut AnyObject;
@@ -267,15 +271,6 @@ pub fn run() {
                         }
                     }
                 }
-                #[cfg(target_os = "windows")]
-                {
-                    use window_vibrancy::{apply_acrylic, apply_mica};
-                    // Prefer Mica (Win11). Fall back to Acrylic if Mica is unsupported (Win10).
-                    if apply_mica(&main, None).is_err() {
-                        let _ = apply_acrylic(&main, None);
-                    }
-                }
-
                 // Keep the taskbar entry on Linux, where `skipTaskbar` in
                 // tauri.conf.json would be actively harmful: the tray it assumes
                 // as the way back into the app is optional on this platform (see
@@ -294,17 +289,18 @@ pub fn run() {
                         if !quitting {
                             api.prevent_close();
                             let _ = main_clone.hide();
+                            crate::events::FrontendEvent::WindowHidden.emit(&app_handle);
                         }
                     }
                     WindowEvent::ThemeChanged(_) => {
-                        let mode = *app_handle.state::<AppState>().theme.lock().unwrap();
-                        if mode == ThemeMode::System {
+                        // Only the wallpaper is drawn in the OS's theme: the window
+                        // follows it on its own, and a run that only fetches the
+                        // map's data (syncing off) doesn't depend on it.
+                        let state = app_handle.state::<AppState>();
+                        let mode = *state.theme.lock().unwrap();
+                        if mode == ThemeMode::System && state.sync_wallpaper.load(Ordering::Acquire) {
                             pipeline::spawn_force_regen(app_handle.clone());
                         }
-                        // Push the (possibly changed) effectiveTheme so the Style
-                        // tab's active-palette highlight updates even if the
-                        // regen above is a no-op or skipped.
-                        app_handle.state::<AppState>().mark_status_dirty();
                     }
                     _ => {}
                 });
@@ -313,9 +309,12 @@ pub fn run() {
                 // only when the user launched the app; an autostart (login)
                 // launch stays silent in the background — unless there is no
                 // tray to be silent *in*, which would leave the app unreachable.
-                if !launched_by_autostart() || tray_would_be_invisible() {
-                    let _ = main.show();
-                    let _ = main.set_focus();
+                //
+                // Not straight away: the page starts in the light map's palette
+                // (styles/ink.css) until its first status brings the real one, so
+                // it's shown once that's on (`commands::window_ready`).
+                if !launched_by_autostart() || tray_missing {
+                    handle.state::<AppState>().show_on_ready.store(true, Ordering::Release);
                 }
             }
 
@@ -363,7 +362,9 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::get_status,
+            commands::window_ready,
             commands::set_update_mode,
+            commands::set_sync_wallpaper,
             commands::apply_custom_city,
             commands::search_cities,
             commands::set_hide_tray,
@@ -374,11 +375,13 @@ pub fn run() {
             commands::install_update,
             commands::cancel_update,
             commands::set_update_strings,
-            commands::apply_style_settings,
-            commands::apply_lab_settings,
+            commands::apply_map_settings,
             commands::set_bypass_cache,
             commands::set_dev_mode,
             commands::apply_proxy_settings,
+            commands::get_system_proxy,
+            commands::test_proxy,
+            commands::get_map_data,
             commands::regenerate_now,
             commands::guess_store_read,
             commands::guess_store_write,
@@ -386,7 +389,6 @@ pub fn run() {
             commands::renderer_ready,
             commands::submit_render_result,
             commands::quit_app,
-            commands::hide_window,
             commands::update_tray_labels,
             commands::open_log_dir,
             commands::has_wallpaper_cache,

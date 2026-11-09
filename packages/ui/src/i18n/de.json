@@ -15,6 +15,39 @@
     "winRate": "Gewinnquote",
     "streak": "Aktuelle Serie",
     "maxStreak": "Beste Serie",
-    "distribution": "Verteilung der Versuche"
+    "distribution": "Verteilung der Versuche",
+    "share": "Teilen",
+    "copied": "In die Zwischenablage kopiert",
+    "details": "Details ansehen",
+    "back": "Zurück",
+    "collapse": "Einklappen",
+    "expand": "Ausklappen",
+    "nextCity": "bis zur nächsten Stadt"
+  },
+  "intro": {
+    "question": "In welchem Land liegt diese Stadt?"
+  },
+  "today": {
+    "label": "Heute",
+    "loading": "Die Karte von heute wird geladen…",
+    "rebuilding": "Die heutige Karte ist noch nicht veröffentlicht – sie wird direkt aus OpenStreetMap gezeichnet, das kann eine Minute dauern…",
+    "failed": "Die heutige Karte konnte nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Norden",
+    "ne": "Nordosten",
+    "e": "Osten",
+    "se": "Südosten",
+    "s": "Süden",
+    "sw": "Südwesten",
+    "w": "Westen",
+    "nw": "Nordwesten"
+  },
+  "globe": {
+    "label": "Ein Globus mit den heutigen Tipps, der Reihe nach verbunden. Zum Drehen ziehen.",
+    "failed": "Der Globus konnte nicht geladen werden."
   }
 }

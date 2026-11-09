@@ -7,20 +7,25 @@
 //     quiet given up on, .json and all, while a slow one is waited for; the rebuilt
 //     day stamped and cached; nothing in a day's place when everything fails; an
 //     Overpass mirror that never answers left for the next,
-//   • decoding a day (map/manifest.ts): gzip sniffed, a whole city required,
+//   • decoding a day (map/manifest.ts): gzip sniffed, a page or a cut-off body refused,
 //   • the engine (map/engine.ts): one load per day, a burst of requests drawn once,
-//     a theme switch redrawn from memory, a day that failed reloaded by a retry only,
-//     the roads laid out for inking in (map/growth.ts) only for the frame that asks:
-//     each road split at its highest point, in the frame's pixels and drawScene's
-//     widths, started as the front coming down reaches it,
+//     a theme switch redrawn from memory, a day that failed loaded again when asked again,
+//     a frame too big to draw drawn smaller, the roads laid out for inking in (core's
+//     ink/growth.ts, which the desktop's window inks in with too) only for the frame
+//     that asks: each road split at its highest point, in the frame's pixels and
+//     drawScene's widths, started as the front coming down reaches it,
+//   • what it runs on, as the desktop's window's engine does: the queue that serves
+//     only the newest request, a turn of the event loop before each (core's
+//     ink/queue.ts), and the halving of a frame that won't draw (ink/fit.ts),
 //   • the save's fallback to memory when the browser won't store it (lib/storage.ts),
-//     who counts as a returning player (lib/recent.ts), the result as it's shared
-//     (game/share.ts), the globe's projection and zoom (game/globe/sphere.ts), and
-//     which wheel events make one gesture, for turning pages (lib/paging.ts),
+//     and which wheel events make one gesture, for turning pages (lib/paging.ts),
+//   • the game's pieces both hosts draw with (packages/ui/src/game): who counts as a
+//     returning player (recent.ts), the result as it's shared (share.ts), the globe's
+//     projection and zoom (globe/sphere.ts), the countdown (time.ts) and the city's
+//     name per language (city-name.ts),
 //   • which installer to lead with for which visitor (lib/platform.ts),
-//   • the local date and the countdown (lib/date.ts), the city's name per language
-//     (lib/city-name.ts), and the canvas size under its cap and iOS's lower one
-//     (map/size.ts),
+//   • the local date (lib/date.ts), and the canvas size under its cap and iOS's lower
+//     one (map/size.ts, over core's ink/cover.ts),
 //   • the page's paper (index.css, index.html) being the map's, from defaults.json.
 // Exits non-zero (printing every violation) on failure, so it can gate CI.
 //
@@ -32,25 +37,37 @@ import { fileURLToPath } from "node:url";
 import {
   bboxForScreen,
   DEFAULT_COLORS,
+  DEFAULT_STYLE,
+  FRONT_EASE,
+  growthFor,
   MAX_HALF_KM,
+  MAX_SQUARE_SIDE,
+  MIN_FIT_SIDE,
   mirrorUrls,
+  newestOnly,
   normalizeCountryQuery,
+  renderFitting,
   SCHEDULE_DATA_DIR,
   SCHEDULE_ROOT,
   SCHEDULE_STATE_FILE,
+  SPREAD_CURVE,
+  SPREAD_S,
   type City,
+  type Growth,
   type Osm,
 } from "@inkcity/core";
 import { emptyGuessStore, type GameSnapshot, type GuessStorage, type GuessStore } from "@inkcity/core";
 import { shiftStamp } from "@inkcity/core/schedule";
-import { cityName } from "../apps/web/src/lib/city-name";
-import { formatCountdown, localDate, msUntilMidnight } from "../apps/web/src/lib/date";
+import { cityName } from "../packages/ui/src/game/city-name";
+import { tokensFor } from "../packages/ui/src/game/tokens";
+import { localDate } from "../apps/web/src/lib/date";
+import { formatCountdown, msUntilMidnight } from "../packages/ui/src/game/time";
 import { detectVisitor, refineVisitor, type NavigatorLike, type Visitor } from "../apps/web/src/lib/platform";
 import { memoryFallback } from "../apps/web/src/lib/storage";
-import { playedWithin, RECENT_DAYS } from "../apps/web/src/lib/recent";
+import { playedWithin, RECENT_DAYS } from "../packages/ui/src/game/recent";
 import { follow, NO_GESTURE } from "../apps/web/src/lib/paging";
-import { matchSpan } from "../apps/web/src/game/format";
-import { shareText } from "../apps/web/src/game/share";
+import { matchSpan } from "../packages/ui/src/game/format";
+import { shareText } from "../packages/ui/src/game/share";
 import {
   angle,
   decodeWorld,
@@ -64,14 +81,12 @@ import {
   viewOf,
   zoomAbout,
   type WorldData,
-} from "../apps/web/src/game/globe/sphere";
+} from "../packages/ui/src/game/globe/sphere";
 import type { DayCache } from "../apps/web/src/map/cache";
 import { createEngine, type Frame, type Reply, type ShowRequest } from "../apps/web/src/map/engine";
-import { FRONT_EASE, SPREAD_CURVE, SPREAD_S } from "../apps/web/src/map/front";
-import { growthFor, type Growth } from "../apps/web/src/map/growth";
 import { loadDay, type LoadDeps } from "../apps/web/src/map/load";
 import { decodeManifest, gzip, isGzip } from "../apps/web/src/map/manifest";
-import { cover, IOS_MAX_SIDE, isIOS, MAX_SIDE } from "../apps/web/src/map/size";
+import { cover, IOS_MAX_SIDE, isIOS, mapBBox } from "../apps/web/src/map/size";
 import { fetchOverpass } from "../packages/osm/src/overpass";
 
 let checks = 0;
@@ -106,9 +121,6 @@ const encode = (v: unknown) => new TextEncoder().encode(JSON.stringify(v));
     }
   };
   await rejects(new TextEncoder().encode("<!doctype html><title>403 Forbidden</title>"), "an HTML error page");
-  await rejects(encode({ ...DAY, city: undefined }), "a day without a city");
-  await rejects(encode({ ...DAY, city: { ...CITY, localName: undefined } }), "a day whose city is missing a field");
-  await rejects(encode({ ...DAY, elements: [] }), "a day without roads");
   await rejects(gz.slice(0, gz.length / 2), "a cut-off gzip");
 }
 
@@ -148,7 +160,6 @@ const deps = (over: Partial<LoadDeps>): LoadDeps => ({
   reconstruct: async () => {
     throw new Error("rung 3 not expected here");
   },
-  gzip: true,
   stallTimeoutMs: 50,
   ...over,
 });
@@ -189,13 +200,6 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   check(cache.days[DATE] !== undefined, "the day that was fetched is cached");
   check(cache.days["2026-10-01"] === undefined, "days other than today and yesterday are pruned");
   check(JSON.stringify(cache.kept.at(-1)) === JSON.stringify([DATE, shiftStamp(DATE, -1)]), "prune keeps today and yesterday", cache.kept);
-}
-
-{
-  // Without DecompressionStream there's no .gz to ask for.
-  const calls: Call[] = [];
-  await loadDay(DATE, deps({ gzip: false, fetch: fakeFetch({ [`${manifests[2]}/${DATE}.json`]: () => new Response(JSON.stringify(DAY)) }, calls) }));
-  check(calls.every((c) => c.url.endsWith(".json")), "a browser that can't gunzip never asks for .gz", calls);
 }
 
 {
@@ -346,8 +350,7 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
 }
 
 {
-  // A day that failed stays failed through resizes and theme switches: only the
-  // page's retry (or another day) climbs the ladder again.
+  // A day that failed is loaded again when it's asked for again — the page's retry.
   let loads = 0;
   const replies: Reply[] = [];
   const show = createEngine({
@@ -357,23 +360,103 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
     },
     post: (reply) => replies.push(reply),
   });
-  const req = (width: number, theme: "light" | "dark" = "light"): ShowRequest => ({
-    type: "show", date: DATE, theme, width, height: 900,
-  });
+  const req: ShowRequest = { type: "show", date: DATE, theme: "light", width: 800, height: 900 };
   const settle = () => new Promise((r) => setTimeout(r, 50));
-  show(req(800));
-  show(req(1000)); // a resize while the load fails
+  show(req);
   await settle();
-  check(loads === 1 && replies.at(-1)?.type === "error", "a resize during a failing load doesn't load the day again", loads);
-  const before = replies.length;
-  show(req(1200));
-  show(req(1200, "dark"));
+  check(loads === 1 && replies.at(-1)?.type === "error", "a day that can't be had reports an error", loads);
+  show(req);
   await settle();
-  check(loads === 1 && replies.length === before, "nor does a resize or a theme switch after it, which leaves the error up", loads);
-  show({ ...req(1200), retry: true });
-  show(req(1300)); // and one during the retry
-  await settle();
-  check(loads === 2, "the retry loads it once more, and only once", loads);
+  check(loads === 2, "and asking for it again loads it again", loads);
+}
+
+{
+  // A frame the machine can't hold is drawn at half, and its roads laid out at the
+  // size it was drawn: the page lays it over the screen the same, only softer.
+  const frames: Frame[] = [];
+  const show = createEngine({
+    deps: deps({ cache: memoryCache({ [DATE]: encode(DAY) }) }),
+    render: async (_m, _t, width) => {
+      if (width > 3000) throw new Error("out of memory");
+      return {} as ImageBitmap;
+    },
+    post: (reply) => reply.type === "frame" && frames.push(reply),
+  });
+  show({ type: "show", date: DATE, theme: "light", width: 4096, height: 4096, grow: { view: { x: 1024, y: 0, width: 2048, height: 4096 } } });
+  await new Promise((r) => setTimeout(r, 50));
+  check(
+    frames.length === 1 && frames[0].width === 2048 && frames[0].height === 2048 && frames[0].growth?.speed === 2048 / SPREAD_S,
+    "a frame too big to draw comes at half the size, its roads laid out for that size",
+    frames.map((f) => ({ width: f.width, speed: f.growth?.speed })),
+  );
+}
+
+// ---- what both engines run on ----------------------------------------------------
+
+{
+  // A burst is served once, at its newest; nothing is served before the event loop
+  // has had a turn; and what's asked while a request is served — in a worker,
+  // messages that queue up behind a draw holding the thread — is taken in before the
+  // next is taken up, so only the newest of it is served.
+  const served: string[] = [];
+  let waitedDuring = false;
+  const queue = newestOnly<string>(async (req) => {
+    served.push(req);
+    if (req === "a") {
+      // Two messages delivered once the draw lets go: timers queued ahead of the queue's own turn.
+      setTimeout(() => queue.push("b"));
+      setTimeout(() => queue.push("c"));
+    }
+    if (req === "slow") {
+      queue.push("d");
+      waitedDuring = queue.waiting();
+      await new Promise((r) => setTimeout(r, 10));
+    }
+  });
+  queue.push("x");
+  queue.push("y");
+  queue.push("a");
+  check(served.length === 0, "nothing is served the moment it's asked: the queue gives the event loop a turn first", served);
+  await new Promise((r) => setTimeout(r, 20));
+  check(served[0] === "a", "a burst is served once, at its newest", served);
+  check(
+    served.join() === "a,c",
+    "what's asked while one is served is all taken in first, and only the newest of it served",
+    served,
+  );
+  queue.push("slow");
+  await new Promise((r) => setTimeout(r, 40));
+  check(waitedDuring && served.join() === "a,c,slow,d", "a request asked during a slow serve waits for it, and says so", served);
+  queue.push("e");
+  queue.clear();
+  await new Promise((r) => setTimeout(r, 20));
+  check(served.at(-1) === "d", "a request cleared before it's taken up isn't served", served);
+}
+
+{
+  // A frame that won't draw is tried at half, and half again, down to MIN_FIT_SIDE.
+  const tried: number[] = [];
+  const fit = await renderFitting(6144, 6144, async (w) => {
+    tried.push(w);
+    if (w > 2000) throw new Error("out of memory");
+    return "bitmap";
+  });
+  check(
+    tried.join() === "6144,3072,1536" && fit.width === 1536 && fit.height === 1536 && fit.scale === 0.25,
+    "a frame that won't draw is halved until it does",
+    { tried, fit },
+  );
+  tried.length = 0;
+  let gaveUp = false;
+  try {
+    await renderFitting(3000, 3000, async (w) => {
+      tried.push(w);
+      throw new Error("no context");
+    });
+  } catch {
+    gaveUp = true;
+  }
+  check(gaveUp && tried.join() === `3000,1500` && 750 < MIN_FIT_SIDE, "and given up on before it would go below MIN_FIT_SIDE", tried);
 }
 
 // ---- inking the map in ------------------------------------------------------------
@@ -410,7 +493,7 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   const near = (a: number, b: number) => Math.abs(a - b) < 1e-3;
   const delay = (d: number) => SPREAD_S * Math.pow(d / H, 0.85);
 
-  const frame = growthFor(day, W, H);
+  const frame = growthFor(day, mapBBox(day, W, H), DEFAULT_STYLE.preset, W, H);
   const got = paths(frame);
   check(got.length === 4, "every drawn road on the frame is laid out, the Λ as two halves; a footway and an off-frame road are not", got);
   const halves = got.filter((p) => p.pts[0][0] === 250 && p.pts[0][1] === 200);
@@ -463,7 +546,7 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   // roads from the same points at the same times, just further along the square. One
   // beside the screen, on the square but off what shows, is left to the last step.
   const beside = { ...day, elements: [...day.elements, way("residential", [[-150, 100], [-100, 300]])] };
-  const onSquare = growthFor(beside, H, H, { x: (H - W) / 2, y: 0, width: W, height: H });
+  const onSquare = growthFor(beside, mapBBox(beside, H, H), DEFAULT_STYLE.preset, H, H, { x: (H - W) / 2, y: 0, width: W, height: H });
   const moved = got.map((p) => ({ ...p, pts: p.pts.map(([x, y]) => [x + (H - W) / 2, y]) }));
   const same = paths(onSquare).every((p, i) => {
     const q = moved[i];
@@ -529,8 +612,12 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
     resumesTomorrow: false,
   };
   const text = shareText(snapshot, DATE, "en", "https://inkcity.ralfz.com/");
-  const want = ["InkCity 2026-10-20 2/6", "■□□□□ ← 8,991 km", "■■■■■ ✓", "https://inkcity.ralfz.com/"].join("\n");
-  check(text === want, "the shared result is the score, the squares and the arrows", text);
+  const want = ["InkCity 2026-10-20 2/6", "⬛⬜⬜⬜⬜ 8,991 km ←\uFE0E", "⬛⬛⬛⬛⬛ ✓", "https://inkcity.ralfz.com/"].join("\n");
+  check(text === want, "the shared result is the score, the squares, how far and the arrows", text);
+  // The squares are emoji, the same width everywhere; the arrow, forced to text so
+  // it isn't painted blue, comes last, where a platform's width for it can't push
+  // anything out of line.
+  check(text.split("\n").slice(1, -1).every((l) => /^[⬛⬜]{5} /u.test(l)), "every guess opens on five emoji squares", text);
   check(!/Japan|Bulgaria|JP|BG/.test(text), "and names no country");
   const lost = shareText({ ...snapshot, state: "lost", guesses: snapshot.guesses.slice(0, 1) }, DATE, "en", "x");
   check(lost.startsWith("InkCity 2026-10-20 ✕/6"), "a lost day scores ✕", lost);
@@ -642,7 +729,8 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   check(u.at(15, 80) && u.at(-15, 80) && u.filled(...rim(-15)) && u.filled(...rim(15)), "a country over the rim in two places is filled in both", u.polys);
   check(!u.at(0, 80) && !u.filled(...rim(0)), "and not between them, though the rim is drawn along there");
   // Antarctica, from the world itself: one ring round the pole, over the rim from the south.
-  const world = decodeWorld(JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "apps", "web", "src", "game", "globe", "world.json"), "utf8")) as WorldData);
+  const worldData = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "packages", "ui", "src", "game", "globe", "world.json"), "utf8")) as WorldData;
+  const world = decodeWorld(worldData);
   for (const lat of [0, -10]) {
     const south = fill(world.rings.get("AQ")!, { lat, lon: 0 });
     check(
@@ -651,6 +739,17 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
     );
   }
   check([...world.rings.values()].flat().every((r) => Math.hypot(r[0] - r[r.length - 3], r[1] - r[r.length - 2], r[2] - r[r.length - 1]) < 1e-9), "every country's rings close");
+  // Every border and coast drawn is some country's: a piece of land left out of every
+  // country is drawn in outline but never washed in.
+  const used = new Set(Object.values(worldData.countries).flat(2).map((ref) => (ref < 0 ? ~ref : ref)));
+  const loose = worldData.arcs.map((_, i) => i).filter((i) => !used.has(i));
+  check(loose.length === 0, "every arc is a country's border or coast", loose);
+  // world-atlas gives Somaliland and Northern Cyprus no ISO code; they're folded into
+  // Somalia and Cyprus, as the game counts them.
+  const so = fill(world.rings.get("SO")!, { lat: 6, lon: 45 });
+  check(so.at(9.56, 44.06) && so.at(2.04, 45.34) && !so.at(9.0, 38.75), "Somalia is filled with Somaliland (Hargeisa) and without Ethiopia (Addis Ababa)");
+  const cy = fill(world.rings.get("CY")!, { lat: 35, lon: 33 });
+  check(cy.at(35.34, 33.32) && cy.at(34.68, 33.04), "Cyprus is filled north (Kyrenia) and south (Limassol)");
 }
 
 // ---- wheel gestures (lib/paging.ts) -------------------------------------------------
@@ -795,7 +894,7 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   const fiveK = cover(2560, 1440, 2);
   check(fiveK.px === 5120, "a 5K display's is drawn at its full resolution", fiveK);
   const huge = cover(7680, 4320, 2);
-  check(huge.px === MAX_SIDE && huge.css === 7680, "an 8K screen's stays under the cap, and still covers it", huge);
+  check(huge.px === MAX_SQUARE_SIDE && huge.css === 7680, "an 8K screen's stays under the cap, and still covers it", huge);
   const ipad = cover(3008, 1692, 2, IOS_MAX_SIDE);
   check(ipad.px === IOS_MAX_SIDE && ipad.css === 3008, "under iOS's lower cap, the same", ipad);
   const iPhone = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15";
@@ -834,8 +933,39 @@ const schedules = mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_STATE_FILE}`);
   }
 }
 
+// ---- the game's colours: one formula, both hosts ------------------------------------
+
+{
+  // The website's token tables, and the desktop window's pre-status fallback, are
+  // `tokensFor` of the default palettes, written out: what the window works out at
+  // run time from the palette in use is what the page's first paint already wears.
+  const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+  const webCss = readFileSync(join(root, "apps", "web", "src", "index.css"), "utf8");
+  const deskCss = readFileSync(join(root, "apps", "desktop", "src", "styles", "ink.css"), "utf8");
+  /** `--name: value;` declarations of the first block opened by `selector {` at a line's start. */
+  const block = (css: string, selector: string): Map<string, string> => {
+    const body = new RegExp(`^${selector} \\{([^}]*)\\}`, "m").exec(css)?.[1] ?? "";
+    return new Map([...body.matchAll(/--([\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+  };
+  // The website names the paper and ink after the page's own `--background` / `--foreground`.
+  const webName = (k: string) => (k === "paper" ? "background" : k === "ink" ? "foreground" : k);
+  const WEB_KEYS = ["paper", "ink", "ink-2", "ink-3", "line", "hair", "sheet", "pop", "land", "land-2", "on-ink", "brick"];
+  for (const [theme, selector] of [["light", ":root"], ["dark", "\\.dark"]] as const) {
+    const want = tokensFor(DEFAULT_COLORS[theme], null);
+    const got = block(webCss, selector);
+    for (const k of WEB_KEYS) {
+      check(got.get(webName(k)) === want[k], `index.css: the ${theme} --${webName(k)} is tokensFor's ${k}, ${want[k]}`, got.get(webName(k)));
+    }
+  }
+  const light = tokensFor(DEFAULT_COLORS.light, null);
+  const fallback = block(deskCss, ":root");
+  for (const k of WEB_KEYS) {
+    check(fallback.get(k) === light[k], `desktop ink.css: the fallback --${k} is tokensFor's ${k}, ${light[k]}`, fallback.get(k));
+  }
+}
+
 if (failures > 0) {
   console.error(`✗ ${failures}/${checks} website checks failed`);
   process.exit(1);
 }
-console.log(`✓ website: ${checks} checks (fetch ladder, day decoding, engine, ink-in, returning players, sharing, globe, wheel gestures, save fallback, visitor, dates, names, sizes, paper)`);
+console.log(`✓ website: ${checks} checks (fetch ladder, day decoding, engine, newest-only queue, halving, ink-in, returning players, sharing, globe, wheel gestures, save fallback, visitor, dates, names, sizes, paper, colours)`);

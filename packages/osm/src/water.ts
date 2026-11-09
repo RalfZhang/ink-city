@@ -363,7 +363,7 @@ const AREA_RELATION_TYPES = new Set(["multipolygon", "boundary", "route"]);
  * Coordinates are rounded to `coordPrecision` decimals at the end (after
  * endpoint matching, which needs full precision).
  */
-export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecision?: number): WaterFeature[] {
+export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecision: number): WaterFeature[] {
   const elements = raw.elements ?? [];
   const features: WaterFeature[] = [];
 
@@ -423,7 +423,7 @@ export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecisio
     features.push({ kind: "ocean", polygon: poly });
   }
 
-  return coordPrecision === undefined ? features : roundFeatures(features, coordPrecision);
+  return roundFeatures(features, coordPrecision);
 }
 
 function roundFeatures(features: WaterFeature[], precision: number): WaterFeature[] {

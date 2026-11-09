@@ -7,8 +7,8 @@
 // key of en.json in every locale, nothing extra.
 //
 // What the components can't word for every host stays with the host and comes in
-// as a prop instead — e.g. GuessCountry's `paintingLine`, which on the desktop is
-// about painting the wallpaper.
+// as a prop instead — e.g. the Stage's `wallpaper`: the website's way down to the
+// app, and all its words for it, which live in the website's own catalog.
 import ar from "./ar.json";
 import de from "./de.json";
 import en from "./en.json";

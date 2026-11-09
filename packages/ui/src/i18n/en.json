@@ -15,6 +15,39 @@
     "winRate": "Win rate",
     "streak": "Streak",
     "maxStreak": "Best streak",
-    "distribution": "Guess distribution"
+    "distribution": "Guess distribution",
+    "share": "Share",
+    "copied": "Copied to clipboard",
+    "details": "View details",
+    "back": "Back",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "nextCity": "until the next city"
+  },
+  "intro": {
+    "question": "Which country is this city in?"
+  },
+  "today": {
+    "label": "Today",
+    "loading": "Loading today's map…",
+    "rebuilding": "Today's map isn't published yet — drawing it from OpenStreetMap, which can take a minute…",
+    "failed": "Couldn't load today's map.",
+    "retry": "Try again",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "North",
+    "ne": "North-east",
+    "e": "East",
+    "se": "South-east",
+    "s": "South",
+    "sw": "South-west",
+    "w": "West",
+    "nw": "North-west"
+  },
+  "globe": {
+    "label": "A globe with today's guesses, joined in order. Drag it to turn it.",
+    "failed": "Couldn't load the globe."
   }
 }

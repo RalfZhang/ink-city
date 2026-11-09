@@ -146,11 +146,24 @@ export function resetDay(store: GuessStore, date: string): GuessStore {
 }
 
 /**
- * `stamp` shifted by `days` calendar days. Formats the date itself rather than
- * borrowing `dateStamp` from ../city, the deprecated rotation module slated for
- * removal — the game shouldn't go with it.
+ * Whether `s` is a calendar day as the save keys them, `YYYY-MM-DD` — and a real
+ * one: not `2026-02-30`, not the empty string a host passes before it knows its date.
  */
-function shiftDay(stamp: string, days: number): string {
+export function isDateStamp(s: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+/**
+ * `stamp` shifted by `days` calendar days, or null for a stamp that isn't a day
+ * (`isDateStamp`) — which `Date` would turn into an Invalid Date, and its
+ * `toISOString` into a throw. Formats the date itself rather than borrowing
+ * `dateStamp` from ../city, the deprecated rotation module slated for removal — the
+ * game shouldn't go with it.
+ */
+function shiftDay(stamp: string, days: number): string | null {
+  if (!isDateStamp(stamp)) return null;
   const d = new Date(`${stamp}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
@@ -187,11 +200,12 @@ export function guessStats(store: GuessStore, today: string): GuessStats {
     }
   }
 
+  // A host that doesn't know its date yet has no "today" to count a streak back from.
   const todayEnd = store.days[today]?.end;
   let currentStreak = 0;
-  if (todayEnd === undefined || todayEnd === "won") {
-    let d = todayEnd === "won" ? today : shiftDay(today, -1);
-    while (store.days[d]?.end === "won") {
+  if (isDateStamp(today) && (todayEnd === undefined || todayEnd === "won")) {
+    let d: string | null = todayEnd === "won" ? today : shiftDay(today, -1);
+    while (d !== null && store.days[d]?.end === "won") {
       currentStreak++;
       d = shiftDay(d, -1);
     }

@@ -3,52 +3,17 @@
     "title": "InkCity — bugünün şehrini tahmin edin",
     "description": "Her gün OpenStreetMap verilerinden mürekkeple çizilmiş yeni bir şehir. Hangi ülkede olduğunu tahmin edin, sonra onu duvar kağıdınız yapın."
   },
-  "intro": {
-    "question": "Bu şehir hangi ülkede?"
-  },
-  "today": {
-    "label": "Bugün",
-    "loading": "Bugünün haritası yükleniyor…",
-    "rebuilding": "Bugünün haritası henüz yayımlanmadı; doğrudan OpenStreetMap'ten çiziliyor, bu bir dakika sürebilir…",
-    "failed": "Bugünün haritası yüklenemedi.",
-    "retry": "Tekrar dene",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Tahmin et",
-    "wallpaper": "Duvar kâğıdı yap",
-    "more": "Daha fazlası için aşağı kaydır"
-  },
-  "dir": {
-    "n": "Kuzey",
-    "ne": "Kuzeydoğu",
-    "e": "Doğu",
-    "se": "Güneydoğu",
-    "s": "Güney",
-    "sw": "Güneybatı",
-    "w": "Batı",
-    "nw": "Kuzeybatı"
-  },
-  "result": {
-    "share": "Paylaş",
-    "copied": "Panoya kopyalandı",
-    "details": "Ayrıntıları gör",
-    "back": "Geri",
-    "collapse": "Daralt",
-    "expand": "Genişlet",
-    "nextCity": "sonraki şehre kadar"
-  },
-  "globe": {
-    "label": "Bugünkü tahminlerin sırayla birleştirildiği bir küre. Döndürmek için sürükle.",
-    "failed": "Küre yüklenemedi."
-  },
   "storage": {
     "memoryOnly": "Tarayıcınız bu oyunu kaydetmiyor; sayfayı kapattığınızda oyun biter.",
     "dismiss": "Kapat"
   },
   "app": {
     "tagline": "Her gün mürekkeple çizilmiş yeni bir şehir"
+  },
+  "play": {
+    "guess": "Tahmin et",
+    "wallpaper": "Duvar kâğıdı yap",
+    "more": "Daha fazlası için aşağı kaydır"
   },
   "download": {
     "title": "{{city}} bugün duvar kağıdınız olsun",

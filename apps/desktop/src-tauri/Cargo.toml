@@ -18,17 +18,22 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = ["tray-icon", "macos-private-api", "image-png"] }
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
 tauri-plugin-opener = "2"
 tauri-plugin-autostart = "2"
 tauri-plugin-single-instance = "2"
 tauri-plugin-updater = "2"
-tauri-plugin-process = "2"
 tauri-plugin-notification = "2"
-window-vibrancy = "0.6"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "socks"] }
+# Not used here: this turns on `socks` for the reqwest 0.13 that tauri-plugin-updater
+# brings, so the updater can go through a SOCKS proxy — which System mode picks by
+# itself when the OS has only a SOCKS proxy set. Cargo merges features per version,
+# so it adds the feature to that copy, not another copy. Without it every update
+# check over SOCKS fails with "unsupported scheme socks5", while "Test connection"
+# (the 0.12 above) passes.
+reqwest_updater = { package = "reqwest", version = "0.13", default-features = false, features = ["socks"] }
 tokio = { version = "1", features = ["sync", "time", "net", "rt-multi-thread", "macros"] }
 chrono = { version = "0.4", features = ["serde"] }
 anyhow = "1"

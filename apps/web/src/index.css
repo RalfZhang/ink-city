@@ -1,8 +1,10 @@
 @import "@inkcity/ui/globals.css";
-@import "./styles/ink.css";
+/* The pen's components and the game, drawn as the desktop window draws them. */
+@import "@inkcity/ui/ink.css";
+@import "@inkcity/ui/game.css";
+@import "./styles/brand.css";
 @import "./styles/play.css";
 @import "./styles/pages.css";
-@import "./styles/globe.css";
 
 /* The website's design: the map's own paper and ink (DEFAULT_COLORS in
    packages/core/src/defaults.json — #eee8d6 / #2d2d2d by day, #000000 / #5e5d58 by
@@ -13,8 +15,8 @@
    inked in, what shows is the same paper with no ink on it yet. pnpm web-test holds
    both `--background`s, and index.html's theme-color, to defaults.json.
 
-   `--background`/`--foreground` are the shared theme's names (the base layer of
-   @inkcity/ui/globals.css reads them); the rest are the site's own:
+   `--background`/`--foreground` are the page's paper and ink, which the rest are
+   worked out from:
      --ink-2 / --ink-3   secondary text / the faintest marks (placeholders, empty cells)
      --line              drawn things: frames, rules, the globe's rim. By night the
                          map's dim ink, a little lifted; text stays light (--ink)
@@ -26,42 +28,47 @@
      --on-ink            what's written on an ink fill
      --brick             the one colour that isn't ink: a mistake */
 :root {
+  /* Messages rise from just above the game's bar (@inkcity/ui/game.css), and above
+     a phone's keyboard when it's up. */
+  --toast-bottom: max(calc(126px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 72px));
+  /* This and .dark below are @inkcity/ui/game/tokens' `tokensFor` of the map's
+     default palettes (DEFAULT_COLORS) — the formula the desktop window wears its own
+     palette by — written out for the first paint, and held to it by `pnpm web-test`. */
   --background: #eee8d6;
   --foreground: #2d2d2d;
   --paper: var(--background);
   --ink: var(--foreground);
-  --ink-2: #6b665a;
-  --ink-3: #a19a88;
+  --ink-2: #676560;
+  --ink-3: #9d998f;
   --line: #2d2d2d;
   --hair: rgb(45 45 45 / 0.2);
-  --sheet: rgb(245 241 230 / 0.9);
-  --pop: #f8f5ec;
-  --land: #ebe4d1;
-  --land-2: #f2eee1;
-  --on-ink: #f5f1e6;
+  --sheet: rgb(243 239 226 / 0.92);
+  --pop: #f7f5ed;
+  --land: #e9e3d2;
+  --land-2: #f3efe2;
+  --on-ink: #f6f2e8;
   --brick: #a4372a;
-  /* The shared theme's, for the base layer's borders and outlines. */
-  --border: rgb(45 45 45 / 0.2);
-  --ring: #2d2d2d;
-  --destructive: #a4372a;
 }
 
+/* The bar sits higher on a narrow screen (@inkcity/ui/game.css), its messages with it. */
+@media not all and (min-width: 768px) {
+  :root {
+    --toast-bottom: max(calc(138px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 72px));
+  }
+}
 .dark {
   --background: #000000;
-  --foreground: #e6e1d1;
-  --ink-2: #9a968b;
-  --ink-3: #5e5d58;
-  --line: #77756d;
-  --hair: rgb(230 225 209 / 0.16);
-  --sheet: rgb(12 12 11 / 0.88);
-  --pop: #121211;
-  --land: #1f1e1b;
-  --land-2: #181816;
-  --on-ink: #0c0c0b;
+  --foreground: #ccccc8;
+  --ink-2: #8f8e8c;
+  --ink-3: #565554;
+  --line: #70706e;
+  --hair: rgb(204 204 200 / 0.16);
+  --sheet: rgb(9 9 9 / 0.9);
+  --pop: #0e0e0e;
+  --land: #191818;
+  --land-2: #121212;
+  --on-ink: #060606;
   --brick: #e0806f;
-  --border: rgb(230 225 209 / 0.16);
-  --ring: #e6e1d1;
-  --destructive: #e0806f;
 }
 
 @layer base {

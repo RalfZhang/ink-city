@@ -106,16 +106,12 @@ export function roadsSelector(b: Bbox): string {
  * Strip an Overpass response down to only what the renderer reads: `way`
  * elements with a `highway` tag and a 2+ point geometry, minus area-mapped ones
  * (see the header). Drops node ids, bounds and every tag but `highway` and
- * {@link ROAD_TAGS} — an untagged way costs no more than it did. Optionally
- * rounds coordinates to `coordPrecision` decimals (5 ≈ 1m, sub-pixel at our 20km
- * scale) to shrink the payload further. Used to keep the CDN-served cache small
+ * {@link ROAD_TAGS} — an untagged way costs no more than it did. Rounds
+ * coordinates to `coordPrecision` decimals to shrink the payload further. Used to keep the CDN-served cache small
  * for slow/blocked networks.
  */
-export function slimRoads(osm: RawOsm, coordPrecision?: number): Osm {
-  const round = (v: number) =>
-    coordPrecision === undefined
-      ? v
-      : Math.round(v * 10 ** coordPrecision) / 10 ** coordPrecision;
+export function slimRoads(osm: RawOsm, coordPrecision: number): Osm {
+  const round = (v: number) => Math.round(v * 10 ** coordPrecision) / 10 ** coordPrecision;
   const elements = (osm.elements ?? [])
     .filter(
       (el) =>

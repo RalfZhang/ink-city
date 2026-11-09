@@ -1,4 +1,4 @@
-//! The bundled city list. Its one job is the City tab's "Customized" name lookup
+//! The bundled city list. Its one job is the Customized line's name lookup
 //! (issue #11) — `search` below — plus `today()`, the app's single definition of
 //! the current date.
 //!
@@ -194,7 +194,7 @@ fn dev_day_offset() -> Option<i64> {
 }
 
 /// Cities whose `name`, `localName` or country code matches `query`, best first,
-/// capped at `limit`. Backs the City tab's "Customized" name lookup (issue #11):
+/// capped at `limit`. Backs the Customized line's name lookup (issue #11):
 /// the list is already in memory here, so searching it costs nothing and keeps
 /// the whole pool out of the frontend bundle.
 ///

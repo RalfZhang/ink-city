@@ -59,13 +59,11 @@ export const SCHEDULE_DAYS = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
 // previous run pruned to `(today-1) - HISTORY_BACK_DAYS`, which is that same
 // `today-24`. Shorten the history (or prune before picking) and `today-24` is
 // gone — and it is precisely the day sitting 30 apart from `today+6`, so the only
-// symptom is an occasional exactly-30-day repeat. `scheduleInvariant` asserts it;
-// `schedule-test.ts` checks it too, because it can't be caught by inspection.
+// symptom is an occasional exactly-30-day repeat. `schedule-test.ts` checks it,
+// because it can't be caught by inspection.
 
 /**
- * Which `packages/core/data/*.json` city pools the schedule draws from. The hyphen keeps
- * `cities.json` — the legacy population rotation's list, now read only by that
- * deprecated CI flow — out on purpose.
+ * Which `packages/core/data/*.json` city pools the schedule draws from.
  * Shared so the precache script and its test agree on one definition. The
  * desktop's Customized-mode name search compiles in the same pools by name
  * (`POOLS` in apps/desktop/src-tauri/src/city.rs), and a test there fails if a pool exists
@@ -82,9 +80,6 @@ export { SCHEDULE_DATA_DIR, SCHEDULE_ROOT, SCHEDULE_STATE_FILE } from "./cdn";
  * Hand-editable: replace a day's city object to override it.
  */
 export type ScheduleState = { list: Record<string, City> };
-
-/** How far the cooldown filters had to be loosened to find any candidate. */
-export type Relaxation = "none" | "country" | "all";
 
 function parseStamp(stamp: string): Date {
   const [y, m, d] = stamp.split("-").map(Number);
@@ -148,46 +143,17 @@ function neighbours(state: ScheduleState, stamp: string, days: number): City[] {
  * ahead is honoured by every pick that later comes within range of it. The one
  * case symmetry can't cover is two days that were *both* pinned by hand; nothing
  * re-rolls an existing entry, so that conflict stands as written.
- *
- * Degrades rather than failing — the schedule must always produce a city. If
- * both filters leave nothing it drops the (softer) country rule, and if even the
- * city rule can't be met it allows the whole pool. Neither should happen for a
- * ~1000-city pool against a 30-day window, but a shrunken pool or a hand-edited
- * file could get there.
  */
-export function candidatesFor(
-  pool: readonly City[],
-  state: ScheduleState,
-  stamp: string,
-): { cities: City[]; relaxed: Relaxation } {
+function candidatesFor(pool: readonly City[], state: ScheduleState, stamp: string): City[] {
   const usedIds = new Set(neighbours(state, stamp, CITY_COOLDOWN_DAYS).map((c) => c.id));
   const usedCountries = new Set(
     neighbours(state, stamp, COUNTRY_COOLDOWN_DAYS).map((c) => c.country),
   );
-
-  const strict = pool.filter((c) => !usedIds.has(c.id) && !usedCountries.has(c.country));
-  if (strict.length > 0) return { cities: strict, relaxed: "none" };
-
-  const cityOnly = pool.filter((c) => !usedIds.has(c.id));
-  if (cityOnly.length > 0) return { cities: cityOnly, relaxed: "country" };
-
-  return { cities: [...pool], relaxed: "all" };
+  return pool.filter((c) => !usedIds.has(c.id) && !usedCountries.has(c.country));
 }
 
 /** One day's filled-in pick, for logging. */
-export type Appended = { stamp: string; city: City; relaxed: Relaxation };
-
-/** Throws if the day-count constants stop satisfying the invariant above. */
-export function scheduleInvariant(): void {
-  const need = HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS;
-  if (CITY_COOLDOWN_DAYS !== need) {
-    throw new Error(
-      `schedule constants inconsistent: CITY_COOLDOWN_DAYS=${CITY_COOLDOWN_DAYS} but ` +
-        `HISTORY_BACK_DAYS+1+LOOKAHEAD_DAYS=${need} — the retained history no longer ` +
-        `covers the city cooldown, which shows up only as rare exactly-N-day repeats`,
-    );
-  }
-}
+export type Appended = { stamp: string; city: City };
 
 /**
  * Advance the schedule by one run: give `today + LOOKAHEAD_DAYS` a city if it
@@ -196,7 +162,7 @@ export function scheduleInvariant(): void {
  * **Only that one day is filled.** Every earlier day in the window was filled by
  * an earlier run, and a day that somehow has no entry — a hand-deletion, or a run
  * that never happened — is deliberately left empty rather than back-filled: the
- * client falls back to the rotation for it, and re-rolling a day the calendar has
+ * client simply has no city for it, and re-rolling a day the calendar has
  * nearly reached would fight the hand-edits this file exists to carry. Existing
  * entries are never re-rolled, which is what makes a pinned day stick.
  *
@@ -214,16 +180,14 @@ export function advanceSchedule(
   today: string,
   rng: () => number = Math.random,
 ): { added?: Appended; dropped: string[] } {
-  if (pool.length === 0) throw new Error("advanceSchedule: empty city pool");
-  scheduleInvariant();
-
   const stamp = shiftStamp(today, LOOKAHEAD_DAYS);
   let added: Appended | undefined;
   if (state.list[stamp] === undefined) {
-    const { cities, relaxed } = candidatesFor(pool, state, stamp);
+    const cities = candidatesFor(pool, state, stamp);
+    if (cities.length === 0) throw new Error(`advanceSchedule: no city in the pool meets the cooldowns for ${stamp}`);
     const city = cities[Math.min(cities.length - 1, Math.floor(rng() * cities.length))];
     state.list[stamp] = city;
-    added = { stamp, city, relaxed };
+    added = { stamp, city };
   }
 
   const cutoff = shiftStamp(today, -HISTORY_BACK_DAYS);

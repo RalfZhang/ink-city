@@ -1,18 +1,6 @@
-// Shared primitives live in the portable core; re-export them so existing
-// `../types` imports keep working. `Status` is desktop-specific (it mirrors the
-// Rust `get_status` command output), so it stays here.
-export type {
-  City,
-  ColorPair,
-  LabelCorner,
-  MapProvider,
-  RailwayStyle,
-  StylePreset,
-  StyleVariant,
-  Theme,
-  ThemeMode,
-} from "@inkcity/core";
-
+// What only the desktop has: `Status` (it mirrors the Rust `get_status` command
+// output) and the settings' own unions. Shared primitives are imported from the
+// portable core, `@inkcity/core`, where they live.
 import type {
   City,
   ColorPair,
@@ -21,49 +9,52 @@ import type {
   RailwayStyle,
   StylePreset,
   StyleVariant,
-  Theme,
   ThemeMode,
 } from "@inkcity/core";
 
 export type UpdateCheck = "daily" | "weekly" | "monthly" | "never";
 
-/** How the wallpaper is refreshed — the City-tab "How to update?" selector. */
-export type UpdateMode = "disable" | "daily" | "customized";
+/** Which map the app shows — General's "How to update?" selector. */
+export type UpdateMode = "daily" | "customized";
+
+/** Where requests go — General's Proxy selector (`config::ProxyMode`). */
+export type ProxyMode = "off" | "system" | "custom";
 
 /** Where the wallpaper carries the day's city caption (Style tab) — `config::CityLabel`. */
 export type CityLabel = "off" | LabelCorner;
 
 /** Mirrors the Rust `commands::Status` — see there for the field-by-field contract. */
 export type Status = {
-  /** How the wallpaper is refreshed (City tab). */
+  /** Which map the app shows (General). */
   updateMode: UpdateMode;
+  /** Whether that map is put on the desktop too — the home's "Sync to wallpaper". */
+  syncWallpaper: boolean;
   /** The Customized-mode pin, or null until the user applies one. */
   custom: { lat: number; lon: number } | null;
   hideTray: boolean;
   running: boolean;
   /**
-   * The city today's Daily wallpaper depicts — null until the backend has resolved
-   * one (see `pipeline::city_for_status`). Nothing recomputes it here. Present even
-   * while today's guess-the-country game is underway (the game needs the answer to
-   * score guesses), so the City tab must not draw it until the day is revealed.
+   * Today's Daily city — null until the backend has resolved one (see
+   * `pipeline::city_for_status`). Nothing recomputes it here. Present even while
+   * today's guess-the-country game is underway (the game needs the answer to score
+   * guesses), so the home must not show it until the day is revealed.
    */
   city: City | null;
+  /** Which map the window draws (`daily:<date>` / `custom:<coords>`), or null with no pin. */
+  mapKey: string | null;
+  /** Whether `mapKey`'s data is cached, ready for `get_map_data`. */
+  mapReady: boolean;
+  /** Which writing of that cache file this is (its modification time, ms; 0 when not ready): the window reads it again when this moves. */
+  mapRev: number;
   /**
-   * Whether today's Daily wallpaper is on the desktop yet — the game's
-   * `DayInputs.ready` (packages/core/src/guess/types.ts): it waits for the map it's about.
+   * Why `mapKey`'s data couldn't be had, or null. Not ready with no error is "still
+   * on its way"; not ready with one is "can't be had" — see the Rust `Status::map_error`.
    */
-  todayPainted: boolean;
-  /**
-   * Why today's Daily render failed, or null if it succeeded / hasn't run yet.
-   * Only meaningful next to `city`: both null means "still resolving", while
-   * `city: null` + a message means the day can't be resolved at all. See the Rust
-   * `Status::last_error` — it's scoped to the Daily flow and to today, so it can't
-   * be a Customized pin's failure or yesterday's.
-   */
-  lastError: string | null;
+  mapError: string | null;
+  /** Why the map didn't make it onto the desktop while syncing, or null. */
+  wallError: string | null;
   date: string;
   theme: ThemeMode;
-  effectiveTheme: Theme;
   light: ColorPair;
   dark: ColorPair;
   style: StylePreset;
@@ -105,9 +96,31 @@ export type Status = {
   devMode: boolean;
   /** Dev-only: bypass the local cache and CDN, fetch OSM live from Overpass. In-memory only (off on launch). */
   bypassCache: boolean;
-  proxyEnabled: boolean;
+  proxyMode: ProxyMode;
   proxyUrl: string;
   mapProvider: MapProvider;
   /** Where the wallpaper carries the city caption (Style tab). */
   cityLabel: CityLabel;
+  /** Whether there's a tray icon to quit from; false only on a Linux desktop without one. */
+  trayAvailable: boolean;
+  /** When updates were last checked for, Unix seconds, or null before the first. */
+  lastUpdateCheck: number | null;
+};
+
+/** `pipeline:end`'s payload — mirrors the Rust `pipeline::RunEnd`. */
+export type RunEnd = {
+  /** Every request whose ticket is at or below this was served — the last pass's; null from Dev Mode's preview, which serves none. */
+  served: number | null;
+  /** Each pass in turn: a ticket was served by the first whose `served` reaches it. */
+  passes: PassEnd[];
+};
+
+/** How one pass of a run went, for the requests it served — mirrors the Rust `pipeline::PassEnd`. */
+export type PassEnd = {
+  /** The last ticket the pass served: those above the pass before's, up to this. */
+  served: number;
+  /** Why it failed, or null. */
+  failure: string | null;
+  /** Whether it put a map on the desktop: never with syncing off. */
+  painted: boolean;
 };

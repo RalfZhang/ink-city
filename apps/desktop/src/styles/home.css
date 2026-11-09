@@ -1,0 +1,312 @@
+/* The home: the day's map within its frame, with the bar along its top and the game
+   at its foot — the website's game (@inkcity/ui/game.css), placed here. */
+
+/* Round the map, a margin of plain paper and a neatline, as a printed map has: what
+   tells the window apart from the wallpaper behind it, the same map edge to edge.
+   The margin is the window's rounded corners' to round: a square corner inset by d
+   stays inside a corner of radius r while d ≥ 0.29 r, so at 12px the neatline
+   clears any radius up to 41px, macOS's largest included, and nothing of it is cut. */
+.app {
+  --frame-inset: 12px;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+  isolation: isolate;
+  /* The bar along the frame's top — what the window's caption keeps clear of, too
+     (map/MapCaption.tsx reads it). */
+  --top-h: 54px;
+  /* Where the game's foot sits in the frame (@inkcity/ui/game.css). */
+  --stage-top: var(--top-h);
+  --stage-bottom: 22px;
+}
+.frame {
+  position: absolute;
+  inset: var(--frame-inset);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+/* The square the map is drawn as, laid over the frame as `object-fit: cover` lays
+   an image — its size and place set as the frame resizes (map/useHomeMap.ts). */
+.map {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+/* The wallpaper's caption, in its corner of the frame: under the bar and the foot,
+   which lie over it. Faded in once the map is all there. */
+.map-caption {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s var(--draw);
+}
+.map-caption.is-on {
+  opacity: 1;
+}
+
+/* Messages rise from a fixed place just above the foot's bar, in the frame
+   (@inkcity/ui/game.css's .toasts): the inset, the foot's room, the bar, a gap. */
+:root {
+  --toast-bottom: calc(12px + 22px + 50px + 12px);
+}
+
+/* ---------------------------------------------------------------- the top bar */
+
+.top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: var(--top-h);
+  padding: 0 10px;
+  /* The chips keep to the top right, in the same order, whichever way the language
+     reads: the top left is where macOS puts the window's own buttons
+     (tauri.conf.json's trafficLightPosition), which a mirrored bar would run under.
+     Each chip's words still read the language's way. */
+  direction: ltr;
+}
+[dir="rtl"] .top .chip {
+  direction: rtl;
+}
+.top__chips {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+/* Under the bar: why the map didn't make it onto the desktop, and an unsaved preview
+   — one column, so neither can lie over the other. */
+.top__notes {
+  position: absolute;
+  top: 50px;
+  left: 10px;
+  right: 10px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.top__notes > * {
+  pointer-events: auto;
+}
+.top__err {
+  /* Under the chips, which stay on the right in either direction (.top). */
+  margin-left: auto;
+  max-width: 380px;
+  animation: ink-rise 0.25s var(--draw) backwards;
+}
+
+/* Something that comes and goes beside others that stay: it slides open and shut
+   along its own width rather than popping, as the palette folds in Style. */
+.slide-x {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-inline-end: 0;
+  transition:
+    grid-template-columns 0.35s var(--draw),
+    opacity 0.25s var(--draw);
+}
+.slide-x > span {
+  min-width: 0;
+  overflow: hidden;
+}
+.slide-x.is-shut {
+  grid-template-columns: 0fr;
+  opacity: 0;
+  /* The gap it had with its neighbour shuts with it. */
+  margin-inline-end: -6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--pop);
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+.chip:hover,
+.chip[aria-expanded="true"] {
+  box-shadow: var(--neatline);
+}
+.chip:disabled {
+  cursor: default;
+  box-shadow: none;
+}
+.chip.is-busy > .ic {
+  animation: spin 1s linear infinite;
+}
+/* With motion turned down the turning and the breathing (.box, below) stop: busy is
+   then the mark held faint, still for as long as it lasts. */
+@media (prefers-reduced-motion: reduce) {
+  .chip.is-busy > .ic,
+  .chip--sync.is-busy .box {
+    opacity: 0.4;
+  }
+}
+.box {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--on-mark);
+  background: var(--pop);
+  border: 1px solid var(--line);
+}
+.box svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.2;
+}
+.chip--sync[aria-checked="true"] .box {
+  background: var(--mark);
+  border-color: var(--mark);
+}
+.chip--sync[aria-checked="true"] .box svg {
+  stroke-dashoffset: 0;
+}
+.chip--sync.is-busy .box {
+  animation: breathe 0.8s ease-in-out infinite alternate;
+}
+@keyframes breathe {
+  to {
+    opacity: 0.35;
+  }
+}
+
+/* An unsaved preview, with the sheet put away: what's on the map isn't saved. In the
+   middle, under anything to the right (.top__notes). */
+.peek {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  color: var(--on-ink);
+  background: var(--ink);
+  animation: ink-rise 0.25s var(--draw) backwards;
+}
+.peek .ink-link {
+  color: inherit;
+  text-decoration-color: currentColor;
+  font-weight: 500;
+}
+/* Alone, where it has always sat. */
+.top__notes > .peek:first-child {
+  margin-top: 6px;
+}
+
+/* ---------------------------------------------------------------- the foot */
+
+/* Under the sheet the foot would only blur into a smudge through the paper: it steps out. */
+.home {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--draw);
+}
+.home > * {
+  pointer-events: auto;
+}
+.home.is-under {
+  opacity: 0;
+}
+
+/* Over the game while it's played: the day, then what's asked of it — set on the
+   map, so ringed by the paper's colour, as the website sets its type over the map. */
+.head {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  margin: 0 0 8px;
+  text-align: center;
+  -webkit-text-stroke: 4px var(--paper);
+  paint-order: stroke fill;
+}
+.head p {
+  margin: 0;
+}
+.head__q {
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  -webkit-text-stroke-width: 6px;
+}
+.head__err {
+  font-size: 13px;
+  color: var(--brick);
+}
+.head__note {
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+/* The pin line's go-key holds a word, not the guess line's arrow. */
+.bar--pin .line__input {
+  padding-inline-end: 96px;
+}
+.line__go--text {
+  width: auto;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.line__go--text:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The place's map being fetched: the line can't be written on, and its key goes to
+   paper with a stroke running along its foot, as the game's bar has while its map
+   comes. A moment late, so a map already to hand doesn't blink it. */
+.bar--pin .line__input,
+.bar--pin .line__go {
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.15s ease;
+}
+.bar--pin.is-busy .line__input,
+.bar--pin.is-busy .line__go,
+.bar--pin.is-busy .bar__half--a {
+  transition-delay: 0.15s;
+}
+.bar--pin.is-busy .line__input {
+  color: var(--ink-2);
+}
+.bar--pin.is-busy .bar__half--a {
+  box-shadow: none;
+}
+.bar--pin.is-busy .line__go {
+  overflow: hidden;
+  opacity: 1;
+  color: var(--ink-2);
+  background: var(--pop);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.bar--pin.is-busy .line__go::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--ink);
+  animation: waiting 1.6s 0.15s ease-in-out infinite backwards;
+}

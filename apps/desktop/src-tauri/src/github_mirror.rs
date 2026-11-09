@@ -4,21 +4,6 @@ use std::time::Duration;
 use anyhow::{anyhow, Result};
 use serde::Deserialize;
 
-/// Process-wide proxy URL applied to every mirror fetch, or `None` for a direct
-/// connection. Set once at startup from the persisted config and again whenever
-/// the user changes the Proxy setting (see `commands::apply_proxy_settings`).
-/// A module-level holder rather than a `client()` parameter because the callers
-/// (`cdn.rs`, and `refresh_release_proxies` below) have no `AppState` handle, and
-/// the proxy is a single app-wide setting.
-static PROXY: RwLock<Option<String>> = RwLock::new(None);
-
-/// Update the proxy applied to future `client()` builds. `None` (or the empty
-/// string) means a direct connection.
-pub fn set_proxy(url: Option<String>) {
-    let normalized = url.filter(|u| !u.trim().is_empty());
-    *PROXY.write().unwrap() = normalized;
-}
-
 /// Where installed clients fetch published files from — `packages/core/src/cdn.json`,
 /// compiled in and shared with the TypeScript side, whose CI publishes the schedule
 /// where `schedule` says (packages/core/src/schedule.ts). Every value ships inside
@@ -94,7 +79,7 @@ pub const GITHUB_RAW_HOST: &str = "https://raw.githubusercontent.com";
 /// Host serving GitHub *releases* — the updater's manifest and bundles, as
 /// opposed to the repo files every host above serves. Sole input to
 /// `release_mirror_urls`, which leaves any other host untouched.
-const RELEASE_ORIGIN_HOST: &str = "github.com";
+pub(crate) const RELEASE_ORIGIN_HOST: &str = "github.com";
 
 /// Relays for GitHub release downloads, for the in-app updater. A separate list
 /// from the repo-file hosts above for two reasons, and the second is the one
@@ -286,14 +271,21 @@ const REQUEST_TIMEOUT: Duration = Duration::from_secs(60);
 /// successful read, so it measures a stalled socket and not a slow one.
 const DOWNLOAD_READ_TIMEOUT: Duration = Duration::from_secs(30);
 
-/// Shared base for the clients below: the user agent, the connect budget and the
-/// configured proxy (see `set_proxy`). An invalid proxy URL is logged and
-/// skipped rather than propagated, so a bad setting degrades to a direct
-/// connection instead of breaking every fetch.
+/// What every client the app builds starts from: the user agent and the connect
+/// budget. "Test connection" builds on it too (`proxy::test`), with the route under
+/// test in place of the current one.
+pub(crate) fn base_builder() -> reqwest::ClientBuilder {
+    reqwest::Client::builder().user_agent(USER_AGENT).connect_timeout(CONNECT_TIMEOUT)
+}
+
+/// Shared base for the clients below: `base_builder`, through the proxy the Proxy
+/// setting routes through right now (`proxy::current`, which for `System` is the
+/// OS's as of the last half-minute). An invalid proxy URL is logged and skipped
+/// rather than propagated, so a bad setting degrades to a direct connection instead
+/// of breaking every fetch.
 fn proxied_builder() -> reqwest::ClientBuilder {
-    let mut builder =
-        reqwest::Client::builder().user_agent(USER_AGENT).connect_timeout(CONNECT_TIMEOUT);
-    if let Some(url) = PROXY.read().unwrap().as_ref() {
+    let mut builder = base_builder();
+    if let Some(url) = crate::proxy::current().as_ref() {
         match reqwest::Proxy::all(url) {
             Ok(proxy) => builder = builder.proxy(proxy),
             Err(e) => log::warn!("[proxy] ignoring invalid proxy URL {:?}: {}", url, e),

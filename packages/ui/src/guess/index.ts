@@ -1,10 +1,5 @@
-// The guess-the-country game's React layer, shared by the desktop app and the
-// website: the state hook, the presentational pieces, and `DailyGuess`, which picks
-// between them for the day. Free of any host API — storage, the day's inputs and
-// host-specific wording all come in as arguments or props. The rules themselves
-// live in `@inkcity/core`.
-export { useGuessGame, type GuessGame } from "./useGuessGame";
-export { default as DailyGuess } from "./DailyGuess";
-export { default as GuessCountry } from "./GuessCountry";
-export { default as GuessResult } from "./GuessResult";
-export { default as GuessRow } from "./GuessRow";
+// The guess-the-country game's state, shared by the desktop app and the website:
+// the hook both hosts run the day's game through. Free of any host API — storage
+// and the day's inputs come in as arguments. The rules themselves live in
+// `@inkcity/core`; the game as both hosts draw it is `@inkcity/ui/game`.
+export { useGuessGame, type GameError, type GuessGame } from "./useGuessGame";

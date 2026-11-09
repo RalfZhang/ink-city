@@ -1,42 +1,9 @@
-import { useCallback, useEffect, useState, type RefObject } from "react";
-import { localDate, msUntilMidnight } from "./date";
+import { useEffect, useState } from "react";
+import { msUntilMidnight } from "@inkcity/ui/game/time";
+import { localDate } from "./date";
 
-/** Anyone who'd rather nothing moved. */
-export const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-
-/** Whether motion should be left out right now — for what's animated from script, once. */
-export function prefersReducedMotion(): boolean {
-  return window.matchMedia(REDUCED_MOTION).matches;
-}
-
-/** Whether `query` matches, kept current. */
-export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const update = () => setMatches(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [query]);
-  return matches;
-}
-
-/**
- * A value that clears itself `ms` after it's set: a word up for a moment. Set again —
- * even to the same word — it stays its full time from then.
- */
-export function useTransient<T>(ms: number): [T | null, (value: T | null) => void] {
-  // Boxed, so every set is a change, and restarts the clock.
-  const [held, setHeld] = useState<{ value: T } | null>(null);
-  useEffect(() => {
-    if (held === null) return;
-    const id = setTimeout(() => setHeld(null), ms);
-    return () => clearTimeout(id);
-  }, [held, ms]);
-  const set = useCallback((value: T | null) => setHeld(value === null ? null : { value }), []);
-  return [held === null ? null : held.value, set];
-}
+// The motion and countdown hooks the game uses too are the game's own (@inkcity/ui/game/motion, /time);
+// the page's measures the desktop reads too are @inkcity/ui/lib/hooks.
 
 /**
  * Today's local date, rolling over at midnight. Checked on a timer aimed at the
@@ -66,49 +33,6 @@ export function useLocalDate(): string {
     };
   }, []);
   return date;
-}
-
-/** Milliseconds left until local midnight, ticking every second. */
-export function useUntilMidnight(): number {
-  const [ms, setMs] = useState(msUntilMidnight);
-  useEffect(() => {
-    const id = setInterval(() => setMs(msUntilMidnight()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  return ms;
-}
-
-/**
- * `ref`'s content-box size in CSS px, or null before it's laid out. With `settleMs`,
- * a new size is taken up only once it has held still that long — except the first,
- * which passes straight through, so the map's first draw doesn't wait out a resize
- * delay — and a drag-resize re-renders the caller once, not on every frame.
- */
-export function useElementSize(
-  ref: RefObject<HTMLElement | null>,
-  settleMs = 0,
-): { width: number; height: number } | null {
-  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    let first = true;
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      const take = () => setSize((s) => (s && s.width === width && s.height === height ? s : { width, height }));
-      clearTimeout(timer);
-      if (first || settleMs <= 0) take();
-      else timer = setTimeout(take, settleMs);
-      first = false;
-    });
-    observer.observe(el);
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [ref, settleMs]);
-  return size;
 }
 
 /**

@@ -1,103 +1,141 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
-import { Direction } from "radix-ui";
-import { X } from "lucide-react";
-import i18n, { dirForLocale } from "@/i18n";
+import { ArrowUpRight } from "lucide-react";
+import { useGuessGame } from "@inkcity/ui/guess";
+import { Stage, ToastProvider, useToast } from "@inkcity/ui/game";
+import { UI_NS } from "@inkcity/ui/i18n";
+import { useMediaQuery } from "@inkcity/ui/lib/hooks";
+import { MAP_PROVIDERS, WEBSITE_URL, countryIndex, countryName, formatLatLon, isRevealed, mapUrl, type MapLabel } from "@inkcity/core";
+import countries from "@inkcity/core/countries.json";
+import i18n from "@/i18n";
+import { errorText } from "@/lib/action";
+import { draftFrom, pairOf, sameDraft, styleOf, themeOf, type MapDraft } from "@/lib/draft";
+import { guessStorage } from "@/lib/guess-storage";
+import { useWindowShown } from "@/lib/window-shown";
 import { logWarn } from "@/lib/log";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@inkcity/ui/components/tabs";
-import { Button } from "@inkcity/ui/components/button";
-import General from "./tabs/General";
-import City from "./tabs/City";
-import Style from "./tabs/Style";
-import Lab from "./tabs/Lab";
-import About from "./tabs/About";
-import DevMode from "./tabs/DevMode";
-import type { Status } from "./types";
+import { applyTokens, tokensFor } from "@inkcity/ui/game/tokens";
+import { createMapClient } from "@/map/client";
+import MapCaption from "@/map/MapCaption";
+import { useHomeFrame, useMapData } from "@/map/useHomeMap";
+import PinLine from "@/home/PinLine";
+import TopBar from "@/home/TopBar";
+import AboutTab from "@/sheet/AboutTab";
+import DevTab from "@/sheet/DevTab";
+import General from "@/sheet/General";
+import LabTab from "@/sheet/LabTab";
+import Sheet, { type Foot, type TabId } from "@/sheet/Sheet";
+import StyleTab from "@/sheet/StyleTab";
+import type { PassEnd, RunEnd, Status } from "./types";
 
-const TAB_IDS = ["general", "city", "style", "lab", "about", "devMode"] as const;
-type TabId = (typeof TAB_IDS)[number];
+const COUNTRIES = countryIndex(countries);
 
-const isTabId = (v: string): v is TabId => (TAB_IDS as readonly string[]).includes(v);
+/** A wait on a run: its request's ticket (`pipeline::spawn_run`), and what's done with the pass that serves it. */
+type Waiter = { ticket: number; done: (pass: PassEnd) => void };
 
-function App() {
+/**
+ * The pass of `end` that served `ticket`: the first whose `served` reaches it. Only
+ * asked of an end that covers the ticket, whose last pass always does.
+ */
+function passFor(end: RunEnd, ticket: number): PassEnd {
+  return end.passes.find((pass) => ticket <= pass.served) ?? end.passes[end.passes.length - 1];
+}
+
+/**
+ * Something that ends in a run — syncing turned on, Regenerate, a save, a caption
+ * added: `ok` is its word once the map is on the desktop, and `save` whether Save
+ * waits on it too.
+ */
+type Job = { ok: string; save: boolean };
+
+/** Why a save fell short, and what its Retry does: save again (nothing was written), or paint again (saved, not on the desktop). */
+type SaveFailure = { message: string; retry: "save" | "paint" };
+
+/**
+ * The window: today's map within its frame, with the game at its foot — the
+ * website's own (@inkcity/ui/game), save that the line is there from the start —
+ * and the bar along its top (the home), and the settings as a sheet drawn up over
+ * it. The map wears the wallpaper's palette — the draft's, while Style and Lab are
+ * edited, so the window previews what Save would put on the desktop — and so does
+ * the window.
+ */
+export default function App() {
+  return (
+    <ToastProvider>
+      <Main />
+    </ToastProvider>
+  );
+}
+
+function Main() {
   const { t } = useTranslation();
+  const { t: tUi } = useTranslation(UI_NS);
+  const toast = useToast();
   const [status, setStatus] = useState<Status | null>(null);
-  // Default to the City tab — the functional day-to-day view — rather than the
-  // rarely-changed General settings.
-  const [tab, setTab] = useState<TabId>("city");
-  const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [tab, setTab] = useState<TabId>("general");
+  const [draft, setDraft] = useState<MapDraft | null>(null);
+  const [saving, setSaving] = useState<{ painting: boolean } | null>(null);
+  const [saveFailed, setSaveFailed] = useState<SaveFailure | null>(null);
+  const [syncBusy, setSyncBusy] = useState(false);
+  // Why the sync box couldn't be switched, under the bar until it can.
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const osDark = useMediaQuery("(prefers-color-scheme: dark)");
+  const [gameEpoch, setGameEpoch] = useState(0);
+  const client = useMemo(() => createMapClient(), []);
+  useEffect(() => () => client.dispose(), [client]);
+  const frame = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
 
-  const refresh = async () => {
-    try {
-      setStatus(await invoke<Status>("get_status"));
-    } catch (e) {
-      setErr(String(e));
-    }
-  };
+  const refresh = useCallback(async () => {
+    setStatus(await invoke<Status>("get_status"));
+  }, []);
 
-  // The backend pushes a fresh Status snapshot on every change. Subscribe first,
-  // then fetch the initial snapshot, so a change landing between the two can't be
-  // missed (a redundant push during the gap is harmless: last-write-wins).
+  // The backend pushes a fresh Status on every change. Subscribe first, then fetch
+  // the initial snapshot, so a change landing between the two can't be missed.
   useEffect(() => {
     let off: (() => void) | undefined;
     let cancelled = false;
     listen<Status>("status:changed", (e) => setStatus(e.payload)).then((f) => {
-      // If cleanup already ran before `listen` resolved (StrictMode remount, or
-      // a fast unmount), unsubscribe immediately instead of leaking the listener.
-      if (cancelled) {
-        f();
-        return;
-      }
+      if (cancelled) return f();
       off = f;
-      refresh();
+      void refresh();
     });
     return () => {
       cancelled = true;
       off?.();
     };
-  }, []);
+  }, [refresh]);
 
+  // Busy only lets go once the status after the run is in: the errors the bar shows
+  // when it stops looking busy are then the run's own.
   useEffect(() => {
     const offStart = listen("pipeline:start", () => setBusy(true));
-    const offEnd = listen("pipeline:end", () => {
+    const offEnd = listen("pipeline:end", async () => {
+      await refresh();
       setBusy(false);
-      refresh();
     });
     return () => {
       offStart.then((f) => f());
       offEnd.then((f) => f());
     };
-  }, []);
+  }, [refresh]);
 
-  // "Jump to a tab", emitted by the tray's "Open Settings" entry (see
-  // `FrontendEvent::OpenTab`). Validated rather than cast: the payload crosses IPC
-  // as a plain string, and an unrecognized one would strand Tabs on a value with no
-  // trigger or content.
-  useEffect(() => {
-    const off = listen<string>("open-tab", (e) => {
-      if (isTabId(e.payload)) setTab(e.payload);
-      else logWarn("[app] ignoring open-tab for an unknown tab", e.payload);
-    });
-    return () => {
-      off.then((f) => f());
-    };
-  }, []);
-
-  // Push the current language's translations for the Rust-rendered surfaces
-  // (tray menu + the windowless update notification/dialogs) into Rust. Done on
-  // mount and on every language change. Source of truth remains the JSON locale
-  // files; Rust just renders whatever it's told.
+  // Push the current language's strings for the Rust-rendered surfaces (the tray,
+  // and the windowless update notification and dialogs) into Rust, on mount and on
+  // every language change. The JSON locale files stay the one source.
   useEffect(() => {
     const sync = () => {
       invoke("update_tray_labels", {
         openSettings: i18n.t("tray.openSettings"),
-        // Shown instead of openSettings while today's game is playable — Rust
-        // picks between the two (`tray::sync_open_item`).
+        // Shown instead of openSettings while today's game is playable — Rust picks
+        // between the two (`tray::sync_open_item`).
         openGame: i18n.t("tray.openGame"),
-        dailyUpdates: i18n.t("tray.dailyUpdates"),
+        syncWallpaper: i18n.t("tray.syncWallpaper"),
         regenerateNow: i18n.t("tray.regenerateNow"),
         quit: i18n.t("tray.quit"),
         updateAvailable: i18n.t("tray.updateAvailable"),
@@ -119,139 +157,397 @@ function App() {
     return () => i18n.off("languageChanged", sync);
   }, []);
 
-  // The settings-page UI always follows the OS theme. The user-visible "Map
-  // Theme" toggle in Style only controls which palette the wallpaper renderer
-  // draws in — the user's light or dark colors, or Mondrian's light or dark one;
-  // it doesn't override the app chrome's appearance.
-  useEffect(() => {
-    const root = document.documentElement;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const apply = () => {
-      if (mq.matches) root.classList.add("dark");
-      else root.classList.remove("dark");
-    };
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+  // ------------------------------------------------------------ the draft
+
+  // Once per saved look, not per status: every push is a new object, most of them
+  // about a run's progress, and the tokens below are laid again only when the look,
+  // the draft or the theme changes.
+  const savedKey = status ? JSON.stringify(draftFrom(status)) : null;
+  const saved = useMemo<MapDraft | null>(() => (savedKey ? JSON.parse(savedKey) : null), [savedKey]);
+  const shown = draft ?? saved;
+  const dirty = draft !== null && saved !== null && !sameDraft(draft, saved);
+  const theme = shown ? themeOf(shown, osDark) : osDark ? "dark" : "light";
+  const pair = shown ? pairOf(shown, theme) : null;
+
+  // A launch shows the window only once its first palette is on (`window_ready`):
+  // until a status brings it, the page wears the light map's. The window's own fill,
+  // behind the page, is the paper too — told again whenever the paper changes (a
+  // palette, Mondrian, the OS going dark), or an edge bared by a resize would show
+  // the old one; `window_ready` shows the window only the first time.
+  const windowPaper = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    if (!shown || !pair) return;
+    const tokens = tokensFor(pair, shown.variant === "mondrian" ? theme : null);
+    applyTokens(document.documentElement, tokens, theme);
+    if (windowPaper.current === tokens.paper) return;
+    windowPaper.current = tokens.paper;
+    invoke("window_ready", { paper: tokens.paper }).catch((e) => logWarn("[window] couldn't say it's ready", e));
+  }, [shown, pair, theme]);
+
+  // ------------------------------------------------------------ wallpaper jobs
+
+  // Each job is settled by the pass that served its ticket, in the `pipeline:end` of
+  // its loop, from what that pass says rather than from whatever the next status
+  // holds — or the loop's last pass, which may have been another request's: a word
+  // once its map is on the desktop — or none if the pass failed, which `mapError` or
+  // `wallError` then shows where it failed, until a run succeeds. Several can wait
+  // at once.
+  const waiters = useRef<Waiter[]>([]);
+  // The latest end: a wait whose run was over before its ticket came back — a fetch
+  // from the cache takes no time — is settled from it at once.
+  const lastEnd = useRef<RunEnd | null>(null);
+  /** Hand `done` the pass that serves `ticket`: the jobs below, and the pin line's pins. */
+  const awaitRun = useCallback((ticket: number, done: (pass: PassEnd) => void) => {
+    const end = lastEnd.current;
+    if (end && end.served !== null && ticket <= end.served) done(passFor(end, ticket));
+    else waiters.current.push({ ticket, done });
   }, []);
-
-  // There is deliberately no midnight timer here: the backend scheduler detects the
-  // date change and pushes a fresh Status (repainting within its ≤60s reconcile when
-  // daily updates are on), which also sidesteps wall-clock timer fragility across
-  // sleep/wake and DST.
-
-  const onError = (e: unknown) => setErr(String(e));
-
-  // Dev Mode's unlocked state is persisted in config.json (backend) so the tab
-  // stays revealed across restarts. Unlocked by clicking the version number in
-  // About seven times in a row (see About.tsx). The toggle just tells the
-  // backend; the fresh status:changed push flips `devMode` below.
-  const toggleDevMode = () => {
-    const next = !(status?.devMode ?? false);
-    // Leaving devMode while it's the active tab would otherwise strand the Tabs
-    // component on a value with no matching trigger/content.
-    if (!next && tab === "devMode") setTab("city");
-    invoke("set_dev_mode", { on: next }).catch(onError);
+  const settle = (job: Job, pass: PassEnd) => {
+    if (job.save) {
+      setSaving(null);
+      if (pass.failure) setSaveFailed({ message: t("sheet.saveFailWall", { reason: pass.failure }), retry: "paint" });
+      else {
+        setSaveFailed(null);
+        toast(pass.painted ? job.ok : t("sheet.saved"));
+      }
+    } else if (!pass.failure && pass.painted) {
+      toast(job.ok);
+    }
+  };
+  const settleRef = useRef(settle);
+  settleRef.current = settle;
+  const startJob = (ticket: number, ok: string, save = false) => awaitRun(ticket, (pass) => settleRef.current({ ok, save }, pass));
+  useEffect(() => {
+    const off = listen<RunEnd>("pipeline:end", ({ payload: end }) => {
+      const served = end.served;
+      // Dev Mode's preview serves no request.
+      if (served === null) return;
+      lastEnd.current = end;
+      const done = waiters.current.filter((w) => w.ticket <= served);
+      waiters.current = waiters.current.filter((w) => w.ticket > served);
+      for (const w of done) w.done(passFor(end, w.ticket));
+    });
+    return () => {
+      off.then((f) => f());
+    };
+  }, []);
+  const save = async () => {
+    if (!draft || !status || saving) return;
+    setSaveFailed(null);
+    setSaving({ painting: status.syncWallpaper });
+    try {
+      // The draft stays put until the status push carries it back: dropping it now
+      // would flash the old style for a frame.
+      const r = await invoke<{ ticket: number | null }>("apply_map_settings", { settings: draft });
+      if (r.ticket !== null) startJob(r.ticket, t("sheet.savedWall"), true);
+      else {
+        setSaving(null);
+        toast(t("sheet.saved"));
+      }
+    } catch (e) {
+      setSaving(null);
+      // Nothing was written: Retry saves again.
+      setSaveFailed({ message: errorText(e), retry: "save" });
+    }
   };
 
-  if (!status) {
-    return (
-      <main className="p-4 text-sm text-muted-foreground">
-        {err ? <pre className="text-destructive">{err}</pre> : t("common.loading")}
-      </main>
+  const revert = () => {
+    setDraft(null);
+    setSaveFailed(null);
+  };
+
+  const regenerate = (ok: string, isSave = false) => {
+    if (isSave) {
+      setSaveFailed(null);
+      setSaving({ painting: true });
+    }
+    void invoke<number>("regenerate_now").then((ticket) => startJob(ticket, ok, isSave));
+  };
+
+  const toggleSync = async () => {
+    if (!status || syncBusy) return;
+    const on = !status.syncWallpaper;
+    setSyncBusy(true);
+    try {
+      const ticket = await invoke<number | null>("set_sync_wallpaper", { on });
+      setSyncError(null);
+      if (ticket !== null) startJob(ticket, t("home.syncOn"));
+      else toast(t("home.syncOff"));
+    } catch (e) {
+      logWarn("[sync] couldn't switch", e);
+      setSyncError(errorText(e));
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
+  // ------------------------------------------------------------ events from the backend
+
+  useEffect(() => {
+    const offView = listen<string>("open-view", (e) => {
+      if (e.payload === "home") setSheetOpen(false);
+      else if (e.payload === "settings") setSheetOpen(true);
+    });
+    // The window was put away: what only made sense while it was looked at goes —
+    // an unsaved preview included, so it isn't still on the map next time.
+    const offHidden = listen("window:hidden", () => {
+      setSheetOpen(false);
+      setDraft(null);
+      setSaveFailed(null);
+    });
+    return () => {
+      offView.then((f) => f());
+      offHidden.then((f) => f());
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Not while an input method is composing: Escape there drops the candidate, and
+      // only that (read as @inkcity/ui/game/motion's `isComposing` reads it).
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === "Escape" && !e.defaultPrevented) setSheetOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // ------------------------------------------------------------ the map
+
+  const daily = status?.updateMode === "daily";
+  const centerLat = daily ? status?.city?.lat : status?.custom?.lat;
+  const centerLon = daily ? status?.city?.lon : status?.custom?.lon;
+  const center = useMemo(
+    () => (centerLat !== undefined && centerLon !== undefined ? { lat: centerLat, lon: centerLon } : null),
+    [centerLat, centerLon],
+  );
+  // The map is read and drawn only while the window is on screen (`useMapData`).
+  const onScreen = useWindowShown();
+  const data = useMapData(client, status?.mapKey ?? null, status?.mapReady ? status.mapRev : null, onScreen);
+  const loadedKey = data.key !== null && data.key === status?.mapKey ? data.key : null;
+  const painted = useHomeFrame({
+    client,
+    stage: frame,
+    canvas,
+    mapKey: loadedKey,
+    rev: loadedKey !== null ? data.rev : null,
+    visible: onScreen,
+    center,
+    style: shown ? styleOf(shown, theme) : null,
+  });
+
+  // The run the last save started, if any: one that revealed the day captions the
+  // wallpaper (`guess_store_write`).
+  const saveRun = useRef<number | null>(null);
+  // A new storage object makes the game read the save again: Dev Mode rewrites it.
+  const storage = useMemo(
+    () =>
+      guessStorage((ticket) => {
+        saveRun.current = ticket;
+      }),
+    [gameEpoch],
+  );
+  // The game waits for its map to be on screen: nobody guesses at bare paper.
+  const ready = daily && painted.shown !== null && painted.shown === status?.mapKey;
+  const game = useGuessGame(
+    storage,
+    { date: status?.date ?? "", city: daily ? (status?.city ?? null) : null, ready },
+    COUNTRIES,
+    // Shown from `game.error`, which a later success clears; logged here.
+    (e) => logWarn("[game] the save couldn't be read or written", e),
+  );
+  // Dev Mode hands the save out for editing by hand (`reveal_guess_store`), and an
+  // edit made in another app ends with this window clicked back into: read the save
+  // again then, or the next guess would write the old one back over the edit. Only
+  // in Dev Mode, where hand edits happen: a read landing mid-guess could show the
+  // save from before the guess.
+  const devMode = status?.devMode ?? false;
+  const reloadGame = game.reload;
+  useEffect(() => {
+    if (!devMode) return;
+    const off = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
+      if (focused) reloadGame();
+    });
+    return () => {
+      off.then((f) => f());
+    };
+  }, [devMode, reloadGame]);
+
+  // The caption the wallpaper carries, on the window's map too, in its corner of
+  // the frame: a Daily city as soon as the day is revealed, a pin's coordinates always.
+  const revealed = game.snapshot !== null && isRevealed(game.snapshot.state);
+  let label: MapLabel | null = null;
+  if (shown && shown.cityLabel !== "off") {
+    if (daily && revealed && status?.city) {
+      label = {
+        corner: shown.cityLabel,
+        name: status.city.name,
+        localName: status.city.localName,
+        country: status.city.country,
+        countryName: countryName(COUNTRIES, status.city.country, "en"),
+        lat: status.city.lat,
+        lon: status.city.lon,
+      };
+    } else if (!daily && status?.custom) {
+      label = { corner: shown.cityLabel, name: "", localName: "", country: "", lat: status.custom.lat, lon: status.custom.lon };
+    }
+  }
+  // A game solved here, with the city's name on the wallpaper: the render that puts
+  // it there gets a word when it's done.
+  const wasPlaying = useRef(false);
+  useEffect(() => {
+    const state = game.snapshot?.state;
+    if (state === "playing") wasPlaying.current = true;
+    else if (wasPlaying.current && state && isRevealed(state)) {
+      wasPlaying.current = false;
+      // The save that revealed it has just returned the run it started, if it started one.
+      const ticket = saveRun.current;
+      saveRun.current = null;
+      if (ticket !== null && status?.syncWallpaper && status.cityLabel !== "off") startJob(ticket, t("home.captionDone"));
+    }
+    // The snapshot's state is what matters.
+  }, [game.snapshot?.state]);
+
+  const sheetFoot: Foot = saving
+    ? { kind: "saving", painting: saving.painting }
+    : saveFailed
+      ? { kind: "failed", message: saveFailed.message }
+      : dirty
+        ? { kind: "dirty" }
+        : null;
+  // One tree from the first frame, status or not: the frame is what the map and the
+  // caption measure, so it must be there from the start.
+  const tabs: TabId[] = ["general", "style", "lab", "about", ...(status?.devMode ? (["devMode"] as const) : [])];
+  const activeTab = tabs.includes(tab) ? tab : "about";
+  // Rejects when the switch couldn't be saved: About says so, and only says it
+  // switched once it has.
+  const toggleDevMode = async () => {
+    if (!status) return;
+    const next = !status.devMode;
+    await invoke("set_dev_mode", { on: next });
+    if (!next && tab === "devMode") setTab("about");
+  };
+
+  const provider = MAP_PROVIDERS.find((p) => p.id === status?.mapProvider) ?? MAP_PROVIDERS[0];
+  let home: ReactNode = (
+    <div className="stage">
+      <p className="status">{t("common.loading")}</p>
+    </div>
+  );
+  if (status && !daily) {
+    // A pinned place: which one, and a way to see it in the chosen map service, over
+    // the line it's pinned from — with a word on why to pin sparingly: each new place
+    // is a live Overpass fetch, and too many in a row get rate-limited.
+    const pin = status.custom;
+    home = (
+      <div className="stage">
+        <div className="stack">
+          <div className="head">
+            <p className="ink-label">{pin ? formatLatLon(pin.lat, pin.lon) : "—"}</p>
+            {pin && (
+              <button type="button" className="ink-link" onClick={() => void openUrl(mapUrl(provider.id, pin.lat, pin.lon))}>
+                {t(provider.labelKey)}
+                <ArrowUpRight aria-hidden />
+              </button>
+            )}
+            <p className="head__note">{t("home.pinRateHint")}</p>
+          </div>
+        </div>
+        <PinLine
+          awaitRun={awaitRun}
+          fetching={status.mapKey !== null && !status.mapReady && !status.mapError}
+          fetchError={status.mapError ?? data.error}
+        />
+      </div>
+    );
+  } else if (status) {
+    home = (
+      <Stage
+        key={status.date}
+        game={game}
+        date={status.date}
+        index={COUNTRIES}
+        map={{
+          city: status.city,
+          painted: ready,
+          error: ready ? null : (status.mapError ?? data.error),
+          showReason: true,
+          // The map is missing: ask for it again, and read and draw what comes —
+          // what couldn't be read may be whole by now, or gone and fetched anew.
+          retry: () => {
+            data.retry();
+            painted.redraw();
+            regenerate(t("home.regenDone"));
+          },
+        }}
+        wide
+        theme={theme}
+        head={
+          <div className="head">
+            <p className="ink-label">
+              {tUi("today.label")} · {status.date}
+            </p>
+            <p className="head__q">{tUi("game.prompt")}</p>
+            {/* The save couldn't be written: the guess didn't count, and it says why — until one is. */}
+            {game.error?.kind === "save" && (
+              <p className="head__err" role="alert">
+                {errorText(game.error.cause)}
+              </p>
+            )}
+          </div>
+        }
+        mapLink={(city) => ({ href: mapUrl(provider.id, city.lat, city.lon), label: t(provider.labelKey) })}
+        onOpen={(href) => void openUrl(href)}
+        shareUrl={WEBSITE_URL}
+      />
     );
   }
 
-  const effectiveStatus = { ...status, running: busy || status.running };
-  const devMode = status.devMode;
-
-  // Radix reads direction from this provider, not the DOM `dir`; without it its
-  // roots force `dir="ltr"` and cancel the RTL mirroring. `useTranslation`
-  // re-renders on language change, so `i18n.language` here stays current.
-  const dir = dirForLocale(i18n.language);
-
   return (
-    <Direction.Provider dir={dir}>
-    <div className="relative h-screen flex flex-col">
-      <Tabs
-        orientation="vertical"
-        value={tab}
-        onValueChange={(v) => setTab(v as TabId)}
-        className="flex-1 min-h-0 gap-0"
-      >
-        <div className="w-[180px] h-full flex flex-col p-4">
-          <TabsList className="w-full bg-transparent rounded-none p-0 gap-0.5 items-stretch">
-            <TabsTrigger value="city">{t("sidebar.city")}</TabsTrigger>
-            <TabsTrigger value="general">{t("sidebar.general")}</TabsTrigger>
-            <TabsTrigger value="style">{t("sidebar.style")}</TabsTrigger>
-            <TabsTrigger value="lab">{t("sidebar.lab")}</TabsTrigger>
-            <TabsTrigger value="about">{t("sidebar.about")}</TabsTrigger>
-            {devMode && <TabsTrigger value="devMode">{t("sidebar.devMode")}</TabsTrigger>}
-          </TabsList>
-          {/* Window controls pinned to the bottom of the sidebar. */}
-          <div className="mt-auto flex flex-col gap-2 pt-4">
-            <Button variant="outline" size="sm" onClick={() => invoke("quit_app")}>
-              {t("general.quit")}
-            </Button>
-            <Button size="sm" onClick={() => invoke("hide_window")}>
-              {t("general.closeWindow")}
-            </Button>
-          </div>
-        </div>
-
-        <TabsContent value="city" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-          <City status={effectiveStatus} onError={onError} />
-        </TabsContent>
-        <TabsContent value="general" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-          <General status={effectiveStatus} refresh={refresh} onError={onError} />
-        </TabsContent>
-        <TabsContent value="style" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-          <Style status={effectiveStatus} busy={busy || status.running} onError={onError} />
-        </TabsContent>
-        <TabsContent value="lab" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-          <Lab status={effectiveStatus} busy={busy || status.running} onError={onError} />
-        </TabsContent>
-        <TabsContent value="about" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-          <About
-            status={effectiveStatus}
-            refresh={refresh}
-            onError={onError}
-            onToggleDevMode={toggleDevMode}
+    // The map, inside its frame: the paper round it is what tells the window from
+    // the wallpaper behind it, the same map edge to edge. It's the window's to drag.
+    <main className="app" data-tauri-drag-region>
+      <div ref={frame} className="frame">
+        <canvas ref={canvas} className="map" aria-hidden />
+        <MapCaption stage={frame} label={label} pair={pair} on={painted.landed !== null && painted.landed === loadedKey} />
+        {status && (
+          <TopBar
+            sync={status.syncWallpaper}
+            busy={busy || status.running}
+            sheetOpen={sheetOpen}
+            wallError={sheetOpen && saveFailed ? null : status.wallError}
+            syncError={syncError}
+            dirty={dirty && !saving}
+            onSync={() => void toggleSync()}
+            onRegenerate={() => regenerate(t("home.regenDone"))}
+            onSettings={() => setSheetOpen((o) => !o)}
+            onSave={() => void save()}
+            onRevert={revert}
           />
-        </TabsContent>
-        {devMode && (
-          <TabsContent value="devMode" className="flex-1 overflow-y-auto border-s border-s-divider px-4 py-4">
-            <DevMode status={effectiveStatus} onError={onError} />
-          </TabsContent>
         )}
-      </Tabs>
-
-      {/* Dismissable, and overlaid rather than in flow: nothing else clears `err`,
-          so without the button a one-off failure (a preview whose cached PNG was
-          since cleaned, say) would sit there for the rest of the session — and an
-          error appearing must not shove the content it's about out from under the
-          cursor. Floating means an opaque background, and `start-[180px]` (the
-          sidebar's width, logical so it flips under RTL) so it can't cover the
-          window controls pinned to the sidebar's bottom. */}
-      {err && (
-        <div className="absolute bottom-0 start-[180px] end-0 mx-4 mb-4 flex items-start gap-3 p-3 rounded border border-destructive/30 bg-background shadow-lg">
-          <div className="flex-1 min-w-0 max-h-40 overflow-y-auto text-destructive text-xs whitespace-pre-wrap break-words">
-            {err}
-          </div>
-          <button
-            type="button"
-            onClick={() => setErr(null)}
-            aria-label={t("common.dismiss")}
-            title={t("common.dismiss")}
-            className="shrink-0 text-destructive/60 hover:text-destructive"
-          >
-            <X className="size-3.5" />
-          </button>
+        <div className={`home${sheetOpen ? " is-under" : ""}`} inert={sheetOpen}>
+          {home}
         </div>
-      )}
-    </div>
-    </Direction.Provider>
+        {status && (
+          <Sheet
+            open={sheetOpen}
+            tab={activeTab}
+            tabs={tabs}
+            onTab={setTab}
+            onClose={() => setSheetOpen(false)}
+            foot={sheetFoot}
+            onSave={() => void save()}
+            onRevert={revert}
+            onRetry={() => (saveFailed?.retry === "save" ? void save() : regenerate(t("sheet.savedWall"), true))}
+          >
+            {activeTab === "general" && <General status={status} game={game} />}
+            {activeTab === "style" && shown && <StyleTab draft={shown} onChange={setDraft} theme={theme} />}
+            {activeTab === "lab" && shown && <LabTab draft={shown} onChange={setDraft} theme={theme} />}
+            {activeTab === "about" && <AboutTab status={status} onToggleDevMode={toggleDevMode} />}
+            {activeTab === "devMode" && <DevTab status={status} onGameChanged={() => setGameEpoch((n) => n + 1)} />}
+          </Sheet>
+        )}
+      </div>
+    </main>
   );
 }
-
-export default App;

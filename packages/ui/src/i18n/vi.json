@@ -15,6 +15,39 @@
     "winRate": "Tỷ lệ thắng",
     "streak": "Chuỗi thắng hiện tại",
     "maxStreak": "Chuỗi thắng dài nhất",
-    "distribution": "Phân bố số lượt đoán"
+    "distribution": "Phân bố số lượt đoán",
+    "share": "Chia sẻ",
+    "copied": "Đã sao chép vào bộ nhớ tạm",
+    "details": "Xem chi tiết",
+    "back": "Quay lại",
+    "collapse": "Thu gọn",
+    "expand": "Mở rộng",
+    "nextCity": "đến thành phố tiếp theo"
+  },
+  "intro": {
+    "question": "Thành phố này ở nước nào?"
+  },
+  "today": {
+    "label": "Hôm nay",
+    "loading": "Đang tải bản đồ hôm nay…",
+    "rebuilding": "Bản đồ hôm nay chưa được phát hành — đang vẽ trực tiếp từ OpenStreetMap, có thể mất khoảng một phút…",
+    "failed": "Không tải được bản đồ hôm nay.",
+    "retry": "Thử lại",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Bắc",
+    "ne": "Đông Bắc",
+    "e": "Đông",
+    "se": "Đông Nam",
+    "s": "Nam",
+    "sw": "Tây Nam",
+    "w": "Tây",
+    "nw": "Tây Bắc"
+  },
+  "globe": {
+    "label": "Quả địa cầu với các lượt đoán hôm nay, nối theo thứ tự. Kéo để xoay.",
+    "failed": "Không tải được quả địa cầu."
   }
 }

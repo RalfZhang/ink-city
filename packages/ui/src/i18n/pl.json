@@ -15,6 +15,39 @@
     "winRate": "Skuteczność",
     "streak": "Obecna seria",
     "maxStreak": "Najlepsza seria",
-    "distribution": "Rozkład prób"
+    "distribution": "Rozkład prób",
+    "share": "Udostępnij",
+    "copied": "Skopiowano do schowka",
+    "details": "Zobacz szczegóły",
+    "back": "Wróć",
+    "collapse": "Zwiń",
+    "expand": "Rozwiń",
+    "nextCity": "do następnego miasta"
+  },
+  "intro": {
+    "question": "W jakim kraju jest to miasto?"
+  },
+  "today": {
+    "label": "Dziś",
+    "loading": "Wczytywanie dzisiejszej mapy…",
+    "rebuilding": "Dzisiejsza mapa nie została jeszcze opublikowana — rysujemy ją prosto z OpenStreetMap, to może potrwać minutę…",
+    "failed": "Nie udało się wczytać dzisiejszej mapy.",
+    "retry": "Spróbuj ponownie",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Północ",
+    "ne": "Północny wschód",
+    "e": "Wschód",
+    "se": "Południowy wschód",
+    "s": "Południe",
+    "sw": "Południowy zachód",
+    "w": "Zachód",
+    "nw": "Północny zachód"
+  },
+  "globe": {
+    "label": "Globus z dzisiejszymi odpowiedziami połączonymi po kolei. Przeciągnij, by go obrócić.",
+    "failed": "Nie udało się wczytać globusa."
   }
 }

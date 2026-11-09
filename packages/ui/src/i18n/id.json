@@ -15,6 +15,39 @@
     "winRate": "Persentase menang",
     "streak": "Beruntun saat ini",
     "maxStreak": "Beruntun terbaik",
-    "distribution": "Distribusi tebakan"
+    "distribution": "Distribusi tebakan",
+    "share": "Bagikan",
+    "copied": "Disalin ke papan klip",
+    "details": "Lihat detail",
+    "back": "Kembali",
+    "collapse": "Ciutkan",
+    "expand": "Bentangkan",
+    "nextCity": "menuju kota berikutnya"
+  },
+  "intro": {
+    "question": "Kota ini ada di negara mana?"
+  },
+  "today": {
+    "label": "Hari ini",
+    "loading": "Memuat peta hari ini…",
+    "rebuilding": "Peta hari ini belum diterbitkan — sedang digambar langsung dari OpenStreetMap, bisa memakan waktu sekitar semenit…",
+    "failed": "Tidak dapat memuat peta hari ini.",
+    "retry": "Coba lagi",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Utara",
+    "ne": "Timur laut",
+    "e": "Timur",
+    "se": "Tenggara",
+    "s": "Selatan",
+    "sw": "Barat daya",
+    "w": "Barat",
+    "nw": "Barat laut"
+  },
+  "globe": {
+    "label": "Bola dunia dengan tebakan hari ini, dihubungkan berurutan. Seret untuk memutarnya.",
+    "failed": "Tidak dapat memuat bola dunia."
   }
 }

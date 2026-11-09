@@ -39,3 +39,10 @@ export const DEFAULT_STYLE = (defaults.style satisfies Record<keyof StyleDefault
  * client draws them, for good.
  */
 export const MAX_HALF_KM: number = defaults.maxHalfKm;
+
+/**
+ * How many decimals of a pin's coordinates are kept — about a metre at 5. The
+ * desktop's pin line rounds to it, and its backend keys the pin's cache by it
+ * (`pipeline::coord_key`), so a pin applied and the pin stored can't differ.
+ */
+export const PIN_DECIMALS: number = defaults.pinDecimals;

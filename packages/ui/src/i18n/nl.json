@@ -15,6 +15,39 @@
     "winRate": "Winstpercentage",
     "streak": "Huidige reeks",
     "maxStreak": "Beste reeks",
-    "distribution": "Verdeling van pogingen"
+    "distribution": "Verdeling van pogingen",
+    "share": "Delen",
+    "copied": "Gekopieerd naar het klembord",
+    "details": "Details bekijken",
+    "back": "Terug",
+    "collapse": "Inklappen",
+    "expand": "Uitklappen",
+    "nextCity": "tot de volgende stad"
+  },
+  "intro": {
+    "question": "In welk land ligt deze stad?"
+  },
+  "today": {
+    "label": "Vandaag",
+    "loading": "De kaart van vandaag wordt geladen…",
+    "rebuilding": "De kaart van vandaag is nog niet gepubliceerd — hij wordt rechtstreeks uit OpenStreetMap getekend, dat kan een minuut duren…",
+    "failed": "De kaart van vandaag kon niet worden geladen.",
+    "retry": "Opnieuw proberen",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Noord",
+    "ne": "Noordoost",
+    "e": "Oost",
+    "se": "Zuidoost",
+    "s": "Zuid",
+    "sw": "Zuidwest",
+    "w": "West",
+    "nw": "Noordwest"
+  },
+  "globe": {
+    "label": "Een wereldbol met de gokken van vandaag, op volgorde verbonden. Sleep om hem te draaien.",
+    "failed": "De wereldbol kon niet worden geladen."
   }
 }

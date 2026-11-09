@@ -4,10 +4,9 @@
 //! 20km-square OSM response carrying every layer, plus the schedule state file
 //! that names the day (see scripts/osm-cli.ts).
 //!
-//! The workflow also still publishes the legacy id-keyed rotation payloads
-//! (`osm/<id>.json`) for already-shipped clients, but nothing here reads them any
-//! more — the client dropped the `src/data/cities.json` rotation, so a day it can't
-//! resolve from `osm-v2/` isn't a day it could look up by city id either.
+//! The legacy id-keyed rotation payloads (`osm/<id>.json`) aren't read here: the
+//! client dropped the `src/data/cities.json` rotation, and CI has since stopped
+//! publishing them.
 //!
 //! Tried before the live osm-cli sidecar because jsDelivr is reliably reachable
 //! from mainland China and the slim payload is small. Any miss (404 / not yet
@@ -39,18 +38,44 @@ fn manifest_dir() -> String {
 /// the caller reconstruct the day from the schedule state file instead
 /// (`fetch_schedule_city` + a live Overpass fetch).
 ///
-/// Returns the day's `City` already deserialized, and rejects a payload whose
-/// `city` won't deserialize as part of validation — so a host serving a
-/// truncated or half-written manifest is treated like any other bad payload and
-/// the *next mirror* gets a turn, rather than the whole day silently dropping to
-/// the rotation. Validating exactly what the caller consumes is also what keeps
-/// the two from drifting apart.
+/// Returns the day's `City` already deserialized. A payload that doesn't parse,
+/// its `city` included (a truncated body, an HTML error page), gives the *next
+/// mirror* a turn.
 pub async fn fetch_scheduled(date: &str) -> Result<(city::City, serde_json::Value)> {
     let bases = github_mirror::mirror_urls(&manifest_dir());
-    let v =
-        fetch_from_mirrors(bases, &format!("{date}.json"), Gz::Prefer, validate_scheduled).await?;
-    let city = scheduled_city(&v)?;
-    Ok((city, v))
+    fetch_from_mirrors(bases, &format!("{date}.json"), Gz::Prefer, |bytes, url| {
+        let v: serde_json::Value =
+            serde_json::from_slice(&bytes).map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))?;
+        let city = scheduled_city(&v).map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))?;
+        Ok((city, v))
+    })
+    .await
+}
+
+/// `fetch_scheduled` for a run that only caches the map (syncing off): the manifest
+/// as published (gunzipped), with the city it names. The window reads the cache
+/// file itself, so nothing here needs the payload as a `Value` — whose tens of MB
+/// of JSON would take hundreds in memory. Parsed as `fetch_scheduled` parses it,
+/// by a pass that keeps nothing of the map (`scheduled_city_in`).
+pub async fn fetch_scheduled_raw(date: &str) -> Result<(city::City, Vec<u8>)> {
+    let bases = github_mirror::mirror_urls(&manifest_dir());
+    fetch_from_mirrors(bases, &format!("{date}.json"), Gz::Prefer, |bytes, url| {
+        let city = scheduled_city_in(&bytes, url)?;
+        Ok((city, bytes))
+    })
+    .await
+}
+
+/// `scheduled_city` on a manifest's bytes: the whole document parsed, but only its
+/// city built — serde reads past the map data.
+fn scheduled_city_in(bytes: &[u8], url: &str) -> Result<city::City> {
+    #[derive(serde::Deserialize)]
+    struct Manifest {
+        city: city::City,
+    }
+    let m: Manifest =
+        serde_json::from_slice(bytes).map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))?;
+    Ok(m.city)
 }
 
 /// Which mirror hosts a read may use.
@@ -85,38 +110,18 @@ pub async fn fetch_schedule_city(date: &str, hosts: Hosts) -> Result<city::City>
         Hosts::Mirrored => github_mirror::mirror_urls(&layout.root),
         Hosts::GithubOnly => github_mirror::github_only_urls(&layout.root),
     };
-    let v = fetch_from_mirrors(bases, &layout.state_file, Gz::Skip, validate_state).await?;
+    let v = fetch_from_mirrors(bases, &layout.state_file, Gz::Skip, |bytes, url| {
+        serde_json::from_slice::<serde_json::Value>(&bytes)
+            .map_err(|e| anyhow!("unusable schedule state ({url}): {e}"))
+    })
+    .await?;
     schedule_entry(&v, date)
 }
 
-/// The manifest's `city` envelope as a `City`. The id-keyed flow's payloads carry
-/// one too, but this is only ever called on the date-keyed ones.
+/// The manifest's `city` envelope as a `City`.
 fn scheduled_city(v: &serde_json::Value) -> Result<city::City> {
     let c = v.get("city").ok_or_else(|| anyhow!("schedule payload has no `city`"))?;
     Ok(serde_json::from_value(c.clone())?)
-}
-
-fn require_city(v: &serde_json::Value, url: &str) -> Result<()> {
-    scheduled_city(v).map(|_| ()).map_err(|e| anyhow!("unusable schedule payload ({url}): {e}"))
-}
-
-/// A date-keyed manifest must be usable as *both* map data and a city — validate
-/// exactly what `fetch_scheduled` hands back, so a truncated or half-written one
-/// gives the next mirror a turn instead of silently dropping the day.
-fn validate_scheduled(v: &serde_json::Value, url: &str) -> Result<()> {
-    validate_osm(v, url)?;
-    require_city(v, url)
-}
-
-/// `city-list.json` carries no `elements`, so the OSM check doesn't apply — what
-/// makes it usable is a `list` object. An array passes `is_object()` nowhere, and
-/// a missing/renamed key must not read as "an empty schedule": that would look
-/// like every day legitimately having no entry.
-fn validate_state(v: &serde_json::Value, url: &str) -> Result<()> {
-    match v.get("list") {
-        Some(l) if l.is_object() => Ok(()),
-        _ => Err(anyhow!("unusable schedule state ({url}): no `list` object")),
-    }
 }
 
 /// One day out of a parsed `city-list.json`. A date the schedule doesn't cover is
@@ -159,12 +164,15 @@ enum Gz {
 /// transparently. So prefer the .gz. Fall back to the plain .json on the *same*
 /// host (branch not yet re-published with .gz files, or this particular file
 /// predates that) before moving to the next host entirely.
-async fn fetch_from_mirrors(
+///
+/// `read` turns a response's (gunzipped) bytes into what the caller keeps, and
+/// says no to a payload it can't use — the next URL then gets its turn.
+async fn fetch_from_mirrors<T>(
     bases: Vec<String>,
     file: &str,
     gz: Gz,
-    validate: fn(&serde_json::Value, &str) -> Result<()>,
-) -> Result<serde_json::Value> {
+    read: impl Fn(Vec<u8>, &str) -> Result<T>,
+) -> Result<T> {
     let client = github_mirror::client()?;
     let mut last_err = None;
     for base in bases {
@@ -174,9 +182,7 @@ async fn fetch_from_mirrors(
         }
         attempts.push((format!("{base}/{file}"), false));
         for (url, gzipped) in attempts {
-            let result = fetch_json(&client, &url, gzipped)
-                .await
-                .and_then(|v| validate(&v, &url).map(|()| v));
+            let result = fetch_bytes(&client, &url, gzipped).await.and_then(|bytes| read(bytes, &url));
             match result {
                 Ok(v) => return Ok(v),
                 Err(e) => last_err = Some(e),
@@ -186,37 +192,24 @@ async fn fetch_from_mirrors(
     Err(last_err.unwrap_or_else(|| anyhow!("no CDN hosts configured")))
 }
 
-async fn fetch_json(
-    client: &reqwest::Client,
-    url: &str,
-    gzipped: bool,
-) -> Result<serde_json::Value> {
+/// A response's body, gunzipped when it's a `.gz`.
+async fn fetch_bytes(client: &reqwest::Client, url: &str, gzipped: bool) -> Result<Vec<u8>> {
     let res = client.get(url).send().await?;
     if !res.status().is_success() {
         return Err(anyhow!("CDN HTTP {} ({url})", res.status()));
     }
+    let bytes = res.bytes().await?;
     if gzipped {
-        decode_gz_json(&res.bytes().await?, url)
+        gunzip(&bytes, url)
     } else {
-        Ok(res.json().await?)
+        Ok(bytes.to_vec())
     }
 }
 
-fn decode_gz_json(bytes: &[u8], url: &str) -> Result<serde_json::Value> {
-    let mut decoder = GzDecoder::new(bytes);
-    let mut s = String::new();
-    decoder.read_to_string(&mut s).map_err(|e| anyhow!("gunzip failed ({url}): {e}"))?;
-    Ok(serde_json::from_str(&s)?)
-}
-
-// Validate before trusting it, so a truncated/garbage response falls back to
-// the osm-cli sidecar instead of producing an empty wallpaper.
-fn validate_osm(v: &serde_json::Value, url: &str) -> Result<()> {
-    let has_roads = v.get("elements").and_then(|e| e.as_array()).is_some_and(|a| !a.is_empty());
-    if !has_roads {
-        return Err(anyhow!("CDN payload has no road elements ({url})"));
-    }
-    Ok(())
+fn gunzip(bytes: &[u8], url: &str) -> Result<Vec<u8>> {
+    let mut out = Vec::new();
+    GzDecoder::new(bytes).read_to_end(&mut out).map_err(|e| anyhow!("gunzip failed ({url}): {e}"))?;
+    Ok(out)
 }
 
 #[cfg(test)]
@@ -237,78 +230,33 @@ mod tests {
     }
 
     #[test]
-    fn decode_gz_json_round_trips() {
+    fn gunzip_round_trips() {
         let compressed = gzip(br#"{"elements":[{"type":"way"}]}"#);
-        let v = decode_gz_json(&compressed, "test://x").unwrap();
+        let v: serde_json::Value = serde_json::from_slice(&gunzip(&compressed, "test://x").unwrap()).unwrap();
         assert_eq!(v["elements"].as_array().unwrap().len(), 1);
     }
 
     #[test]
-    fn decode_gz_json_rejects_non_gzip_bytes() {
-        let err = decode_gz_json(b"not gzip data", "test://x").unwrap_err();
+    fn gunzip_rejects_non_gzip_bytes() {
+        let err = gunzip(b"not gzip data", "test://x").unwrap_err();
         assert!(err.to_string().contains("gunzip failed"));
     }
 
+    /// A manifest the bytes path can't name a city from — no city, a half-written
+    /// one, a body cut short — is refused, so the next mirror gets a turn.
     #[test]
-    fn validate_osm_accepts_payload_with_roads() {
-        assert!(validate_osm(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_ok());
-    }
-
-    #[test]
-    fn validate_osm_rejects_empty_elements() {
-        assert!(validate_osm(&json(r#"{"elements":[]}"#), "test://x").is_err());
-    }
-
-    #[test]
-    fn validate_osm_rejects_missing_elements() {
-        assert!(validate_osm(&json(r#"{"water":[]}"#), "test://x").is_err());
+    fn scheduled_city_in_needs_a_city() {
+        let both = format!(r#"{{"elements":[{{"type":"way"}}],"city":{CITY}}}"#);
+        assert_eq!(scheduled_city_in(both.as_bytes(), "test://x").unwrap().id, 2797656);
+        assert!(scheduled_city_in(br#"{"elements":[{"type":"way"}]}"#, "test://x").is_err());
+        assert!(scheduled_city_in(br#"{"city":{"lat":51.05,"lon":3.72}}"#, "test://x").is_err());
+        assert!(scheduled_city_in(both[..both.len() - 1].as_bytes(), "test://x").is_err(), "cut short");
     }
 
     const CITY: &str = r#"{"id":2797656,"name":"Ghent","localName":"Gent",
         "country":"BE","lat":51.05,"lon":3.72,"population":231493}"#;
 
-    #[test]
-    fn require_city_accepts_a_schedule_manifest() {
-        assert!(require_city(&json(&format!(r#"{{"city":{CITY}}}"#)), "test://x").is_ok());
-    }
-
-    // Valid OSM, but nothing naming the day's city — e.g. a payload cached before
-    // the envelope existed.
-    #[test]
-    fn require_city_rejects_a_payload_without_one() {
-        assert!(require_city(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_err());
-    }
-
-    // A half-written `city` must fail here, not later in the pipeline: failing
-    // here lets the mirror loop try the next host instead of dropping the day.
-    #[test]
-    fn require_city_rejects_a_partial_city() {
-        assert!(require_city(&json(r#"{"city":{"lat":51.05,"lon":3.72}}"#), "test://x").is_err());
-    }
-
-    // A manifest has to pass both halves — map data *and* city.
-    #[test]
-    fn validate_scheduled_needs_both_osm_and_city() {
-        let both = json(&format!(r#"{{"elements":[{{"type":"way"}}],"city":{CITY}}}"#));
-        assert!(validate_scheduled(&both, "test://x").is_ok());
-        assert!(validate_scheduled(&json(&format!(r#"{{"city":{CITY}}}"#)), "test://x").is_err());
-        assert!(validate_scheduled(&json(r#"{"elements":[{"type":"way"}]}"#), "test://x").is_err());
-    }
-
-    // --- the schedule state file (Dev Mode's bypass path) ---
-
-    #[test]
-    fn validate_state_accepts_a_list_object() {
-        assert!(validate_state(&json(r#"{"list":{}}"#), "test://x").is_ok());
-    }
-
-    // A missing or array `list` must be an error, not "an empty schedule" — the
-    // latter would look like every day legitimately having no entry.
-    #[test]
-    fn validate_state_rejects_a_missing_or_array_list() {
-        assert!(validate_state(&json(r#"{"list":[]}"#), "test://x").is_err());
-        assert!(validate_state(&json(r#"{}"#), "test://x").is_err());
-    }
+    // --- the schedule state file ---
 
     #[test]
     fn schedule_entry_reads_the_day() {

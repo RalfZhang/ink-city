@@ -84,9 +84,10 @@ export type DayInputs = {
   /** Today's city, or null while it's still being resolved. */
   city: DayCity | null;
   /**
-   * Whether the city's map is actually in front of the player — on the desktop, that
-   * today's wallpaper has been set. The game waits for it, so nobody plays against a
-   * map they can't see yet.
+   * Whether the city's map is actually in front of the player — the website's page
+   * or the desktop window having drawn it (not the wallpaper: with syncing off
+   * there's none). The game waits for it, so nobody plays against a map they can't
+   * see yet.
    */
   ready: boolean;
 };

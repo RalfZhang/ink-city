@@ -24,11 +24,9 @@ import { fileURLToPath } from "node:url";
 import type { City } from "@inkcity/core";
 import {
   advanceSchedule,
-  candidatesFor,
   manifestWindow,
   mergePools,
   parseState,
-  scheduleInvariant,
   serializeState,
   shiftStamp,
   stamps,
@@ -63,7 +61,6 @@ const dayNum = (s: string): number =>
 
 // ---- the constants themselves ----
 
-scheduleInvariant();
 check(
   CITY_COOLDOWN_DAYS === HISTORY_BACK_DAYS + 1 + LOOKAHEAD_DAYS,
   `retention invariant broken: ${CITY_COOLDOWN_DAYS} !== ${HISTORY_BACK_DAYS}+1+${LOOKAHEAD_DAYS}`,
@@ -116,9 +113,9 @@ check(
 );
 
 // The publish guard has to count the schedule as something worth publishing, or a
-// run that fetched schedule days but no rotation cities is discarded while green.
-// Every operand of each `ls -A`, up to its redirect or `)`: the guard lists all
-// its directories in one call (`ls -A osm osm-v2 client 2>/dev/null`).
+// run that fetched schedule days is discarded while green. Every operand of each
+// `ls -A`, up to its redirect or `)`: the guard lists all its directories in one
+// call (`ls -A osm-v2 client 2>/dev/null`).
 const guarded = [...precacheYml.matchAll(/ls -A ([^)]*?)\s*(?:2>|\))/g)].flatMap((m) =>
   m[1].split(/\s+/).filter(Boolean),
 );
@@ -136,7 +133,6 @@ console.log(
 // The same constant osm-cli.ts globs with, so the test can't drift from it.
 const files = readdirSync(DATA_DIR).filter((n) => SCHEDULE_POOL_RE.test(n)).sort();
 check(files.length > 0, "no packages/core/data/cities-*.json pools found");
-check(!files.includes("cities.json"), "cities.json must not be part of the schedule pool");
 
 const pools = files.map((f) => JSON.parse(readFileSync(join(DATA_DIR, f), "utf8")) as City[]);
 const pool = mergePools(pools);
@@ -162,15 +158,11 @@ console.log(`✓ pools: ${files.join(" + ")} → ${pool.length} cities (${rawTot
 function runDays(days: number, start: string, seed: ScheduleState = { list: {} }) {
   const state = seed;
   const emitted = new Map<string, City>(stamps(state).map((k) => [k, state.list[k]]));
-  const relaxations: string[] = [];
   for (let i = 0; i < days; i++) {
     const { added } = advanceSchedule(state, pool, shiftStamp(start, i));
-    if (added !== undefined) {
-      emitted.set(added.stamp, added.city);
-      if (added.relaxed !== "none") relaxations.push(`${added.stamp}: ${added.relaxed}`);
-    }
+    if (added !== undefined) emitted.set(added.stamp, added.city);
   }
-  return { state, emitted, relaxations };
+  return { state, emitted };
 }
 
 /** Every pairwise cooldown violation in an emitted sequence, both directions. */
@@ -194,7 +186,6 @@ function auditCooldowns(emitted: Map<string, City>): string[] {
 
 const DAYS = 365 * 3;
 const long = runDays(DAYS, "2026-01-01");
-check(long.relaxations.length === 0, `cooldowns had to be relaxed on the real pool: ${long.relaxations[0]}`);
 check(long.emitted.size === DAYS, `expected ${DAYS} emitted days, got ${long.emitted.size}`);
 
 const violations = auditCooldowns(long.emitted);
@@ -232,7 +223,6 @@ check(
   `picked ${edgeAdded!.city.name} for today+6 while ${A.name} sat exactly ` +
     `${CITY_COOLDOWN_DAYS} days earlier — the prune must run *after* the pick`,
 );
-check(edgeAdded!.relaxed === "none", "the edge case should not need relaxed cooldowns");
 check(
   edgeDropped.includes(shiftStamp(today, -(HISTORY_BACK_DAYS + 1))),
   "today-24 should be pruned once the pick that needed it is done",
@@ -364,23 +354,5 @@ check(
   "a far-future pinned day must not change the manifest window",
 );
 console.log(`✓ manifest window: today-${MANIFEST_BACK_DAYS} … today+${LOOKAHEAD_DAYS} by date, unaffected by a far pin`);
-
-// ---- graceful degradation on a pool too small for the cooldowns ----
-
-const tiny: City[] = [
-  { id: 1, name: "A", localName: "A", country: "XX", lat: 0, lon: 0, population: 1 },
-  { id: 2, name: "B", localName: "B", country: "XX", lat: 1, lon: 1, population: 1 },
-];
-const smallState: ScheduleState = { list: {} };
-const smallRelaxed: string[] = [];
-for (let i = 0; i < 10; i++) {
-  const { added } = advanceSchedule(smallState, tiny, shiftStamp(today, i));
-  if (added !== undefined) smallRelaxed.push(added.relaxed);
-}
-check(smallRelaxed.length === 10, "a tiny pool should still fill a day per run");
-check(smallRelaxed.some((r) => r !== "none"), "a 2-city single-country pool must report relaxed cooldowns");
-const exhausted = candidatesFor(tiny, smallState, shiftStamp(today, LOOKAHEAD_DAYS + 10));
-check(exhausted.cities.length > 0, "candidatesFor must never return an empty list");
-console.log("✓ degrades gracefully: a tiny pool still yields a city every run");
 
 console.log("✓ schedule behaves correctly for all pools");

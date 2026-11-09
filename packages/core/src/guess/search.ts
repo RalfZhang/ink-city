@@ -148,6 +148,9 @@ function score(entry: Entry, q: string): number | null {
   return best;
 }
 
+/** How many suggestions the guess box shows at most. */
+const MAX_SUGGESTIONS = 6;
+
 /**
  * The guess box's suggestions for `query`: an exact two-letter code first, then
  * whole-name, prefix, word-prefix and substring matches across the player's
@@ -159,7 +162,6 @@ export function searchCountries(
   query: string,
   lang: string,
   exclude: Iterable<string> = [],
-  limit = 6,
 ): Country[] {
   const q = normalizeCountryQuery(query);
   if (!q) return [];
@@ -177,7 +179,7 @@ export function searchCountries(
     collator = new Intl.Collator();
   }
   hits.sort((a, b) => a[0] - b[0] || collator.compare(a[1].label, b[1].label));
-  return hits.slice(0, limit).map(([, e]) => e.country);
+  return hits.slice(0, MAX_SUGGESTIONS).map(([, e]) => e.country);
 }
 
 /**

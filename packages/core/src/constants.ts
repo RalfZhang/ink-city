@@ -60,6 +60,9 @@ export const OSM_SCHEMA_VERSION = 8;
 export const GITHUB_REPO = `https://github.com/${cdn.repo}`;
 export const GITHUB_ISSUES = `${GITHUB_REPO}/issues`;
 
+/** The website, which plays the same daily game: what the desktop links to, and what its shared results point at. */
+export const WEBSITE_URL = "https://inkcity.ralfz.com/";
+
 export const WIKIPEDIA_BASE = "https://en.wikipedia.org/wiki/";
 
 export function wikipediaUrl(cityName: string): string {

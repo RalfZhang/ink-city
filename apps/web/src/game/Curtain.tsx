@@ -1,13 +1,13 @@
 import type { CSSProperties } from "react";
+import { FRONT_EASE, SPREAD_S } from "@inkcity/core";
 import { cn } from "@inkcity/ui/lib/utils";
 import Sheet from "../components/Sheet";
-import { FRONT_EASE, SPREAD_S } from "../map/front";
 
 /**
  * What a visit opens on: the second page's sheet over the whole screen, as if the
  * page were scrolled down to it, with only the name on it. When the map starts to
  * be drawn it slides down off the map — the page scrolling back up to its first
- * page — its top edge keeping pace with the ink front (map/front.ts), so the
+ * page — its top edge keeping pace with the ink front (core's ink/front.ts), so the
  * roads come out from under it — and with them the first page, the question in its
  * middle. Once it's down, `onGone`: the page takes it away for good.
  */

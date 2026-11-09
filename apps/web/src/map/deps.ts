@@ -1,7 +1,6 @@
 import { bboxForScreen, MAX_HALF_KM, type City } from "@inkcity/core";
 import { cacheStorageDayCache, noDayCache } from "./cache";
 import type { LoadDeps } from "./load";
-import { gzipSupported } from "./manifest";
 
 /**
  * Rung 3's map data: the day's square straight from Overpass, through the same
@@ -14,9 +13,8 @@ import { gzipSupported } from "./manifest";
  * (see `userAgent`).
  */
 async function reconstruct(city: City) {
-  const { fetchCityData, PUBLISHED_COORD_PRECISION } = await import("@inkcity/osm");
+  const { fetchCityData } = await import("@inkcity/osm");
   return fetchCityData(bboxForScreen(city.lat, city.lon, MAX_HALF_KM, 1), {
-    coordPrecision: PUBLISHED_COORD_PRECISION,
     overpass: { retries: 1, backoffMs: 5_000, requestTimeoutMs: 90_000, userAgent: null },
   });
 }
@@ -28,6 +26,5 @@ export function browserDeps(): Omit<LoadDeps, "onStage"> {
     // Cache Storage exists only on a secure origin; anywhere else, every visit fetches.
     cache: typeof caches === "undefined" ? noDayCache : cacheStorageDayCache(caches, location.origin),
     reconstruct,
-    gzip: gzipSupported,
   };
 }

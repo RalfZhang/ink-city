@@ -31,8 +31,6 @@ export type LoadDeps = {
   cache: DayCache;
   /** Rung 3's map data for `city` — `@inkcity/osm`, loaded lazily (./deps.ts). */
   reconstruct: (city: City) => Promise<Osm>;
-  /** Whether the browser can gunzip (`.json.gz` is skipped without it) and gzip what rung 3 caches. */
-  gzip: boolean;
   onStage?: (stage: Stage) => void;
   /**
    * How long a host may send nothing — before its headers, or between chunks of its
@@ -112,16 +110,10 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
 
   deps.onStage?.("cache");
   const cached = await deps.cache.read(date).catch(() => null);
-  if (cached) {
-    try {
-      return { manifest: await decodeManifest(cached), source: "cache" };
-    } catch {
-      // A copy that no longer decodes is worth nothing; climb past it.
-    }
-  }
+  if (cached) return { manifest: await decodeManifest(cached), source: "cache" };
 
   deps.onStage?.("cdn");
-  const files = deps.gzip ? [`${date}.json.gz`, `${date}.json`] : [`${date}.json`];
+  const files = [`${date}.json.gz`, `${date}.json`];
   for (const base of mirrorUrls(`${SCHEDULE_ROOT}/${SCHEDULE_DATA_DIR}`)) {
     for (const file of files) {
       const bytes = await get(deps.fetch, `${base}/${file}`, stallMs);
@@ -144,6 +136,6 @@ export async function loadDay(date: string, deps: LoadDeps): Promise<LoadedDay> 
   const city = await scheduledCity(date, deps.fetch, stallMs);
   const manifest: Manifest = { ...(await deps.reconstruct(city)), date, city };
   const text = JSON.stringify(manifest);
-  await keep(deps.gzip ? await gzip(text) : new TextEncoder().encode(text));
+  await keep(await gzip(text));
   return { manifest, source: "overpass" };
 }

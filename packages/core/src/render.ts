@@ -18,10 +18,6 @@ import { fillMondrianBlocks, MONDRIAN_COLORS } from "./mondrian";
 // at draw time so strokes cover the same ground at any canvas size. Layer
 // opacities the Lab-tab UI also reads live in constants.ts; the aerialway ones
 // are render-only and stay here.
-//
-// Exported, read-only, for code that draws this same map its own way (../www's
-// animated road maps), so it can take the weights from here instead of restating
-// them.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -72,7 +68,7 @@ export const ROAD_WEIGHT_DEFAULT: Readonly<Record<StylePreset, number | null>> =
 
 /** Linear-waterway stroke weight per class; unlisted classes (stream/drain/ditch) use the default. */
 export const WATER_LINE_WEIGHTS: Readonly<Record<string, number>> = { river: 1.6, canal: 1.3 };
-export const WATER_LINE_WEIGHT_DEFAULT = 0.7;
+const WATER_LINE_WEIGHT_DEFAULT = 0.7;
 
 /**
  * Runway/taxiway *centerline* stroke weights (fixed, not scaled by preset — see
@@ -289,7 +285,7 @@ function waterLineWidth(cls: string, scale: number): number {
  * rule, which is winding-direction agnostic — water.ts only guarantees rings are
  * closed, not their orientation.
  */
-export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
+function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const water = req.osm.water;
   if (!req.style.showWater || !water || water.length === 0) return 0;
   const { bbox, width, height, style } = req;
@@ -349,7 +345,7 @@ export function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
  * (`butt`) caps, unlike roads' round ones — a runway/taxiway is a rectangular
  * strip, not a network of joined lines.
  */
-export function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): number {
+function drawAirports(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const airports = req.osm.airports;
   if (!req.style.showAirports || !airports || airports.length === 0) return 0;
   const { bbox, width, height, style } = req;
@@ -732,7 +728,7 @@ export function drawAerialways(ctx: CanvasRenderingContext2D, req: DrawReq): num
  * drawn thinnest-first, so heavier roads layer on top and `lineWidth` is set once
  * per bucket rather than per way.
  */
-export function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
+function drawRoads(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const { bbox, width, height, style, osm } = req;
 
   ctx.strokeStyle = style.foreground;
@@ -837,15 +833,9 @@ export function drawScene(ctx: CanvasRenderingContext2D, req: DrawReq): SceneCou
   counts.roads = drawRoads(ctx, r);
   for (const { id, draw } of OVER_ROADS) counts[id] = draw(ctx, r);
   // The caption goes over everything, in the same (possibly Mondrian-forced) ink.
-  // A caption that throws must never cost the wallpaper: the desktop's renderer
-  // would otherwise drop the whole render and Rust wait out its 120s timeout.
   if (r.label) {
-    try {
-      drawLabel(ctx, r.label, style, width, height);
-      counts.label = 1;
-    } catch (e) {
-      console.error("[render] city caption failed; drawing the map without it", e);
-    }
+    drawLabel(ctx, r.label, style, width, height);
+    counts.label = 1;
   }
   return counts;
 }

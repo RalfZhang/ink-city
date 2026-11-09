@@ -3,52 +3,17 @@
     "title": "InkCity — zgadnij dzisiejsze miasto",
     "description": "Codziennie nowe miasto narysowane tuszem na podstawie danych OpenStreetMap. Zgadnij, w jakim kraju leży, a potem ustaw je jako tapetę."
   },
-  "intro": {
-    "question": "W jakim kraju jest to miasto?"
-  },
-  "today": {
-    "label": "Dziś",
-    "loading": "Wczytywanie dzisiejszej mapy…",
-    "rebuilding": "Dzisiejsza mapa nie została jeszcze opublikowana — rysujemy ją prosto z OpenStreetMap, to może potrwać minutę…",
-    "failed": "Nie udało się wczytać dzisiejszej mapy.",
-    "retry": "Spróbuj ponownie",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Zgadnij",
-    "wallpaper": "Ustaw jako tapetę",
-    "more": "Przewiń w dół, by dowiedzieć się więcej"
-  },
-  "dir": {
-    "n": "Północ",
-    "ne": "Północny wschód",
-    "e": "Wschód",
-    "se": "Południowy wschód",
-    "s": "Południe",
-    "sw": "Południowy zachód",
-    "w": "Zachód",
-    "nw": "Północny zachód"
-  },
-  "result": {
-    "share": "Udostępnij",
-    "copied": "Skopiowano do schowka",
-    "details": "Zobacz szczegóły",
-    "back": "Wróć",
-    "collapse": "Zwiń",
-    "expand": "Rozwiń",
-    "nextCity": "do następnego miasta"
-  },
-  "globe": {
-    "label": "Globus z dzisiejszymi odpowiedziami połączonymi po kolei. Przeciągnij, by go obrócić.",
-    "failed": "Nie udało się wczytać globusa."
-  },
   "storage": {
     "memoryOnly": "Twoja przeglądarka nie zapisuje tej gry, więc skończy się po zamknięciu strony.",
     "dismiss": "Zamknij"
   },
   "app": {
     "tagline": "Codziennie nowe miasto, narysowane tuszem"
+  },
+  "play": {
+    "guess": "Zgadnij",
+    "wallpaper": "Ustaw jako tapetę",
+    "more": "Przewiń w dół, by dowiedzieć się więcej"
   },
   "download": {
     "title": "Ustaw {{city}} jako dzisiejszą tapetę",

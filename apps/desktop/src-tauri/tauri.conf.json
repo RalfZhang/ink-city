@@ -10,17 +10,18 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "InkCity",
-        "width": 732,
-        "height": 728,
-        "minWidth": 732,
-        "maxWidth": 732,
-        "transparent": true,
+        "width": 1000,
+        "minWidth": 700,
+        "height": 700,
+        "minHeight": 500,
         "visible": false,
-        "skipTaskbar": true
+        "skipTaskbar": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "trafficLightPosition": { "x": 24, "y": 32 }
       }
     ],
     "security": {

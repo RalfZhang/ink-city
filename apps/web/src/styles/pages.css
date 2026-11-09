@@ -13,9 +13,6 @@
     scroll-snap-type: y mandatory;
     scrollbar-width: none;
   }
-  .pages::-webkit-scrollbar {
-    display: none;
-  }
   .page {
     position: relative;
     scroll-snap-align: start;
@@ -35,7 +32,6 @@
     min-height: 100%;
     padding: 0 20px calc(72px + env(safe-area-inset-bottom));
     background: var(--sheet);
-    -webkit-backdrop-filter: blur(14px) saturate(0.9);
     backdrop-filter: blur(14px) saturate(0.9);
     border-top: 1px solid var(--line);
   }

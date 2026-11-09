@@ -34,6 +34,9 @@ const CASES: Case[] = [
   ["https://www.google.com/maps/place/X/@1.5,2.5,13z/data=!3d51.0543!4d3.7174", [51.0543, 3.7174]],
   ["https://www.openstreetmap.org/#map=13/51.0543/3.7174", [51.0543, 3.7174]],
   ["https://www.openstreetmap.org/?mlat=51.0543&mlon=3.7174", [51.0543, 3.7174]],
+  ["https://wego.here.com/?map=51.0543,3.7174,13,normal", [51.0543, 3.7174]],
+  ["https://maps.apple.com/?ll=51.0543,3.7174&q=Ghent", [51.0543, 3.7174]],
+  ["https://www.bing.com/maps?cp=51.0543~3.7174&lvl=13", [51.0543, 3.7174]],
 
   // --- rejected ---
   ["", null],

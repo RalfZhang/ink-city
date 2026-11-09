@@ -1,13 +1,11 @@
 use std::collections::HashMap;
-use std::sync::atomic::Ordering;
 
 use anyhow::{anyhow, Result};
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
 
 use crate::bbox::Bbox;
-use crate::state::AppState;
 
 /// Fetch OSM data for `b` by invoking the bundled `ink-city-osm-cli` sidecar in
 /// single-shot "fetch" mode — the same TypeScript implementation
@@ -30,24 +28,28 @@ pub async fn fetch(app: &AppHandle, b: Bbox) -> Result<serde_json::Value> {
         format!("--east={}", b.east),
     ]);
 
-    // Route the sidecar's live Overpass fetch through the user's proxy when set.
-    // The sidecar is a compiled Bun binary whose `fetch` honors the standard
-    // HTTPS_PROXY / HTTP_PROXY / ALL_PROXY environment variables, so handing the
-    // child those vars is all that's needed — no JS-side change. Extends the
-    // inherited environment (doesn't clear it).
-    {
-        let state = app.state::<AppState>();
-        if state.proxy_enabled.load(Ordering::Acquire) {
-            let url = state.proxy_url.lock().unwrap().trim().to_string();
-            if !url.is_empty() {
-                let env = HashMap::from([
-                    ("HTTPS_PROXY".to_string(), url.clone()),
-                    ("HTTP_PROXY".to_string(), url.clone()),
-                    ("ALL_PROXY".to_string(), url),
-                ]);
-                cmd = cmd.envs(env);
-            }
+    // Route the sidecar's live Overpass fetch through the Proxy setting's route —
+    // the user's URL, or the OS's for System (`proxy::current`). The sidecar is a
+    // compiled Bun binary whose `fetch` honors the standard HTTPS_PROXY /
+    // HTTP_PROXY / ALL_PROXY environment variables, so handing the child those
+    // vars is all that's needed — no JS-side change. Extends the inherited
+    // environment (doesn't clear it).
+    //
+    // Bun takes HTTP(S) proxies only, so a SOCKS route goes in as a local HTTP proxy
+    // that forwards into it (`socks_bridge`), held for as long as this run lasts.
+    let mut _bridge = None;
+    if let Some(mut url) = crate::proxy::current() {
+        if crate::socks_bridge::is_socks(&url) {
+            let bridge = crate::socks_bridge::start(&url).await?;
+            url = bridge.url.clone();
+            _bridge = Some(bridge);
         }
+        let env = HashMap::from([
+            ("HTTPS_PROXY".to_string(), url.clone()),
+            ("HTTP_PROXY".to_string(), url.clone()),
+            ("ALL_PROXY".to_string(), url),
+        ]);
+        cmd = cmd.envs(env);
     }
 
     let (mut rx, _child) =

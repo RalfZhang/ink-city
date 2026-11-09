@@ -13,11 +13,11 @@ use std::sync::{Arc, Mutex as StdMutex};
 use tokio::sync::{oneshot, Mutex, Notify};
 
 use crate::config::{
-    CityLabel, ColorPair, CustomCity, MapProvider, RailwayStyle, StylePreset, StyleVariant,
-    ThemeMode, UpdateCheck, UpdateMode,
+    CityLabel, ColorPair, CustomCity, MapProvider, ProxyMode, RailwayStyle, StylePreset,
+    StyleVariant, ThemeMode, UpdateCheck, UpdateMode,
 };
 use crate::guess_store::StoreView;
-use crate::pipeline::RunKind;
+use crate::pipeline::{FailedRun, Requests};
 use crate::updates::UpdateStrings;
 
 pub struct PendingJob {
@@ -36,8 +36,10 @@ pub struct AppState {
     pub renderer_ready: AtomicBool,
     pub renderer_notify: Arc<Notify>,
     pub pending: Mutex<Option<PendingJob>>,
-    /// How the wallpaper is refreshed (see `config::UpdateMode`).
+    /// Which map the app shows (see `config::UpdateMode`).
     pub update_mode: StdMutex<UpdateMode>,
+    /// Whether that map is put on the desktop too (see `config::Config::sync_wallpaper`).
+    pub sync_wallpaper: AtomicBool,
     /// The pinned location for `UpdateMode::Customized`, or `None`. Persisted via
     /// `config::Config::custom`.
     pub custom: StdMutex<Option<CustomCity>>,
@@ -93,7 +95,9 @@ pub struct AppState {
     /// China-reachable (the reason the CDN exists). Read through
     /// `effective_bypass_cache`, never directly.
     pub bypass_cache: AtomicBool,
-    pub proxy_enabled: AtomicBool,
+    /// The Proxy setting as persisted; the route requests take is `proxy::set`'s
+    /// copy, which `System` resolves at each use.
+    pub proxy_mode: StdMutex<ProxyMode>,
     pub proxy_url: StdMutex<String>,
     pub map_provider: StdMutex<MapProvider>,
     /// Where the wallpaper carries the day's city caption (Style tab). Persisted —
@@ -107,26 +111,33 @@ pub struct AppState {
     /// back. Never hold it across a call into the pipeline: `pipeline::label_for`
     /// looks the city up (`city_for_status` takes `resolved_city`) before locking it.
     pub guess_view: StdMutex<StoreView>,
-    /// The date whose Daily wallpaper is on the desktop right now — set by
-    /// `pipeline::apply_target` once `wallpaper_set::set` succeeds, and cleared when
-    /// a Customized pin is applied over it (`pipeline::mark_painted`). `Status` reports
-    /// whether that's today (`today_painted`), and the game waits for it, so nobody
-    /// is asked to guess a map that isn't up yet (it can lag the city by a render,
-    /// or never arrive if setting the wallpaper fails). In-memory only: on launch the
-    /// first reconcile renders the day again (from its cached map data) and sets it. A
-    /// force regen doesn't clear it — the old image stays up until the new one
-    /// replaces it, so the game shouldn't close in between.
-    pub painted_day: StdMutex<Option<chrono::NaiveDate>>,
+    /// Whether the app has a tray icon to be reached and quit from: false only on a
+    /// Linux session with no `StatusNotifierItem` host (see `tray_linux`), where
+    /// General offers its own Quit instead. Probed once at launch.
+    pub tray_available: AtomicBool,
+    /// When updates were last checked for (Unix seconds), for About's "Last
+    /// checked". Seeded from `update.meta.json` at launch and set by every check.
+    pub last_update_check: StdMutex<Option<i64>>,
     /// User-facing strings for the windowless update flows, pushed from the
     /// frontend JSON locale files (see `UpdateStrings`). English until synced.
     pub update_strings: StdMutex<UpdateStrings>,
     pub running: Mutex<bool>,
-    /// A `pipeline::run_now` request that arrived while a run held `running`, merged
-    /// to the stronger kind (a queued `Force` absorbs a queued `Apply`). Only touched
-    /// under the `running` lock; the run in flight drains it before releasing
-    /// `running` (and `render_preview` hands it on) — see `run_now`. In-memory only.
-    pub rerun: StdMutex<Option<RunKind>>,
+    /// The run requests not yet taken up, and the last ticket handed out: each
+    /// request is numbered and queued under this one lock, and each pass of the
+    /// loop that holds `running` takes the work and reads the number under it too,
+    /// so the `pipeline:end` it ends with can say which requests each pass served.
+    /// The window waits on its own request's number for its outcome, rather than
+    /// guessing which busy stretch was its own. See `pipeline::Requests`.
+    /// In-memory only.
+    pub requests: StdMutex<Requests>,
+    /// The current map's run of failures, and when the scheduler's poll may try it
+    /// again (`pipeline::note_outcome`). Cleared by a success. In-memory only: a
+    /// launch tries afresh.
+    pub failed_run: StdMutex<Option<FailedRun>>,
     pub quitting: AtomicBool,
+    /// A launch the user made is waiting to show the window until its page has its
+    /// first palette on (`commands::window_ready`), so a dark desktop doesn't first see the light defaults the page starts in.
+    pub show_on_ready: AtomicBool,
     /// Signature of the render the wallpaper was last successfully applied for —
     /// see `pipeline::Target::signature`. In-memory only (None on launch →
     /// forces a reconcile at startup). The scheduler's poll compares it against
@@ -153,26 +164,29 @@ pub struct AppState {
     /// Only the Daily flow writes it — a Customized pin isn't a city and must not
     /// overwrite the day's answer.
     pub resolved_city: StdMutex<Option<(chrono::NaiveDate, Option<crate::city::City>)>>,
-    /// Why the Daily render for a date failed, or `None` once one succeeds. The
-    /// counterpart to `resolved_city`: that field says which city a day resolved
-    /// to, this one says why it couldn't.
+    /// Why the map for a target couldn't be had — the schedule or the CDN
+    /// unreachable, Overpass refusing a pin — keyed by the target it was for
+    /// (`pipeline::Target::key`: `daily:<date>` or `custom:<coords>`), or `None`
+    /// once it's had. The window has no map to show then, and says why.
     ///
     /// It has to be state rather than a command's return value because **every**
     /// caller of `pipeline::run_now` is detached — `spawn_apply`,
     /// `spawn_force_regen` (which is what `regenerate_now` invokes) and the
     /// scheduler's `reconcile` all spawn and drop the `Result`. So a failure has no
-    /// awaited `Result` to travel back on, and before this existed the only trace
-    /// was a log line the user never sees. Since the rotation was retired an
-    /// unresolvable day paints nothing and names nothing, so that trace had to
-    /// become user-visible (see `Status::last_error`).
+    /// awaited `Result` to travel back on, and the only other trace is a log line
+    /// the user never sees.
     ///
-    /// Carries the date, and only the Daily flow writes it (see
-    /// `pipeline::run_now_inner`). Both halves of that are load-bearing: a
-    /// Customized pin's failure recorded here would be shown as the reason the
-    /// *schedule* has no city for the day — reachable, since applying a pin and
-    /// switching back to Daily are adjacent actions — and an undated one would
-    /// survive midnight and indict a day nothing had tried yet.
-    pub last_error: StdMutex<Option<(chrono::NaiveDate, String)>>,
+    /// The key is what keeps it honest: `Status` reports it only while it names the
+    /// current target, so yesterday's failure doesn't indict a day nothing has tried
+    /// yet (the scheduler pushes a snapshot on the rollover before it reconciles),
+    /// and a pin's doesn't read as the schedule's.
+    pub map_error: StdMutex<Option<(String, String)>>,
+    /// Why the map, once had, didn't make it onto the desktop — the renderer timing
+    /// out, the OS refusing it, a Linux desktop with no known way to set one — keyed
+    /// like `map_error`. Only a run that puts the map on the desktop sets or clears
+    /// it; turning syncing off clears it (`commands::set_sync`), since nothing is
+    /// trying any more. The home shows it under the sync box until a run succeeds.
+    pub wall_error: StdMutex<Option<(String, String)>>,
     /// Signal that some `Status`-affecting state changed. The status-emitter task
     /// waits on it and pushes a fresh snapshot to the frontend. Mutation sites only
     /// signal (`mark_status_dirty`); the snapshot is built in one place.
@@ -188,6 +202,7 @@ impl AppState {
             renderer_notify: Arc::new(Notify::new()),
             pending: Mutex::new(None),
             update_mode: StdMutex::new(cfg.update_mode),
+            sync_wallpaper: AtomicBool::new(cfg.sync_wallpaper),
             custom: StdMutex::new(cfg.custom),
             hide_tray: AtomicBool::new(cfg.hide_tray),
             theme: StdMutex::new(cfg.theme),
@@ -207,21 +222,26 @@ impl AppState {
             variant: StdMutex::new(cfg.variant),
             dev_mode: AtomicBool::new(cfg.dev_mode),
             bypass_cache: AtomicBool::new(false),
-            proxy_enabled: AtomicBool::new(cfg.proxy_enabled),
+            proxy_mode: StdMutex::new(cfg.proxy_mode),
             proxy_url: StdMutex::new(cfg.proxy_url.clone()),
             map_provider: StdMutex::new(cfg.map_provider),
             city_label: StdMutex::new(cfg.city_label),
             // Read from disk in `lib.rs`'s setup, which has the AppHandle that
             // locates it; empty until then.
             guess_view: StdMutex::new(StoreView::default()),
-            painted_day: StdMutex::new(None),
+            // Probed and read in `lib.rs`'s setup, which has the AppHandle.
+            tray_available: AtomicBool::new(true),
+            last_update_check: StdMutex::new(None),
             update_strings: StdMutex::new(UpdateStrings::default()),
             running: Mutex::new(false),
-            rerun: StdMutex::new(None),
+            requests: StdMutex::new(Requests::default()),
+            failed_run: StdMutex::new(None),
             quitting: AtomicBool::new(false),
+            show_on_ready: AtomicBool::new(false),
             last_applied: StdMutex::new(None),
             resolved_city: StdMutex::new(None),
-            last_error: StdMutex::new(None),
+            map_error: StdMutex::new(None),
+            wall_error: StdMutex::new(None),
             status_dirty: Arc::new(Notify::new()),
         }
     }

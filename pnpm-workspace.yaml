@@ -20,11 +20,9 @@ catalog:
   "@vitejs/plugin-react": ^4.6.0
   i18next: ^26.3.0
   lucide-react: ^1.17.0
-  radix-ui: ^1.4.3
   react: ^19.1.0
   react-dom: ^19.1.0
   react-i18next: ^17.0.8
-  shadcn: ^4.8.2
   tailwindcss: ^4.3.0
   typescript: ~5.8.3
   vite: ^7.0.4

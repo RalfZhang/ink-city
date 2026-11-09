@@ -3,52 +3,17 @@
     "title": "InkCity — tebak kota hari ini",
     "description": "Setiap hari kota baru, digambar dengan tinta dari data OpenStreetMap. Tebak di negara mana kota itu berada, lalu jadikan wallpaper desktop Anda."
   },
-  "intro": {
-    "question": "Kota ini ada di negara mana?"
-  },
-  "today": {
-    "label": "Hari ini",
-    "loading": "Memuat peta hari ini…",
-    "rebuilding": "Peta hari ini belum diterbitkan — sedang digambar langsung dari OpenStreetMap, bisa memakan waktu sekitar semenit…",
-    "failed": "Tidak dapat memuat peta hari ini.",
-    "retry": "Coba lagi",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Tebak",
-    "wallpaper": "Jadikan wallpaper",
-    "more": "Gulir ke bawah untuk selengkapnya"
-  },
-  "dir": {
-    "n": "Utara",
-    "ne": "Timur laut",
-    "e": "Timur",
-    "se": "Tenggara",
-    "s": "Selatan",
-    "sw": "Barat daya",
-    "w": "Barat",
-    "nw": "Barat laut"
-  },
-  "result": {
-    "share": "Bagikan",
-    "copied": "Disalin ke papan klip",
-    "details": "Lihat detail",
-    "back": "Kembali",
-    "collapse": "Ciutkan",
-    "expand": "Bentangkan",
-    "nextCity": "menuju kota berikutnya"
-  },
-  "globe": {
-    "label": "Bola dunia dengan tebakan hari ini, dihubungkan berurutan. Seret untuk memutarnya.",
-    "failed": "Tidak dapat memuat bola dunia."
-  },
   "storage": {
     "memoryOnly": "Browser Anda tidak menyimpan permainan ini, jadi permainan berakhir saat halaman ditutup.",
     "dismiss": "Tutup"
   },
   "app": {
     "tagline": "Kota baru setiap hari, digambar dengan tinta"
+  },
+  "play": {
+    "guess": "Tebak",
+    "wallpaper": "Jadikan wallpaper",
+    "more": "Gulir ke bawah untuk selengkapnya"
   },
   "download": {
     "title": "Jadikan {{city}} wallpaper Anda hari ini",

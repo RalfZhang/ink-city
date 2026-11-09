@@ -8,7 +8,7 @@ A GitHub Action draws each day's city at random from `packages/core/data/cities-
 index = (days_since_2023-03-03 * 379) % N
 ```
 
-`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` can stay population-sorted and append-only. The Rust port is deleted; `packages/core/src/city.ts` keeps the formula for the CI pre-cacher, which still publishes the id-keyed `osm/<id>.json` payloads for clients shipped before the removal (recommended removal after 2026-11-01). A day the schedule can't name is now simply not painted: the previous wallpaper stays up, the City tab says why, and the 60s poll retries. The formula is not a source of truth for any client any more — the future website will read the manifests rather than recompute it, since a random stored pick has no formula to recompute.
+`379` is prime, which makes the mapping a *permutation* of `0..N-1`: the sequence feels random and never repeats within a full `N`-day cycle, yet `cities.json` could stay population-sorted and append-only. The formula, `cities.json` and CI's id-keyed `osm/<id>.json` payloads for older clients are all gone now (the last after its 2026-11-01 deprecation date). A day the schedule can't name is now simply not painted: the previous wallpaper stays up, the City tab says why, and the poll tries again, backing off from 5 minutes to an hour. The formula is not a source of truth for any client any more — the future website will read the manifests rather than recompute it, since a random stored pick has no formula to recompute.
 
 ## Architecture
 
@@ -30,19 +30,19 @@ packages/osm/       `@inkcity/osm` — Overpass transport + per-layer extraction
                     (roads, water, airports, railways, aerialways). Node/Bun
                     only; a package of its own so it never reaches a client
                     bundle.
-packages/ui/        `@inkcity/ui` — shadcn components, the theme stylesheet, and
-                    the guess-the-country game's React layer and strings. All
-                    three packages are imported as TypeScript source with no
-                    build step.
+packages/ui/        `@inkcity/ui` — the base stylesheet (Tailwind, Geist) and the
+                    guess-the-country game's React layer, as both apps draw it,
+                    and its strings. All three packages are imported as
+                    TypeScript source with no build step.
 scripts/            osm-cli (the OSM acquisition CLI — CI's batch precache mode
                     and the app's live single-fetch sidecar mode), build-sidecar,
-                    build-cities, render, and the check-i18n / *-test guards.
+                    render, and the check-i18n / *-test guards.
 .github/workflows/  ci (build + every test, cargo test on all three OSes, on each
                     pushed branch), precache (OSM data → `data` branch, every 6h)
                     and the release-please → release signing pipeline.
 ```
 
-**Data flow:** resolve today's city *and* its map data together (local day cache → schedule manifest → schedule state + live Overpass → rotation fallback) → compute a screen-sized bbox → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). Every apply renders afresh — the PNG is just `<date>.png`, rewritten each time and never reused — while the day's OSM payload stays cached, so re-rendering after a theme change, a style edit or a relaunch needs no network.
+**Data flow:** resolve today's city *and* its map data together (local day cache → schedule manifest → schedule state + live Overpass) → compute a screen-sized bbox → a hidden WebView renders it to a PNG → the PNG is set as the wallpaper (cover-fit). Every apply renders afresh — the PNG is just `<date>.png`, rewritten each time and never reused — while the day's OSM payload stays cached, so re-rendering after a theme change, a style edit or a relaunch needs no network.
 
 **Map variants:** `Style.variant` picks the visual language the same geometry is drawn in — `ink` (the default map, in the theme's colors) or `mondrian` (issue #18). The Mondrian variant is not a separate pipeline: `core/render.ts` runs the one compositing order with the palette forced to its paper/ink pair and one extra step that fills a deterministic subset of the enclosed city blocks (`core/mondrian.ts`) just before the roads are stroked over them. Which blocks exist is derived from the road classes the active preset actually strokes, so a color plane always has its black borders. Mondrian has a palette per theme, picked by `Style.theme` (the desktop sends its effective theme); both pick the same blocks, so a theme switch recolors the poster rather than reshuffling it — except that the dark one leaves its rare ink-colored blocks bare, since its gray ink would read as water.
 
@@ -75,19 +75,13 @@ pnpm tauri dev
 pnpm tauri build
 ```
 
-**Regenerate the city list** (downloads GeoNames `cities1000`, takes the top 1000 by population):
+**Pre-cache OSM data** (what the GitHub Action runs; writes `data/osm-v2/`):
 
 ```bash
-pnpm build:cities
+pnpm precache data
 ```
 
-**Pre-cache OSM data** (what the GitHub Action runs; writes `data/osm/<id>.json`):
-
-```bash
-pnpm precache data/osm 7
-```
-
-Script arguments are passed directly, with no `--` separator. pnpm forwards `--` through to the script rather than stripping it (npm strips it), so both `osm-cli.ts` and `render.ts` drop a bare `--` from their argv — `pnpm precache -- data/osm 7` works too, it just isn't the idiomatic form.
+Script arguments are passed directly, with no `--` separator. pnpm forwards `--` through to the script rather than stripping it (npm strips it), so both `osm-cli.ts` and `render.ts` drop a bare `--` from their argv — `pnpm precache -- data` works too, it just isn't the idiomatic form.
 
 ## Reclaiming disk space
 

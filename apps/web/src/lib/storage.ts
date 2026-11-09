@@ -24,7 +24,6 @@ export function memoryFallback(inner: GuessStorage, onMemoryOnly: () => void): G
       }
       memory = raw;
     },
-    backupCorrupt: inner.backupCorrupt,
   };
 }
 

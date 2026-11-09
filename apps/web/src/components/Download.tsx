@@ -7,10 +7,10 @@ import {
   desktopDownloadUrl,
   type DesktopDownload,
 } from "@inkcity/core";
-import { formatCountdown } from "../lib/date";
-import { useTransient, useUntilMidnight } from "../lib/hooks";
+import { formatCountdown, useUntilMidnight } from "@inkcity/ui/game/time";
+import { useTransient } from "@inkcity/ui/game/motion";
 import type { Visitor } from "../lib/platform";
-import { shareOrCopy } from "../lib/share";
+import { shareOrCopy } from "@inkcity/ui/game/share-or-copy";
 
 /**
  * The installers, led by the visitor's own platform: one button for macOS or

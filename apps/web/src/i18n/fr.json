@@ -3,52 +3,17 @@
     "title": "InkCity — devinez la ville du jour",
     "description": "Chaque jour, une nouvelle ville dessinée à l'encre d'après OpenStreetMap. Devinez dans quel pays elle se trouve, puis faites-en votre fond d'écran."
   },
-  "intro": {
-    "question": "Dans quel pays est cette ville ?"
-  },
-  "today": {
-    "label": "Aujourd'hui",
-    "loading": "Chargement de la carte du jour…",
-    "rebuilding": "La carte du jour n'est pas encore publiée : elle est dessinée directement depuis OpenStreetMap, ce qui peut prendre une minute…",
-    "failed": "Impossible de charger la carte du jour.",
-    "retry": "Réessayer",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Deviner",
-    "wallpaper": "En fond d'écran",
-    "more": "Faites défiler pour en savoir plus"
-  },
-  "dir": {
-    "n": "Nord",
-    "ne": "Nord-est",
-    "e": "Est",
-    "se": "Sud-est",
-    "s": "Sud",
-    "sw": "Sud-ouest",
-    "w": "Ouest",
-    "nw": "Nord-ouest"
-  },
-  "result": {
-    "share": "Partager",
-    "copied": "Copié dans le presse-papiers",
-    "details": "Voir les détails",
-    "back": "Retour",
-    "collapse": "Réduire",
-    "expand": "Développer",
-    "nextCity": "avant la prochaine ville"
-  },
-  "globe": {
-    "label": "Un globe avec les propositions du jour, reliées dans l'ordre. Faites-le glisser pour le tourner.",
-    "failed": "Impossible de charger le globe."
-  },
   "storage": {
     "memoryOnly": "Votre navigateur ne conserve pas cette partie : elle s'arrête quand vous fermez la page.",
     "dismiss": "Fermer"
   },
   "app": {
     "tagline": "Une nouvelle ville chaque jour, dessinée à l'encre"
+  },
+  "play": {
+    "guess": "Deviner",
+    "wallpaper": "En fond d'écran",
+    "more": "Faites défiler pour en savoir plus"
   },
   "download": {
     "title": "Mettez {{city}} en fond d'écran aujourd'hui",

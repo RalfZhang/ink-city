@@ -5,10 +5,6 @@ import type { MapLabel, Style } from "./types";
 // on Earth it is. Drawn over everything else in the map's own ink, ringed by a
 // paper-coloured halo: the cartographic way to keep type legible over linework
 // without boxing it in.
-//
-// Its typeface and proportions are exported (`LABEL_*`) for anything that sets the
-// same caption in another medium — ../www lays it out in CSS — so it can take them
-// from here instead of restating them.
 
 /**
  * Geist first — the settings window's typeface, bundled with the app (the renderer
@@ -20,21 +16,21 @@ import type { MapLabel, Style } from "./types";
  * CLI renderer) rejects a font string containing it outright — and a canvas that
  * rejects `font` keeps drawing at its 10px default without a word.
  */
-export const LABEL_FONT_FAMILY = `"Geist Variable", system-ui, "Segoe UI", "Noto Sans", sans-serif`;
+const LABEL_FONT_FAMILY = `"Geist Variable", system-ui, "Segoe UI", "Noto Sans", sans-serif`;
 
 /** Type sizes, as fractions of the image's short side. */
-export const LABEL_TITLE_SIZE = 0.034;
-export const LABEL_SUBTITLE_SIZE = 0.0165;
-export const LABEL_COORDS_SIZE = 0.0125;
+const LABEL_TITLE_SIZE = 0.034;
+const LABEL_SUBTITLE_SIZE = 0.0165;
+const LABEL_COORDS_SIZE = 0.0125;
 /**
  * Extra gap below each line, as a fraction of that line's size, on top of the font's
  * own ascent + descent (which already carry most of the leading).
  */
-export const LABEL_GAP_AFTER: readonly number[] = [0.1, 0.22];
-/** Distance from the edge (on top of any insets), as a fraction of the short side. */
+const LABEL_GAP_AFTER: readonly number[] = [0.1, 0.22];
+/** Distance from the edge (on top of any insets, or at least theirs — `MapLabel.insetsMode`), as a fraction of the short side. */
 export const LABEL_MARGIN = 0.04;
 /** Widest the caption may get, as a fraction of the image width; longer names shrink. */
-export const LABEL_MAX_WIDTH = 0.42;
+const LABEL_MAX_WIDTH = 0.42;
 /**
  * Width of the paper-coloured halo stroke, as a fraction of the *coordinates* line's
  * size — one width for every line, however big its type. Sized off the smallest
@@ -44,7 +40,7 @@ export const LABEL_MAX_WIDTH = 0.42;
  * outline and the fill covers its inner half, so half of it shows: about 3.6 px on a
  * 5K screen, 1.4 px at 1080p.
  */
-export const LABEL_HALO = 0.2;
+const LABEL_HALO = 0.2;
 
 type Line = { text: string; size: number; weight: number };
 
@@ -74,29 +70,26 @@ export function captionText(
   return { title, subtitle: parts.join(" · ") };
 }
 
-/** The caption's lines at `short` px — title, subtitle (when there is one), coordinates. */
+/**
+ * The caption's lines at `short` px — title, subtitle (when there is one),
+ * coordinates. A place with no name — the desktop's pinned coordinates — is the
+ * coordinates line alone, as a named place's caption ends.
+ */
 function lines(label: MapLabel, short: number): Line[] {
   const { title, subtitle } = captionText(label);
-  const out: Line[] = [{ text: title, size: short * LABEL_TITLE_SIZE, weight: 400 }];
-  if (subtitle) out.push({ text: subtitle, size: short * LABEL_SUBTITLE_SIZE, weight: 400 });
+  const out: Line[] = [];
+  if (title.trim()) out.push({ text: title, size: short * LABEL_TITLE_SIZE, weight: 400 });
+  if (title.trim() && subtitle) out.push({ text: subtitle, size: short * LABEL_SUBTITLE_SIZE, weight: 400 });
   out.push({ text: formatLatLon(label.lat, label.lon), size: short * LABEL_COORDS_SIZE, weight: 400 });
   return out;
 }
 
-/** Whole pixels: a canvas serializes `font` back with the size it understood, which `setFont` checks. */
+/** Whole pixels. */
 const pxOf = (l: Line, scale: number) => Math.max(1, Math.round(l.size * scale));
 const fontOf = (l: Line, scale: number) => `${l.weight} ${pxOf(l, scale)}px ${LABEL_FONT_FAMILY}`;
 
-/**
- * Set a line's font, falling back to a bare `sans-serif` at the same size should the
- * canvas reject the full stack — which it does silently, leaving the previous (or
- * 10px default) font in place: a caption at a tenth of its size is worse than one in
- * the wrong face.
- */
 function setFont(ctx: CanvasRenderingContext2D, l: Line, scale: number): void {
-  const px = pxOf(l, scale);
   ctx.font = fontOf(l, scale);
-  if (!ctx.font.includes(`${px}px`)) ctx.font = `${l.weight} ${px}px sans-serif`;
 }
 
 /**
@@ -128,6 +121,15 @@ export function drawLabel(
   const ls = lines(label, short);
   const insets = label.insets ?? { top: 0, right: 0, bottom: 0, left: 0 };
   const margin = short * LABEL_MARGIN;
+  // How far from each edge the caption sets in: the margin beyond the inset, or —
+  // `"min"` — whichever of the two is the farther.
+  const fromEdge = (inset: number) => (label.insetsMode === "min" ? Math.max(margin, inset) : inset + margin);
+  const from = {
+    top: fromEdge(insets.top),
+    right: fromEdge(insets.right),
+    bottom: fromEdge(insets.bottom),
+    left: fromEdge(insets.left),
+  };
   const leftSide = label.corner.endsWith("left");
   const topSide = label.corner.startsWith("top");
 
@@ -139,10 +141,13 @@ export function drawLabel(
       setFont(ctx, l, 1);
       widest = Math.max(widest, ctx.measureText(l.text).width);
     }
-    const room = Math.min(width * LABEL_MAX_WIDTH, width - insets.left - insets.right - 2 * margin);
+    const room = Math.min(width * LABEL_MAX_WIDTH, width - from.left - from.right);
     const scale = widest > room && widest > 0 ? room / widest : 1;
 
-    const x = leftSide ? insets.left + margin : width - insets.right - margin;
+    // On whole pixels, the baselines below too: WebKit sets filled text on the pixel
+    // grid but strokes its outline where it's told, so from a fractional position the
+    // letters sit up to a pixel low in their halo — more of it above than below.
+    const x = Math.round(leftSide ? from.left : width - from.right);
     ctx.textAlign = leftSide ? "left" : "right";
     ctx.textBaseline = "alphabetic";
     ctx.lineJoin = "round";
@@ -166,10 +171,10 @@ export function drawLabel(
     });
     // A bottom caption starts one block-height up, so it ends at the bottom margin.
     const blockHeight = placed.reduce((h, p) => h + p.ascent + p.descent + p.gap, 0);
-    let y = topSide ? insets.top + margin : height - insets.bottom - margin - blockHeight;
+    let y = topSide ? from.top : height - from.bottom - blockHeight;
     const baselines = placed.map((p) => {
       y += p.ascent;
-      const baseline = y;
+      const baseline = Math.round(y);
       y += p.descent + p.gap;
       return baseline;
     });

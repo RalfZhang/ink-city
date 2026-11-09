@@ -15,6 +15,39 @@
     "winRate": "Tasso di vittoria",
     "streak": "Serie attuale",
     "maxStreak": "Serie migliore",
-    "distribution": "Distribuzione dei tentativi"
+    "distribution": "Distribuzione dei tentativi",
+    "share": "Condividi",
+    "copied": "Copiato negli appunti",
+    "details": "Vedi dettagli",
+    "back": "Indietro",
+    "collapse": "Comprimi",
+    "expand": "Espandi",
+    "nextCity": "alla prossima città"
+  },
+  "intro": {
+    "question": "In che Paese si trova questa città?"
+  },
+  "today": {
+    "label": "Oggi",
+    "loading": "Caricamento della mappa di oggi…",
+    "rebuilding": "La mappa di oggi non è ancora pubblicata: la stiamo disegnando direttamente da OpenStreetMap, può richiedere un minuto…",
+    "failed": "Impossibile caricare la mappa di oggi.",
+    "retry": "Riprova",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Nord",
+    "ne": "Nord-est",
+    "e": "Est",
+    "se": "Sud-est",
+    "s": "Sud",
+    "sw": "Sud-ovest",
+    "w": "Ovest",
+    "nw": "Nord-ovest"
+  },
+  "globe": {
+    "label": "Un globo con i tentativi di oggi, collegati in ordine. Trascinalo per ruotarlo.",
+    "failed": "Impossibile caricare il globo."
   }
 }

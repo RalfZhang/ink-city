@@ -15,6 +15,39 @@
     "winRate": "Taux de réussite",
     "streak": "Série actuelle",
     "maxStreak": "Meilleure série",
-    "distribution": "Répartition des essais"
+    "distribution": "Répartition des essais",
+    "share": "Partager",
+    "copied": "Copié dans le presse-papiers",
+    "details": "Voir les détails",
+    "back": "Retour",
+    "collapse": "Réduire",
+    "expand": "Développer",
+    "nextCity": "avant la prochaine ville"
+  },
+  "intro": {
+    "question": "Dans quel pays est cette ville ?"
+  },
+  "today": {
+    "label": "Aujourd'hui",
+    "loading": "Chargement de la carte du jour…",
+    "rebuilding": "La carte du jour n'est pas encore publiée : elle est dessinée directement depuis OpenStreetMap, ce qui peut prendre une minute…",
+    "failed": "Impossible de charger la carte du jour.",
+    "retry": "Réessayer",
+    "wikipedia": "Wikipedia",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "Nord",
+    "ne": "Nord-est",
+    "e": "Est",
+    "se": "Sud-est",
+    "s": "Sud",
+    "sw": "Sud-ouest",
+    "w": "Ouest",
+    "nw": "Nord-ouest"
+  },
+  "globe": {
+    "label": "Un globe avec les propositions du jour, reliées dans l'ordre. Faites-le glisser pour le tourner.",
+    "failed": "Impossible de charger le globe."
   }
 }

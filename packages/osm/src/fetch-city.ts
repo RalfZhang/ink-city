@@ -19,14 +19,12 @@ import { aerialwaysSelector, slimAerialways } from "./aerialways";
 import { OSM_SCHEMA_VERSION } from "@inkcity/core";
 
 /**
- * The decimals the published days' coordinates are rounded to (the precache,
- * scripts/osm-cli.ts) — what anything rebuilding a day passes as `coordPrecision`,
- * so its day matches a published one.
+ * The decimals every fetched day's coordinates are rounded to (5 ≈ 1m, sub-pixel
+ * at our 20km scale), so a day rebuilt live matches a published one.
  */
-export const PUBLISHED_COORD_PRECISION = 5;
+const COORD_PRECISION = 5;
 
 export type FetchCityOptions = {
-  coordPrecision?: number;
   /** Passed to the Overpass transport — the website's worker spends less time and sends no User-Agent. */
   overpass?: FetchOptions;
 };
@@ -41,7 +39,7 @@ const OVERPASS_TIMEOUT_S = 180;
  * `{ v, elements, water, airports, railways, aerialways }`.
  */
 export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Promise<Osm> {
-  const precision = opts.coordPrecision;
+  const precision = COORD_PRECISION;
 
   // One request for every layer: a single Overpass union query, so the live
   // sidecar path (a user waiting on a CDN miss / custom city) pays one round

@@ -1,4 +1,4 @@
-import { DEFAULT_COLORS, DEFAULT_STYLE, drawScene } from "@inkcity/core";
+import { DEFAULT_COLORS, DEFAULT_STYLE, drawScene, paintBitmap } from "@inkcity/core";
 import type { Manifest } from "./manifest";
 import { mapBBox } from "./size";
 
@@ -24,4 +24,9 @@ export function drawMap(
     style: { ...DEFAULT_COLORS[theme], ...DEFAULT_STYLE },
     osm: manifest,
   });
+}
+
+/** `drawMap` as a bitmap to hand over, wherever the engine runs: the worker's and the main thread's `render`. */
+export function paint(manifest: Manifest, theme: Theme, width: number, height: number): Promise<ImageBitmap> {
+  return paintBitmap(width, height, (ctx) => drawMap(ctx, manifest, theme, width, height));
 }

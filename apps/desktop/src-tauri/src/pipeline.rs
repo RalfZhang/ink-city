@@ -1,12 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::Ordering;
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 
 use anyhow::{anyhow, Result};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Emitter, Manager, Theme, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+use tauri::{AppHandle, Emitter, Manager, Theme, WebviewWindow};
 use tokio::sync::oneshot;
 
 use crate::bbox::{bbox_for_screen, Bbox};
@@ -21,10 +21,11 @@ use crate::state::{AppState, PendingJob};
 use crate::wallpaper_set;
 
 /// How many days of rendered Daily PNGs (`<date>.png`) the cache keeps.
-/// Everything older is swept by `cleanup_daily` after each render.
+/// Everything older is swept by `cleanup_daily` after each Daily run that gets its
+/// map — rendered, or with syncing off only fetched (`run_now_inner`).
 const KEEP_DAYS: i64 = 7;
 
-/// How many days *back* a day's downloaded OSM payload (`<date>.osm.json`) is
+/// How many days *back* a day's downloaded OSM payload (`<date>.square.osm.json`) is
 /// kept. Retention is split from `KEEP_DAYS` because the two artifacts have
 /// wildly different costs: a rendered PNG is a few MB, while an `.osm.json` runs
 /// to tens of MB — big city days hit 20 MB — and is only ever re-read to render
@@ -35,8 +36,7 @@ const KEEP_DAYS: i64 = 7;
 const KEEP_OSM_DAYS: i64 = 1;
 
 /// The theme a render is drawn for: `ThemeMode` with `System` resolved. Serialized
-/// as the renderer's `Style.theme` and as `Status::effective_theme` (both `Theme`
-/// in packages/core/src/types.ts).
+/// as the renderer's `Style.theme` (`Theme` in packages/core/src/types.ts).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum EffectiveTheme {
@@ -112,18 +112,21 @@ struct Insets {
 //     wallpaper-<ts>.png        ← the file actually handed to the OS. Rewritten
 //                                 with a fresh timestamp on every apply so the
 //                                 platform reliably re-reads it (macOS caches the
-//                                 desktop image by URL). See wallpaper_set::set.
+//                                 desktop image by URL). The ones it replaced
+//                                 stay a few minutes, in case the OS is still
+//                                 reading them. See wallpaper_set::set.
 //     daily/                    ← the Daily rotation cache, swept by cleanup_daily.
 //       <date>.png                ← that day's latest render, whatever its theme,
 //                                   palette or caption: rewritten by every apply,
 //                                   never read back as a cache hit (`apply_target`).
 //                                   Kept KEEP_DAYS back (and any future preview).
-//       <date>.osm.json           ← kept only KEEP_OSM_DAYS back; it's the heavy half.
+//       <date>.square.osm.json    ← kept only KEEP_OSM_DAYS back; it's the heavy half.
 //     customized/               ← the Customized-pin cache. Writing a new
 //                                 coordinate wipes every other coordinate's
 //                                 files, so only the active pin is kept.
 //       <lat>_<lon>.png           ← the pin's latest render, like <date>.png.
-//       <lat>_<lon>.osm.json
+//       <lat>_<lon>.square.osm.json ← the square every screen's crop lies in, as a
+//                                   day's is (`pin_osm_name`).
 // ─────────────────────────────────────────────────────────────────────────────
 
 // These four only *name* directories; they never create them. Creation belongs
@@ -186,7 +189,8 @@ fn theme_suffix(theme: EffectiveTheme) -> &'static str {
 /// trailing zeros trimmed so `-68.17000` → `-68.17` while `-16.50016` is kept
 /// verbatim. Used to build the stable per-pin cache key.
 fn fmt_coord(v: f64) -> String {
-    let s = format!("{v:.5}");
+    // As finely as the pin line rounds it (packages/core/src/defaults.json).
+    let s = format!("{:.*}", defaults::get().pin_decimals, v);
     let t = s.trim_end_matches('0').trim_end_matches('.');
     t.to_string()
 }
@@ -198,7 +202,7 @@ fn coord_key(lat: f64, lon: f64) -> String {
 // ─────────────────────────────────────────────────────────────────────────────
 // Render target resolution — turns the current UpdateMode into the concrete
 // cache paths + signature to render, or `None` when there's nothing to do
-// (updates disabled, or Customized with no pin applied yet).
+// (Customized with no pin applied yet).
 //
 // Note what a `Target` deliberately does *not* carry: the city. For the Daily
 // flow the city and its map data have to be resolved *together* (see
@@ -218,8 +222,16 @@ enum TargetKind {
 
 struct Target {
     /// Identity of this render for `last_applied` de-duping — see
-    /// `AppState::last_applied`.
+    /// `AppState::last_applied`. A run that only fetches the map (syncing off)
+    /// is `data:<key>`: what's wanted then is the data, whatever it'd be drawn in.
     signature: String,
+    /// Which map this is, whatever it's drawn in: `daily:<date>` or
+    /// `custom:<coords>`. What the window asks for (`commands::get_map_data`), and
+    /// what the errors are kept against (`AppState::map_error`).
+    key: String,
+    /// Whether this run puts the map on the desktop (`Config::sync_wallpaper`), or
+    /// only makes sure its data is to hand for the window.
+    paint: bool,
     png_path: PathBuf,
     osm_path: PathBuf,
     kind: TargetKind,
@@ -232,8 +244,11 @@ struct Target {
 fn daily_target(app: &AppHandle, date: NaiveDate, theme: EffectiveTheme) -> Result<Target> {
     let dir = daily_dir(app)?;
     let label = label_for(app, date);
+    let key = format!("daily:{date}");
     Ok(Target {
-        signature: daily_signature(date, theme_suffix(theme), label),
+        signature: render_signature(&key, theme, label),
+        key,
+        paint: true,
         png_path: dir.join(daily_png_name(date)),
         osm_path: dir.join(daily_osm_name(date)),
         kind: TargetKind::Daily(date),
@@ -241,16 +256,18 @@ fn daily_target(app: &AppHandle, date: NaiveDate, theme: EffectiveTheme) -> Resu
     })
 }
 
-/// A Daily render's `last_applied` signature: `daily:<date>:<theme>`, plus
-/// `:label-<corner>` once the day is revealed. Only the signature tells the two
+/// A render's `last_applied` signature: its map's key and theme —
+/// `daily:<date>:<theme>`, `custom:<coords>:<theme>` — plus `:label-<corner>` while
+/// it carries the caption. Only the signature tells a Daily render's two looks
 /// apart — the PNG is `<date>.png` either way — and that's where it matters:
 /// revealing the day moves the *desired signature*, so the scheduler's poll keeps
 /// repainting until the captioned image is actually up, even if the render the
 /// reveal kicked off fails.
-fn daily_signature(date: NaiveDate, theme: &str, label: Option<&str>) -> String {
+fn render_signature(key: &str, theme: EffectiveTheme, label: Option<&str>) -> String {
+    let theme = theme_suffix(theme);
     match label {
-        Some(tag) => format!("daily:{date}:{theme}:label-{tag}"),
-        None => format!("daily:{date}:{theme}"),
+        Some(tag) => format!("{key}:{theme}:label-{tag}"),
+        None => format!("{key}:{theme}"),
     }
 }
 
@@ -281,63 +298,67 @@ fn label_for(app: &AppHandle, date: NaiveDate) -> Option<&'static str> {
 fn custom_target(app: &AppHandle, lat: f64, lon: f64, theme: EffectiveTheme) -> Result<Target> {
     let dir = custom_dir(app)?;
     let key = coord_key(lat, lon);
+    // A pin isn't a city and has no game to reveal it: its caption — its
+    // coordinates — is there whenever the setting is on. Part of the signature, so
+    // moving the corner renders the pin again.
+    let label = app.state::<AppState>().city_label.lock().unwrap().tag();
+    let map = format!("custom:{key}");
     Ok(Target {
-        signature: format!("custom:{key}:{}", theme_suffix(theme)),
+        signature: render_signature(&map, theme, label),
+        key: map,
+        paint: true,
         png_path: dir.join(format!("{key}.png")),
-        osm_path: dir.join(format!("{key}.osm.json")),
+        osm_path: dir.join(pin_osm_name(&key)),
         kind: TargetKind::Custom { key, lat, lon },
-        // A pin is coordinates, not a city — there's nothing to caption.
-        label: None,
+        label,
     })
 }
 
-/// Resolve what to render right now, or `None` when updates are off / no pin.
-/// A Customized pin takes precedence over the daily schedule by construction:
-/// the mode selects exactly one of them, so the two never race.
+/// Resolve what to show right now, or `None` when Customized has no pin yet. A
+/// Customized pin takes precedence over the daily schedule by construction: the
+/// mode selects exactly one of them, so the two never race.
+///
+/// With syncing off the target is still resolved — the window draws its map, and
+/// the day's game is played on it — but only its data is wanted: the run fetches
+/// and caches it and leaves the desktop alone (`fetch_target`).
 fn resolve_target(
     app: &AppHandle,
     date: NaiveDate,
     theme: EffectiveTheme,
 ) -> Result<Option<Target>> {
-    let mode = *app.state::<AppState>().update_mode.lock().unwrap();
-    match mode {
-        UpdateMode::Disable => Ok(None),
-        UpdateMode::Daily => Ok(Some(daily_target(app, date, theme)?)),
+    let state = app.state::<AppState>();
+    let mode = *state.update_mode.lock().unwrap();
+    let mut target = match mode {
+        UpdateMode::Daily => daily_target(app, date, theme)?,
         UpdateMode::Customized => {
-            let custom = *app.state::<AppState>().custom.lock().unwrap();
+            let custom = *state.custom.lock().unwrap();
             match custom {
-                Some(c) => Ok(Some(custom_target(app, c.lat, c.lon, theme)?)),
-                None => Ok(None),
+                Some(c) => custom_target(app, c.lat, c.lon, theme)?,
+                None => return Ok(None),
             }
         }
+    };
+    if !state.sync_wallpaper.load(Ordering::Acquire) {
+        target.signature = format!("data:{}", target.key);
+        target.paint = false;
+        target.label = None;
     }
+    Ok(Some(target))
+}
+
+/// The map the window should show: its key, and where its data is cached — whether
+/// or not it's there yet. `None` when Customized has no pin.
+pub fn current_map(app: &AppHandle) -> Option<(String, PathBuf)> {
+    let target = resolve_target(app, city::today(), effective_theme(app)).ok().flatten()?;
+    Some((target.key, target.osm_path))
 }
 
 fn mark_applied(app: &AppHandle, signature: &str) {
     *app.state::<AppState>().last_applied.lock().unwrap() = Some(signature.to_string());
 }
 
-/// Record which Daily map is now the desktop wallpaper — see
-/// `AppState::painted_day`. A Customized pin replaces it, so applying one clears it:
-/// otherwise switching back to Daily would report today's map as up while the pin
-/// is still showing, and open the game against it until the Daily render lands.
-///
-/// Pushes the change itself rather than leaving it to `run_now`'s closing push,
-/// which a queued run would hold back for a whole extra render.
-fn mark_painted(app: &AppHandle, target: &Target) {
-    let day = match target.kind {
-        TargetKind::Daily(date) => Some(date),
-        TargetKind::Custom { .. } => None,
-    };
-    let state = app.state::<AppState>();
-    let previous = std::mem::replace(&mut *state.painted_day.lock().unwrap(), day);
-    if previous != day {
-        state.mark_status_dirty();
-    }
-}
-
-/// The signature the wallpaper *should* currently match, or `None` when there's
-/// nothing to render (disabled / no pin). Cheap — the scheduler compares it to
+/// The signature the current target *should* match, or `None` when there's
+/// nothing to show (Customized with no pin). Cheap — the scheduler compares it to
 /// `last_applied` to decide whether a repaint is even needed.
 pub fn desired_signature(app: &AppHandle) -> Option<String> {
     let date = city::today();
@@ -345,9 +366,8 @@ pub fn desired_signature(app: &AppHandle) -> Option<String> {
     resolve_target(app, date, theme).ok().flatten().map(|t| t.signature)
 }
 
-/// Whether there's nothing to repaint: the wallpaper already shows what the current
-/// settings ask for, or they ask for nothing (updates disabled, Customized with no
-/// pin). The scheduler's poll runs on it (`scheduler::reconcile`), and so does a
+/// Whether there's nothing to do: the current settings' map is in hand (and on the
+/// desktop, when syncing), or they ask for nothing (Customized with no pin). The scheduler's poll runs on it (`scheduler::reconcile`), and so does a
 /// change that may have moved the target (`commands::adopt_guess_view`).
 pub fn up_to_date(app: &AppHandle) -> bool {
     desired_signature(app).is_none_or(|desired| {
@@ -360,44 +380,100 @@ pub fn up_to_date(app: &AppHandle) -> bool {
 /// `Force` always runs where a queued `Apply` is skipped once up to date — so use it
 /// when the look changed, which the signature doesn't encode. Declared weakest
 /// first, so queued requests merge to the stronger one with `max` — see
-/// `AppState::rerun`.
+/// `Requests`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RunKind {
     Apply,
     Force,
 }
 
+/// The run requests not yet taken up, and how many have been numbered
+/// (`AppState::requests`). One lock for both, so a request is numbered and queued in
+/// a single step (`ask`), and a pass takes the work and reads the last number in a
+/// single step (`take`): every ticket a pass says it served is one whose work it
+/// took. Numbered in one step and queued in another, a request could be counted by
+/// a pass that never saw its work — a Force's `forget_applied` among it — and its
+/// asker settled from that pass's outcome while its own run was still to come.
+#[derive(Debug, Default)]
+pub struct Requests {
+    /// The work asked for and not yet taken by a pass, merged to the stronger kind:
+    /// a queued `Force` absorbs a queued `Apply`.
+    pending: Option<RunKind>,
+    /// The last ticket handed out. Starts at 0, which no request gets.
+    issued: u64,
+}
+
+impl Requests {
+    /// Number a request for `kind` and queue its work: its ticket.
+    fn ask(&mut self, kind: RunKind) -> u64 {
+        self.issued += 1;
+        self.pending = self.pending.max(Some(kind));
+        self.issued
+    }
+
+    /// The queued work for a pass, and the last ticket that pass serves — or `None`
+    /// when nothing's queued.
+    fn take(&mut self) -> Option<(RunKind, u64)> {
+        self.pending.take().map(|kind| (kind, self.issued))
+    }
+}
+
+/// Number a request for `kind` and queue its work (`Requests::ask`), after whatever
+/// the caller changed: the pass that takes the work then sees the change too.
+fn ask(app: &AppHandle, kind: RunKind) -> u64 {
+    app.state::<AppState>().requests.lock().unwrap().ask(kind)
+}
+
 /// Render today's target (per the current UpdateMode) and apply it as the
-/// wallpaper. A no-op when updates are disabled or a Customized pin isn't set.
+/// wallpaper — or, with syncing off, only fetch its map (`fetch_target`). A no-op
+/// when a Customized pin isn't set. The scheduler's poll waits on it; everything
+/// else asks without waiting (`spawn_run`).
+pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
+    ask(&app, kind);
+    drive(app).await
+}
+
+/// Do the queued work (`Requests`), unless a loop is doing it already.
 ///
 /// Only one run is ever in flight (`state.running` — there's one renderer window).
 /// A request that arrives during a run used to be dropped, which lost real work: the
 /// run in flight had already read its inputs, so a style edit or a caption change
 /// made meanwhile only reached the wallpaper at some later regen. Now it's queued
-/// instead (`AppState::rerun`), and the run that holds `running` goes round again
-/// before letting go — checked and cleared under the same lock that releases
-/// `running`, so a request can't slip in between the last check and the release.
-/// `PipelineStart`/`End` bracket the whole loop, so the UI sees one busy stretch.
-pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
-    {
-        let state = app.state::<AppState>();
+/// instead, and the loop that holds `running` goes round again before letting go —
+/// the queue checked under the same lock that releases `running`, so a request can't
+/// slip in between the last check and the release. `PipelineStart`/`End` bracket the
+/// whole loop, so the UI sees one busy stretch; the `End` says which requests each
+/// pass served and how it went (`RunEnd`).
+async fn drive(app: AppHandle) -> Result<()> {
+    let state = app.state::<AppState>();
+    // The work is taken, and the last ticket it covers read, before the pass reads
+    // anything else: a request changes what it changes before it's queued (`ask`),
+    // so a pass that has taken its work also sees the change.
+    let (mut kind, mut served) = {
         let mut g = state.running.lock().await;
         if *g {
-            let mut rerun = state.rerun.lock().unwrap();
-            *rerun = (*rerun).max(Some(kind));
+            // The loop in flight takes the work before it lets go.
             return Ok(());
         }
+        let Some(work) = state.requests.lock().unwrap().take() else {
+            // A loop that has ended since this was queued took the work.
+            return Ok(());
+        };
         *g = true;
-    }
+        work
+    };
     FrontendEvent::PipelineStart.emit(&app);
-    let mut kind = kind;
     let mut queued = false;
+    let mut passes: Vec<PassEnd> = Vec::new();
     let r = loop {
+        // What this pass is after, to tell a queued request for the same thing from
+        // one for something new, should the pass fail.
+        let attempted = desired_signature(&app);
         // A queued Apply is usually the scheduler's poll landing mid-render, which the
         // render it waited for has already satisfied — rerunning it would just set the
         // same wallpaper again. A queued Force always runs: something changed.
         let r = if queued && kind == RunKind::Apply && up_to_date(&app) {
-            Ok(())
+            Ok(false)
         } else {
             if kind == RunKind::Force {
                 forget_applied(&app);
@@ -405,74 +481,258 @@ pub async fn run_now(app: AppHandle, kind: RunKind) -> Result<()> {
             run_now_inner(&app).await
         };
         queued = true;
-        let state = app.state::<AppState>();
+        passes.push(PassEnd { served, failure: r.as_ref().err().map(|e| e.to_string()), painted: matches!(r, Ok(true)) });
         let mut g = state.running.lock().await;
-        let next = state.rerun.lock().unwrap().take();
+        let same_target_failed = r.is_err() && desired_signature(&app) == attempted;
+        let next = state.requests.lock().unwrap().take();
         match next {
             None => {
                 *g = false;
                 break r;
             }
-            // An Apply queued behind a *failed* run isn't looped into: attempts that
-            // fail slowly (CDN/Overpass timeouts, the renderer's 120s) outlast the
-            // scheduler's 60s poll, which would queue another each time, so the loop
-            // would retry back to back and never release `running` — the UI stuck
-            // busy, `PipelineEnd` and the status push carrying `last_error` never
-            // sent. The poll retries within a minute anyway, against whatever the
-            // target has become by then. A queued Force still runs: something changed.
-            Some(RunKind::Apply) if r.is_err() => {
+            // An Apply queued behind a *failed* run isn't looped into while it would
+            // only try the same target again: attempts that fail slowly (CDN/Overpass
+            // timeouts, the renderer's 120s) outlast the scheduler's 60s poll, which
+            // would queue another each time, so the loop would retry back to back and
+            // never release `running` — the UI stuck busy, `PipelineEnd` and the
+            // status push carrying the error never sent. When the same target is
+            // tried again is the poll's to decide (`poll_may_run`). One for a target
+            // that has moved since — a new pin, the mode switched, the day revealed —
+            // is new work someone asked for, and runs; so does a queued Force.
+            Some((RunKind::Apply, last)) if same_target_failed => {
+                // What it asked for just failed: that failure is its answer, so this
+                // pass covers it too, and nothing waits on it for ever.
+                if let Some(pass) = passes.last_mut() {
+                    pass.served = last;
+                }
                 *g = false;
                 break r;
             }
-            Some(next) => {
+            Some(work) => {
                 if let Err(e) = &r {
                     log::error!("[pipeline] run failed, running the queued one next: {e}");
                 }
-                kind = next;
+                (kind, served) = work;
             }
         }
     };
-    FrontendEvent::PipelineEnd.emit(&app);
+    let served = passes.last().map(|pass| pass.served);
+    FrontendEvent::PipelineEnd(RunEnd { served, passes }).emit(&app);
     // Push the post-render snapshot: running back to false, plus any new
     // date/city/has_water (e.g. the scheduler's midnight reconcile).
-    app.state::<AppState>().mark_status_dirty();
-    r
+    state.mark_status_dirty();
+    r.map(|_| ())
+}
+
+/// How a run loop (`drive`) ended: `pipeline:end`'s payload. The window settles each
+/// request it's waiting on from the pass that served it — the first whose `served`
+/// reaches its ticket — rather than from the loop's last pass, which may have been
+/// another request's, or from the next status, guessing which busy stretch was its
+/// request's.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RunEnd {
+    /// Every request whose ticket is at or below this was served: the last pass's
+    /// `served`. `None` from Dev Mode's preview, which serves none.
+    pub served: Option<u64>,
+    /// Each pass in turn.
+    pub passes: Vec<PassEnd>,
+}
+
+/// One pass of a run loop (`drive`), for the requests it served: those whose tickets
+/// are above the pass before's `served`, and at or below its own.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassEnd {
+    /// The last ticket this pass served (`Requests::take`).
+    pub served: u64,
+    /// Why it failed, or `None` when it didn't.
+    pub failure: Option<String>,
+    /// Whether it put a map on the desktop. With syncing off none does.
+    pub painted: bool,
 }
 
 /// `RunKind::Force`'s extra step: forget what was last applied. The signature names
 /// the target, not its look, so after a style edit it still matches the old image —
 /// and if the render that edit asked for fails, the poll would take the old image
 /// for up to date and never retry. Runs only while holding `state.running` (from
-/// inside `run_now`'s loop): done before taking it, a render already in flight could
+/// inside `drive`'s loop): done before taking it, a render already in flight could
 /// mark its pre-change image applied right after.
 fn forget_applied(app: &AppHandle) {
     *app.state::<AppState>().last_applied.lock().unwrap() = None;
 }
 
-async fn run_now_inner(app: &AppHandle) -> Result<()> {
+/// One pass of `drive`'s loop: resolve today's target and bring it in — painted while
+/// syncing, only fetched otherwise. `Ok(true)` when it put a map on the desktop.
+async fn run_now_inner(app: &AppHandle) -> Result<bool> {
     let date = city::today();
     let theme = effective_theme(app);
     let Some(target) = resolve_target(app, date, theme)? else {
-        // Nothing to render (disabled / no pin). Not an outcome either way, so the
-        // memo below is left exactly as it was.
-        return Ok(());
+        // Nothing to show (no pin). Not an outcome either way, so the errors below
+        // are left exactly as they were.
+        return Ok(false);
     };
-    let r = apply_target(app, &target).await;
-    // Record the Daily outcome for `Status::last_error` — the one path by which a
-    // failure reaches the UI, since every caller of `run_now` is detached and drops
-    // the `Result` (see `AppState::last_error`). Success clears it, so a day that
-    // recovers stops reporting.
-    //
-    // Only the Daily flow, because `Status::city`/`last_error` describe that flow
-    // alone: a pin's failure recorded here would surface as the reason the
-    // *schedule* couldn't name the day, and "apply a pin, then switch back to
-    // Daily" is an ordinary pair of actions. The date is stamped for the same
-    // reason across midnight — see `commands::build_status`.
-    if let TargetKind::Daily(d) = target.kind {
-        *app.state::<AppState>().last_error.lock().unwrap() =
-            r.as_ref().err().map(|e| (d, e.to_string()));
+    let r = if target.paint {
+        apply_target(app, &target).await
+    } else {
+        fetch_target(app, &target).await.map(|()| false)
+    };
+    // Record the outcome against the target — the one path by which a failure
+    // reaches the UI, since every caller of `run_now` is detached and drops the
+    // `Result` (see `AppState::map_error`). Success clears it, so a map that
+    // recovers stops reporting. A run that only fetches says nothing about the
+    // desktop, so it leaves `wall_error` alone.
+    let state = app.state::<AppState>();
+    let at = |e: &anyhow::Error| Some((target.key.clone(), e.to_string()));
+    let (map, wall) = match &r {
+        Ok(_) => (None, None),
+        Err(Failure::Map(e)) => (at(e), None),
+        Err(Failure::Wallpaper(e)) => (None, at(e)),
+    };
+    *state.map_error.lock().unwrap() = map;
+    if target.paint {
+        *state.wall_error.lock().unwrap() = wall;
     }
-    r
+    note_outcome(app, &target, r.is_ok());
+    // A Daily run that has its map sweeps the days gone by, whether it painted the
+    // desktop or only fetched: with syncing off, a fetch is all that ever runs, and
+    // each day's tens of MB would otherwise pile up for good.
+    if r.is_ok() {
+        if let TargetKind::Daily(_) = target.kind {
+            if let Ok(dir) = daily_dir(app) {
+                let _ = cleanup_daily(&dir, city::today());
+            }
+        }
+    }
+    r.map_err(Failure::into_error)
+}
+
+/// The current map's run of failures (`AppState::failed_run`): which map, how many
+/// in a row, and when the scheduler's poll may try it again — `None` for not at all.
+#[derive(Clone, Debug)]
+pub struct FailedRun {
+    pub key: String,
+    pub count: u32,
+    pub retry_at: Option<SystemTime>,
+}
+
+/// How long the poll waits before trying a Daily map again after it failed, by how
+/// many times in a row it has: five minutes, then fifteen, then every hour from the
+/// third on.
+const DAILY_RETRY_MINUTES: [u64; 3] = [5, 15, 60];
+
+/// When the poll may try a map again after its `count`-th failure in a row, from
+/// now — `None` for never.
+///
+/// A Daily map is the background's to get: whoever uses Daily isn't watching for
+/// it, so it's tried again quietly, backing off. A pin isn't: whoever just pinned a
+/// place is watching for it, and decides themselves whether to try again — which
+/// also keeps live Overpass fetches, each pin's only source, as rare as can be.
+fn retry_after(kind: &TargetKind, count: u32) -> Option<Duration> {
+    match kind {
+        TargetKind::Custom { .. } => None,
+        TargetKind::Daily(_) => {
+            let i = (count.max(1) as usize - 1).min(DAILY_RETRY_MINUTES.len() - 1);
+            Some(Duration::from_secs(DAILY_RETRY_MINUTES[i] * 60))
+        }
+    }
+}
+
+/// Keep `target`'s outcome for the poll (`poll_may_run`): a success clears the
+/// record; a failure counts on from one of the same map's, or starts over. Wall
+/// clock rather than a monotonic one, which barely moves while the machine sleeps:
+/// an hour's wait is an hour, asleep or not.
+fn note_outcome(app: &AppHandle, target: &Target, ok: bool) {
+    let state = app.state::<AppState>();
+    let mut failed = state.failed_run.lock().unwrap();
+    if ok {
+        *failed = None;
+        return;
+    }
+    let count = failed.as_ref().filter(|f| f.key == target.key).map_or(0, |f| f.count) + 1;
+    let retry_at = retry_after(&target.kind, count).map(|wait| SystemTime::now() + wait);
+    *failed = Some(FailedRun { key: target.key.clone(), count, retry_at });
+}
+
+/// Whether the scheduler's poll may run now: not while the current map is waiting
+/// out a failure, and never for a pin that failed (`retry_after`). Someone asking —
+/// Regenerate, Retry, a pin applied again, a setting changed — runs regardless; only
+/// the poll waits.
+pub fn poll_may_run(app: &AppHandle) -> bool {
+    let Some((key, _)) = current_map(app) else { return true };
+    match app.state::<AppState>().failed_run.lock().unwrap().as_ref() {
+        Some(f) if f.key == key => f.retry_at.is_some_and(|at| SystemTime::now() >= at),
+        _ => true,
+    }
+}
+
+/// Where a run fell short: getting the map's data — the window has nothing to
+/// show — or, with the data in hand, putting it on the desktop.
+enum Failure {
+    Map(anyhow::Error),
+    Wallpaper(anyhow::Error),
+}
+
+impl Failure {
+    fn into_error(self) -> anyhow::Error {
+        match self {
+            Failure::Map(e) | Failure::Wallpaper(e) => e,
+        }
+    }
+}
+
+/// A run with syncing off: make sure the target's map data is cached for the
+/// window, and leave the desktop alone. Free once it's there: a Daily cache that
+/// already names its city — as `city_for_status`'s memo says, without reading tens
+/// of MB again — or a pin's square, written whole (`atomic::write`), is taken as it
+/// is (the window reads the file itself), unless Dev Mode's bypass asks for the map
+/// afresh.
+async fn fetch_target(app: &AppHandle, target: &Target) -> Result<(), Failure> {
+    let bypass = app.state::<AppState>().effective_bypass_cache();
+    let cached = !bypass
+        && target.osm_path.exists()
+        && match target.kind {
+            TargetKind::Daily(date) => city_for_status(app, date).is_some(),
+            TargetKind::Custom { .. } => true,
+        };
+    if !cached {
+        prune_other_pins(app, target);
+        let quick = match target.kind {
+            TargetKind::Daily(date) if !bypass => cache_published_day(app, target, date).await,
+            _ => false,
+        };
+        if !quick {
+            let resolved = resolve_and_record(app, target).await.map_err(Failure::Map)?;
+            acquire_osm(app, target, resolved).await.map_err(Failure::Map)?;
+        }
+    }
+    mark_applied(app, &target.signature);
+    Ok(())
+}
+
+/// `fetch_target`'s short way to a Daily map: the published manifest
+/// (`cdn::fetch_scheduled_raw`), written to the cache as published, and its city
+/// recorded as `resolve_and_record` records it — no `Value` built, since nothing
+/// here draws it. `false` on any miss, for the whole ladder to take over (whose
+/// manifest rung then asks again: a few quick misses, against a reconstruction).
+async fn cache_published_day(app: &AppHandle, target: &Target, date: NaiveDate) -> bool {
+    let (city, bytes) = match cdn::fetch_scheduled_raw(&date.to_string()).await {
+        Ok(got) => got,
+        Err(e) => {
+            log::info!("[pipeline] no manifest for {date} ({e}); going down the ladder");
+            return false;
+        }
+    };
+    if let Err(e) = crate::atomic::write(&target.osm_path, &bytes) {
+        log::warn!("[pipeline] couldn't cache {date}'s map ({e}); going down the ladder");
+        return false;
+    }
+    log::info!("[pipeline] scheduled city for {}: {} ({}), cached as published", date, city.name, city.country);
+    let state = app.state::<AppState>();
+    *state.resolved_city.lock().unwrap() = Some((date, Some(city)));
+    // The city, and the map now to hand (`Status::map_ready`).
+    state.mark_status_dirty();
+    true
 }
 
 /// Everything `run_now_inner` does once it knows *what* to render: resolve, render
@@ -486,29 +746,35 @@ async fn run_now_inner(app: &AppHandle) -> Result<()> {
 /// has since changed. The map data is still reused — `resolve_and_record` reads the
 /// cached `.osm.json` first — so switching Customized → Daily and back to the same
 /// pin, or a theme flip, costs a render, never a download.
-async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
-    let live = wallpaper_dir(app)?;
+///
+/// `Ok(true)` once the picture is on the desktop; `Ok(false)` when syncing was turned
+/// off while it rendered — a pin's fetch and render can take minutes — since off
+/// means the desktop keeps whatever it has (`commands::set_sync`). The picture then
+/// stays in the cache, nothing is marked applied, and the fetch-only run that
+/// turning it off queued takes over.
+async fn apply_target(app: &AppHandle, target: &Target) -> Result<bool, Failure> {
+    let live = wallpaper_dir(app).map_err(Failure::Wallpaper)?;
+    prune_other_pins(app, target);
 
-    // A new Customized coordinate supersedes any previous pin — drop the old
-    // pin's files before writing the new ones so only the active pin is kept.
+    render_and_cache(app, target).await?;
+    if !app.state::<AppState>().sync_wallpaper.load(Ordering::Acquire) {
+        log::info!("[pipeline] syncing turned off mid-run; not setting {}", target.key);
+        return Ok(false);
+    }
+    wallpaper_set::set(&target.png_path, &live).map_err(Failure::Wallpaper)?;
+    mark_applied(app, &target.signature);
+    log::info!("[pipeline] wallpaper set: {}", target.key);
+    Ok(true)
+}
+
+/// A new Customized coordinate supersedes any previous pin: the old pin's files go
+/// before the new one's are written, so only the active pin is kept.
+fn prune_other_pins(app: &AppHandle, target: &Target) {
     if let TargetKind::Custom { ref key, .. } = target.kind {
         if let Ok(dir) = custom_dir(app) {
             let _ = prune_other_custom(&dir, key);
         }
     }
-
-    let (city, _png) = render_and_cache(app, target).await?;
-    wallpaper_set::set(&target.png_path, &live)?;
-    mark_applied(app, &target.signature);
-    mark_painted(app, target);
-
-    if let TargetKind::Daily(_) = target.kind {
-        if let Ok(dir) = daily_dir(app) {
-            let _ = cleanup_daily(&dir, city::today());
-        }
-    }
-    log::info!("[pipeline] wallpaper set: {} ({})", city.name, city.country);
-    Ok(())
 }
 
 /// Resolve `target`, render it, and write both halves to its cache — the day's
@@ -516,14 +782,11 @@ async fn apply_target(app: &AppHandle, target: &Target) -> Result<()> {
 /// Everything the pipeline does for a target *except* applying the wallpaper, so
 /// `run_now_inner` and Dev Mode's Advance Preview can share one path and can't
 /// drift apart. Returns the city drawn plus the PNG bytes.
-async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::City, Vec<u8>)> {
-    let resolved = resolve_and_record(app, target).await?;
+async fn render_and_cache(app: &AppHandle, target: &Target) -> Result<(city::City, Vec<u8>), Failure> {
+    let resolved = resolve_and_record(app, target).await.map_err(Failure::Map)?;
     let city = resolved.city.clone();
     let bytes = render_bytes_for(app, target, resolved).await?;
-    if let Some(parent) = target.png_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(&target.png_path, &bytes)?;
+    crate::atomic::write(&target.png_path, &bytes).map_err(|e| Failure::Wallpaper(e.into()))?;
     Ok((city, bytes))
 }
 
@@ -559,12 +822,12 @@ struct Resolved {
 }
 
 /// The synthetic `City` a Customized pin renders as. Not a real place — there's
-/// no GeoNames id or name for arbitrary coordinates — so it carries the formatted
-/// coordinates as its name for logging and gets `id: 0`.
+/// no GeoNames id, name or country for arbitrary coordinates — so it's its
+/// coordinates alone, which is all its caption shows (core/label.ts), and `id: 0`.
 fn pin_city(lat: f64, lon: f64) -> city::City {
     city::City {
         id: 0,
-        name: format!("{lat:.4}, {lon:.4}"),
+        name: String::new(),
         local_name: String::new(),
         country: String::new(),
         lat,
@@ -579,8 +842,13 @@ fn pin_city(lat: f64, lon: f64) -> city::City {
 /// memo.
 async fn resolve_and_record(app: &AppHandle, target: &Target) -> Result<Resolved> {
     match target.kind {
+        // A pin is never published, and Dev Mode's bypass leaves pins alone
+        // (`AppState::bypass_cache_for`) — each would be another live Overpass fetch.
+        // Once its square is cached, that's the pin's map; Dev Mode's Clean cache is
+        // the way to have it fetched afresh (`commands::clean_cache`).
         TargetKind::Custom { lat, lon, .. } => {
-            Ok(Resolved { city: pin_city(lat, lon), osm: None, stamp: None })
+            let osm = cached_osm_at(&target.osm_path).map(DayOsm::Cached);
+            Ok(Resolved { city: pin_city(lat, lon), osm, stamp: None })
         }
         TargetKind::Daily(date) => {
             let resolved = resolve_daily(app, date, &target.osm_path).await?;
@@ -619,8 +887,8 @@ async fn resolve_and_record(app: &AppHandle, target: &Target) -> Result<Resolved
 /// fallback: it needs only a few KB of the state file, so the case the rotation
 /// covered had narrowed to "GitHub and every CDN edge unreachable, but Overpass
 /// reachable". When even that misses, the day is unresolvable and this returns
-/// `Err` — the caller leaves yesterday's wallpaper up and the scheduler retries on
-/// its next poll, rather than painting a city nothing else agrees on.
+/// `Err` — the caller leaves yesterday's wallpaper up and the scheduler tries again,
+/// backing off (`poll_may_run`), rather than painting a city nothing else agrees on.
 ///
 /// Dev Mode's "bypass cache & CDN" jumps straight to rung 3 — see below.
 async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Result<Resolved> {
@@ -658,50 +926,11 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
     //     under a PNG still cached for the other theme. The PNG cache key is
     //     date+theme, not city, so once a day is rendered it must keep its city.
     //
-    // An envelope-less payload predates the `city` stamp — every flow that writes
-    // one now stamps it (see `stamp`). Nothing on disk says which city such a
-    // payload depicts, and the rotation that used to name it is gone, so it reads
-    // as a miss: pairing it with a city resolved further down would draw one city's
-    // map under another's name.
-    //
-    // It's deleted rather than left for the answering rung to overwrite, because
-    // the rungs below can *fail* (no host, or Overpass down after the state file
-    // named the day) and then nothing overwrites anything. The file would sit there
-    // unusable while every 60s poll re-read and re-parsed it — tens of MB — only to
-    // discard it again. Deleting costs nothing: the payload is regenerable, and it
-    // is provably unnameable, so there is no future in which we'd want it back.
+    // Every writer of this file stamps the day's city on it (see `stamp`).
     if let Some(v) = cached_osm_at(osm_path) {
-        match city_envelope(&v) {
-            Some(city) => {
-                log::info!(
-                    "[pipeline] city for {} from cache: {} ({})",
-                    date,
-                    city.name,
-                    city.country
-                );
-                return Ok(Resolved { city, osm: Some(DayOsm::Cached(v)), stamp: Some(date) });
-            }
-            None => match fs::remove_file(osm_path) {
-                Ok(()) => log::info!(
-                    "[pipeline] dropped the cached payload for {}: no city envelope, so nothing \
-                     can name it; re-resolving the day",
-                    date
-                ),
-                // Worth its own line rather than a swallowed `let _`: a delete that
-                // didn't happen is a file re-read and re-parsed on every 60s poll —
-                // tens of MB, to reach this same branch again — which is precisely
-                // the cost the delete exists to avoid. Not hypothetical on Windows,
-                // where an indexer, AV scanner or sync client holding a handle
-                // denies the unlink. The day still resolves either way, so this
-                // doesn't abort the ladder.
-                Err(e) => log::warn!(
-                    "[pipeline] couldn't drop the unnameable cached payload for {} ({}); \
-                     re-resolving the day anyway, but it will be re-read every poll \
-                     until it goes",
-                    date,
-                    e
-                ),
-            },
+        if let Some(city) = city_envelope(&v) {
+            log::info!("[pipeline] city for {} from cache: {} ({})", date, city.name, city.country);
+            return Ok(Resolved { city, osm: Some(DayOsm::Cached(v)), stamp: Some(date) });
         }
     }
 
@@ -751,32 +980,26 @@ async fn resolve_daily(app: &AppHandle, date: NaiveDate, osm_path: &Path) -> Res
 ///  2. That day's cached OSM payload. `run_now_inner` short-circuits on an
 ///     existing PNG without resolving anything, so after a restart onto an
 ///     already-rendered day (1) is empty; the cached payload carries the `city`
-///     envelope both published flows now stamp on, so it says exactly what was
-///     rendered.
+///     envelope every writer stamps on, so it says exactly what was rendered.
 ///
 /// `None` when neither has an answer — the day hasn't been rendered yet (first
 /// launch of a day, a render still in flight or one that couldn't reach the
-/// schedule), or its cached payload predates the `city` envelope. There is
+/// schedule). There is
 /// deliberately no third source: naming the day from a local formula is exactly
 /// what the retired rotation did, and it would report a city the wallpaper doesn't
-/// show. The City tab renders the gap as a placeholder.
+/// show. The home renders the gap as a placeholder.
 ///
-/// The answer is memoized under (1) **whether or not there was one** — (2) is the
-/// expensive source and its miss is the expensive miss: an envelope-less payload
-/// is read and parsed in full, tens of MB, only to yield nothing. `Status` is
-/// rebuilt on every settings change, so a miss that isn't remembered is re-paid on
-/// each one, all day. That combination is reachable rather than theoretical: a day
-/// already rendered by a build that predates the `city` envelope keeps its payload,
-/// because `apply_target` short-circuits on the existing PNG and never reaches the
-/// `resolve_daily` rung that would delete it.
+/// The answer is memoized under (1) **whether or not there was one**: `Status` is
+/// rebuilt on every settings change, and (2) reads a payload of tens of MB.
 ///
 /// A memoized `None` can't go stale. The only way this day acquires an answer later
-/// is a render, `render_bytes_for` is the only writer of `<date>.osm.json`, and it
-/// is reachable only through `render_and_cache` — which calls `resolve_and_record`
-/// first, overwriting the memo with the city it resolved.
+/// is its payload being written, and every writer records the city as it does,
+/// overwriting the memo: a render or a fetch-only run going down the ladder
+/// (`resolve_and_record`, first), or a fetch-only run's published manifest
+/// (`cache_published_day`, alongside).
 ///
 /// Describes the *Daily* flow only, which is what `Status::city` reports — a
-/// Customized pin is shown by its own City-tab panel from `Status::custom`.
+/// Customized pin is shown from `Status::custom`.
 pub fn city_for_status(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
     let state = app.state::<AppState>();
     if let Some((d, c)) = state.resolved_city.lock().unwrap().as_ref() {
@@ -791,8 +1014,14 @@ pub fn city_for_status(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
 
 /// The Daily flow's OSM cache filename for `date`. One definition so
 /// `daily_target` and `cached_day_city` can't drift apart.
+///
+/// Not `<date>.osm.json`, the name earlier versions wrote: a day they had to rebuild
+/// live (no manifest on the CDN) they fetched as their screen's crop alone, which the
+/// window — laying every day as the 20 km square — would show with bands missing. So
+/// those are never read: the day is had again, once, as the square, and the old file
+/// ages out with the rest (`cleanup_daily`). As pins did (`pin_osm_name`).
 fn daily_osm_name(date: NaiveDate) -> String {
-    format!("{}.osm.json", date)
+    format!("{date}.square.osm.json")
 }
 
 /// The cached OSM payload at `path`, or `None` when there is none / it won't
@@ -808,7 +1037,7 @@ fn city_envelope(v: &serde_json::Value) -> Option<city::City> {
     serde_json::from_value(v.get("city")?.clone()).ok()
 }
 
-/// The `city` envelope on `<date>.osm.json` in the *Daily* cache —
+/// The `city` envelope on `<date>.square.osm.json` in the *Daily* cache —
 /// `city_for_status`'s source (2). Deserializes that one field and lets serde skip
 /// the map data rather than build it into a `Value`: the memo runs this on its first
 /// call of a day, which the scheduler's poll can make, and a tens-of-MB `Value` just
@@ -830,25 +1059,26 @@ fn cached_day_city(app: &AppHandle, date: NaiveDate) -> Option<city::City> {
 /// `target.signature` doubles as the job id: the renderer echoes it back and it's
 /// matched against the pending job, so a stale result (e.g. a superseded custom pin)
 /// is rejected.
-async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) -> Result<Vec<u8>> {
-    let renderer = ensure_renderer(app).await?;
-    let ((w, h), screens) = screen_geometry(&renderer)?;
-    let aspect = w as f64 / h as f64;
-    // A 20km long side: the same `max_half_km` (packages/core/src/defaults.json) that
-    // osm-cli precaches each day's square with, at aspect 1 — the superset every
-    // screen-aspect rectangle here fits inside, so the CDN data always covers the
-    // wallpaper (`pnpm bbox-test` checks the square contains them all).
+async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) -> Result<Vec<u8>, Failure> {
+    let (city, osm) = acquire_osm(app, target, resolved).await.map_err(Failure::Map)?;
+    render_bytes(app, target, &city, osm).await.map_err(Failure::Wallpaper)
+}
+
+/// The target's map data, in hand and in its cache: what resolving it already
+/// produced, or — for a pin not fetched yet, the reconstruction rung, or Dev Mode's
+/// bypass — fetched live as the square every screen's crop lies in, and written back.
+async fn acquire_osm(app: &AppHandle, target: &Target, resolved: Resolved) -> Result<(city::City, serde_json::Value)> {
     let Resolved { city, osm: preloaded, stamp } = resolved;
-    let bbox = bbox_for_screen(city.lat, city.lon, defaults::get().max_half_km, aspect);
 
     // The back half of the acquisition ladder `resolve_daily` documents: its first
     // two rungs (cache, schedule manifest) arrive here already resolved as
     // `preloaded`, because they also decide *which city* this is. What's left is the
     // live sidecar — which honors the proxy, important for mainland-China users.
     //
-    // The published square is a superset of `bbox`, so the renderer projects within
-    // `bbox` and clips the rest; the sidecar fetches exactly `bbox` to save
-    // bandwidth.
+    // Every rung yields the same square — the published one, or the one fetched live
+    // here — so the window can lay it for any shape of its own, as the website lays a
+    // day's, and the renderer projects within its screen's crop and clips the rest.
+    let written = !matches!(preloaded, Some(DayOsm::Cached(_)));
     let osm: serde_json::Value = match preloaded {
         // Fetched from the date-keyed schedule manifest (issue #1): authoritative
         // for the scheduled city, so cache + use it directly (overwriting any
@@ -860,13 +1090,14 @@ async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) 
         // Already the contents of `target.osm_path` — writing it back would just burn
         // a multi-MB write.
         Some(DayOsm::Cached(v)) => v,
-        // Nothing preloaded: a Customized pin (arbitrary coordinates, never
-        // published), the reconstruction rung, or Dev Mode's bypass. Written back
-        // afterwards, so a bypassed fetch overwrites the stale local data as
+        // Nothing preloaded: a Customized pin not fetched yet (arbitrary coordinates,
+        // never published), the reconstruction rung, or Dev Mode's bypass. Written
+        // back afterwards, so a bypassed fetch overwrites the stale local data as
         // documented.
         None => {
             log::info!("[pipeline] fetching osm live from sidecar");
-            let mut v = osm_sidecar::fetch(app, bbox).await?;
+            let square = bbox_for_screen(city.lat, city.lon, defaults::get().max_half_km, 1.0);
+            let mut v = osm_sidecar::fetch(app, square).await?;
             if let Some(date) = stamp {
                 stamp_manifest_envelope(&mut v, date, &city);
             }
@@ -874,7 +1105,24 @@ async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) 
             v
         }
     };
+    // Written: the window can draw it now (`Status::map_ready`) rather than once the
+    // wallpaper is rendered and set, and the pin line stops showing a fetch.
+    if written {
+        app.state::<AppState>().mark_status_dirty();
+    }
+    Ok((city, osm))
+}
 
+/// Draw `osm` for the screen in the hidden renderer window, in the current style,
+/// returning the PNG bytes.
+async fn render_bytes(app: &AppHandle, target: &Target, city: &city::City, osm: serde_json::Value) -> Result<Vec<u8>> {
+    let renderer = ensure_renderer(app).await?;
+    let ((w, h), screens) = screen_geometry(&renderer)?;
+    // The screen's crop of the square the data was had for (`acquire_osm`): the same
+    // 20 km long side (`max_half_km`, packages/core/src/defaults.json) — the square
+    // is the superset every screen-aspect rectangle fits inside, so the data always
+    // covers the wallpaper (`pnpm bbox-test` checks the square contains them all).
+    let bbox = bbox_for_screen(city.lat, city.lon, defaults::get().max_half_km, w as f64 / h as f64);
     let theme = effective_theme(app);
     let colors = colors_for(app, theme);
     let preset = *app.state::<AppState>().style.lock().unwrap();
@@ -902,6 +1150,8 @@ async fn render_bytes_for(app: &AppHandle, target: &Target, resolved: Resolved) 
         *g = Some(PendingJob { date: target.signature.clone(), tx });
     }
 
+    // A pin has no name (`pin_city`), so its caption is its coordinates alone: the
+    // renderer sets them as the caption's one line (core/label.ts).
     let label = target.label.map(|corner| LabelPayload {
         corner,
         name: city.name.clone(),
@@ -946,13 +1196,12 @@ fn stamp_manifest_envelope(v: &mut serde_json::Value, date: NaiveDate, city: &ci
     }
 }
 
-/// Write a payload to its cache path, creating the directory (see the note above
-/// the `*_dir` helpers — writers own creation).
+/// Write a payload to its cache path, whole or not at all (`atomic::write`, which
+/// also creates the directory — see the note above the `*_dir` helpers). The window
+/// reads the file as soon as it exists (`Status::map_ready`), and so does the next
+/// launch: a write cut short by a quit or a crash must leave no half of it there.
 fn write_osm(path: &Path, v: &serde_json::Value) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(path, v.to_string())?;
+    crate::atomic::write(path, v.to_string().as_bytes())?;
     Ok(())
 }
 
@@ -990,7 +1239,7 @@ pub async fn render_preview(
     let theme = effective_theme(app);
     let r = match daily_target(app, date, theme) {
         Ok(target) => {
-            let out = render_and_cache(app, &target).await;
+            let out = render_and_cache(app, &target).await.map_err(Failure::into_error);
             if let Ok(dir) = daily_dir(app) {
                 let _ = cleanup_daily(&dir, city::today());
             }
@@ -999,38 +1248,29 @@ pub async fn render_preview(
         Err(e) => Err(e),
     };
     // A run requested while the preview held `running` was queued for it (see
-    // `run_now`); hand it on now that the renderer is free.
+    // `drive`); hand it on now that the renderer is free.
     let state = app.state::<AppState>();
     let queued = {
         let mut g = state.running.lock().await;
         *g = false;
-        state.rerun.lock().unwrap().take()
+        state.requests.lock().unwrap().pending.is_some()
     };
-    FrontendEvent::PipelineEnd.emit(app);
+    FrontendEvent::PipelineEnd(RunEnd { served: None, passes: Vec::new() }).emit(app);
     state.mark_status_dirty();
-    if let Some(kind) = queued {
-        spawn_run(app.clone(), kind);
+    if queued {
+        spawn_drive(app.clone());
     }
     r
 }
 
-/// The hidden renderer window, built on demand if `setup` hasn't already made it.
+/// The hidden renderer window `lib.rs`'s setup builds, once its webview is ready.
 ///
-/// Both paths wait for readiness, and that's the point: the window *existing* says
-/// nothing about the webview inside it having subscribed yet. `render-request` is a
-/// fire-and-forget `emit`, so a render that gets here first has its request dropped
-/// on the floor and then burns the full 120s result timeout ("renderer timeout").
-/// Since `lib.rs`'s setup pre-builds the window, the found path is the one that
-/// actually runs in production — it used to be the one that skipped the wait.
+/// The window *existing* says nothing about the webview inside it having
+/// subscribed yet. `render-request` is a fire-and-forget `emit`, so a render that
+/// gets here first would have its request dropped on the floor and then burn the
+/// full 120s result timeout ("renderer timeout").
 async fn ensure_renderer(app: &AppHandle) -> Result<WebviewWindow> {
-    let w = match app.get_webview_window("renderer") {
-        Some(w) => w,
-        None => WebviewWindowBuilder::new(app, "renderer", WebviewUrl::App("render.html".into()))
-            .visible(false)
-            .skip_taskbar(true)
-            .title("InkCity Renderer")
-            .build()?,
-    };
+    let w = app.get_webview_window("renderer").ok_or_else(|| anyhow!("no renderer window"))?;
     wait_renderer_ready(app).await?;
     Ok(w)
 }
@@ -1185,10 +1425,18 @@ fn for_each_daily_artifact(dir: &Path, mut f: impl FnMut(&fs::DirEntry, NaiveDat
 ///
 /// `today` is a parameter rather than a `city::today()` call so the windows are
 /// testable without moving the clock.
+///
+/// A temp file left by a write cut short (`atomic::write`) goes whatever its date:
+/// nothing reads it, and no write is under way while this runs — both happen only
+/// inside a run, which holds `running`.
 fn cleanup_daily(dir: &Path, today: NaiveDate) -> Result<()> {
     for_each_daily_artifact(dir, |entry, d| {
         let age = (today - d).num_days();
-        let keep = if entry.file_name().to_string_lossy().ends_with(".osm.json") {
+        let name = entry.file_name();
+        let name = name.to_string_lossy();
+        let keep = if name.ends_with(".tmp") {
+            false
+        } else if name.ends_with(".osm.json") {
             (0..=KEEP_OSM_DAYS).contains(&age)
         } else {
             age <= KEEP_DAYS
@@ -1199,12 +1447,21 @@ fn cleanup_daily(dir: &Path, today: NaiveDate) -> Result<()> {
     })
 }
 
+/// A pin's map data's file name. Not `<key>.osm.json`, the name earlier versions
+/// wrote: theirs is only the crop of the screen it was rendered for, which a window
+/// of another shape would run off the edge of — so it's fetched again, once, as the
+/// square, and the old file is swept with the rest.
+fn pin_osm_name(key: &str) -> String {
+    format!("{key}.square.osm.json")
+}
+
 /// Drop every file in the customized cache that doesn't belong to `key` (the
 /// active pin), so applying a new coordinate leaves only that coordinate's
-/// files. A pin's files are `<key>.osm.json` and `<key>.png`; the
-/// `<key>-<theme>.png` names older versions wrote go too, since nothing reads them.
+/// files. A pin's files are `pin_osm_name` and `<key>.png`; the names older
+/// versions wrote (`<key>.osm.json`, `<key>-<theme>.png`) go too, since nothing
+/// reads them.
 fn prune_other_custom(dir: &Path, key: &str) -> Result<()> {
-    let osm = format!("{key}.osm.json");
+    let osm = pin_osm_name(key);
     let png = format!("{key}.png");
     for entry in fs::read_dir(dir)? {
         let entry = entry?;
@@ -1258,10 +1515,20 @@ pub fn wipe_cache(app: &AppHandle) -> Result<(usize, u64)> {
     Ok((files, bytes))
 }
 
-fn spawn_run(app: AppHandle, kind: RunKind) {
+/// Request a run, detached: number and queue the request (`ask`), then start a loop
+/// to do it — or leave it to the loop in flight. Returns the request's ticket: the
+/// pass in `pipeline:end` whose `served` first reaches it is the one that served it.
+fn spawn_run(app: AppHandle, kind: RunKind) -> u64 {
+    let ticket = ask(&app, kind);
+    spawn_drive(app);
+    ticket
+}
+
+/// `drive`, detached: errors are logged.
+fn spawn_drive(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
-        if let Err(e) = run_now(app, kind).await {
-            log::error!("[pipeline] {kind:?} run failed: {e}");
+        if let Err(e) = drive(app).await {
+            log::error!("[pipeline] run failed: {e}");
         }
     });
 }
@@ -1269,23 +1536,102 @@ fn spawn_run(app: AppHandle, kind: RunKind) {
 /// Render + apply the current mode's wallpaper (OSM data is reused if cached).
 /// Fire-and-forget; errors are logged. Used on mode switches / applying a pin /
 /// revealing today's city or moving its caption — changes that move the target, so
-/// the signature alone tells the poll whether they landed. A no-op when disabled /
-/// no pin.
-pub fn spawn_apply(app: AppHandle) {
-    spawn_run(app, RunKind::Apply);
+/// the signature alone tells the poll whether they landed. With syncing off it only
+/// fetches the map. A no-op with no pin. Returns the request's ticket (`spawn_run`).
+pub fn spawn_apply(app: AppHandle) -> u64 {
+    spawn_run(app, RunKind::Apply)
 }
 
 /// Render + apply today's wallpaper when what changed is its look, which the
 /// signature doesn't encode — see `forget_applied`. Used for theme switches,
 /// style/color/layer edits, and "regenerate now".
-/// Fire-and-forget: errors are logged. A no-op when updates are disabled / no pin.
-pub fn spawn_force_regen(app: AppHandle) {
-    spawn_run(app, RunKind::Force);
+/// Fire-and-forget: errors are logged. A no-op with no pin. Returns the request's
+/// ticket (`spawn_run`).
+pub fn spawn_force_regen(app: AppHandle) -> u64 {
+    spawn_run(app, RunKind::Force)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_pass_serves_only_the_requests_whose_work_it_took() {
+        let mut queue = Requests::default();
+        assert_eq!(queue.take(), None, "nothing asked for, nothing to do");
+        let apply = queue.ask(RunKind::Apply);
+        let force = queue.ask(RunKind::Force);
+        assert!(apply < force);
+        // Both asked before the pass: merged to the stronger, both served by it.
+        assert_eq!(queue.take(), Some((RunKind::Force, force)));
+        // Asked once the pass has its work: the next pass's, never this one's.
+        let later = queue.ask(RunKind::Apply);
+        assert_eq!(queue.take(), Some((RunKind::Apply, later)));
+        assert_eq!(queue.take(), None);
+    }
+
+    /// The loop's side of `Requests` while the window's commands and the scheduler
+    /// ask from other threads. Were a request numbered in one step and queued in
+    /// another, a pass could count a ticket whose work wasn't queued yet, and the
+    /// pass that later took that work would serve no ticket of its own.
+    #[test]
+    fn every_ticket_asked_from_many_threads_is_served_by_exactly_one_pass() {
+        use std::sync::{Arc, Mutex};
+        const THREADS: u64 = 8;
+        const EACH: u64 = 500;
+        let queue = Arc::new(Mutex::new(Requests::default()));
+        let askers: Vec<_> = (0..THREADS)
+            .map(|i| {
+                let queue = Arc::clone(&queue);
+                std::thread::spawn(move || {
+                    (0..EACH)
+                        .map(|j| {
+                            let kind = if (i + j) % 3 == 0 { RunKind::Force } else { RunKind::Apply };
+                            queue.lock().unwrap().ask(kind)
+                        })
+                        .collect::<Vec<u64>>()
+                })
+            })
+            .collect();
+        let mut served = vec![0];
+        loop {
+            let asked = askers.iter().all(|t| t.is_finished());
+            let taken = queue.lock().unwrap().take();
+            match taken {
+                Some((_, last)) => served.push(last),
+                None if asked => break,
+                None => std::thread::yield_now(),
+            }
+        }
+        let mut tickets: Vec<u64> = askers.into_iter().flat_map(|t| t.join().unwrap()).collect();
+        tickets.sort_unstable();
+        assert_eq!(tickets, (1..=THREADS * EACH).collect::<Vec<_>>(), "each request numbered once, none skipped");
+        assert!(served.windows(2).all(|w| w[0] < w[1]), "every pass serves a ticket the one before didn't");
+        assert_eq!(served.last(), Some(&(THREADS * EACH)), "no ticket left unserved");
+    }
+
+    /// `RunEnd` crosses the IPC boundary untyped: apps/desktop/src/types.ts reads
+    /// these keys, and settles each waiting request from its own pass.
+    #[test]
+    fn run_end_payload_uses_the_keys_the_window_reads() {
+        let end = RunEnd {
+            served: Some(7),
+            passes: vec![
+                PassEnd { served: 5, failure: None, painted: true },
+                PassEnd { served: 7, failure: Some("renderer timed out".into()), painted: false },
+            ],
+        };
+        assert_eq!(
+            serde_json::to_value(&end).unwrap(),
+            serde_json::json!({
+                "served": 7,
+                "passes": [
+                    { "served": 5, "failure": null, "painted": true },
+                    { "served": 7, "failure": "renderer timed out", "painted": false },
+                ],
+            })
+        );
+    }
 
     /// The renderer's `Style` payload is the one place with hand-written
     /// `#[serde(rename)]`s, and nothing type-checks it across the IPC boundary: a
@@ -1348,7 +1694,7 @@ mod tests {
         assert_eq!(city.local_name, "深圳");
     }
 
-    // Anything cached before the envelope existed: unnameable, so `resolve_daily`
+    // An unstamped payload names no city, so `resolve_daily`
     // treats it as a cache miss and `city_for_status` reports `None`.
     #[test]
     fn city_envelope_absent_on_an_unstamped_payload() {
@@ -1476,11 +1822,12 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("inkcity-prune-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
-        let keep = ["51.5_-0.12.osm.json", "51.5_-0.12.png"];
+        let keep = ["51.5_-0.12.square.osm.json", "51.5_-0.12.png"];
         let drop = [
-            "48.85_2.35.osm.json",
+            "48.85_2.35.square.osm.json",
             "48.85_2.35.png",
             // The active pin's names from older versions: never read, so swept.
+            "51.5_-0.12.osm.json",
             "51.5_-0.12-light.png",
             "51.5_-0.12-dark.png",
         ];
@@ -1495,6 +1842,26 @@ mod tests {
             assert!(!dir.join(f).exists(), "{f} should have been pruned");
         }
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    /// Earlier versions' day caches were sometimes only their screen's crop: the
+    /// name moved so those are never read as the square the window lays.
+    #[test]
+    fn a_days_cache_is_named_for_the_square() {
+        let date = NaiveDate::from_ymd_opt(2026, 11, 7).unwrap();
+        assert_eq!(daily_osm_name(date), "2026-11-07.square.osm.json");
+    }
+
+    /// A Daily map is tried again after 5 minutes, then 15, then every hour; a pin
+    /// that failed is never tried again by the poll.
+    #[test]
+    fn retry_backs_off_for_a_day_and_never_for_a_pin() {
+        let day = TargetKind::Daily(NaiveDate::from_ymd_opt(2026, 11, 7).unwrap());
+        let minutes = |n: u32| retry_after(&day, n).map(|d| d.as_secs() / 60);
+        assert_eq!([1, 2, 3, 4, 10].map(minutes), [Some(5), Some(15), Some(60), Some(60), Some(60)]);
+        let pin = TargetKind::Custom { key: "48.85_2.35".into(), lat: 48.85, lon: 2.35 };
+        assert_eq!(retry_after(&pin, 1), None);
+        assert_eq!(retry_after(&pin, 5), None);
     }
 
     /// The whole point of splitting the retention: a week of `.osm.json` was
@@ -1512,9 +1879,9 @@ mod tests {
 
         let keep = [
             // Today and yesterday: both halves live.
-            format!("{}.osm.json", day(0)),
+            format!("{}.square.osm.json", day(0)),
             format!("{}.png", day(0)),
-            format!("{}.osm.json", day(-1)),
+            format!("{}.square.osm.json", day(-1)),
             format!("{}.png", day(-1)),
             // Still inside the PNG window.
             format!("{}.png", day(-7)),
@@ -1534,6 +1901,8 @@ mod tests {
             format!("{}-light-label-top-left.png", day(-8)),
             // A future preview's payload: re-previewing re-resolves anyway.
             format!("{}.osm.json", day(5)),
+            // Today's payload, from a write cut short: never read.
+            format!("{}.osm.json.tmp", day(0)),
         ];
         for f in keep.iter().chain(drop.iter()) {
             fs::write(dir.join(f), b"x").unwrap();
@@ -1555,14 +1924,15 @@ mod tests {
     #[test]
     fn a_caption_moves_the_signature_but_not_the_png() {
         let date = NaiveDate::from_ymd_opt(2026, 10, 16).unwrap();
-        assert_eq!(daily_signature(date, "light", None), "daily:2026-10-16:light");
+        let key = format!("daily:{date}");
+        assert_eq!(render_signature(&key, EffectiveTheme::Light, None), "daily:2026-10-16:light");
         assert_eq!(
-            daily_signature(date, "dark", Some("bottom-right")),
+            render_signature(&key, EffectiveTheme::Dark, Some("bottom-right")),
             "daily:2026-10-16:dark:label-bottom-right"
         );
         assert_ne!(
-            daily_signature(date, "dark", Some("top-left")),
-            daily_signature(date, "dark", Some("bottom-right"))
+            render_signature(&key, EffectiveTheme::Dark, Some("top-left")),
+            render_signature(&key, EffectiveTheme::Dark, Some("bottom-right"))
         );
         assert_eq!(daily_png_name(date), "2026-10-16.png");
     }

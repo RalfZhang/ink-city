@@ -51,7 +51,7 @@ export function railwaysSelector(b: Bbox): string {
  * skipped here as well as in the query, so any payload is cleaned even if it
  * carried them (see isServiceTrack).
  */
-export function slimRailways(raw: RawOsm, coordPrecision?: number): RailwayFeature[] {
+export function slimRailways(raw: RawOsm, coordPrecision: number): RailwayFeature[] {
   const features: RailwayFeature[] = [];
 
   for (const el of raw.elements ?? []) {
@@ -64,7 +64,7 @@ export function slimRailways(raw: RawOsm, coordPrecision?: number): RailwayFeatu
     features.push({ line: pts });
   }
 
-  return coordPrecision === undefined ? features : roundFeatures(features, coordPrecision);
+  return roundFeatures(features, coordPrecision);
 }
 
 function roundFeatures(features: RailwayFeature[], precision: number): RailwayFeature[] {

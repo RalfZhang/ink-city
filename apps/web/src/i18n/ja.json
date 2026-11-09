@@ -3,52 +3,17 @@
     "title": "InkCity — 今日の都市を当てよう",
     "description": "毎日ひとつの新しい都市を、OpenStreetMap のデータからインクの線で描きます。どの国にあるか当てて、デスクトップの壁紙にしましょう。"
   },
-  "intro": {
-    "question": "この都市はどの国にある？"
-  },
-  "today": {
-    "label": "今日",
-    "loading": "今日の地図を読み込み中…",
-    "rebuilding": "今日の地図はまだ公開されていません。OpenStreetMap から直接描いています（1 分ほどかかることがあります）…",
-    "failed": "今日の地図を読み込めませんでした。",
-    "retry": "再試行",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "当ててみる",
-    "wallpaper": "壁紙にする",
-    "more": "下にスクロールして詳しく"
-  },
-  "dir": {
-    "n": "北",
-    "ne": "北東",
-    "e": "東",
-    "se": "南東",
-    "s": "南",
-    "sw": "南西",
-    "w": "西",
-    "nw": "北西"
-  },
-  "result": {
-    "share": "シェア",
-    "copied": "クリップボードにコピーしました",
-    "details": "詳細を見る",
-    "back": "戻る",
-    "collapse": "閉じる",
-    "expand": "開く",
-    "nextCity": "次の都市まで"
-  },
-  "globe": {
-    "label": "今日の推測を順に結んだ地球儀です。ドラッグで回せます。",
-    "failed": "地球儀を読み込めませんでした。"
-  },
   "storage": {
     "memoryOnly": "このブラウザはゲームを保存しないため、ページを閉じると記録が消えます。",
     "dismiss": "閉じる"
   },
   "app": {
     "tagline": "毎日新しい都市を、インクの線で"
+  },
+  "play": {
+    "guess": "当ててみる",
+    "wallpaper": "壁紙にする",
+    "more": "下にスクロールして詳しく"
   },
   "download": {
     "title": "{{city}}を今日の壁紙に",

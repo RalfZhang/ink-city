@@ -15,6 +15,39 @@
     "winRate": "胜率",
     "streak": "当前连胜",
     "maxStreak": "最长连胜",
-    "distribution": "猜中次数分布"
+    "distribution": "猜中次数分布",
+    "share": "分享",
+    "copied": "已复制到剪贴板",
+    "details": "查看细节",
+    "back": "返回",
+    "collapse": "收起",
+    "expand": "展开",
+    "nextCity": "后揭晓下一座城市"
+  },
+  "intro": {
+    "question": "这座城市在哪个国家？"
+  },
+  "today": {
+    "label": "今日",
+    "loading": "正在加载今天的地图…",
+    "rebuilding": "今天的地图还没发布，正从 OpenStreetMap 现场绘制，可能需要一分钟…",
+    "failed": "今天的地图加载失败。",
+    "retry": "重试",
+    "wikipedia": "维基百科",
+    "openMap": "OpenStreetMap"
+  },
+  "dir": {
+    "n": "正北",
+    "ne": "东北",
+    "e": "正东",
+    "se": "东南",
+    "s": "正南",
+    "sw": "西南",
+    "w": "正西",
+    "nw": "西北"
+  },
+  "globe": {
+    "label": "地球上标出了今天的每次猜测，按顺序连线。拖动可以旋转。",
+    "failed": "地球仪加载失败。"
   }
 }

@@ -3,52 +3,17 @@
     "title": "InkCity — errate die Stadt des Tages",
     "description": "Jeden Tag eine neue Stadt, mit Tinte gezeichnet aus OpenStreetMap-Daten. Errate, in welchem Land sie liegt – und mach sie zu deinem Hintergrundbild."
   },
-  "intro": {
-    "question": "In welchem Land liegt diese Stadt?"
-  },
-  "today": {
-    "label": "Heute",
-    "loading": "Die Karte von heute wird geladen…",
-    "rebuilding": "Die heutige Karte ist noch nicht veröffentlicht – sie wird direkt aus OpenStreetMap gezeichnet, das kann eine Minute dauern…",
-    "failed": "Die heutige Karte konnte nicht geladen werden.",
-    "retry": "Erneut versuchen",
-    "wikipedia": "Wikipedia",
-    "openMap": "OpenStreetMap"
-  },
-  "play": {
-    "guess": "Raten",
-    "wallpaper": "Als Hintergrund",
-    "more": "Nach unten scrollen für mehr"
-  },
-  "dir": {
-    "n": "Norden",
-    "ne": "Nordosten",
-    "e": "Osten",
-    "se": "Südosten",
-    "s": "Süden",
-    "sw": "Südwesten",
-    "w": "Westen",
-    "nw": "Nordwesten"
-  },
-  "result": {
-    "share": "Teilen",
-    "copied": "In die Zwischenablage kopiert",
-    "details": "Details ansehen",
-    "back": "Zurück",
-    "collapse": "Einklappen",
-    "expand": "Ausklappen",
-    "nextCity": "bis zur nächsten Stadt"
-  },
-  "globe": {
-    "label": "Ein Globus mit den heutigen Tipps, der Reihe nach verbunden. Zum Drehen ziehen.",
-    "failed": "Der Globus konnte nicht geladen werden."
-  },
   "storage": {
     "memoryOnly": "Dein Browser speichert dieses Spiel nicht – es endet, wenn du die Seite schließt.",
     "dismiss": "Schließen"
   },
   "app": {
     "tagline": "Jeden Tag eine neue Stadt, mit Tinte gezeichnet"
+  },
+  "play": {
+    "guess": "Raten",
+    "wallpaper": "Als Hintergrund",
+    "more": "Nach unten scrollen für mehr"
   },
   "download": {
     "title": "Mach {{city}} heute zu deinem Hintergrundbild",

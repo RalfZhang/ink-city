@@ -11,7 +11,7 @@
 //   "51.5074N 0.1278W"       hemisphere with no separator
 //   "51°30'26\"N 0°7'39\"W"  degrees/minutes/seconds + hemisphere
 //   "@51.5074,-0.1278,13z"   Google-Maps centre fragment
-//   a whole pasted Google Maps URL (see `fromUrl`)
+//   a whole pasted map link — Google, OSM, Apple, HERE, Bing (see `fromUrl`)
 
 export type LatLon = { lat: number; lon: number };
 
@@ -30,17 +30,19 @@ const NUM = String.raw`-?\d+(?:\.\d+)?`;
  * Pull the coordinate pair out of a pasted map URL. Ordered by how specific each
  * form is, because a Google place URL carries both: `!3d…!4d…` is the *place*,
  * while `@…` is only wherever the viewport happened to be centred, so the former
- * wins. `q=`/`ll=`/`center=` cover the query-parameter styles (Google, OSM,
- * Bing). Returns null when the string carries no recognizable pair — the caller
- * then tries to read it as plain coordinates.
+ * wins. `q=`/`ll=`/`center=`/`map=` cover the query-parameter styles (Google,
+ * Apple, HERE WeGo — what "Open map" opens). Returns null when the string carries
+ * no recognizable pair — the caller then tries to read it as plain coordinates.
  */
 function fromUrl(s: string): LatLon | null {
   const patterns = [
     new RegExp(String.raw`!3d(${NUM})!4d(${NUM})`),
     new RegExp(String.raw`@\s*(${NUM})\s*,\s*(${NUM})`),
-    new RegExp(String.raw`[?&#](?:q|ll|center|mlat)=\s*(${NUM})\s*,\s*(${NUM})`, "i"),
+    new RegExp(String.raw`[?&#](?:q|ll|center|mlat|map)=\s*(${NUM})\s*,\s*(${NUM})`, "i"),
     // OSM's map fragment: #map=<zoom>/<lat>/<lon>
     new RegExp(String.raw`[#&]map=${NUM}/(${NUM})/(${NUM})`, "i"),
+    // Bing's centre: cp=<lat>~<lon>
+    new RegExp(String.raw`[?&]cp=(${NUM})~(${NUM})`, "i"),
   ];
   for (const re of patterns) {
     const m = s.match(re);

@@ -103,12 +103,13 @@ pub fn is_revealed(view: &StoreView, today: NaiveDate, city: Option<&City>) -> b
 }
 
 /// Whether `today` can be played right now — the frontend's `playing` state
-/// (`dayState`), given whether today's map is on the desktop (`painted`): there's a
-/// city to guess, its wallpaper is up, and nothing has revealed the day. Not merely
-/// "not over yet": a day still resolving, or one whose wallpaper never landed,
-/// isn't over either, but its game card has nothing to play.
-pub fn is_playing(view: &StoreView, today: NaiveDate, city: Option<&City>, painted: bool) -> bool {
-    city.is_some() && painted && !is_revealed(view, today, city)
+/// (`dayState`), given whether today's map is to hand (`map_ready`: its data cached,
+/// which the window draws from — the wallpaper doesn't come into it, and with
+/// syncing off there's none): there's a city to guess, its map to draw, and nothing
+/// has revealed the day. Not merely "not over yet": a day still resolving, or one
+/// whose map never arrived, isn't over either, but its game has nothing to play on.
+pub fn is_playing(view: &StoreView, today: NaiveDate, city: Option<&City>, map_ready: bool) -> bool {
+    city.is_some() && map_ready && !is_revealed(view, today, city)
 }
 
 /// Where the save lives: `app_data_dir()/guess.json`.
@@ -135,47 +136,20 @@ pub fn write(app: &AppHandle, raw: &str) -> Result<StoreView> {
     Ok(view)
 }
 
-/// A file that can't be a save (not UTF-8, not a JSON object) is moved aside to
-/// `guess.json.corrupt-<unix seconds>` and reads as `None`: the game then starts
-/// over, and its first save would otherwise overwrite the only copy of the history.
-/// An empty file is handed back as is — the frontend reads it as "nothing saved".
+/// The file's contents as saved, or `None` when there's no file yet. What they
+/// mean is the frontend's to decide (`parseGuessStore`).
 fn read_at(path: &Path) -> Result<Option<String>> {
-    let bytes = match fs::read(path) {
-        Ok(b) => b,
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-        Err(e) => return Err(e.into()),
-    };
-    if let Ok(raw) = String::from_utf8(bytes) {
-        if raw.trim().is_empty() || StoreView::parse(&raw).is_some() {
-            return Ok(Some(raw));
-        }
+    match fs::read_to_string(path) {
+        Ok(raw) => Ok(Some(raw)),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(e.into()),
     }
-    let secs = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
-    let backup = path.with_file_name(format!("{FILE}.corrupt-{secs}"));
-    log::warn!("[guess] {} is not a save; moving it to {}", path.display(), backup.display());
-    fs::rename(path, &backup)?;
-    Ok(None)
 }
 
-/// Write via a sibling temp file and a rename, so a crash mid-write leaves the old
+/// Write whole or not at all (`atomic::write`), so a crash mid-write leaves the old
 /// save intact rather than half of a new one.
 fn write_at(path: &Path, raw: &str) -> Result<()> {
-    if let Some(dir) = path.parent() {
-        fs::create_dir_all(dir)?;
-    }
-    let tmp = path.with_file_name(format!("{FILE}.tmp"));
-    fs::write(&tmp, raw)?;
-    if let Err(e) = fs::rename(&tmp, path) {
-        // Windows refuses to replace a file another process has open — an indexer
-        // or antivirus scanner looking at it. Writing in place loses the atomicity
-        // but keeps the guess, which is the point.
-        log::warn!("[guess] replacing {} failed ({e}); writing in place", path.display());
-        let _ = fs::remove_file(&tmp);
-        fs::write(path, raw)?;
-    }
+    crate::atomic::write(path, raw.as_bytes())?;
     Ok(())
 }
 
@@ -294,30 +268,4 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
     }
 
-    #[test]
-    fn a_corrupt_save_is_moved_aside_not_returned() {
-        let dir = scratch("corrupt");
-        let path = dir.join(FILE);
-        fs::write(&path, "{half a save").unwrap();
-        assert_eq!(read_at(&path).unwrap(), None);
-        assert!(!path.exists(), "the corrupt file must not be left where the next save lands");
-        let backups: Vec<_> = fs::read_dir(&dir)
-            .unwrap()
-            .filter_map(|e| e.ok())
-            .filter(|e| e.file_name().to_string_lossy().starts_with("guess.json.corrupt-"))
-            .collect();
-        assert_eq!(backups.len(), 1);
-        assert_eq!(fs::read_to_string(backups[0].path()).unwrap(), "{half a save");
-        let _ = fs::remove_dir_all(&dir);
-    }
-
-    #[test]
-    fn an_empty_file_reads_as_empty_not_corrupt() {
-        let dir = scratch("empty");
-        let path = dir.join(FILE);
-        fs::write(&path, "").unwrap();
-        assert_eq!(read_at(&path).unwrap().as_deref(), Some(""));
-        assert!(path.exists());
-        let _ = fs::remove_dir_all(&dir);
-    }
 }

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
-import type { City } from "@inkcity/core";
+import { inkIn, type City } from "@inkcity/core";
+import { useDevicePixelRatio } from "@inkcity/ui/lib/hooks";
 import { createMapClient, type MapClient } from "./client";
 import type { Theme } from "./draw";
 import type { Frame, ShowRequest } from "./engine";
-import { inkIn } from "./ink-in";
 import type { Stage } from "./load";
 import { cover } from "./size";
 
@@ -37,7 +37,7 @@ const MAP_DELAY_MS = 300;
  * `bitmaprenderer` one could take it without the copy, but it's one more context
  * type with its own support story, for a copy that costs nothing next to the draw
  * that made it. A frame laid out for growing (the day's first) is inked in instead
- * (./ink-in.ts), `onDone` once it's all there. Returns a function that stops it,
+ * (core's ink/ink-in.ts), `onDone` once it's all there. Returns a function that stops it,
  * whichever stage it's at.
  */
 function show(canvas: HTMLCanvasElement, frame: Frame, onShown: () => void, onDone: () => void): () => void {
@@ -138,13 +138,15 @@ export function useDailyMap(
   // read when a request goes out, for where the ink sets out from.
   const stage = useRef(size);
   stage.current = size;
-  const side = size && size.width > 0 && size.height > 0 ? cover(size.width, size.height, window.devicePixelRatio || 1).px : 0;
+  // Drawn again for a new pixel ratio, too: a move to another screen resizes nothing.
+  const dpr = useDevicePixelRatio();
+  const side = size && size.width > 0 && size.height > 0 ? cover(size.width, size.height, dpr).px : 0;
   useEffect(() => {
     const box = stage.current;
     if (!side || !box) return;
     const req: ShowRequest = { type: "show", date, theme, width: side, height: side };
     if (shown.current !== date && growing.current) {
-      req.grow = { view: cover(box.width, box.height, window.devicePixelRatio || 1).view };
+      req.grow = { view: cover(box.width, box.height, dpr).view };
     }
     lastRequest.current = req;
     client.current?.show(req);
@@ -152,7 +154,7 @@ export function useDailyMap(
 
   const retry = useCallback(() => {
     setStatus(forDay(today.current, { error: null }));
-    if (lastRequest.current) client.current?.show({ ...lastRequest.current, retry: true });
+    if (lastRequest.current) client.current?.show(lastRequest.current);
   }, []);
 
   // Read against the date being rendered, not reset after it: a new date is IDLE from

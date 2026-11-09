@@ -11,20 +11,22 @@
 use tauri::{AppHandle, Emitter};
 
 use crate::commands::Status;
+use crate::pipeline::RunEnd;
 
-/// The tabs `FrontendEvent::OpenTab` can target. An enum rather than a bare string
-/// because the frontend receives this as a `TabId` (see `apps/desktop/src/App.tsx`) and switches
-/// to it: a value that isn't one of those ids would strand the Tabs component on a
-/// tab with no trigger and no content. Add an arm when a new tab needs targeting.
-pub enum Tab {
-    City,
+/// What `FrontendEvent::OpenView` opens the window on: the home (the day's map and
+/// its game) or the settings sheet over it. An enum rather than a bare string
+/// because the frontend matches on these exact names (`apps/desktop/src/App.tsx`).
+pub enum View {
+    Home,
+    Settings,
 }
 
-impl Tab {
-    /// The `TabId` string the frontend matches on.
+impl View {
+    /// The name the frontend matches on.
     fn id(&self) -> &'static str {
         match self {
-            Self::City => "city",
+            Self::Home => "home",
+            Self::Settings => "settings",
         }
     }
 }
@@ -36,12 +38,19 @@ pub enum FrontendEvent {
     /// Render pipeline started. An edge event (deliberately separate from the
     /// coalesced `StatusChanged`) driving the spinner / Style save-button.
     PipelineStart,
-    /// Render pipeline finished.
-    PipelineEnd,
-    /// Ask the frontend to switch to a tab. Emitted by the tray's "Open Settings"
-    /// entry, which lands on {@link Tab::City} — reopening the window from the tray
-    /// otherwise leaves it on whatever tab it was hidden on.
-    OpenTab(Tab),
+    /// Render pipeline finished: which requests it served, and how (`RunEnd`).
+    PipelineEnd(RunEnd),
+    /// Ask the frontend to show a view. Emitted by the tray's "open" entry: "Open
+    /// Game" lands on the home, "Open Settings" on the sheet — reopening the window
+    /// otherwise leaves it as it was hidden.
+    OpenView(View),
+    /// The window was just hidden (its close button). The
+    /// frontend lets go of what only made sense while it was looked at: an unsaved
+    /// preview, the open sheet.
+    WindowHidden,
+    /// The window was just shown (a launch, the tray, a second launch). The map is
+    /// only read and drawn while it's on screen (`useMapData`), so this sets it going.
+    WindowShown,
 }
 
 impl FrontendEvent {
@@ -51,8 +60,10 @@ impl FrontendEvent {
         match self {
             Self::StatusChanged(_) => "status:changed",
             Self::PipelineStart => "pipeline:start",
-            Self::PipelineEnd => "pipeline:end",
-            Self::OpenTab(_) => "open-tab",
+            Self::PipelineEnd(_) => "pipeline:end",
+            Self::OpenView(_) => "open-view",
+            Self::WindowHidden => "window:hidden",
+            Self::WindowShown => "window:shown",
         }
     }
 
@@ -63,8 +74,10 @@ impl FrontendEvent {
         let result = match self {
             Self::StatusChanged(s) => app.emit(name, s),
             Self::PipelineStart => app.emit(name, ()),
-            Self::PipelineEnd => app.emit(name, ()),
-            Self::OpenTab(tab) => app.emit(name, tab.id()),
+            Self::PipelineEnd(end) => app.emit(name, end),
+            Self::OpenView(view) => app.emit(name, view.id()),
+            Self::WindowHidden => app.emit(name, ()),
+            Self::WindowShown => app.emit(name, ()),
         };
         if let Err(e) = result {
             log::warn!("[events] emit {name} failed: {e}");

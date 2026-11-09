@@ -1,0 +1,9 @@
+{
+  "_comment": "The Overpass API servers live map data is fetched from, in the order they're tried. The one Overpass client (packages/osm/src/overpass.ts — CI's precache, the desktop's sidecar, the website's last rung) goes down the list until one answers; the desktop's \"Test connection\" tries them all at once and passes when one does (apps/desktop/src-tauri/src/proxy.rs, which compiles this file in), so it tests what a live fetch would reach. Build time only, like ./cdn.json.",
+  "mirrors": [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.openstreetmap.fr/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter"
+  ]
+}

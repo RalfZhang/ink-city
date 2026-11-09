@@ -81,7 +81,7 @@ import {
   type StylePreset,
   type Theme,
 } from "@inkcity/core";
-import { fetchCityData, PUBLISHED_COORD_PRECISION } from "@inkcity/osm";
+import { fetchCityData } from "@inkcity/osm";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(SCRIPT_DIR, "..");
@@ -220,7 +220,7 @@ async function main() {
 
     console.log(`[render] ${lat}/${lon}, ${areaKm}km square`);
     console.log(`[render] fetching roads + water + airports + railways + aerialways from Overpass ...`);
-    const osm = await fetchCityData(bbox, { coordPrecision: PUBLISHED_COORD_PRECISION });
+    const osm = await fetchCityData(bbox);
 
     mkdirSync(outDir, { recursive: true });
     // Persist the raw payload so it can be replayed offline later. `city` and

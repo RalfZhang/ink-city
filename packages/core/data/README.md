@@ -1,15 +1,14 @@
 # City data pools
 
-Three **schema-identical** JSON pools — each entry is
+Two **schema-identical** JSON pools — each entry is
 `{ id, name, localName, country, lat, lon, population }`, so they're drop-in
-interchangeable. `id` is the GeoNames `geonameid` in **all three**, so the same city
+interchangeable. `id` is the GeoNames `geonameid` in **both**, so the same city
 carries the same id across pools and they can be joined/deduped by id.
 `cities-famous.json` carries one extra key, `wikiId` — additive, so it still
 deserializes anywhere the others do.
 
 | File | Pins | What it is |
 |---|---|---|
-| `cities.json` | 1000 | Top cities by population (GeoNames). **Legacy:** read only by the deprecated id-keyed CI flow. |
 | `cities-famous.json` | 992 | Fame-ranked (Wikidata sitelinks × log₁₀ pop). **The schedule and the desktop search.** |
 | `cities-countries.json` | 284 | Capital + largest city of every inhabited ISO 3166-1 region, deduped. **Ditto.** |
 
@@ -29,21 +28,19 @@ added to its `POOLS`. Should the two roles ever need different lists — a searc
 wants whatever users are likely to type, the schedule whatever makes the best
 wallpapers — split them deliberately and change that test with it.
 
-`cities.json` used to fill both roles itself: first as the daily city (a
-population-ordered rotation), then only as the search index, which releases up to
-v0.13.0 also re-downloaded daily from `main`. Now only the deprecated id-keyed
-precache flow in CI reads it (removal recommended after 2026-11-01), and the file can
-go with that flow.
+A third pool, `cities.json` (the top 1000 by population, from GeoNames), used to
+fill both roles: first as the daily city (a population-ordered rotation), then only
+as the search index, which releases up to v0.13.0 also re-downloaded daily from
+`main`. It was removed with the legacy id-keyed CI flow after 2026-11-01.
 
 ## How these are built / regenerated
 
-`cities.json` has a committed generator,
-[`scripts/build-cities.mjs`](../../../scripts/build-cities.mjs) (`pnpm build:cities`).
-
-**The two curated pools do not, by convention** — they're produced by a throwaway
-script run from `/tmp`, and only the resulting JSON is committed. They reuse
-`build-cities.mjs`'s GeoNames download/parse logic plus the `localName` rules below,
-which is why those rules are written out here rather than left implicit in code.
+**The pools have no committed generator, by convention** — they're produced by a
+throwaway script run from `/tmp`, and only the resulting JSON is committed. Such a
+script can borrow the GeoNames download/parse logic of the old `cities.json`
+generator (`scripts/build-cities.mjs`, in git history) plus the `localName` rules
+below, which is why those rules are written out here rather than left implicit in
+code.
 Sources: GeoNames `cities1000.txt`, `alternateNamesV2.txt`, `countryInfo.txt`.
 
 When editing an existing file, change **only the field you mean to** — e.g. the
@@ -61,9 +58,9 @@ back to the sovereign ISO assigns it — Crimea → `UA` (ISO 3166-2 `UA-43` / `
 Kosovo has no ISO 3166-1 code at all and uses the user-assigned **`XK`**.
 
 That's exactly the GeoNames `country code` column, which makes the invariant
-checkable: join all three pools to `cities1000.txt` by `id` and every `country` must
-match. It holds for all 2276 pins except the two with no `cities1000.txt` row at all
-(Jaboatão in `cities.json`, Monte Águila — see below). Across pools it's also
+checkable: join both pools to `cities1000.txt` by `id` and every `country` must
+match. It holds for all 1276 pins except Monte Águila, which has no `cities1000.txt`
+row at all (see below). Across pools it's also
 consistent: shared ids never disagree on `country`, which is what lets
 [`mergePools`](../src/schedule.ts) pick a winner without moving a
 city between country cooldowns.
@@ -71,7 +68,7 @@ city between country cooldowns.
 ## `lat` / `lon` — where the coordinates come from
 
 **Both curated pools take their coordinates from the OSM `place` *node*, joined on
-OSM's `wikidata` tag.** `cities.json` is unaffected — it stays GeoNames.
+OSM's `wikidata` tag.**
 
 This matters more here than it would elsewhere, because the coordinate is not a
 label point: it is simultaneously the Overpass download area, the render crop and
@@ -88,7 +85,7 @@ is the thing this pipeline actually needs. As a bonus the centring point and the
 rendered roads then come from the same database.
 
 Measured before the switch: of 439 ids shared between `cities-famous.json` and
-`cities.json`, 120 disagreed by >2 km and 21 by >5 km (Dubai 21 km, Muscat 19 km).
+the old `cities.json` (GeoNames coordinates), 120 disagreed by >2 km and 21 by >5 km (Dubai 21 km, Muscat 19 km).
 OSM did not systematically side with either source — it sided with the urban core
 each time.
 
@@ -201,8 +198,6 @@ one renders the same frame — previously they could differ by up to 21 km.
 
 `localName` means "this city's name in the locally-appropriate language/script."
 
-- **`cities.json`** — `localName` is the GeoNames `name` column, mostly Latin/English
-  (`Beijing`, `Moscow`). **Not** nativized.
 - **`cities-countries.json` & `cities-famous.json`** — `localName` is **native script**
   (北京, Москва, Αθήνα, ירושלים), resolved from GeoNames `alternateNamesV2` per the rules
   below.

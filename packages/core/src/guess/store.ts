@@ -18,11 +18,6 @@ export interface GuessStorage {
   load(): Promise<string | null>;
   /** Persist `raw`. A rejection means the write didn't happen. */
   save(raw: string): Promise<void>;
-  /**
-   * Set aside an unparseable save before the next `save` overwrites it. Optional:
-   * the desktop backend already does this itself when it reads the file.
-   */
-  backupCorrupt?(raw: string): Promise<void>;
 }
 
 export function emptyGuessStore(): GuessStore {
@@ -62,7 +57,7 @@ function parseRecord(v: unknown): DayRecord | null {
  * Parse a stored save, salvaging what it can: a malformed field falls back to its
  * default and a malformed record or guess is dropped, rather than losing the whole
  * history to one bad entry. `corrupt` is set only when nothing could be read at all
- * (not JSON, or not an object) — the cue for the host to `backupCorrupt` it first.
+ * (not JSON, or not an object).
  *
  * `end` survives on its own even when the rest of a record is damaged; the desktop
  * backend reads exactly that field to decide whether the day is revealed, so the two
@@ -98,12 +93,12 @@ export function serializeGuessStore(store: GuessStore): string {
 export const GUESS_STORAGE_KEY = "inkcity:guess";
 
 /**
- * The website's `GuessStorage`: the save file under one `localStorage` key, with an
- * unreadable save copied to `<key>:corrupt` before it can be overwritten. Reads
+ * The website's `GuessStorage`: the save file under one `localStorage` key. Reads
  * swallow storage errors (private mode, blocked site data) and act as "nothing
  * saved"; writes let them propagate so the game knows the guess wasn't kept.
  */
-export function localStorageGuessStorage(key = GUESS_STORAGE_KEY): GuessStorage {
+export function localStorageGuessStorage(): GuessStorage {
+  const key = GUESS_STORAGE_KEY;
   return {
     async load() {
       try {
@@ -114,13 +109,6 @@ export function localStorageGuessStorage(key = GUESS_STORAGE_KEY): GuessStorage 
     },
     async save(raw) {
       localStorage.setItem(key, raw);
-    },
-    async backupCorrupt(raw) {
-      try {
-        localStorage.setItem(`${key}:corrupt`, raw);
-      } catch {
-        // Best effort: losing the backup is no worse than the corrupt save itself.
-      }
     },
   };
 }

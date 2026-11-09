@@ -18,13 +18,13 @@ below records the last time anyone did).
 | Part | State |
 |---|---|
 | Schedule state + cooldowns (`packages/core/src/schedule.ts`) | ✅ + tested (`pnpm schedule-test`) |
-| Pre-cache advances the schedule and emits manifests (`scripts/osm-cli.ts`) | ✅ (additive to `osm/<id>.json`) |
+| Pre-cache advances the schedule and emits manifests (`scripts/osm-cli.ts`) | ✅ |
 | Workflow gzips + publishes `osm-v2/` (`.github/workflows/precache.yml`) | ✅ |
 | Client fetch-by-date + reconstruction (`cdn.rs` + `pipeline.rs`) | ✅ |
 | `Status` names the rendered city and nothing else (`pipeline::city_for_status`) | ✅ |
 | Dev Mode reads the schedule, not the rotation (`render_preview`, bypass) | ✅ |
-| Client-side rotation fallback removed | ✅ code + tests (CI still publishes `osm/` until 2026-11-01) — **not** re-verified against the live path |
-| Unresolvable day surfaced in the UI (`Status::last_error`) | ✅ + tested (`error_for_today`) |
+| Client-side rotation fallback removed | ✅ code + tests — **not** re-verified against the live path; CI's `osm/` flow retired after 2026-11-01 |
+| Unresolvable day surfaced in the UI (`Status::map_error`) | ✅ + tested (`error_for_surfaces_the_current_maps_failure`) |
 
 > **The whole path is live, verified end to end** — CI publishes, jsDelivr serves,
 > and the client consumes. `osm-v2/city-list.json` and the
@@ -44,9 +44,6 @@ below records the last time anyone did).
 ## Published layout (`data` branch)
 
 ```
-osm/                        legacy id-keyed rotation — DEPRECATED, published for
-  <id>.json                 pre-removal clients only; remove after 2026-11-01
-  <id>.json.gz
 osm-v2/
   city-list.json            the schedule itself (CI + humans; the client reads it
                             when no manifest is reachable, and for Dev Mode's
@@ -146,7 +143,7 @@ to carry — and a gap therefore has to come from somewhere unusual: a hand-dele
 `parseState` rejection, or CI not running for more than a day. **A gap now costs
 more than it used to**: with the rotation removed there is nothing below the schedule,
 so a day with no entry and no manifest can't be painted at all (the previous
-wallpaper stays up and the poll keeps retrying). Filling gaps by hand in
+wallpaper stays up and the poll tries again, backing off from 5 minutes to an hour). Filling gaps by hand in
 `city-list.json` is the fix.
 
 **Client** (`apps/desktop/src-tauri`) — `pipeline::resolve_daily` resolves the day's city and
@@ -169,7 +166,8 @@ answers:
 
 **There is no rung 4.** When rung 3 misses too, `resolve_daily` returns an error: the
 day is unresolvable, the previous wallpaper stays up, and `scheduler::reconcile`
-retries on its next 60s poll (logging `error!` each time it can't paint). Advance
+tries again after 5 minutes, then 15, then every hour (`pipeline::poll_may_run`;
+logging `error!` each time it can't paint). Advance
 Preview surfaces the same failure inline. See
 [Retiring the rotation](#retiring-the-rotation) for what used to be here and why it
 went.
@@ -198,14 +196,14 @@ where the name goes and disables the two lookup links until the day resolves.
 
 `None` alone is ambiguous, though, and the two cases behind it want opposite things
 from the user: a day still arriving wants patience, a day that can't arrive wants
-the network looked at. So `Status::last_error` carries the reason (Daily-only, and
-gated to *today* so a failure can't outlive the day it happened on), and the City
-tab spends its coordinate line on it — "fetching…" versus "can't reach the
-schedule" — rather than a second em dash. It's one muted line either way, so
-nothing shifts when the city lands. That error never reaches the global banner:
-every 60s poll re-records it, so a dismissable banner could never stay dismissed.
+the network looked at. So `Status::map_error` carries the reason (kept against the
+map it's about, so a failure can't outlive the day — or the pin — it happened on;
+`wall_error` says the same of the desktop), and the home says it where the map would
+be — "Couldn't load today's map", with the reason — rather than a second em dash.
+That error never reaches a global banner: every retry re-records it, so a
+dismissable banner could never stay dismissed.
 
-`last_error` has to be state rather than a returned `Result` because every caller
+`map_error` has to be state rather than a returned `Result` because every caller
 of `run_now` is detached and drops it — including `regenerate_now`, which is the
 button the user is most likely to press while looking at the gap.
 
@@ -215,9 +213,7 @@ app: the pick is random and stored, so a website recomputing the retired formula
 locally would name a different city every single day, with no code path left that
 could make the two agree.
 
-**Both flows carry `city`.** The legacy `osm/<id>.json` payloads get the same
-envelope (backfilled into already-cached files without re-fetching). Additive and
-ignored by existing clients. A payload fetched live from the sidecar has no
+**Every payload carries `city`.** A payload fetched live from the sidecar has no
 envelope of its own, so the client stamps one on before caching it
 (`pipeline::stamp_manifest_envelope`) — otherwise a day rendered from a live fetch
 would have no name at all after a restart. A cached payload from *before* the
@@ -244,21 +240,18 @@ cause, an offline machine, would have failed one step later at the Overpass fetc
 anyway. And what it painted was *a different city than the schedule had for that
 day*, which the day cache then pinned for the rest of the day (the PNG cache key is
 date+theme, not city). A day nobody can name is now simply not painted, and the
-poll retries.
+poll tries again, backing off.
 
 What went with it: `city::pick_for_date` and its `EPOCH`/`MULTIPLIER`,
 `pipeline::rotation_fallback`, `Resolved::cdn_id`, and `cdn::fetch_cached_osm` —
 the client no longer reads `osm/` at all. `city.rs` kept loading
 `src/data/cities.json` as the index behind the City tab's Customized-mode name
 search until that too moved to the schedule's own pools (compiled in, no longer
-hot-updated from `main`); `packages/core/src/city.ts` keeps `pickCityForDate` for CI.
+hot-updated from `main`).
 
-**CI still publishes `osm/`**, unchanged, for clients shipped before this change —
-they have no other last rung. **Recommended removal after 2026-11-01**, by which
-point anything still reading it is ~3 months stale. `scripts/osm-cli.ts`'s header
-lists everything that goes at once (including re-deriving `MIN_NEEDED_TO_ALARM`,
-whose "two fetches per day" premise halves), and `.github/workflows/precache.yml`
-marks the two spots in the workflow.
+CI kept publishing `osm/` for clients shipped before this change, until its
+2026-11-01 deprecation date; then the flow went too, with `pickCityForDate` and
+`packages/core/data/cities.json`.
 
 ## Dev Mode
 
@@ -306,21 +299,11 @@ conditions:
   only a human can fix it.
 
 The two-city threshold is what keeps a single stubborn city quiet, and it matters
-more than it looks. Steady state needs about two fetches per calendar day (one
-rotation city, one schedule day), so the day's first run still catches a real
-outage immediately. But once a run has succeeded at everything *except* one city,
-later runs that day have nothing else left to try — without the threshold that
-lone failure would satisfy "every attempt failed" and turn every remaining run of
-the day red. A genuine outage escalates past the threshold on its own within a
-day, as each new day adds another city and schedule day to the backlog.
-
-> This is a deliberate change from the previous policy, which also failed the job
-> when today's or tomorrow's rotation city was uncached. That case is now a
-> warning.
-
-> **Re-derive the threshold when the id-keyed flow is removed** (after 2026-11-01):
-> steady state drops to ~one fetch per day, so `needed` will usually sit *below* 2
-> and a real outage will take two days rather than one to escalate.
+more than it looks. Steady state is one new schedule day per calendar day. Once a
+run has succeeded at everything *except* one city, later runs have nothing else
+left to try — without the threshold that lone failure would satisfy "every attempt
+failed" and turn every remaining run red. A genuine outage reaches the threshold on
+its second day, when that day's city joins the backlog.
 
 ## Known edge cases / follow-ups
 

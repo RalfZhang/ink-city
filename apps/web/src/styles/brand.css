@@ -1,0 +1,40 @@
+/* The mark and the name (components/Brand.tsx): stacked and centred on each other
+   at the head of the sheet, side by side in the header. */
+
+@layer components {
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+  }
+  .brand__logo {
+    display: block;
+    height: auto;
+  }
+  .brand__name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .brand--large {
+    gap: 12px;
+  }
+  .brand--large .brand__logo {
+    width: 96px;
+  }
+  .brand--large .brand__name {
+    font-size: 30px;
+  }
+  .brand--header {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .brand--header .brand__logo {
+    width: 31px;
+  }
+  .brand--header .brand__name {
+    font-size: 21px;
+  }
+}

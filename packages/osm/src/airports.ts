@@ -38,7 +38,7 @@ export function airportsSelector(b: Bbox): string {
 }
 
 /** Slim a raw Overpass response to runway/taxiway centerlines and areas. */
-export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeature[] {
+export function slimAirports(raw: RawOsm, coordPrecision: number): AirportFeature[] {
   const features: AirportFeature[] = [];
 
   for (const el of raw.elements ?? []) {
@@ -54,7 +54,7 @@ export function slimAirports(raw: RawOsm, coordPrecision?: number): AirportFeatu
     else features.push({ kind, line: pts });
   }
 
-  return coordPrecision === undefined ? features : roundFeatures(features, coordPrecision);
+  return roundFeatures(features, coordPrecision);
 }
 
 // Rounding a ring keeps it closed: its first and last points hold the same values

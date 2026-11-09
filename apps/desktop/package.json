@@ -19,11 +19,9 @@
     "@tauri-apps/plugin-opener": "^2",
     "i18next": "catalog:",
     "lucide-react": "catalog:",
-    "radix-ui": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-i18next": "catalog:",
-    "shadcn": "catalog:"
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",

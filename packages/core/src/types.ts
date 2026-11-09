@@ -47,13 +47,8 @@ export type StylePreset = (typeof STYLE_PRESETS)[number];
  *   • `ink`      — the default ink-on-paper map, drawn in the theme's colors.
  *   • `mondrian` — a De Stijl repaint of the same real street grid (issue #18,
  *                  see core/mondrian.ts), in its own palette for each theme.
- *
- * A const tuple with the type derived from it (the `LAYER_IDS` pattern, as with
- * {@link STYLE_PRESETS}) because the desktop's Style tab enumerates it: it offers the
- * variants as the palette, your own colors or Mondrian's, in this order.
  */
-export const STYLE_VARIANTS = ["ink", "mondrian"] as const;
-export type StyleVariant = (typeof STYLE_VARIANTS)[number];
+export type StyleVariant = "ink" | "mondrian";
 
 /**
  * How the railway layer is drawn — one dimension rather than a boolean plus a
@@ -143,6 +138,13 @@ export type MapLabel = {
    * Absent ⇒ none; the base margin applies either way.
    */
   insets?: { top: number; right: number; bottom: number; left: number };
+  /**
+   * How the insets meet the margin. `"add"`, the default and the wallpaper's: the
+   * margin is kept beyond them — the caption a margin below the menu bar. `"min"`,
+   * the desktop window's: the margin counts from the edge, and an inset only pushes
+   * the caption in as far as it must to clear what's there.
+   */
+  insetsMode?: "add" | "min";
 };
 
 // --- OSM Overpass shapes (only the fields we read) ---
