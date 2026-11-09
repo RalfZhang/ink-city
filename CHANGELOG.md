@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/RalfZhang/ink-city/compare/v0.14.1...v0.15.0) (2026-11-09)
+
+
+### Features
+
+* unify web and app ([8537bba](https://github.com/RalfZhang/ink-city/commit/8537bba35c4e3b3c9f39486dcb5d41b4348f2eda))
+
 ## [0.14.1](https://github.com/RalfZhang/ink-city/compare/v0.14.0...v0.14.1) (2026-10-26)
 
 
