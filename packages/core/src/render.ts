@@ -267,6 +267,28 @@ function addRing(ctx: CanvasRenderingContext2D, ring: Geom[], bbox: Bbox, width:
   ctx.closePath();
 }
 
+/**
+ * Trace one closed ring like {@link addRing}, wound counter-clockwise in lon/lat
+ * when `ccw` and clockwise otherwise, whichever way it's stored. Its winding is
+ * the sign of its shoelace area, taken relative to the first point so that big
+ * coordinates don't eat the precision of a small pond's.
+ */
+function addWoundRing(
+  ctx: CanvasRenderingContext2D,
+  ring: Geom[],
+  ccw: boolean,
+  bbox: Bbox,
+  width: number,
+  height: number,
+): void {
+  const { lat: lat0, lon: lon0 } = ring[0];
+  let area = 0;
+  for (let i = 1; i + 1 < ring.length; i++) {
+    area += (ring[i].lon - lon0) * (ring[i + 1].lat - lat0) - (ring[i + 1].lon - lon0) * (ring[i].lat - lat0);
+  }
+  addRing(ctx, (area > 0) === ccw ? ring : ring.slice().reverse(), bbox, width, height);
+}
+
 /** Stroke width (px) for a linear waterway, scaled like roads. */
 function waterLineWidth(cls: string, scale: number): number {
   return scale * (WATER_LINE_WEIGHTS[cls] ?? WATER_LINE_WEIGHT_DEFAULT);
@@ -281,9 +303,18 @@ function waterLineWidth(cls: string, scale: number): number {
 
 /**
  * Draw the water layer: filled bodies (lakes, sea) plus thin linear waterways
- * (creeks/canals). Polygon holes (islands) are punched out with the even-odd
- * rule, which is winding-direction agnostic — water.ts only guarantees rings are
- * closed, not their orientation.
+ * (creeks/canals).
+ *
+ * The bodies are one path, filled once. OSM often splits one sheet of water into
+ * areas that share an edge — Mombasa's Likoni Channel meets Kilindini Harbour
+ * along a line across the water — and filled one by one, each would cover about
+ * half of every pixel on that edge: the two halves composite to ¾, and the paper
+ * shows through as a hairline (osm-carto hides the same seam with
+ * `polygon-gamma`, which canvas lacks). One fill covers the edge in full. It must
+ * be nonzero, since even-odd would open a hole wherever two areas overlap, so
+ * every outer ring is wound one way and every hole the other (water.ts only
+ * guarantees rings are closed, not their orientation): the path then fills the
+ * union of the areas, an island staying open unless another area covers it.
  */
 function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const water = req.osm.water;
@@ -294,14 +325,16 @@ function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
 
   // Filled bodies.
   ctx.fillStyle = color;
+  ctx.beginPath();
   for (const f of water) {
     if (f.kind === "line" || !f.polygon?.outer || f.polygon.outer.length < 3) continue;
-    ctx.beginPath();
-    addRing(ctx, f.polygon.outer, bbox, width, height);
-    for (const hole of f.polygon.holes ?? []) addRing(ctx, hole, bbox, width, height);
-    ctx.fill("evenodd");
+    addWoundRing(ctx, f.polygon.outer, true, bbox, width, height);
+    for (const hole of f.polygon.holes ?? []) {
+      if (hole.length >= 3) addWoundRing(ctx, hole, false, bbox, width, height);
+    }
     drawn++;
   }
+  ctx.fill("nonzero");
 
   // Linear waterways, grouped by width so we set lineWidth once per bucket.
   const scale = strokeScale(bbox, height);
