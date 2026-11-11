@@ -13,6 +13,17 @@
     scroll-snap-type: y mandatory;
     scrollbar-width: none;
   }
+  /* Over the result's globe the wheel zooms it (Globe.tsx), and the pages mustn't
+     scroll as well. The globe refuses every wheel event, but Firefox lets a
+     trackpad's gesture scroll on its own from any step that moves zero pixels:
+     that step never reaches the page to be refused. So the pages stop scrolling
+     natively under the pointer there (turning a page by script still works). Not
+     on a touch screen, where a tap's :hover stays. */
+  @media (hover: hover) {
+    .pages:has(.globe:hover) {
+      overflow-y: hidden;
+    }
+  }
   .page {
     position: relative;
     scroll-snap-align: start;
