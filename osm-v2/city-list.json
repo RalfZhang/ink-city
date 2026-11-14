@@ -1,0 +1,304 @@
+{
+  "list": {
+    "2026-10-22": {
+      "id": 588335,
+      "wikiId": 13972,
+      "name": "Tartu",
+      "localName": "Tartu",
+      "country": "EE",
+      "lat": 58.3779528,
+      "lon": 26.7290023,
+      "population": 97759
+    },
+    "2026-10-23": {
+      "id": 5746545,
+      "wikiId": 6106,
+      "name": "Portland",
+      "localName": "Portland",
+      "country": "US",
+      "lat": 45.5202471,
+      "lon": -122.674194,
+      "population": 652503
+    },
+    "2026-10-24": {
+      "id": 2657896,
+      "wikiId": 72,
+      "name": "Zurich",
+      "localName": "Zürich",
+      "country": "CH",
+      "lat": 47.3744489,
+      "lon": 8.5410422,
+      "population": 452421
+    },
+    "2026-10-25": {
+      "id": 1732752,
+      "wikiId": 231318,
+      "name": "Johor Bahru",
+      "localName": "Johor Bahru",
+      "country": "MY",
+      "lat": 1.4581986,
+      "lon": 103.7649059,
+      "population": 797882
+    },
+    "2026-10-26": {
+      "id": 2636432,
+      "wikiId": 23051,
+      "name": "Swansea",
+      "localName": "Swansea",
+      "country": "GB",
+      "lat": 51.6195955,
+      "lon": -3.9459248,
+      "population": 246700
+    },
+    "2026-10-27": {
+      "id": 2855745,
+      "wikiId": 2971,
+      "name": "Paderborn",
+      "localName": "Paderborn",
+      "country": "DE",
+      "lat": 51.7177044,
+      "lon": 8.752653,
+      "population": 155749
+    },
+    "2026-10-28": {
+      "id": 1253405,
+      "wikiId": 79980,
+      "name": "Varanasi",
+      "localName": "वाराणसी",
+      "country": "IN",
+      "lat": 25.3356491,
+      "lon": 83.0076292,
+      "population": 1198491
+    },
+    "2026-10-29": {
+      "id": 3067696,
+      "wikiId": 1085,
+      "name": "Prague",
+      "localName": "Praha",
+      "country": "CZ",
+      "lat": 50.0874654,
+      "lon": 14.4212535,
+      "population": 1397880
+    },
+    "2026-10-30": {
+      "id": 932505,
+      "wikiId": 3909,
+      "name": "Maseru",
+      "localName": "Maseru",
+      "country": "LS",
+      "lat": -29.310054,
+      "lon": 27.478222,
+      "population": 343541
+    },
+    "2026-10-31": {
+      "id": 3052009,
+      "wikiId": 134494,
+      "name": "Győr",
+      "localName": "Győr",
+      "country": "HU",
+      "lat": 47.6835029,
+      "lon": 17.6342832,
+      "population": 129373
+    },
+    "2026-11-01": {
+      "id": 3646738,
+      "wikiId": 1533,
+      "name": "Caracas",
+      "localName": "Caracas",
+      "country": "VE",
+      "lat": 10.5060934,
+      "lon": -66.9146008,
+      "population": 2245744
+    },
+    "2026-11-02": {
+      "id": 4920423,
+      "wikiId": 49268,
+      "name": "Fort Wayne",
+      "localName": "Fort Wayne",
+      "country": "US",
+      "lat": 41.0799898,
+      "lon": -85.1386015,
+      "population": 263886
+    },
+    "2026-11-03": {
+      "id": 3183089,
+      "wikiId": 3415,
+      "name": "Ancona",
+      "localName": "Ancona",
+      "country": "IT",
+      "lat": 43.6170137,
+      "lon": 13.5170982,
+      "population": 98356
+    },
+    "2026-11-04": {
+      "id": 2113015,
+      "wikiId": 170616,
+      "name": "Chiba",
+      "localName": "千葉",
+      "country": "JP",
+      "lat": 35.6070629,
+      "lon": 140.1062653,
+      "population": 975014
+    },
+    "2026-11-05": {
+      "id": 285066,
+      "wikiId": 168225,
+      "name": "Hebron",
+      "localName": "الخليل",
+      "country": "PS",
+      "lat": 31.528902,
+      "lon": 35.0944873,
+      "population": 215452
+    },
+    "2026-11-06": {
+      "id": 1717512,
+      "wikiId": 1467,
+      "name": "Cebu City",
+      "localName": "Cebu City",
+      "country": "PH",
+      "lat": 10.2934946,
+      "lon": 123.9018183,
+      "population": 965332
+    },
+    "2026-11-07": {
+      "id": 480060,
+      "wikiId": 2288,
+      "name": "Tver",
+      "localName": "Тверь",
+      "country": "RU",
+      "lat": 56.858675,
+      "lon": 35.9208284,
+      "population": 412806
+    },
+    "2026-11-08": {
+      "id": 2637487,
+      "wikiId": 79848,
+      "name": "Southampton",
+      "localName": "Southampton",
+      "country": "GB",
+      "lat": 50.9025349,
+      "lon": -1.404189,
+      "population": 271173
+    },
+    "2026-11-09": {
+      "id": 2945024,
+      "wikiId": 2773,
+      "name": "Brunswick",
+      "localName": "Braunschweig",
+      "country": "DE",
+      "lat": 52.2646577,
+      "lon": 10.5236066,
+      "population": 252066
+    },
+    "2026-11-10": {
+      "id": 1808722,
+      "wikiId": 185684,
+      "name": "Hefei",
+      "localName": "合肥",
+      "country": "CN",
+      "lat": 31.8665676,
+      "lon": 117.281428,
+      "population": 9369881
+    },
+    "2026-11-11": {
+      "id": 186301,
+      "wikiId": 225641,
+      "name": "Mombasa",
+      "localName": "Mombasa",
+      "country": "KE",
+      "lat": -4.05052,
+      "lon": 39.667169,
+      "population": 1208333
+    },
+    "2026-11-12": {
+      "id": 660158,
+      "wikiId": 47034,
+      "name": "Espoo",
+      "localName": "Espoo",
+      "country": "FI",
+      "lat": 60.2049651,
+      "lon": 24.6559808,
+      "population": 325716
+    },
+    "2026-11-13": {
+      "id": 3165926,
+      "wikiId": 13498,
+      "name": "Taranto",
+      "localName": "Taranto",
+      "country": "IT",
+      "lat": 40.4712427,
+      "lon": 17.2432278,
+      "population": 188098
+    },
+    "2026-11-14": {
+      "id": 4292188,
+      "wikiId": 28603,
+      "name": "Frankfort",
+      "localName": "Frankfort",
+      "country": "US",
+      "lat": 38.2009055,
+      "lon": -84.8732836,
+      "population": 28602
+    },
+    "2026-11-15": {
+      "id": 706448,
+      "wikiId": 156732,
+      "name": "Kherson",
+      "localName": "Херсон",
+      "country": "UA",
+      "lat": 46.6401295,
+      "lon": 32.6143922,
+      "population": 279131
+    },
+    "2026-11-16": {
+      "id": 3006787,
+      "wikiId": 82185,
+      "name": "La Rochelle",
+      "localName": "La Rochelle",
+      "country": "FR",
+      "lat": 46.159732,
+      "lon": -1.1515951,
+      "population": 79851
+    },
+    "2026-11-17": {
+      "id": 2860410,
+      "wikiId": 2838,
+      "name": "Oberhausen",
+      "localName": "Oberhausen",
+      "country": "DE",
+      "lat": 51.4696137,
+      "lon": 6.8514435,
+      "population": 211099
+    },
+    "2026-11-18": {
+      "id": 613607,
+      "wikiId": 172415,
+      "name": "Kutaisi",
+      "localName": "ქუთაისი",
+      "country": "GE",
+      "lat": 42.2716078,
+      "lon": 42.7054475,
+      "population": 147900
+    },
+    "2026-11-19": {
+      "id": 1278994,
+      "wikiId": 162442,
+      "name": "Prayagraj",
+      "localName": "प्रयागराज",
+      "country": "IN",
+      "lat": 25.4381302,
+      "lon": 81.8338005,
+      "population": 5954391
+    },
+    "2026-11-20": {
+      "id": 1070940,
+      "wikiId": 3915,
+      "name": "Antananarivo",
+      "localName": "Tananarive",
+      "country": "MG",
+      "lat": -18.9100122,
+      "lon": 47.5255809,
+      "population": 1275207
+    }
+  }
+}
