@@ -16,6 +16,7 @@ import {
   type Style,
   type View,
 } from "@inkcity/core";
+import { waterShapes } from "@inkcity/core/water";
 
 // The window's map work, wherever it runs: in the map worker (./worker.ts)
 // normally, on the main thread where a worker can't draw (./client.ts) — the
@@ -55,17 +56,24 @@ export type Reply =
   | { type: "loaded"; key: string; id: number }
   | { type: "frame"; key: string; seq: number; bitmap: ImageBitmap; growth?: Growth }
   /** The map couldn't be read — the load `id` says which — or, with its picture's `seq`, drawn. */
-  | { type: "error"; key: string; id?: number; seq?: number; message: string };
+  | { type: "error"; key: string; id?: number; seq?: number; message: string }
+  /** Something went wrong in drawing the map, which was drawn all the same — for the log, which a worker can't write to. */
+  | { type: "warn"; key: string; message: string };
 
 export type EngineEnv = {
-  render: (job: DrawJob, bbox: Bbox, osm: Osm) => Promise<ImageBitmap>;
+  /** `warn`: what to tell the log of a picture drawn all the same (`Reply` "warn"). */
+  render: (job: DrawJob, bbox: Bbox, osm: Osm, warn: (message: string) => void) => Promise<ImageBitmap>;
   post: Post<Reply>;
 };
 
-/** A picture drawn for real, wherever the engine runs: the worker's and the main thread's `render`. */
-export const paint: EngineEnv["render"] = (job, bbox, osm) =>
+/**
+ * A picture drawn for real, wherever the engine runs: the worker's and the main
+ * thread's `render`. Its water, when shown, generalized for the map's scale as the
+ * wallpaper's is — worked out on the first such picture of a map, then kept with it.
+ */
+export const paint: EngineEnv["render"] = (job, bbox, osm, warn) =>
   paintBitmap(job.side, job.side, (ctx) =>
-    drawScene(ctx, { bbox, width: job.side, height: job.side, style: job.style, osm }),
+    drawScene(ctx, { bbox, width: job.side, height: job.side, style: job.style, osm, waterShapes: (o, b) => waterShapes(o, b, warn) }),
   );
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -89,7 +97,8 @@ export function createEngine(env: EngineEnv): (req: Request) => void {
     // The wallpaper's ground: its longer side spans the map's whole width.
     const bbox = bboxForScreen(job.center.lat, job.center.lon, MAX_HALF_KM, 1);
     try {
-      const fit = await renderFitting(job.side, job.side, (side) => env.render({ ...job, side }, bbox, held.osm));
+      const warn = (message: string) => env.post({ type: "warn", key: job.key, message });
+      const fit = await renderFitting(job.side, job.side, (side) => env.render({ ...job, side }, bbox, held.osm, warn));
       const growth = job.grow
         ? growthFor(held.osm, bbox, job.style.preset, fit.width, fit.height, scaleView(job.grow.view, fit.scale))
         : undefined;

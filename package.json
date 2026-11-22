@@ -25,7 +25,8 @@
     "bbox-test": "tsx scripts/bbox-test.ts",
     "cdn-test": "tsx scripts/cdn-test.ts",
     "web-test": "tsx scripts/web-test.ts",
-    "label-test": "tsx scripts/label-test.ts"
+    "label-test": "tsx scripts/label-test.ts",
+    "water-test": "tsx scripts/water-test.ts"
   },
   "devDependencies": {
     "@inkcity/core": "workspace:*",

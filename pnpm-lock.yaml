@@ -30,6 +30,9 @@ catalogs:
     lucide-react:
       specifier: ^1.17.0
       version: 1.24.0
+    polygon-clipping:
+      specifier: ^0.15.7
+      version: 0.15.7
     react:
       specifier: ^19.1.0
       version: 19.2.7
@@ -188,7 +191,11 @@ importers:
         specifier: 'catalog:'
         version: 7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.0)
 
-  packages/core: {}
+  packages/core:
+    dependencies:
+      polygon-clipping:
+        specifier: 'catalog:'
+        version: 0.15.7
 
   packages/osm:
     dependencies:
@@ -196,7 +203,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       polygon-clipping:
-        specifier: ^0.15.7
+        specifier: 'catalog:'
         version: 0.15.7
 
   packages/ui:

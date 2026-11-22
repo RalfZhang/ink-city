@@ -1770,12 +1770,14 @@ mod tests {
     // The whole claim of resolution rung 3 is that a sidecar payload + the envelope
     // is indistinguishable from a downloaded manifest. Pinned against the real key
     // set of a published `osm-v2/data/<date>.json` (checked against the live CDN on
-    // 2026-07-28), so a change to either side has to come here and say so.
+    // 2026-07-28; `minorWater` added with v9, which both sides get from
+    // packages/osm/src/fetch-city.ts), so a change to either side has to come here
+    // and say so.
     #[test]
     fn a_stamped_sidecar_payload_has_a_manifests_exact_shape() {
         let mut v: serde_json::Value = serde_json::from_str(
-            r#"{"v":5,"elements":[{"type":"way"}],"water":[],"airports":[],
-                "railways":[],"aerialways":[]}"#,
+            r#"{"v":9,"elements":[{"type":"way"}],"water":[],"minorWater":[],
+                "airports":[],"railways":[],"aerialways":[]}"#,
         )
         .unwrap();
         stamp_manifest_envelope(
@@ -1795,7 +1797,7 @@ mod tests {
         keys.sort_unstable();
         assert_eq!(
             keys,
-            ["aerialways", "airports", "city", "date", "elements", "railways", "v", "water"]
+            ["aerialways", "airports", "city", "date", "elements", "minorWater", "railways", "v", "water"]
         );
     }
 

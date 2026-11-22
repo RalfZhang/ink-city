@@ -81,6 +81,7 @@ import {
   type StylePreset,
   type Theme,
 } from "@inkcity/core";
+import { waterShapes } from "@inkcity/core/water";
 import { fetchCityData } from "@inkcity/osm";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -306,6 +307,9 @@ async function main() {
               theme,
             },
             osm,
+            // its water (every layer is on here) generalized as the apps draw it — at
+            // another --km than the apps', drawn as mapped (`waterShapes` declines it)
+            waterShapes,
           });
           const buf = type === "svg" ? canvas.toBuffer() : canvas.toBuffer("image/png");
           const label = tag(theme);

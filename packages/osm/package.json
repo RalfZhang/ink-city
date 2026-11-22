@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "@inkcity/core": "workspace:*",
-    "polygon-clipping": "^0.15.7"
+    "polygon-clipping": "catalog:"
   }
 }

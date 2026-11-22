@@ -54,7 +54,15 @@ export const RUNWAY_ALPHA = 0.6;
 // wedge of land — and multipolygons whose rings don't close (why: osm/water.ts).
 // That one does change what clients draw, so the bump is what clears it from
 // already-cached cities; it rides on 8 because 8 hadn't shipped yet.
-export const OSM_SCHEMA_VERSION = 8;
+//
+// Version 9 keeps waterways in tunnels (`tunnel=yes`, dropped until now while
+// culverts stayed) and marks each named water line `named` (why: osm/water.ts),
+// which the generalizer draws whole. The mark is additive inside the feature:
+// older clients ignore it, and a newer one reads a missing mark as unnamed.
+// It also keeps the unnamed drains and ditches, in a key of their own (`minorWater`)
+// that only the generalizer reads, to link water standing alone; older clients
+// ignore the key, and both rode on 9 because 9 hadn't shipped yet.
+export const OSM_SCHEMA_VERSION = 9;
 
 /** The repo on GitHub — the same one ./cdn.json serves the published data from. */
 export const GITHUB_REPO = `https://github.com/${cdn.repo}`;

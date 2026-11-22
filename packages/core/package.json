@@ -6,6 +6,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./schedule": "./src/schedule.ts",
+    "./water": "./src/water/index.ts",
     "./countries.json": "./data/countries.json"
+  },
+  "dependencies": {
+    "polygon-clipping": "catalog:"
   }
 }

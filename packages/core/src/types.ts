@@ -172,8 +172,10 @@ export type WayTags = {
 
 // --- Water layer ---
 // Pre-assembled at precache time (the heavy stitching lives in
-// packages/osm/src/water.ts and runs in CI, never on the client) so the renderer
-// just fills polygons.
+// packages/osm/src/water.ts and runs in CI, never on the client): polygons and
+// lines as mapped. Each client generalizes them for the map's scale before drawing
+// (`@inkcity/core/water`, which yields the `WaterShapes` below); the data itself
+// stays as mapped, so a change to that needs no new data.
 
 /** A polygon ready to fill: one outer ring + zero or more holes (islands). */
 export type WaterPolygon = { outer: Geom[]; holes?: Geom[][] };
@@ -185,11 +187,28 @@ export type WaterLineClass = "river" | "canal" | "stream" | "drain" | "ditch";
  * A slimmed water feature. `area` = a real polygon water body (lake, reservoir,
  * wide river); `ocean` = sea derived from coastline; `line` = a linear waterway
  * centerline (e.g. a creek/canal) stroked thinly. Filled kinds carry `polygon`,
- * the line kind carries `line` + its `cls` (mapped to a stroke width at render).
+ * the line kind carries `line` + its `cls` (mapped to a stroke width at render),
+ * and `named` when the way has a `name` (absent before schema v9: read as unnamed).
  */
 export type WaterFeature =
   | { kind: "area" | "ocean"; polygon: WaterPolygon }
-  | { kind: "line"; cls: WaterLineClass; line: Geom[] };
+  | { kind: "line"; cls: WaterLineClass; line: Geom[]; named?: boolean };
+
+/** A water line: the `line` kind of {@link WaterFeature}. */
+export type WaterLine = Extract<WaterFeature, { kind: "line" }>;
+
+/**
+ * The water layer generalized for the map's scale (`waterShapes` in
+ * `@inkcity/core/water`), drawn in place of the features as mapped: what is too
+ * small or thin to see dropped, shores and lines smoothed, built water keeping its
+ * corners. Worked out by each client from the data, never stored.
+ */
+export type WaterShapes = {
+  /** The bodies, each its rings — the outer one counter-clockwise in lon/lat, its holes clockwise — filled as one path (nonzero). */
+  fills: Geom[][][];
+  /** The lines; a vertex marked `corner` is drawn sharp, the rest rounded off. */
+  lines: { cls: WaterLineClass; line: Geom[]; corner: boolean[] }[];
+};
 
 // --- The airport / railway / aerialway layers ---
 // Railways and aerialways are bare centerlines; airports carry both centerlines
@@ -243,6 +262,14 @@ export type Osm = {
   v?: number;
   /** Pre-assembled fill polygons. Absent ⇒ no water layer. */
   water?: WaterFeature[];
+  /**
+   * The unnamed drains and ditches, which `water` leaves out (there are thousands
+   * round a city's fields). Never drawn as they are: the water generalizer only
+   * draws a stretch of one where it links water standing alone to the rest. Kept in
+   * a key of its own so clients that draw `water` as mapped never see them. Absent ⇒
+   * none (data cached before schema v9 shipped with it).
+   */
+  minorWater?: WaterLine[];
   /** Pre-assembled runway/taxiway centerlines + areas. Absent ⇒ no airport layer. */
   airports?: AirportFeature[];
   /** Pre-assembled railway centerlines. Absent ⇒ no railway layer. */

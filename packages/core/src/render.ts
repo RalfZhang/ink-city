@@ -1,4 +1,4 @@
-import type { AirportKind, Bbox, Geom, MapLabel, Osm, RailwayStyle, Style, StylePreset, Way } from "./types";
+import type { AirportKind, Bbox, Geom, MapLabel, Osm, RailwayStyle, Style, StylePreset, WaterShapes, Way } from "./types";
 import type { LayerId } from "./layers";
 import { drawLabel } from "./label";
 import { groundHeightKm, project } from "./bbox";
@@ -67,8 +67,23 @@ export const ROAD_WEIGHT_DEFAULT: Readonly<Record<StylePreset, number | null>> =
 };
 
 /** Linear-waterway stroke weight per class; unlisted classes (stream/drain/ditch) use the default. */
-export const WATER_LINE_WEIGHTS: Readonly<Record<string, number>> = { river: 1.6, canal: 1.3 };
-const WATER_LINE_WEIGHT_DEFAULT = 0.7;
+export const WATER_LINE_WEIGHTS: Readonly<Record<string, number>> = { river: 1.6, canal: 1.0 };
+export const WATER_LINE_WEIGHT_DEFAULT = 0.7;
+
+/**
+ * Ground (m) a generalized line's soft vertex is rounded off over on each side, at
+ * most — half the side, where that is shorter, as it nearly always is on land: a
+ * line smoothed there comes simplified at 1 m (its vertices some 20–60 m apart), its
+ * stretches in the water at 20 m (`@inkcity/core/water`).
+ */
+export const WATER_LINE_ROUND = 50;
+
+/**
+ * Where a line meets a thinner one end to end, it narrows to the thinner one's width
+ * at the joint, over this many times the width it gives up (216 m for a river
+ * meeting a stream), so the width doesn't change in one step.
+ */
+const WATER_LINE_TAPER = 20;
 
 /**
  * Runway/taxiway *centerline* stroke weights (fixed, not scaled by preset — see
@@ -202,6 +217,14 @@ export type DrawReq = {
   height: number;
   style: Style;
   osm: Osm;
+  /**
+   * How `osm`'s water is generalized for the map's scale — `waterShapes` from
+   * `@inkcity/core/water`, which this module can't import (it pulls in
+   * polygon-clipping) — called only when `style.showWater`, its shapes drawn in place
+   * of the water as mapped. Absent ⇒ the water as mapped, which the Lab tab's made-up
+   * samples want, being far smaller than any real map.
+   */
+  waterShapes?: (osm: Osm, bbox: Bbox) => WaterShapes | undefined;
   /** The city caption, drawn last (core/label.ts). Absent ⇒ none. */
   label?: MapLabel;
 };
@@ -319,6 +342,8 @@ function waterLineWidth(cls: string, scale: number): number {
 function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
   const water = req.osm.water;
   if (!req.style.showWater || !water || water.length === 0) return 0;
+  const shapes = req.waterShapes?.(req.osm, req.bbox);
+  if (shapes) return drawWaterShapes(ctx, req, shapes);
   const { bbox, width, height, style } = req;
   const color = mixColor(style.foreground, style.background);
   let drawn = 0;
@@ -357,6 +382,130 @@ function drawWater(ctx: CanvasRenderingContext2D, req: DrawReq): number {
     ctx.stroke();
   }
   return drawn;
+}
+
+/**
+ * Draw the water as generalized ({@link DrawReq.waterShapes}): the bodies as one
+ * path filled once, as {@link drawWater} fills them — their rings come wound for a
+ * nonzero fill — then the lines, each soft vertex rounded off by a quadratic curve
+ * that leaves and rejoins the line up to {@link WATER_LINE_ROUND} m either side of
+ * it (or halfway along the side, if that is shorter). Each line is stroked on its
+ * own, as the generalizer's lab drew them: where two meet, their edges blend as
+ * they did there. A line meeting a thinner one end to end narrows to it
+ * ({@link WATER_LINE_TAPER}), filled instead as the round-ended pieces a stroke of
+ * changing width is made of.
+ */
+function drawWaterShapes(ctx: CanvasRenderingContext2D, req: DrawReq, shapes: WaterShapes): number {
+  const { bbox, width, height, style } = req;
+  const color = mixColor(style.foreground, style.background);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for (const body of shapes.fills) for (const ring of body) addRing(ctx, ring, bbox, width, height);
+  ctx.fill("nonzero");
+
+  const scale = strokeScale(bbox, height);
+  const round = (WATER_LINE_ROUND * height) / (groundHeightKm(bbox) * 1000);
+  const widths = shapes.lines.map((l) => waterLineWidth(l.cls, scale));
+  // the lines ending at each point (the generalizer leaves a joint's ends on the same point)
+  const key = (p: Geom) => `${Math.round(p.lat * 1e6)},${Math.round(p.lon * 1e6)}`;
+  const ends = new Map<string, number[]>();
+  shapes.lines.forEach((l, i) => {
+    if (l.line.length < 2) return;
+    for (const p of [l.line[0], l.line[l.line.length - 1]]) { const k = key(p), at = ends.get(k); if (at) at.push(i); else ends.set(k, [i]); }
+  });
+  // the width line `i` narrows to at its end `p`: the widest other line ending there, if thinner
+  const narrowTo = (i: number, p: Geom) => {
+    let t = 0;
+    for (const j of ends.get(key(p)) ?? []) if (j !== i) t = Math.max(t, widths[j]);
+    return t > 0 && t < widths[i] ? t : widths[i];
+  };
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  shapes.lines.forEach((l, i) => {
+    if (l.line.length < 2) return;
+    const pts = l.line.map((p) => project(p.lat, p.lon, bbox, width, height)), w = widths[i];
+    const w0 = narrowTo(i, l.line[0]), w1 = narrowTo(i, l.line[l.line.length - 1]);
+    if (w0 < w || w1 < w) { fillTapered(ctx, flattenRounded(pts, l.corner, round), w, w0, w1); return; }
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    traceRounded(ctx, pts, l.corner, round);
+    ctx.stroke();
+  });
+  return shapes.fills.length + shapes.lines.length;
+}
+
+/**
+ * Fill a screen polyline as a stroke `w` px wide whose start narrows to `w0` and end
+ * to `w1` ({@link WATER_LINE_TAPER}), each over at most half the line: a disc at
+ * every point and a band between each two, all one way round, in one nonzero fill.
+ */
+function fillTapered(ctx: CanvasRenderingContext2D, f: [number, number][], w: number, w0: number, w1: number): void {
+  const n = f.length, cum = new Float64Array(n);
+  for (let i = 1; i < n; i++) cum[i] = cum[i - 1] + Math.hypot(f[i][0] - f[i - 1][0], f[i][1] - f[i - 1][1]);
+  const len = cum[n - 1];
+  const l0 = Math.min(WATER_LINE_TAPER * (w - w0), len / 2), l1 = Math.min(WATER_LINE_TAPER * (w - w1), len / 2);
+  const ease = (t: number) => t * t * (3 - 2 * t);
+  const r = Array.from(cum, (s) => {
+    let x = w;
+    if (l0 > 0 && s < l0) x = Math.min(x, w0 + (w - w0) * ease(s / l0));
+    if (l1 > 0 && len - s < l1) x = Math.min(x, w1 + (w - w1) * ease((len - s) / l1));
+    return x / 2;
+  });
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const [x, y] = f[i];
+    ctx.moveTo(x + r[i], y);
+    ctx.arc(x, y, r[i], 0, 2 * Math.PI, true);
+    if (i + 1 === n) break;
+    const [x1, y1] = f[i + 1], L = Math.hypot(x1 - x, y1 - y);
+    if (L < 1e-9) continue;
+    const nx = -(y1 - y) / L, ny = (x1 - x) / L;
+    ctx.moveTo(x + nx * r[i], y + ny * r[i]);
+    ctx.lineTo(x1 + nx * r[i + 1], y1 + ny * r[i + 1]);
+    ctx.lineTo(x1 - nx * r[i + 1], y1 - ny * r[i + 1]);
+    ctx.lineTo(x - nx * r[i], y - ny * r[i]);
+    ctx.closePath();
+  }
+  ctx.fill("nonzero");
+}
+
+/** Where the curve rounding off vertex `i` leaves the side towards `j`: `R` px along it, or halfway if that is shorter. */
+function roundFrom(pts: [number, number][], i: number, j: number, R: number): [number, number] {
+  const [x0, y0] = pts[i], [x1, y1] = pts[j];
+  const len = Math.hypot(x1 - x0, y1 - y0);
+  const t = len ? Math.min(0.5, R / len) : 0;
+  return [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t];
+}
+
+/** The polyline {@link traceRounded} draws, its curves as points about 2 px apart. */
+function flattenRounded(pts: [number, number][], corner: boolean[], R: number): [number, number][] {
+  const n = pts.length, out: [number, number][] = [pts[0]];
+  for (let i = 1; i < n - 1; i++) {
+    if (corner[i]) { out.push(pts[i]); continue; }
+    const a = roundFrom(pts, i, i - 1, R), b = roundFrom(pts, i, i + 1, R), [vx, vy] = pts[i];
+    out.push(a);
+    const k = Math.max(2, Math.ceil((Math.hypot(vx - a[0], vy - a[1]) + Math.hypot(b[0] - vx, b[1] - vy)) / 2));
+    for (let q = 1; q <= k; q++) {
+      const t = q / k, u = 1 - t;
+      out.push([u * u * a[0] + 2 * t * u * vx + t * t * b[0], u * u * a[1] + 2 * t * u * vy + t * t * b[1]]);
+    }
+  }
+  out.push(pts[n - 1]);
+  return out;
+}
+
+/** Trace an open screen polyline with its soft vertices (not `corner`) rounded off over up to `R` px each side. */
+function traceRounded(ctx: CanvasRenderingContext2D, pts: [number, number][], corner: boolean[], R: number): void {
+  const n = pts.length;
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < n - 1; i++) {
+    if (corner[i]) { ctx.lineTo(pts[i][0], pts[i][1]); continue; }
+    const [ax, ay] = roundFrom(pts, i, i - 1, R), [bx, by] = roundFrom(pts, i, i + 1, R);
+    ctx.lineTo(ax, ay);
+    ctx.quadraticCurveTo(pts[i][0], pts[i][1], bx, by);
+  }
+  ctx.lineTo(pts[n - 1][0], pts[n - 1][1]);
 }
 
 /**

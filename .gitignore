@@ -49,3 +49,5 @@ tmp.md
 # Compiled macOS icon catalog (scripts/build-icon-car.sh); build artifact,
 # rebuilt by CI and by `pnpm icon:car`. Source of truth is icons/InkCity.icon.
 /apps/desktop/src-tauri/icons/Assets.car
+
+.playwright-mcp

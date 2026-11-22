@@ -1,6 +1,8 @@
 import type { Bbox } from "./types";
 
 const KM_PER_DEG_LAT = 111.32;
+/** m per degree of latitude (and of longitude at the equator). */
+export const M_PER_DEG_LAT = KM_PER_DEG_LAT * 1000;
 
 /**
  * Build a bbox sized to the screen aspect: the longer side spans `2 * maxHalfKm`,

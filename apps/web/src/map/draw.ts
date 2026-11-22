@@ -1,4 +1,5 @@
 import { DEFAULT_COLORS, DEFAULT_STYLE, drawScene, paintBitmap } from "@inkcity/core";
+import { waterShapes } from "@inkcity/core/water";
 import type { Manifest } from "./manifest";
 import { mapBBox } from "./size";
 
@@ -6,9 +7,10 @@ export type Theme = "light" | "dark";
 
 /**
  * Draw `manifest` as the desktop would draw it for a `width`×`height` screen: the
- * same crop around the city (`bboxForScreen` with the shared `MAX_HALF_KM`), and
- * a fresh install's style in the theme's colors (packages/core/src/defaults.json).
- * No city caption — the page says where it is, once the game is over.
+ * same crop around the city (`bboxForScreen` with the shared `MAX_HALF_KM`), and a
+ * fresh install's style in the theme's colors (packages/core/src/defaults.json) —
+ * its water, should that style show it, generalized as the desktop's is. No city
+ * caption — the page says where it is, once the game is over.
  */
 export function drawMap(
   ctx: CanvasRenderingContext2D,
@@ -23,6 +25,7 @@ export function drawMap(
     height,
     style: { ...DEFAULT_COLORS[theme], ...DEFAULT_STYLE },
     osm: manifest,
+    waterShapes,
   });
 }
 

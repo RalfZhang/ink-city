@@ -4,15 +4,13 @@
 import polygonClipping, { type MultiPolygon, type Ring } from "polygon-clipping";
 const { difference, union } = polygonClipping;
 
-import type { Bbox, Geom, WaterFeature, WaterLineClass, WaterPolygon } from "@inkcity/core";
+import type { Bbox, Geom, WaterFeature, WaterLine, WaterLineClass, WaterPolygon } from "@inkcity/core";
 import { TOL, isClosed, dedupeAdjacent, roundPts } from "./geom";
 
 // The "water" layer's selector + slim, dispatched by fetch-city.ts. Runs at
 // PRECACHE/FETCH time (Node/Deno/Bun) — on the web only in the website's map
-// worker, which loads it lazily for its last rung. Its dependency on
-// `polygon-clipping`, which must stay out of the apps' main bundles, is the main
-// reason OSM acquisition is a package of its own rather than part of
-// `@inkcity/core`.
+// worker, which loads it lazily for its last rung. It shares `polygon-clipping`
+// with `@inkcity/core/water`, which generalizes this layer on each client.
 //
 // This is where all the fiddly geometry lives, worked in geographic (lat/lon) space
 // where OSM's "land on the left, water on the right" coastline rule holds as
@@ -21,7 +19,9 @@ import { TOL, isClosed, dedupeAdjacent, roundPts } from "./geom";
 // Scope: area water = natural=water + waterway=riverbank + water=* +
 // landuse=reservoir/basin; ocean from natural=coastline (robustly, via polygon
 // difference); and linear waterway=river/canal/stream/drain/ditch as thin strokes,
-// with drain/ditch kept only when named (see slimWater).
+// tunnels and culverts included, with drain/ditch kept only when named and every
+// named line marked `named` (see slimWater). The unnamed drains and ditches go to a
+// layer of their own, which only the generalizer reads, to link water.
 
 // --- raw Overpass `out geom` shapes (only the fields we read) ---
 
@@ -359,13 +359,16 @@ const AREA_RELATION_TYPES = new Set(["multipolygon", "boundary", "route"]);
 
 /**
  * Assemble a raw water/coastline/waterway Overpass response into slim,
- * render-ready features. `roadCount` feeds the no-coastline sea heuristic.
+ * render-ready features (`water`), and the unnamed drains and ditches apart
+ * (`minorWater`). `roadCount` feeds the no-coastline sea heuristic.
  * Coordinates are rounded to `coordPrecision` decimals at the end (after
- * endpoint matching, which needs full precision).
+ * endpoint matching, which needs full precision); the minor lines, which take
+ * no part in it, as they come.
  */
-export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecision: number): WaterFeature[] {
+export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecision: number): { water: WaterFeature[]; minorWater: WaterLine[] } {
   const elements = raw.elements ?? [];
   const features: WaterFeature[] = [];
+  const minorLines: WaterLine[] = [];
 
   // Area relations → outer rings with holes. Their member ways are recorded so
   // the standalone pass below doesn't draw them again — but only for a relation
@@ -407,14 +410,21 @@ export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecisio
       continue;
     }
     const wt = el.tags?.waterway as WaterLineClass | undefined;
-    if (wt && LINE_CLASSES.has(wt) && el.tags?.tunnel !== "yes") {
-      // drain/ditch are usually anonymous roadside/field channels; keep only
-      // the named ones — that captures urban rivers loosely tagged as drain
-      // (e.g. Nanyang's 三里河) without flooding other cities with every ditch.
-      // river/canal/stream are kept regardless of name.
+    if (wt && LINE_CLASSES.has(wt)) {
+      // drain/ditch are usually anonymous roadside/field channels; only the
+      // named ones join `water` — that captures urban rivers loosely tagged as
+      // drain (e.g. Nanyang's 三里河) without flooding other cities with every
+      // ditch. The rest go to `minorWater`, which no client draws as it is: the
+      // generalizer only draws a stretch of one that links water standing alone
+      // (a culvert under a motorway between a stream and the sea). river/canal/
+      // stream are kept regardless of name; the generalizer draws a named line
+      // whole (@inkcity/core/water).
+      const named = !!el.tags?.name;
       const minor = wt === "drain" || wt === "ditch";
-      if (!minor || el.tags?.name) {
-        features.push({ kind: "line", cls: wt, line: dedupeAdjacent(el.geometry) });
+      if (!minor || named) {
+        features.push({ kind: "line", cls: wt, line: dedupeAdjacent(el.geometry), ...(named ? { named } : {}) });
+      } else {
+        minorLines.push({ kind: "line", cls: wt, line: roundPts(dedupeAdjacent(el.geometry), coordPrecision) });
       }
     }
   }
@@ -423,13 +433,13 @@ export function slimWater(raw: RawOsm, b: Bbox, roadCount: number, coordPrecisio
     features.push({ kind: "ocean", polygon: poly });
   }
 
-  return roundFeatures(features, coordPrecision);
+  return { water: roundFeatures(features, coordPrecision), minorWater: minorLines };
 }
 
 function roundFeatures(features: WaterFeature[], precision: number): WaterFeature[] {
   const ring = (pts: Geom[]) => roundPts(pts, precision);
   return features.map((feat) => {
-    if (feat.kind === "line") return { kind: "line", cls: feat.cls, line: ring(feat.line) };
+    if (feat.kind === "line") return { kind: "line", cls: feat.cls, line: ring(feat.line), ...(feat.named ? { named: true } : {}) };
     return {
       kind: feat.kind,
       polygon: {

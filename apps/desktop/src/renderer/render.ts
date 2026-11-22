@@ -5,8 +5,9 @@ import { invoke } from "@tauri-apps/api/core";
 import "@fontsource-variable/geist";
 
 import { drawScene, type DrawReq } from "@inkcity/core";
+import { waterShapes } from "@inkcity/core/water";
 import { loadLabelFonts } from "@/lib/label-fonts";
-import { logError, logInfo } from "@/lib/log";
+import { logError, logInfo, logWarn } from "@/lib/log";
 
 // Thin Tauri adapter: receive a render request over IPC, draw via the portable
 // core, and hand the PNG bytes back to Rust. All drawing logic lives in
@@ -22,7 +23,9 @@ async function render(req: RenderReq): Promise<void> {
   if (!ctx) throw new Error("canvas 2d unavailable");
 
   if (req.label) await loadLabelFonts(req.label, req.width, req.height);
-  const counts = drawScene(ctx, req);
+  // the water, when shown, generalized for the map's scale, as the window's map draws it — worked
+  // out once for the map, though each request comes parsed anew (`waterShapes` keeps it by its data)
+  const counts = drawScene(ctx, { ...req, waterShapes: (osm, bbox) => waterShapes(osm, bbox, (m) => logWarn(`[renderer] ${m}`)) });
   const summary =
     Object.entries(counts)
       .filter(([, n]) => n > 0)

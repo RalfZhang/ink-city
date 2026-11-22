@@ -1,15 +1,18 @@
 // `@inkcity/core` — the portable, client-safe surface, imported by the desktop
 // frontend, the CI scripts and the website as a workspace package.
 //
-// Two modules are deliberately absent from this barrel:
+// Three modules are deliberately absent from this barrel:
 //
 //   • ./schedule — CI's picker; scripts (and the website, for reading the
 //     schedule) import it as `@inkcity/core/schedule`.
 //   • ./mondrian — reached through `drawScene`'s `variant`; only its colors are
 //     re-exported below, for the desktop window that wears a Mondrian map.
+//   • ./water — the water generalized for the map's scale, `@inkcity/core/water`.
+//     It pulls in `polygon-clipping`, so only what draws a real map imports it
+//     (the map engines, in their workers or loaded lazily, the wallpaper's
+//     renderer, the scripts), and the apps' main bundles stay without it.
 //
-// OSM acquisition isn't here at all: it lives in `@inkcity/osm`, so its
-// `polygon-clipping` dependency can never reach a client bundle.
+// OSM acquisition isn't here at all: it lives in `@inkcity/osm`.
 export * from "./types";
 export * from "./city";
 export * from "./bbox";

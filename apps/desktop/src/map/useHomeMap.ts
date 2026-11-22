@@ -50,7 +50,7 @@ export function useMapData(client: MapClient, mapKey: string | null, mapRev: num
     () =>
       client.listen((reply) => {
         const ask = asked.current;
-        if (!ask || reply.type === "frame" || reply.id === undefined || reply.id !== ask.load) return;
+        if (!ask || reply.type === "frame" || reply.type === "warn" || reply.id === undefined || reply.id !== ask.load) return;
         if (reply.type === "loaded") {
           held.current = { key: ask.key, rev: ask.rev };
           setLoaded(held.current);
@@ -173,6 +173,10 @@ export function useHomeFrame({ client, stage, canvas, mapKey, rev, visible, cent
       client.listen((reply) => {
         if (reply.type === "error" && reply.seq !== undefined) {
           if (reply.key === current.current && reply.seq === seq.current) logWarn("[map] couldn't draw the map", reply.message);
+          return;
+        }
+        if (reply.type === "warn") {
+          logWarn(`[map] ${reply.message}`);
           return;
         }
         if (reply.type !== "frame") return;

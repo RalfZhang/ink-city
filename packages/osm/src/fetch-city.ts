@@ -5,9 +5,9 @@
 // the CDN and the live fallback always produce the same shape for the same bbox.
 //
 // Runs in Node/Deno/Bun, and in one client: the website's map worker, which loads
-// it lazily for the last rung of its fetch ladder (see water.ts's note on
-// polygon-clipping, which is what keeps this package separate from
-// `@inkcity/core`).
+// it lazily for the last rung of its fetch ladder. That is why it is a package of
+// its own: acquiring the data stays out of the apps' bundles, which only draw what
+// it produced.
 
 import type { Bbox, Osm } from "@inkcity/core";
 import { fetchOverpass, type FetchOptions } from "./overpass";
@@ -36,7 +36,7 @@ const OVERPASS_TIMEOUT_S = 180;
 /**
  * Fetch + slim every layer for `bbox` in a single Overpass round trip,
  * returning one payload shaped exactly like a precached CDN file:
- * `{ v, elements, water, airports, railways, aerialways }`.
+ * `{ v, elements, water, minorWater, airports, railways, aerialways }`.
  */
 export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Promise<Osm> {
   const precision = COORD_PRECISION;
@@ -59,10 +59,12 @@ export async function fetchCityData(bbox: Bbox, opts: FetchCityOptions = {}): Pr
   const raw = await fetchOverpass(query, undefined, opts.overpass);
 
   const elements = slimRoads(raw as Parameters<typeof slimRoads>[0], precision).elements ?? [];
+  const { water, minorWater } = slimWater(raw as Parameters<typeof slimWater>[0], bbox, elements.length, precision);
   return {
     v: OSM_SCHEMA_VERSION,
     elements,
-    water: slimWater(raw as Parameters<typeof slimWater>[0], bbox, elements.length, precision),
+    water,
+    minorWater,
     airports: slimAirports(raw as Parameters<typeof slimAirports>[0], precision),
     railways: slimRailways(raw as Parameters<typeof slimRailways>[0], precision),
     aerialways: slimAerialways(raw as Parameters<typeof slimAerialways>[0], precision),

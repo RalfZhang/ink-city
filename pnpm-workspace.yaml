@@ -20,6 +20,7 @@ catalog:
   "@vitejs/plugin-react": ^4.6.0
   i18next: ^26.3.0
   lucide-react: ^1.17.0
+  polygon-clipping: ^0.15.7
   react: ^19.1.0
   react-dom: ^19.1.0
   react-i18next: ^17.0.8
