@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.16.0](https://github.com/RalfZhang/ink-city/compare/v0.15.0...v0.16.0) (2026-11-22)
+
+
+### Features
+
+* smooth water ([b3cdc16](https://github.com/RalfZhang/ink-city/commit/b3cdc16d7f2b364dd3b851425494652a6e690d74))
+
+
+### Bug Fixes
+
+* slight line between water boundaries ([35d2159](https://github.com/RalfZhang/ink-city/commit/35d2159ca8a07e9de04852d8c7d2aa908098971b))
+
 ## [0.15.0](https://github.com/RalfZhang/ink-city/compare/v0.14.1...v0.15.0) (2026-11-09)
 
 
